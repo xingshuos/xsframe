@@ -1,0 +1,89 @@
+{extend name="../../admin/view/public/admin"}
+
+{block name='content'}
+
+<div class="loader" style="display:none;">
+    <div class="la-ball-clip-rotate">
+        <div></div>
+    </div>
+</div>
+
+<div class="system-login-new system-login-new--half auto" style="height: 491px;">
+
+    <div class="login-bg-box" style="background-image: url( __ADMIN_IMG__/login_board.png );"></div>
+
+    <div class="login-panel system-forget">
+        <div class="title">
+            找回密码
+        </div>
+
+        <div class="steps">
+            <div class="steps-item steps-status-finish">
+                <div class="steps-line"><span>1.验证手机号</span></div>
+            </div>
+            <div class="steps-item steps-status-wait step-set-pwd">
+                <div class="steps-line"><span>2.设置新密码</span></div>
+            </div>
+            <div class="steps-item steps-status-wait step-pwd-success">
+                <div class="steps-line"><span>3.完成</span></div>
+            </div>
+        </div>
+
+        <!--step: 1-->
+        <form action="javascript:;" class="form login-form step-1">
+            <div class="input-group-vertical">
+                <input name="login_type" type="hidden" class="form-control " value="system">
+                <input name="referer" type="hidden" value="">
+
+                <div class="form-group">
+                    <input name="username" type="text" class="form-control " placeholder="请输入手机号">
+                    <div class="help-block">请输入手机号</div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <input name="verify" type="text" class="form-control" placeholder="请输入验证码">
+                        <a href="javascript:;" id="toggle" class="input-group-btn imgverify">
+                            <img id="imgverify"
+                                 src="{:url('admin/login/verify')}"
+                                 title="点击图片更换验证码"
+                                 onerror="this.src='__ADMIN_IMG__/noface.png'">
+                        </a>
+                    </div>
+                    <div class="help-block">请输入验证码</div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="text" class="form-control ng-pristine ng-untouched ng-valid ng-empty" placeholder="请输入短信验证码" ng-model="code">
+                        <a href="javascript:;" class="input-group-btn">
+                            <!--<button class="btn btn-primary">发送验证码</button>-->
+                            <input type="button" class="btn btn-primary send-code" ng-disabled="isDisable" ng-click="sendMessage()" value="免费获取验证码">
+                            <span class="js-timer"></span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="login-submit" style="margin-top: 30px;">
+                <span class="btn btn-primary" on-click="nextStep()" disabled="disabled">下一步</span>
+            </div>
+        </form>
+
+        <!--step: 2-->
+
+        <!--step: 3-->
+
+    </div>
+
+
+</div>
+
+<script>
+    $(function () {
+        $('.system-login-new.auto').height($('.login-panel').outerHeight())
+    })
+</script>
+
+{/block}

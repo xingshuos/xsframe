@@ -1,0 +1,144 @@
+{extend name="../../admin/view/public/admin"}
+
+{block name='style'}
+<style>
+    .account-item {
+        width: 100px;
+        height: 100px;
+    }
+</style>
+{/block}
+
+{block name='content'}
+
+
+<div class="page-header">当前位置：<span class="text-primary">项目管理</span></div>
+
+<div class="page-content">
+
+    <form action="" method="get" class="form-horizontal table-search" role="form">
+        <div class="page-toolbar">
+            <div class="col-sm-4">
+                <a class="btn btn-primary btn-sm" href="{:url('account/add')}"><i class="icon icon-plus"></i> 添加项目</a>
+            </div>
+            <div class="col-md-8 input-group">
+                <input type="text" class="form-control " name="keyword" value="{$_GPC['keyword']}" placeholder="可搜索项目名称">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit"> 搜索</button>
+                </span>
+            </div>
+        </div>
+    </form>
+
+    {if empty($list)}
+    <div class="panel panel-default">
+        <div class="panel-body empty-data">未查询到相关数据</div>
+    </div>
+    {else}
+    <form action="" method="post">
+        <div class="page-table-header">
+            <input type='checkbox'/>
+            <div class="btn-group" style="margin-left: 15px;">
+                <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('account/change',array('type' => 'status','value'=>0))}"><i class='icow icow-xianshi'></i> 启用</button>
+                <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('account/change',array('type' => 'status','value'=>1))}"><i class='icow icow-yincang'></i> 禁用</button>
+                <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('account/change',['type' => 'deleted','value' => 1])}">
+                    <i class='icow icow-shanchu1'></i> 删除
+                </button>
+            </div>
+        </div>
+        <table class="table table-responsive table-hover">
+            <thead class="navbar-inner">
+            <tr>
+                <th style="width:40px;"></th>
+                <th style='width:80px'>排序</th>
+                <th style='width:140px'>项目名称</th>
+<!--                <th style='width:120px'>绑定域名</th>-->
+                <th style='width:120px'>项目备注</th>
+                <th style="width: 120px;">应用数量</th>
+                <th style='width:120px;'>项目状态</th>
+                <th style="width: 140px;">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {foreach $list as $key=>$row }
+            <tr>
+                <td>
+                    <input type='checkbox' value="{$row['uniacid']}"/>
+                </td>
+                <td class='full'>
+                    <a href='javascript:;' data-toggle="ajaxEdit" data-href="{:webUrl('account/change',array('type'=>'displayorder','id'=>$row['uniacid']))}">{$row['displayorder']}</a>
+                    <i class="icow icow-weibiaoti-- " data-toggle="ajaxEdit2"></i>
+                </td>
+                <td style="overflow: visible">
+                    <a data-toggle='ajaxHref' href="{:webUrl('account/manager', array('id' => $row['uniacid']))}" target="_blank" rel="pop" style="display: flex" data-content="">
+                        <img class="img-40" src="{:tomedia($row['logo'])}" style='border-radius:50%;border:1px solid #efefef;' onerror="this.src='__ADMIN_IMG__/noface.png'"/>
+                        <span style="display: flex;flex-direction: column;justify-content: center;align-items: flex-start;padding-left: 5px">
+                            <span class="nickname">{$row['name']}</span>
+                        </span>
+                    </a>
+                </td>
+<!--                <td>-->
+<!--                    {$row['hostTotal']}-->
+<!--                </td>-->
+                <td style="overflow: visible;white-space:normal;">
+                    {$row['description']}
+                </td>
+                <td>
+                    {$row['total']}
+                </td>
+                <td>
+                    <span class='label {if $row['status']==1}label-primary{else}label-default{/if}'
+                    data-toggle='ajaxSwitch'
+                    data-switch-value='{$row['status']}'
+                    data-switch-value0='0|未开启|label label-default|{:url('admin/account/change',array('type'=> 'status','value'=>1,'id'=>$row['uniacid']))}'
+                    data-switch-value1='1|已开启|label label-primary|{:url('admin/account/change',array('type'=>'status','value' =>0,'id'=>$row['uniacid']))}'
+                    >
+                    {if $row['status']==1}已开启{else}未开启{/if}
+                    </span>
+                </td>
+                <td style="text-align:left;">
+                    <a href="{:webUrl('account/edit', array('id' => $row['uniacid']))}" class="btn btn-op btn-operation">
+                        <span data-toggle="tooltip" data-placement="top" data-original-title="修改">
+                            <i class='icon icon-pencil'></i>
+                        </span>
+                    </a>
+                    <a data-toggle='ajaxRemove' href="{:webUrl('account/change', array('type' => 'deleted','value' => 1,'id' => $row['uniacid']))}" class="btn btn-op btn-operation" data-confirm='确认要删除此项目吗?'>
+                        <span data-toggle="tooltip" data-placement="top" data-original-title="删除">
+                           <i class='icon icon-trash'></i>
+                        </span>
+                    </a>
+                    <a data-toggle='ajaxHref' href="{:webUrl('account/manager', array('id' => $row['uniacid']))}" target="_blank" class="btn btn-op btn-operation">
+                        <span data-toggle="tooltip" data-placement="top" data-original-title="管理">
+                            <i class='icon icon-cog'></i>
+                        </span>
+                    </a>
+                </td>
+            </tr>
+            {/foreach}
+
+            </tbody>
+            <tfoot>
+            <tr>
+                <td><input type="checkbox"></td>
+                <td colspan="3">
+                    <div class="btn-group">
+                        <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('account/change',array('type' => 'status','value'=>0))}"><i class='icow icow-xianshi'></i> 启用</button>
+                        <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('account/change',array('type' => 'status','value'=>1))}"><i class='icow icow-yincang'></i> 禁用</button>
+                        <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('account/change',['type' => 'deleted','value' => 1])}">
+                            <i class='icow icow-shanchu1'></i> 删除
+                        </button>
+                    </div>
+                </td>
+                <td colspan="3" style="text-align: right">
+                    {$pager | raw}
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </form>
+    {/if}
+</div>
+
+
+{/block}
+

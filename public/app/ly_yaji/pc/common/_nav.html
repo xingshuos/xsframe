@@ -1,0 +1,214 @@
+<style>
+
+    /* nav */
+    nav.navbar-inverse {
+        background-color: var(--background-white-color);
+        border-color: #fff;
+        box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
+        top: 0;
+    }
+
+    nav.navbar-inverse .navbar-brand {
+        max-width: 280px;
+        height: 60px;
+        padding: 5px 0 5px 20px;
+    }
+
+    nav.navbar-inverse .navbar-brand .logo {
+        width: 40px;
+        height: 40px;
+        margin-right: 12px;
+        border-radius: 100%;
+    }
+
+    nav.navbar-inverse .navbar-brand .title {
+        color: var(--primary-black-color);
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    nav.navbar-inverse .navbar-brand .host {
+        color: var(--primary-black-color);
+        font-size: 14px;
+        font-weight: 500;
+        margin-left: 12px;
+    }
+
+    nav.navbar-inverse .navbar-nav {
+        float: right;
+        margin-left: 30px;
+    }
+
+    nav.navbar-inverse .navbar-nav > li > a {
+        height: 60px;
+        line-height: 27px;
+        font-size: 16px;
+        color: #333333;
+        padding: 15px 12px;
+    }
+
+    nav.navbar-inverse .navbar-nav > li > a:before {
+        height: 0;
+        visibility: hidden;
+        overflow: hidden;
+        user-select: none;
+        pointer-events: none;
+        font-weight: 600;
+    }
+
+    nav.navbar-inverse .navbar-nav > li > a:hover, .navbar-inverse .navbar-nav > li > a:focus {
+        color: var(--primary-color);
+    }
+
+    nav.navbar-inverse .navbar-nav > .active > a {
+        background-color: inherit;
+        color: var(--primary-color);
+        font-weight: 500;
+    }
+
+    nav.navbar-inverse .navbar-nav > .active > a:hover {
+        background-color: var(--background-white-color);
+        color: var(--primary-color);
+        font-weight: 500;
+    }
+
+    nav.navbar-inverse .nav-login {
+        width: 120px;
+        height: 36px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /*background-color: var(--primary-color);*/
+        border-radius: 4px;
+    }
+
+    nav.navbar-inverse .nav-login > li > a {
+        padding-left: 0;
+        padding-right: 0;
+        font-size: 16px;
+    }
+
+    nav.navbar-inverse .nav-login > li > a:hover {
+        color: var(--primary-color);
+    }
+
+    .navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form {
+        border-color: var(--primary-color);
+    }
+
+    .nav-member-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 100%;
+        border: 1px solid var(--primary-grey-color);
+        overflow: hidden;
+    }
+
+    .nav-member-name {
+        font-weight: bold;
+    }
+
+    nav.navbar-inverse .navbar-nav > li .search-input-group {
+        display: flex;
+        flex-direction: row;
+        margin-right: 22px;
+        margin-left: 12px;
+    }
+
+    nav.navbar-inverse .navbar-nav > li .search-input-group .search-input {
+        width: 240px;
+        height: 30px;
+        line-height: 35px;
+        background: #fff;
+        border-radius: 100px 0 0 100px;
+        border: 1px solid var(--primary-grey-color);
+        box-sizing: border-box;
+        color: var(--primary-black-color);
+        padding-left: 15px;
+        font-size: 14px;
+    }
+
+    nav.navbar-inverse .navbar-nav > li .search-input-group .input-group-addon {
+        display: block;
+        width: 67px;
+        height: 30px;
+        background: rgba(0, 0, 0, 0.3);
+        text-align: center;
+        border-radius: 0 30px 30px 0;
+        font-size: 14px;
+        color: var(--background-white-color);
+        box-sizing: border-box;
+    }
+
+    nav.navbar-inverse .navbar-nav > li .search-input-group .input-group-addon:hover {
+        background: rgba(0, 0, 0, 0.5);
+    }
+</style>
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">
+                    <img src="{$moduleAttachUrl}/static/images/logo.png" alt="" class="logo">
+                </span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <a class="navbar-brand flex-start-center" href="{:url('/')}">
+                <img src="{$website['logo']}" alt="{$website['title']}" class="logo">
+                <span class="title">{$website['title']}</span>
+                <span class="host">{$_SERVER['HTTP_HOST']}</span>
+            </a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+
+            <!-- 用户登录部分 start -->
+            <ul class="nav navbar-nav navbar-right {if !$isLogin}nav-login{/if}">
+                {if !$isLogin}
+                <li class=""><a href="{:url('user/login',['backUrl' => $backUrl])}">登录 / 注册</a></li>
+                {else}
+                <li class="nav-member" style="display: flex;align-items: center;">
+                    <a href="{:url('user/center')}" style="padding: 0;display: flex;align-items: center;">
+                        <img src="{$moduleAttachUrl}/static/images/avatars/noface.png" class="nav-member-avatar">
+                        <!--<a href="{:url('user/center')}" class="nav-member-name" style="padding-left: 15px;padding-right: 0;">{$memberInfo['nickname'] ? $memberInfo['nickname'] : $memberInfo['username']}</a>-->
+                    </a>
+                </li>
+                {/if}
+            </ul>
+            <!-- 用户登录部分 end -->
+
+            <ul class="nav navbar-nav">
+                <li class="{if $isHome}active{/if}">
+                    <a href="{:url('/')}">首页</a>
+                </li>
+                {foreach $menuList as $key => $row}
+                <li class="{if (!empty($row['link']) && strpos($url,$row['link']))}active{/if}">
+                    <a href="{:url($row['link'])}">{$row['title']}</a>
+                </li>
+                {/foreach}
+
+                <li style="display: flex;height: 60px;align-items: center;">
+                    <form action="{:url('./search')}" method="get">
+                        <div class="search-input-group">
+                            <input type="text" id="search-keywords" name="wd" class="search-input" value="{$keywords ? $keywords : ''}" placeholder="请输入作品类别或艺术家进行搜索" autocomplete="off">
+                            <button type="submit" class="input-group-addon" id="search-keywords-btn">搜索</button>
+                        </div>
+                    </form>
+                </li>
+
+            </ul>
+
+        </div>
+    </div>
+</nav>
+
+<script>
+    require(['jquery', 'bootstrap']);
+</script>

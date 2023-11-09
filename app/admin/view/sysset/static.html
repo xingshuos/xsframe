@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    
+<title></title>
+
+    
+    <meta name="keywords" content="禾擎软件服务">
+    
+    
+    <meta name="description" content="禾擎软件服务">
+    
+
+    <link rel="shortcut icon" href="http://www.souxue.com/attachment/images/global/2023/08/rZPcbXPivvb1qNXB.png">
+
+    <link rel="stylesheet" href="/app/admin/static/components/bootstrap/bootstrap.min.css">
+
+    <link href="/app/admin/static/fonts/awesome/font-awesome.min.css?v=3.2.1" rel="stylesheet">
+    <link href="/app/admin/static/components/animate/animate.css" rel="stylesheet">
+
+    <!--商城icon 后期将作废-->
+    <link rel="stylesheet" type="text/css" href="/app/admin/static/fonts/shop/iconfont.css?v=20170503">
+    <script src="/app/admin/static/fonts/shop/iconfont.js"></script>
+
+    <!--原始样式-->
+    <link rel="stylesheet" href="/app/admin/static/css/upload.css">
+    <link rel="stylesheet" href="/app/admin/static/css/common.css">
+
+    <!--后台装修-->
+    <link href="/app/admin/static/css/admin.css?v=4.1.0" rel="stylesheet">
+
+    <script>var require = {urlArgs: 'v=20211031'};</script>
+
+    <script type="text/javascript">
+        if (navigator.appName === 'Microsoft Internet Explorer') {
+            if (navigator.userAgent.indexOf("MSIE 5.0") > 0 || navigator.userAgent.indexOf("MSIE 6.0") > 0 || navigator.userAgent.indexOf("MSIE 7.0") > 0) {
+                alert('您使用的 IE 浏览器版本过低, 推荐使用 Chrome 浏览器或 IE8 及以上版本浏览器.');
+            }
+        }
+
+        window.sysinfo = {
+            'uniacid': '0',
+            'uid': '1',
+            'siteroot': 'http://www.souxue.com',
+            'siteurl': '',
+            'attachurl': 'http://www.souxue.com/attachment/',
+            'module': 'admin',
+        };
+    </script>
+
+    <script type="text/javascript" src="/app/admin/static/components/jquery/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/app/admin/static/components/bootstrap/bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="/app/admin/static/js/web/util.js"></script>
+    <script type="text/javascript" src="/app/admin/static/js/web/common.min.js"></script>
+    <script type="text/javascript" src="/app/admin/static/js/require.js"></script>
+    <script src="/app/admin/static/js/config.js"></script>
+
+    <script>
+        require(['jquery', 'jquery.gcjs', 'init']);
+
+        // 加载tip提示组件
+        require(['tip'], function () {
+            // tip.msgbox.suc("登录成功");
+            // tip.confirm("登录成功");
+            // util.message("验证错误", '', 'error')
+            // util.message("验证正确", '', 'success')
+        });
+    </script>
+</head>
+<style>
+    .wb-container {
+        margin: 0 0 0 130px;
+    }
+
+    .wb-nav ~ .wb-subnav ~ .wb-container {
+        margin-right: 0;
+    }
+
+    .wb-header .dropdown-menu > li {
+        width: 100%;
+    }
+
+    .wb-header ul li.dropdown.ellipsis {
+        min-width: 230px;
+    }
+</style>
+<style type="text/css">
+    .table > thead > tr > td.full, .table > tbody > tr > td.full, .table > tfoot > tr > td.full {
+        overflow: hidden;
+    }
+
+    tbody tr td {
+        position: relative;
+    }
+
+    tbody tr .icow-weibiaoti-- {
+        visibility: hidden;
+        display: inline-block;
+        color: #fff;
+        height: 18px;
+        width: 18px;
+        background: #e0e0e0;
+        text-align: center;
+        line-height: 18px;
+        vertical-align: middle;
+    }
+
+    tbody tr:hover .icow-weibiaoti-- {
+        visibility: visible;
+    }
+
+    tbody tr .icow-weibiaoti--.hidden {
+        visibility: hidden !important;
+    }
+</style>
+
+<style type="text/css">
+
+</style>
+
+<!-- 结 构 代 码 -->
+<body>
+
+
+<div class="wb-header" style="position: fixed;">
+    <div class="logo ">
+                    <img class="logo-img" src="http://www.souxue.com/attachment/images/global/2023/08/rZPcbXPivvb1qNXB.png" onerror="this.src='/app/admin/static/images/nopic.png'" data-url="http://www.souxue.com/attachment/images/global/2023/08/rZPcbXPivvb1qNXB.png">
+            <div class="title">禾擎软件服务</div>
+            </div>
+
+    <ul>
+                    <li>
+                <a href="/admin/home/welcome.html" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="系统概况"><i class="icow icow-homeL"></i></a>
+            </li>
+            </ul>
+
+    <div class="wb-header-flex"></div>
+
+    <ul>
+        <li class="dropdown  ellipsis">
+            <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                admin <span></span>
+            </a>
+
+            <ul class="dropdown-menu"><!-- style="width:100%;left:0" -->
+                <li>
+
+                                            <a href="/admin/users/profile.html" target="_blank">
+                            <i class="icow icow-quanxian1 " style="font-size: 30px;"></i>
+                            <span style="display: block">修改密码</span>
+                        </a>
+                    
+                </li>
+
+                                    <li data-href="/admin/login/logout.html" class="wb-header-logout">
+                        <a><i class="icow icow-exit"></i> 退出系统</a>
+                    </li>
+                
+            </ul>
+        </li>
+        <li data-toggle="tooltip" data-placement="bottom" title="" data-href="/admin/login/logout.html" data-original-title="退出" class="wb-header-logout">
+            <a><i class="icow icow-exit"></i></a>
+        </li>
+    </ul>
+</div>
+
+
+
+<!-- 一级导航 -->
+<div class="wb-nav ">
+    <p class="wb-nav-fold"><i class="icon icon-indent-left"></i></p>
+    <ul id="navheight">
+
+                    <li >
+                <a data-href="/admin/account/index.html" class="wb-nav-item" data-module="admin">
+                                        <i class="icon icon-th-large"></i>
+                                        <span class="wb-nav-title">项目</span>
+                </a>
+                <span class="wb-nav-tip">项目管理</span>
+            </li>
+                    <li >
+                <a data-href="/admin/app/index.html" class="wb-nav-item" data-module="admin">
+                                        <i class="icon icon-puzzle-piece"></i>
+                                        <span class="wb-nav-title">应用</span>
+                </a>
+                <span class="wb-nav-tip">应用管理</span>
+            </li>
+                    <li >
+                <a data-href="/admin/users/profile.html" class="wb-nav-item" data-module="admin">
+                                        <i class="icon icon-user"></i>
+                                        <span class="wb-nav-title">用户</span>
+                </a>
+                <span class="wb-nav-tip">用户管理</span>
+            </li>
+                    <li class="active">
+                <a data-href="/admin/sysset/site.html" class="wb-nav-item" data-module="admin">
+                                        <i class="icon icon-desktop"></i>
+                                        <span class="wb-nav-title">系统</span>
+                </a>
+                <span class="wb-nav-tip">系统设置</span>
+            </li>
+        
+    </ul>
+</div>
+
+
+    <!-- 二级导航 -->
+        <div class="wb-subnav">
+        <div style="width: 100%;height: 100%;overflow-y: auto">
+
+            <div class="subnav-scene">
+                系统设置            </div>
+
+                                    <ul class="single">
+                            <li  style=" position: relative"><a href="/admin/sysset/site.html" style="cursor: pointer;" data-route="/admin/sysset/site.html">站点设置</a></li>
+                        </ul>
+                                                            <ul class="single">
+                            <li  style=" position: relative"><a href="/admin/sysset/host.html" style="cursor: pointer;" data-route="/admin/sysset/host.html">域名设置</a></li>
+                        </ul>
+                                                            <ul class="single">
+                            <li  style=" position: relative"><a href="/admin/sysset/attachment.html" style="cursor: pointer;" data-route="/admin/sysset/attachment.html">附件设置</a></li>
+                        </ul>
+                                                            <div class='menu-header active data-active'><div class="menu-icon icon icon-caret-down"></div>常用工具</div>
+                        <ul style="display: block">
+                                                        <li ><a href="/admin/sysset/form.html" style="cursor: pointer;" data-route="/admin/sysset/form.html">系统表单</a>
+                                                        <li ><a href="/admin/sysset/icon.html" style="cursor: pointer;" data-route="/admin/sysset/icon.html">系统图标</a>
+                                                        <li class="active"><a href="/admin/sysset/static.html" style="cursor: pointer;" data-route="/admin/sysset/static.html">静态页面</a>
+                                                        <li ><a href="/admin/sysset/bom.html" style="cursor: pointer;" data-route="/admin/sysset/bom.html">检测BOM</a>
+                                                    </ul>
+                                                
+            <div class="wb-subnav-fold icow"></div>
+        </div>
+    </div>
+    
+
+
+
+<div class="wb-container">
+        <div style="padding: 0 20px 30px 20px;box-sizing: border-box;">
+        
+<div class="page-header">当前位置：<span class="text-primary">静态页面</span></div>
+<div class="page-content">
+
+    <div class="alert alert-default">这里是生成的静态页面，通过此方法可以实现客户端静态化的一个生成</div>
+
+</div>
+
+    </div>
+    
+    <div id="page-loading">
+        <div class="page-loading-inner">
+            <div class="sk-three-bounce">
+                <div class="sk-child sk-bounce1"></div>
+                <div class="sk-child sk-bounce2"></div>
+                <div class="sk-child sk-bounce3"></div>
+            </div>
+        </div>
+    </div>
+
+    
+
+        
+
+</div>
+
+<div class="modal fade" id="public_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
+
+<script>
+    // 计算页面高度
+    let iframePage = document.getElementById('iframePage');
+    if (iframePage) {
+        let windowHeight = document.body.clientHeight;
+        iframePage.style.height = (windowHeight - 145) + 'px';
+    }
+</script>
+
+<script language='javascript'>
+    // 适当的post表单页面进行引用
+    require(['bootstrap'], function ($) {
+        // 这里开启会与common.min.js冲突 主要就是将提示框放在最外层，避免提示框被遮盖问题
+        // $('[data-toggle="tooltip"]').tooltip("destroy").tooltip({
+        //     container: $(document.body)
+        // });
+
+        $('[data-toggle="popover"]').popover("destroy").popover({
+            container: $(document.body)
+        });
+
+        // tab切换
+        $('#myTab a').click(function (e) {
+            $('#tab').val($(this).attr('href'));
+            e.preventDefault();
+            $(this).tab('show');
+        });
+        // 鼠标选中弹出信息框
+        $("[rel=pop]").popover({
+            trigger: 'manual',
+            placement: 'right',
+            title: $(this).data('title'),
+            html: 'true',
+            content: $(this).data('content'),
+            animation: false
+        }).on("mouseenter", function () {
+            var _this = this;
+            $(this).popover("show");
+            $(this).siblings(".popover").on("mouseleave", function () {
+                $(_this).popover('hide');
+            });
+        }).on("mouseleave", function () {
+            var _this = this;
+            setTimeout(function () {
+                if (!$(".popover:hover").length) {
+                    $(_this).popover("hide")
+                }
+            }, 100);
+        });
+    });
+</script>
+
+<script language="javascript">
+    if ($('form.form-validate').length <= 0) {
+        window.formInited = true;
+    }
+
+    window.formInitTimer = setInterval(function () {
+        if (typeof (window.formInited) !== 'undefined') {
+            $('#page-loading').remove();
+            clearInterval(window.formInitTimer);
+        }
+    }, 1);
+</script>
+
+<!--低分辨率一级导航显示不全问题 start-->
+<script>
+    var navheight = document.getElementById('navheight');
+    var navwidth = document.getElementById('navwidth');
+    var vh = document.body.clientHeight;
+    var vw = screen.width;
+
+    if (navheight) {
+        if (vh < 800) {
+            navheight.classList.add("wb-navheight");
+        } else {
+            navheight.classList.remove("wb-navheight");
+        }
+
+        if (vw < 1300) {
+            navwidth.classList.add("wb-navwidth");
+        }
+    }
+</script>
+
+<!--低分辨率一级导航显示不全问题 end-->
+
+<script>
+    // 模态框
+    function ajaxModel(obj) {
+        var url = $(obj).data('url');
+        // console.log(url);
+        $.get(url, {}, function (html) {
+            $("#public_modal").html(html).modal('show');
+        });
+    }
+</script>
+
+
+
+
+</body>
+
+</html>

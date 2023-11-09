@@ -1,0 +1,131 @@
+{extend name="pc/common/_base" /}
+
+{block name="title"}
+<title>我的账号-{$website['title']}</title>
+{/block}
+
+{block name="style"}
+<link rel="stylesheet" href="{$moduleAttachUrl}/static/css/user.css">
+{/block}
+
+{block name="main"}
+<section>
+    <div class="user-center-main">
+
+        <div class="container">
+
+            <div class="user-inner flex">
+
+                <!-- 左侧菜单 -->
+                <div class="user-aside">
+                    {include file="pc/user/tpl/menu" /}
+                </div>
+
+                <!-- 右侧菜单 -->
+                <div class="user-main">
+                    <div class="sub-title"><span>我的账号</span></div>
+
+                    <div class="user-content" id="userWrapper" v-cloak>
+                        <div class="item user-info">
+                            <div class="info"><span class="label">我的头像：</span> <img alt="" class="user-header" src="{$moduleAttachUrl}/static/images/avatars/noface.png"></div>
+                            <div class="edit-txt" @click="edit('avatar')">
+                                <div class="upload-demo">
+                                    <div tabindex="0" class="el-upload el-upload--text">
+                                        <span>修改</span><input type="file" name="file" class="el-upload__input">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item text-info"><span class="label">我的昵称：</span> <span class="txt line1" style="display: inline-block; vertical-align: middle;">{{ memberInfo.nickname }}</span>
+                            <div class="edit-txt" @click="edit('nickname')">修改</div>
+                        </div>
+                        <div class="item text-info"><span class="label">我的姓名：</span> <span class="txt line1" style="display: inline-block; vertical-align: middle;">{{ memberInfo.realname }}</span>
+                            <div class="edit-txt" @click="edit('realname')">修改</div>
+                        </div>
+                        <div class="item text-info"><span class="label">手机号：</span> <span class="txt line1" style="display: inline-block; vertical-align: middle;">{{ memberInfo.mobile }}</span>
+                            <div class="edit-txt" @click="edit('mobile')">修改</div>
+                        </div>
+                        <div class="item text-info"><span class="label">我的ID：</span> <span class="txt">{{ memberInfo.id }}</span></div>
+                        <div class="item text-info"><span class="label">密码设置：</span> <span class="txt">******</span>
+                            <div class="edit-txt" @click="edit('password')">修改密码</div>
+                        </div>
+                        <div class="out-btn" @click="loginOut()"><span>退出登录</span></div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    </div>
+</section>
+{/block}
+{block name="script"}
+<script>
+    require(['vue', 'jquery', 'tip', 'ajax'], (Vue, axios, $) => {
+
+        new Vue({
+            el: '#userWrapper',
+            data: {
+                memberInfo: {
+                    id: "{$memberInfo['id']}",
+                    nickname: "{$memberInfo['nickname']}",
+                    realname: "{$memberInfo['realname']}",
+                    avatar: "{$memberInfo['avatar']}",
+                    mobile: "{$memberInfo['mobile']}",
+                },
+            },
+            methods: {
+                edit(type) {
+                    switch (type) {
+                        case 'nickname':
+                            tip.prompt('请输入昵称', {
+                                maxlength: 30,
+                                required: true,
+                                callback: (res) => {
+                                    if (res && res !== this.memberInfo.nickname) {
+                                        this.memberInfo.nickname = res;
+                                        ajax.post("{:url('user/update')}", {nickname: res});
+                                    }
+                                }
+                            });
+                            break;
+                        case 'realname':
+                            tip.prompt('请输入姓名', {
+                                maxlength: 10,
+                                required: true,
+                                callback: (res) => {
+                                    if (res && res !== this.memberInfo.realname) {
+                                        this.memberInfo.realname = res;
+                                        ajax.post("{:url('user/update')}", {realname: res});
+                                    }
+                                }
+                            });
+                            break;
+                        case 'mobile':
+                            tip.msgbox.err('暂未开放修改手机号权限');
+                            break;
+                        case 'password':
+                            tip.msgbox.err('暂未开放修改密码权限');
+                            break;
+                        case 'avatar':
+                            tip.msgbox.err('暂未开放修头像权限');
+                            break;
+                    }
+                },
+                loginOut() {
+                    tip.confirm("确认退出登录么?", () => {
+                        let url = "{:url('user/logout')}";
+                        ajax.post(url, {}, (json) => {
+                            location.href = "{:url('user/login')}"
+                        });
+                    });
+                },
+            }
+        });
+
+    });
+</script>
+{/block}

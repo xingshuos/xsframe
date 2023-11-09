@@ -1,0 +1,84 @@
+<style>
+    .app-list .app-card {
+        margin-top: 20px;
+    }
+
+    .app-list .app-card .card-inner {
+        background: #fff;
+        box-shadow: 0 4px 20px 0 rgba(128, 128, 128, 0.1);
+    }
+
+    .app-list .app-card .card-inner .img-box {
+        display: block;
+        width: 100%;
+    }
+
+    .app-list .app-card .card-inner .img-box img {
+        width: 100%;
+    }
+
+    .app-list .app-card .app-info {
+        padding: 18px 15px;
+    }
+
+    .app-list .app-card .app-info a {
+        line-height: 1;
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .app-list .app-card .app-info .title {
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .app-list .app-card .app-info .money {
+        color: #e63a2e;
+        font-size: 16px;
+        margin-top: 15px;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .app-list .app-card .app-info .info {
+        color: #999;
+        font-size: 14px !important;
+        line-height: 1;
+        margin-top: 10px;
+    }
+
+    .app-list .app-card .BottomInfo {
+        color: #999;
+        font-size: 14px;
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+    }
+
+    .app-list .app-card .purchase-label {
+        color: #999;
+    }
+</style>
+
+<div class="row app-list">
+    <div class="row">
+
+        <div class="col-lg-3 col-md-4 col-xs-6 app-card">
+            <div class="card-inner">
+                <a href="{:url('@store/detail')}" title="" target="_blank" class="img-box">
+                    <img src="https://cdn.fastadmin.net/uploads/addons/command.png!addon" data-src="" alt="在线命令"/>
+                </a>
+                <div class="app-info">
+                    <a href="{:url('@store/detail')}" target="_blank" title="" class="title">在线命令</a>
+                    <a href="{:url('@store/detail')}" target="_blank" title="" class="money">免费</a>
+                    <a href="{:url('@store/detail')}" target="_blank" class="info text-over">2020/11/10更新</a>
+                    <a href="{:url('@store/detail')}" target="_blank" class="info text-over support-box">公众号</a>
+                    <div class="BottomInfo"><span class="purchase-label">销量9525</span></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

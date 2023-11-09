@@ -1,0 +1,88 @@
+<div class="alert alert-primary">
+    <p>默认主域名即可</p>
+    <p>1.域名绑定后，访问该域名可以直接关联到指定项目</p>
+    <p>2.例如:完整地址 https://abc.com?i=1 绑定后:https://bcd.com</p>
+</div>
+
+<div class="form-group">
+    <label class="col-lg control-label"></label>
+    <div class="col-sm-9 col-xs-12">
+
+        <table class="table  table-responsive">
+            <thead class="navbar-inner">
+            <tr>
+                <th>编号</th>
+                <th>域名地址(domain)</th>
+                <th>默认关联应用(标识)</th>
+                <th>默认跳转地址(c/a)</th>
+                <th style="width:60px;"></th>
+            </tr>
+            </thead>
+            <tbody id='tbody-items'>
+            {foreach $hostList as $key=>$row }
+            <tr>
+                <td>
+                    {$row['displayorder']}
+                    <input type="hidden" name="hostIds[]" value="{$row['id']}">
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="hostUrls[]" value="{$row['host_url']}">
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="hostModules[]" value="{$row['default_module']}">
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="hostModulesUrls[]" value="{$row['default_url']}">
+                </td>
+                <td>
+                    <a href="{:webUrl('account/hostDelete', array('uniacid' => $item['uniacid'],'id' => $row['id']))}" data-toggle='ajaxRemove' class="btn btn-default btn-sm btn-operation btn-op" data-confirm="确认删除此域名?">
+                        <span data-toggle="tooltip" data-placement="top" data-original-title="删除"><i class="icon icon-trash"></i></span>
+                    </a>
+                </td>
+            </tr>
+            {/foreach}
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="5">
+                    <input name="button" type="button" class="btn btn-default" value="添加域名" onclick='addHost()'>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+
+    </div>
+</div>
+
+<script>
+    require(['jquery.ui'], function () {
+        $('#tbody-items').sortable();
+    })
+
+    function addHost() {
+        var html = '<tr>';
+
+        html += '<input type="hidden" class="form-control" name="hostIds[]" value="">';
+        html += '<td><i class="icon icon-plus"></i></td>';
+        html += '<td>';
+        html += '<input type="text" class="form-control" name="hostUrls[]" value="">';
+        html += '</td>';
+        html += '<td>';
+        html += '<input type="text" class="form-control" name="hostModules[]" value="">';
+        html += '</td>';
+        html += '<td>';
+        html += '<input type="text" class="form-control" name="hostModulesUrls[]" value="">';
+        html += '</td>';
+        html += '<td>';
+        html += '<a class="btn btn-default btn-sm btn-operation btn-op" onclick="removeTr(this)">';
+        html += '<span data-toggle="tooltip" data-placement="top" data-original-title="删除"><i class="icon icon-trash"></i></span>';
+        html += '</a>';
+        html += '</td>';
+
+        html += '</tr>';
+        $('#tbody-items').append(html);
+    }
+    function removeTr(This) {
+        $(This).parent().parent().remove();
+    }
+</script>

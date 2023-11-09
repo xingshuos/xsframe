@@ -1,0 +1,155 @@
+{extend name="../../admin/view/public/admin"}
+
+{block name='content'}
+
+<div class="page-header">
+    <span>
+        当前位置：<span class="text-primary">用户列表</span>
+    </span>
+    <span>
+        全用户数:  <span class='text-danger'>{$total}</span>
+    </span>
+</div>
+<div class="page-content">
+
+    <form action="" method="get" class="form-horizontal table-search" role="form">
+        <div class="page-toolbar">
+            <div class="col-sm-4">
+                <a class="btn btn-primary btn-sm" href="{:webUrl('users/add')}"><i class="icon icon-plus"></i> 添加用户</a>
+            </div>
+            <div class="col-md-8 input-group">
+                <div class="input-group-select">
+                    <select name='role' class='form-control' style="width:120px;">
+                        <option value="">用户角色</option>
+                        <option value='owner' {if $_GET['role']=='owner'}selected{/if}>超级管理员</option>
+                        <option value='manager' {if $_GET['role']=='manager'}selected{/if}>项目管理员</option>
+                        <option value='role' {if $_GET['role']=='operator'}selected{/if}>普通管理员</option>
+                    </select>
+                </div>
+                <input type="text" class="form-control " name="keyword" value="{$_GPC['keyword']}" placeholder="可搜索用户名称/用户简介部分信息查询">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit"> 搜索</button>
+                    <!-- <button type="submit" name="export" value="1" class="btn btn-success ">导出</button> -->
+                </span>
+            </div>
+        </div>
+    </form>
+
+    {if empty($list)}
+    <div class="panel panel-default">
+        <div class="panel-body empty-data">未查询到相关数据</div>
+    </div>
+    {else/}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="page-table-header">
+                <input type="checkbox">
+                <div class="btn-group">
+                    <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:url('users/change',['type'=> 'deleted','value' => 1])}">
+                        <i class="icow icow-shanchu1"></i> 批量删除
+                    </button>
+                </div>
+            </div>
+            <table class="table table-responsive">
+                <thead>
+                <tr>
+                    <th style="width:40px;"></th>
+                    <th style="width: 60px">ID</th>
+                    <th style="width:120px;">管理账号</th>
+                    <th style="width: 150px">管理项目</th>
+                    <th style="width: 120px">创建时间</th>
+                    <th style="width: 120px">登录时间</th>
+                    <th style="width: 120px">登录IP</th>
+                    <th style="width: 100px">状态</th>
+                    <th style="width: 120px;text-align: center;">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $list as $key=>$row }
+                <tr>
+                    <td style="position: relative; ">
+                        <input type='checkbox' value="{$row['id']}" class="checkone"/>
+                    </td>
+                    <td>{$row['id']}</td>
+                    <td style="overflow: visible;white-space:normal;">
+                        <span style="display: flex;flex-direction: column;justify-content: center;align-items: flex-start;padding-left: 5px">
+                            <span>{$row['username']}</span>
+                            {if $row['role'] == 'owner'}
+                            <label class="label label-primary">超级管理员</label>
+                            {elseif $row['role'] == 'manager' /}
+                            <label class="label label-info">项目管理员</label>
+                            {elseif $row['role'] == 'operator' /}
+                            <label class="label label-default">普通管理员</label>
+                            {/if}
+                        </span>
+                    </td>
+                    <td style="overflow: visible;white-space:normal;">
+                        <a data-toggle='ajaxHref' href="{:webUrl('account/manager', array('id' => $row['account']['uniacid']))}" target="_blank" rel="pop" style="display: flex">
+                            <img class="img-40" src="{:tomedia($row['account']['logo'])}" style="border-radius:50%;border:1px solid #efefef;" onerror="this.src='/app/admin/static/images/nopic.png'">
+                            <span style="display: flex;flex-direction: column;justify-content: center;align-items: flex-start;padding-left: 5px">{$row['account']['name']? $row['account']['name'] : '未分配'}</span>
+                        </a>
+                    </td>
+                    <td>
+                        {$row['createtime']|date="Y-m-d"}<br>
+                        {$row['createtime']|date="H:i:s"}
+                    </td>
+                    <td>
+                        {$row['logintime']|date="Y-m-d"}<br>
+                        {$row['logintime']|date="H:i:s"}
+                    </td>
+                    <td>
+                        {$row['lastip']}
+                    </td>
+                    <td>
+                        <span class='label {if $row['status']==1}label-success{else}label-default{/if}'
+                        data-toggle='ajaxSwitch'
+                        data-switch-value='{$row['status']}'
+                        data-switch-value0='0|已禁用|label label-default|{:url('users/change',array('type'=> 'status','value'=>1,'id'=>$row['id']))}'
+                        data-switch-value1='1|已启用|label label-success|{:url('users/change',array('type'=>'status','value' => 0,'id'=>$row['id']))}'
+                        >
+                        {if $row['status']==1}已启用{else}已禁用{/if}
+                        </span>
+                    </td>
+                    <td style="overflow:visible;text-align: center;">
+                        <div class="btn-group">
+                            <a class='btn btn-op btn-operation' href="{:webUrl('users/edit', array('id' => $row['id'],'page'=>$page))}">
+                                <span data-toggle="tooltip" data-placement="top" title="" data-original-title="编辑">
+                                    <i class="icon icon-edit"></i>
+                                </span>
+                            </a>
+                            <a class="btn btn-op btn-operation" data-toggle='ajaxRemove' href="{:url('users/change',array('type'=> 'deleted','value' => 1,'id' => $row['id']));}" data-confirm="确定要删除该用户吗？">
+                                 <span data-toggle="tooltip" data-placement="top" title="" data-original-title="删除用户">
+                                   <i class='icon icon-trash'></i>
+                                </span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {/foreach}
+
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td colspan="4">
+                        <div class="btn-group">
+                            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:url('users/change',['type'=> 'deleted','value' => 1])}">
+                                <i class="icow icow-shanchu1"></i> 批量删除
+                            </button>
+                        </div>
+                    </td>
+                    <td colspan="4" style="text-align: right">
+                        {$pager | raw}
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    {/if}
+</div>
+
+<script language="javascript">
+
+</script>
+{/block}

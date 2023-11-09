@@ -1,0 +1,164 @@
+{extend name="../../admin/view/public/admin"}
+
+{block name='content'}
+
+<div class="page-header">当前位置：<span class="text-primary">附件设置</span></div>
+
+<style>
+
+</style>
+
+<div class="page-content">
+
+    <form action="" method="post" class="form-validate form-horizontal">
+
+        <input type="hidden" id="tab" name="tab" value="{if empty($_GET['tab'])}#tab_basic{else}#tab_{$_GET['tab']}{/if}"/>
+
+        <ul class="nav nav-tabs" id="myTab">
+            <li {if empty($_GET['tab']) || $_GET['tab']=='basic'}class="active"{/if}><a href="#tab_basic">全局设置</a></li>
+            <li {if $_GET['tab']=='remote'}class="active"{/if}><a href="#tab_remote">远程附件</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane {if empty($_GET['tab']) || $_GET['tab']=='basic'}active{/if}" id="tab_basic">
+                <div class="panel-body">{include file='sysset/tab/basic'}</div>
+            </div>
+
+            <div class="tab-pane {if $_GET['tab']=='remote'}active{/if}" id="tab_remote">
+                {include file="../app/admin/view/public/sets/system/tabs/attachment.html" /}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-lg control-label"></label>
+            <div class="col-sm-9 col-xs-12">
+                <input type="submit" class="btn btn-primary" value="保存配置">
+                <input type="hidden" name="token" value="{$_W['token']}"/>
+            </div>
+        </div>
+
+        <div class="modal fade" id="name" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="we7-modal-dialog modal-dialog we7-form">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <div class="modal-title">上传文件</div>
+                    </div>
+                    <div class="modal-body">
+                        正在上传....
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+</div>
+
+<script type="text/javascript">
+    $('input[name="data[image][is_reduce]"]').click(function () {
+        if ($(this).val() == 1) {
+            $('.upload-image-thumb-width-height').css('display', '');
+        } else {
+            $('.upload-image-thumb-width-height').css('display', 'none');
+        }
+    });
+
+    /*附件存储设置*/
+    $('.js-checkremoteoss').on('click', function () {
+        var bucket = $.trim($('select[name="data[remote][alioss][bucket]"]').val());
+        if (bucket == '') {
+            bucket = $.trim($(':text[name="data[remote][alioss][bucket]"]').val());
+        }
+        var param = {
+            'type': 'alioss',
+            'key': $.trim($(':text[name="data[remote][alioss][key]"]').val()),
+            'secret': $.trim($(':text[name="data[remote][alioss][secret]"]').val()),
+            'url': $.trim($(':text[name="data[remote][alioss][url]"]').val()),
+            'bucket': bucket,
+            'internal': $('[name="data[remote][alioss][internal]"]:checked').val()
+        };
+
+        $.post("{:url('sysset/attachment')}", param, function (data) {
+            var data = $.parseJSON(data);
+            if (data.status == 1) {
+                tip.msgbox.suc('配置成功');
+                return false;
+            }
+            if (data.status < 0) {
+                tip.msgbox.err(data.result.message);
+                return false;
+            }
+        });
+    });
+
+    let aliBucket = "{$upload['remote']['alioss']['bucket']}";
+
+    let buck = function () {
+        let key = $(':text[name="data[remote][alioss][key]"]').val();
+        let secret = $(':text[name="data[remote][alioss][secret]"]').val();
+
+        if (key == '' || secret == '') {
+            $('#bucket').hide();
+            return false;
+        }
+
+        $.post("{:url('sysset/attachment')}", {'type': 'buckets', 'key': key, 'secret': secret}, function (data) {
+            console.log(data);
+            if (data.status == 1) {
+                $('#bucket').show();
+                let bucket = $('select[name="data[remote][alioss][bucket]"]');
+                bucket.empty();
+                let buckets = eval(data.result.data);
+                for (let i in buckets) {
+                    let selected = aliBucket == buckets[i]['name'] || aliBucket == buckets[i]['name'] + '@@' + buckets[i]['location'] ? 'selected' : '';
+                    bucket.append('<option value="' + buckets[i]['name'] + '@@' + buckets[i]['location'] + '"' + selected + '>' + buckets[i]['loca_name'] + '</option>');
+                }
+            } else {
+                util.message('Access Key ID 或 Access Key Secret 填写错误，请重新填写。', '', 'error');
+                $('#bucket').hide();
+                $('select[name="data[remote][alioss][bucket]"]').val('');
+                return false;
+            }
+
+        }, 'json');
+    };
+    buck();
+    $(':text[name="data[remote][alioss][secret]"]').blur(function () {
+        buck();
+    });
+
+    // 一键上传
+    $('.one-key').click(function () {
+        upload_remote();
+        return false;
+    });
+    let upload_remote = function () {
+        try {
+            // $('#name').modal('show');
+            $.post("{:url('sysset/attachment')}", {type: 'upload_remote'}, function (data) {
+                console.log(data);
+                // $('#name').modal('hide');
+
+                if (data.status == 2) {
+                    upload_remote();
+                }
+                if (data.status == 0) {
+                    tip.msgbox.suc("上传完毕",location.reload());
+                }
+                if (data.status == 1) {
+                    tip.msgbox.suc(data.result.message);
+                }
+
+                if (data.status == -1) {
+                    tip.msgbox.err(data.result.message);
+                }
+            }, 'json');
+        }catch (e) {
+            console.log(e)
+        }
+
+    }
+</script>
+
+{/block}

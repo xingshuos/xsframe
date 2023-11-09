@@ -1,0 +1,166 @@
+
+.system-login-new {
+    width: 100%;
+    background-size: cover;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    position: relative;
+    height: 100vh
+}
+
+.system-login-new .head {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 30px 30px;
+    overflow: hidden;
+    background-color: transparent
+}
+
+.system-login-new .head .logo-version {
+    display: inline-block;
+    height: 50px
+}
+
+.system-login-new .head .logo {
+    width: auto;
+    height: 24px
+}
+
+.system-login-new .head .version {
+    margin-left: 6px;
+    margin-top: 4px;
+    background-color: #aeaeae;
+    padding: 2px 5px;
+    display: block;
+    float: right;
+    border-radius: 2px;
+    color: #fff;
+    line-height: 1
+}
+
+.system-login-new .head .pull-right {
+    color: #fff;
+    font-size: 16px
+}
+
+.system-login-new .login-panel {
+    width: 400px;
+    padding: 40px 60px;
+    background-color: #fff;
+    left: 50%;
+    transform: translateX(-50%)
+}
+
+.system-login-new .login-panel .title {
+    text-align: left;
+    font-size: 24px;
+    color: #1a1a1a;
+    border: 0;
+    margin-bottom: 30px
+}
+
+.system-login-new .login-panel .form-group {
+    margin-bottom: 0
+}
+
+.system-login-new .login-panel .form-group .help-block {
+    opacity: 0;
+    color: #cf1010;
+    padding-top: 3px;
+    line-height: 1;
+    margin: 2px 0 10px 0
+}
+
+.system-login-new .login-panel .form-group .help-block::before {
+    display: none
+}
+
+.system-login-new .login-panel .form-group.error .help-block {
+    opacity: 1
+}
+
+.system-login-new .login-panel .form-group .input-group {
+    margin-bottom: 0
+}
+
+.system-login-new .login-panel .form-group .input-group-addon {
+    background-color: transparent;
+    border: 0;
+    border-bottom: 1px solid #e8e9eb;
+    cursor: pointer
+}
+
+.system-login-new .login-panel input.form-control {
+    border: 0;
+    border-bottom: 1px solid #e8e9eb;
+    border-radius: 0;
+    line-height: 1;
+    padding: 13px;
+    font-weight: 300;
+    font-size: 14px;
+}
+
+.system-login-new .login-panel .more-login {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+    position: relative;
+    display: inline-block
+}
+
+.system-login-new .login-panel .more-login::after, .system-login-new .login-panel .more-login::before {
+    content: '';
+    width: 60px;
+    height: 1px;
+    background-color: #e9e9e9;
+    position: absolute;
+    top: 50%;
+    margin-top: .5px
+}
+
+.system-login-new .login-panel .more-login::after {
+    right: 108%
+}
+
+.system-login-new .login-panel .more-login::before {
+    left: 108%
+}
+
+
+
+.system-login-new--half::before {
+    display: none
+}
+
+.system-login-new--half.auto {
+    width: 1240px;
+    height: 600px;
+    margin: 120px auto 20px;
+}
+
+.system-login-new--half.auto .login-bg-box {
+    width: 50%;
+    height: 100%;
+    position: relative;
+}
+
+.system-login-new--half.auto .login-panel {
+    position: absolute;
+    top: 0;
+    left: 75%;
+    margin-left: -240px;
+    transform: unset;
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,0.2);
+}
+
+.login-panel .input-group-vertical input, .register-panel .input-group-vertical input {
+    height: 40px;
+    border-radius: 4px
+}
+
+.imgverify img {
+    width: 100px;
+    height: 38px
+}

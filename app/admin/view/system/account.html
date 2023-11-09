@@ -1,0 +1,209 @@
+{extend name="../../admin/view/public/admin_base"}
+
+{block name='content'}
+
+{include file="../app/admin/view/system/menu.html" /}
+
+<div class="page-header">当前位置：<span class="text-primary">系统设置</span></div>
+
+<style>
+    .tabs-container .form-group {
+        overflow: hidden;
+    }
+
+    .tabs-container .tabs-left > .nav-tabs {
+    }
+
+    .tab-goods .nav li {
+        float: left;
+    }
+
+    .text-edit {
+        color: #44abf7 !important;
+    }
+</style>
+
+<div class="page-content">
+
+    <form action="" method="post" class="form-horizontal form-validate" enctype="multipart/form-data">
+        <input type="hidden" id="tab" name="tab" value="{if empty($_GPC['tab'])}#tab_basic{else}#tab_{$_GPC['tab']}{/if}"/>
+
+        <div class="tabs-container tab-goods">
+            <div class="tabs-left">
+                <ul class="nav nav-tabs" id="myTab">
+                    <li class="{if empty($_GPC['tab']) || $_GPC['tab'] == 'basic'}active{/if}"><a href="#tab_basic">基础设置</a></li>
+                    <li class="{if $_GPC['tab'] == 'host'}active{/if}"><a href="#tab_host">域名设置</a></li>
+                    <li {if $_GPC['tab']=='wechat'}class="active"{/if}><a href="#tab_wechat">微信公众号</a></li>
+                    <li {if $_GPC['tab']=='wxapp'}class="active"{/if}><a href="#tab_wxapp">微信小程序</a></li>
+                    <li  {if $_GPC['tab']=='weixin'}class="active"{/if}><a href="#tab_weixin">企业微信</a></li>
+                    <li {if $_GPC['tab']=='wechatPay'}class="active"{/if}><a href="#tab_wechatPay">微信支付</a></li>
+                    <li {if $_GPC['tab']=='aliPay'}class="active"{/if}><a href="#tab_aliPay">支付宝支付</a></li>
+                    <!--<li {if $_GET['tab']=='remote'}class="active"{/if}><a href="#tab_remote">远程附件</a></li>-->
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-content">
+
+                        <div class="tab-pane {if empty($_GPC['tab']) || $_GPC['tab'] == 'basic'}active{/if}" id="tab_basic">
+                            {include file="../app/admin/view/public/sets/system/tabs/account.html" /}
+                        </div>
+
+                        <div class="tab-pane {if $_GPC['tab'] == 'host'}active{/if}" id="tab_host">
+                            {include file="../app/admin/view/public/sets/system/tabs/host.html" /}
+                        </div>
+
+                        <div class="tab-pane {if $_GPC['tab']=='wechat'}active{/if}" id="tab_wechat">
+                            {include file="../app/admin/view/public/sets/system/tabs/wechat.html" /}
+                        </div>
+
+                        <div class="tab-pane {if $_GPC['tab']=='wxapp'}active{/if}" id="tab_wxapp">
+                            {include file="../app/admin/view/public/sets/system/tabs/wxapp.html" /}
+                        </div>
+
+                        <!--企业微信-->
+                        <div class="tab-pane {if $_GPC['tab']=='weixin'}active{/if}" id="tab_weixin">
+                            {include file="../app/admin/view/public/sets/system/tabs/weixin.html" /}
+                        </div>
+
+                        <!--微信支付-->
+                        <div class="tab-pane {if $_GPC['tab']=='wechatPay'}active{/if}" id="tab_wechatPay">
+                            {include file="../app/admin/view/public/sets/system/tabs/wxpay.html" /}
+                        </div>
+
+                        <!--支付宝支付-->
+                        <div class="tab-pane {if $_GPC['tab']=='aliPay'}active{/if}" id="tab_aliPay">
+                            {include file="../app/admin/view/public/sets/system/tabs/alipay.html" /}
+                        </div>
+
+                        <!--远程附件存储-->
+                        <div class="tab-pane {if $_GET['tab']=='remote'}active{/if}" id="tab_remote">
+                            {include file="../app/admin/view/public/sets/system/tabs/attachment.html" /}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-lg control-label"></label>
+            <div class="col-sm-9 col-xs-12">
+                <input type="submit" value="保存" class="btn btn-primary"/>
+            </div>
+        </div>
+
+    </form>
+
+</div>
+
+{/block}
+{block name="script"}
+<script>
+    $(".text-edit").off("click").on("click", function () {
+        $(this).hide().parent().find('textarea').show();
+    });
+</script>
+<script type="text/javascript">
+    $('input[name="data[image][is_reduce]"]').click(function () {
+        if ($(this).val() == 1) {
+            $('.upload-image-thumb-width-height').css('display', '');
+        } else {
+            $('.upload-image-thumb-width-height').css('display', 'none');
+        }
+    });
+
+    /*附件存储设置*/
+    $('.js-checkremoteoss').on('click', function () {
+        var bucket = $.trim($('select[name="data[remote][alioss][bucket]"]').val());
+        if (bucket == '') {
+            bucket = $.trim($(':text[name="data[remote][alioss][bucket]"]').val());
+        }
+        var param = {
+            'type': 'alioss',
+            'key': $.trim($(':text[name="data[remote][alioss][key]"]').val()),
+            'secret': $.trim($(':text[name="data[remote][alioss][secret]"]').val()),
+            'url': $.trim($(':text[name="data[remote][alioss][url]"]').val()),
+            'bucket': bucket,
+            'internal': $('[name="data[remote][alioss][internal]"]:checked').val()
+        };
+
+        $.post("{:url('system/attachment')}", param, function (data) {
+            var data = $.parseJSON(data);
+            if (data.status == 1) {
+                tip.msgbox.suc('配置成功');
+                return false;
+            }
+            if (data.status < 0) {
+                tip.msgbox.err(data.result.message);
+                return false;
+            }
+        });
+    });
+
+    let aliBucket = "{$upload['remote']['alioss']['bucket']}";
+
+    let buck = function () {
+        let key = $(':text[name="data[remote][alioss][key]"]').val();
+        let secret = $(':text[name="data[remote][alioss][secret]"]').val();
+
+        if (key == '' || secret == '') {
+            $('#bucket').hide();
+            return false;
+        }
+
+        $.post("{:url('system/attachment')}", {'type': 'buckets', 'key': key, 'secret': secret}, function (data) {
+            console.log(data);
+            if (data.status == 1) {
+                $('#bucket').show();
+                let bucket = $('select[name="data[remote][alioss][bucket]"]');
+                bucket.empty();
+                let buckets = eval(data.result.data);
+                for (let i in buckets) {
+                    let selected = aliBucket == buckets[i]['name'] || aliBucket == buckets[i]['name'] + '@@' + buckets[i]['location'] ? 'selected' : '';
+                    bucket.append('<option value="' + buckets[i]['name'] + '@@' + buckets[i]['location'] + '"' + selected + '>' + buckets[i]['loca_name'] + '</option>');
+                }
+            } else {
+                util.message('Access Key ID 或 Access Key Secret 填写错误，请重新填写。', '', 'error');
+                $('#bucket').hide();
+                $('select[name="data[remote][alioss][bucket]"]').val('');
+                return false;
+            }
+
+        }, 'json');
+    };
+    buck();
+    $(':text[name="data[remote][alioss][secret]"]').blur(function () {
+        buck();
+    });
+
+    // 一键上传
+    $('.one-key').click(function () {
+        upload_remote();
+        return false;
+    });
+    let upload_remote = function () {
+        try {
+            // $('#name').modal('show');
+            $.post("{:url('system/attachment')}", {type: 'upload_remote'}, function (data) {
+                console.log(data);
+                // $('#name').modal('hide');
+
+                if (data.status == 2) {
+                    upload_remote();
+                }
+                if (data.status == 0) {
+                    tip.msgbox.suc("上传完毕", location.reload());
+                }
+                if (data.status == 1) {
+                    tip.msgbox.suc(data.result.message);
+                }
+
+                if (data.status == -1) {
+                    tip.msgbox.err(data.result.message);
+                }
+            }, 'json');
+        } catch (e) {
+            console.log(e)
+        }
+
+    }
+</script>
+{/block}

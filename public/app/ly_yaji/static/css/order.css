@@ -1,0 +1,403 @@
+.acea-row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.acea-row.row-middle {
+    align-items: center;
+}
+
+.acea-row.row-between-wrapper {
+    align-items: center;
+    justify-content: space-between;
+}
+
+.acea-row.row-right {
+    justify-content: flex-end;
+}
+
+.font-color {
+    color: var(--primary-color) !important;
+}
+
+.bg-color {
+    background-color: var(--primary-color) !important;
+}
+
+
+.order-confirm {
+    margin-bottom: 50px;
+}
+
+.order-confirm .address {
+    background-color: #fff
+}
+
+.order-confirm .address .title {
+    height: 64px;
+    font-size: 18px;
+    padding: 0 28px;
+    line-height: 64px
+}
+
+.order-confirm .address .lines {
+    width: 100%;
+    height: 4px;
+    position: relative;
+}
+
+.order-confirm .address .lines img {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.order-confirm .address .list {
+    padding: 0 25px 26px;
+}
+
+.order-confirm .address .list.on {
+    height: auto
+}
+
+.order-confirm .address .list .item {
+    width: 250px;
+    height: 170px;
+    border: 1px solid #eaeaea;
+    padding: 22px 27px;
+    overflow: hidden;
+    margin: 30px 0 0 30px;
+    position: relative;
+    cursor: pointer
+}
+
+.order-confirm .address .list .item.on {
+    border-color: var(--primary-color)
+}
+
+.order-confirm .address .list .item .icon-xuanzhong4 {
+    position: absolute;
+    right: -8px;
+    bottom: -20px;
+    font-size: 50px;
+}
+
+.order-confirm .address .list .item .default {
+    position: absolute;
+    width: 56px;
+    height: 23px;
+    font-size: 12px;
+    color: #fff;
+    text-align: center;
+    line-height: 23px;
+    top: 0;
+    right: 0
+}
+
+.order-confirm .address .list .item.add {
+    text-align: center
+}
+
+.order-confirm .address .list .item.add .iconfont {
+    display: block;
+    font-size: 35px;
+    color: #bfbfbf;
+    margin-top: 25px;
+}
+
+.order-confirm .address .list .item.add .tip {
+    color: #c8c8c8;
+    margin-top: 8px
+}
+
+.order-confirm .address .list .item .name {
+    font-size: 16px
+}
+
+.order-confirm .address .list .item .phone {
+    margin-top: 9px
+}
+
+.order-confirm .address .list .item .details {
+    color: #999;
+    margin-top: 4px
+}
+
+.order-confirm .isShow {
+    width: 100%;
+    height: 46px;
+    line-height: 46px;
+    text-align: center;
+    color: #707070;
+    cursor: pointer
+}
+
+.order-confirm .isShow .iconfont {
+    margin-left: 8px;
+    font-size: 12px
+}
+
+.order-confirm .wrapper {
+    background-color: #fff;
+    padding-bottom: 56px;
+    margin-top: 10px;
+}
+
+.order-confirm .wrapper .title {
+    height: 64px;
+    line-height: 64px;
+    padding: 0 28px;
+    font-size: 18px
+}
+
+.order-confirm .wrapper .order {
+    width: 1120px;
+    margin: 0 auto;
+    border: 1px solid #efefef;
+    padding: 26px 32px
+}
+
+.order-confirm .wrapper .order .list .item {
+    margin-bottom: 26px
+}
+
+.order-confirm .wrapper .order .list .item .txtPic .course {
+    width: 100px;
+}
+
+.order-confirm .wrapper .order .list .item .txtPic .pictrue {
+    width: 62px;
+    height: 62px
+}
+
+.order-confirm .wrapper .order .list .item .txtPic img {
+    width: 100%;
+    height: 100%
+}
+
+.order-confirm .wrapper .order .list .item .txtPic .text {
+    margin-left: 10px
+}
+
+.order-confirm .wrapper .order .list .item .txtPic .text .name {
+    width: 100%;
+    height: 38px
+}
+
+.order-confirm .wrapper .order .list .item .txtPic .text .info {
+    margin-top: 4px;
+    color: #919191
+}
+
+.order-confirm .wrapper .order .list .item .font-color {
+    font-size: 16px;
+    font-weight: 700;
+    display: inline-block;
+    width: 130px;
+    text-align: right
+}
+
+.order-confirm .wrapper .order .list .item .money {
+    font-size: 16px
+}
+
+.order-confirm .wrapper .order .list .item .num {
+    margin-left: 6px
+}
+
+.order-confirm .wrapper .order .coupon {
+    border-top: 1px solid #efefef
+}
+
+.order-confirm .wrapper .order .coupon .couponTitle {
+    font-size: 18px;
+    margin: 20px 0
+}
+
+.order-confirm .wrapper .order .coupon .couponTitle .couponPrice {
+    font-size: 16px;
+    font-weight: 700
+}
+
+.order-confirm .wrapper .order .coupon .couponTitle .couponPriceNo {
+    font-size: 14px
+}
+
+.order-confirm .wrapper .order .coupon .couponList .item {
+    height: 40px;
+    width: 176px;
+    border: 1px solid var(--primary-color);
+    margin: 0 15px 15px 0;
+    position: relative;
+    cursor: pointer
+}
+
+.order-confirm .wrapper .order .coupon .couponList .item.grey {
+    border-color: #b4b4b4
+}
+
+.order-confirm .wrapper .order .coupon .couponList .item .iconfont {
+    position: absolute;
+    right: -3px;
+    bottom: -3px;
+    font-size: 20px
+}
+
+.order-confirm .wrapper .order .coupon .couponList .item .name {
+    width: 70px;
+    height: 100%;
+    color: #fff;
+    text-align: center;
+    line-height: 40px;
+    background-color: var(--primary-color)
+}
+
+.order-confirm .wrapper .order .coupon .couponList .item .name.grey {
+    background-color: #b4b4b4
+}
+
+.order-confirm .wrapper .order .coupon .couponList .item .money {
+    width: 103px;
+    text-align: center;
+    color: var(--primary-color)
+}
+
+.order-confirm .wrapper .order .coupon .couponList .item .money.grey {
+    color: #b4b4b4
+}
+
+.order-confirm .wrapper .order .coupon .couponList .item.svip {
+    border-color: #333
+}
+
+.order-confirm .wrapper .order .coupon .couponList .item.svip .name {
+    background-color: #333;
+    color: #fdd7b4
+}
+
+.order-confirm .wrapper .order .coupon .couponList .item.svip .money {
+    color: #333
+}
+
+.order-confirm .wrapper .order .coupon .integralCurrent {
+    margin-left: 33px
+}
+
+.order-confirm .wrapper .order .coupon .integralCurrent .num {
+    margin-left: 6px
+}
+
+.order-confirm .wrapper .order .coupon .msgTitle {
+    font-size: 18px
+}
+
+.order-confirm .wrapper .order .message {
+    padding-top: 26px;
+    margin-top: 26px
+}
+
+.order-confirm .wrapper .order .message .confirmtit {
+    width: 90px;
+    display: inline-block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden
+}
+
+.order-confirm .wrapper .order .message .el-input__inner {
+    border: 1px solid #f7f7f7
+}
+
+.order-confirm .wrapper .order .message .selet {
+    width: 820px
+}
+
+.order-confirm .wrapper .order .message .confirm {
+    margin-left: 26px;
+    font-size: 22px;
+}
+
+.order-confirm .wrapper .order .message .confirm input {
+    width: 820px;
+    padding: 12px 14px;
+    border: 1px solid #f7f7f7
+}
+
+.order-confirm .wrapper .order .message .textarea {
+    width: 820px;
+    height: 120px;
+    background-color: #f7f7f7;
+    border: 0;
+    outline: none;
+    resize: none;
+    padding: 12px 14px;
+    margin-left: 60px;
+    font-size: 15px;
+    color: var(--background-black-color);
+}
+
+.order-confirm .wrapper .order .message .textarea::placeholder {
+    font-size: 14px;
+    color: var(--primary-grey-color);
+}
+
+.order-confirm .wrapper .order .integral {
+    padding: 26px 0
+}
+
+.order-confirm .wrapper .totalCon {
+    padding: 27px 46px
+}
+
+.order-confirm .wrapper .totalCon .total ~ .total {
+    margin-top: 12px
+}
+
+.order-confirm .wrapper .totalCon .total .money {
+    width: 120px;
+    text-align: right;
+    font-size: 16px
+}
+
+.order-confirm .wrapper .totalAmount {
+    width: 1120px;
+    height: 70px;
+    line-height: 70px;
+    background: #f7f7f7;
+    text-align: right;
+    padding-right: 22px;
+    margin: 0 auto
+}
+
+.order-confirm .wrapper .totalAmount .money {
+    font-size: 20px;
+    font-weight: 700;
+    margin-left: 4px;
+    width: 120px;
+    display: inline-block
+}
+
+.order-confirm .wrapper .bnt {
+    margin: 38px 26px 0 0;
+    cursor: pointer
+}
+
+.order-confirm .wrapper .bnt .submit {
+    width: 180px;
+    height: 46px;
+    border-radius: 4px;
+    font-size: 16px;
+    color: #fff;
+    text-align: center;
+    line-height: 46px
+}
+
+.order-confirm .bg-color-hui {
+    background-color: #bbb;
+}
+
+.order-confirm .op {
+    opacity: .5
+}

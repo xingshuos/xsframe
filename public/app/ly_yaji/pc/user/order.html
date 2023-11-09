@@ -1,0 +1,190 @@
+{extend name="pc/common/_base" /}
+
+{block name="title"}
+<title>我的订单-{$website['title']}</title>
+{/block}
+
+{block name="style"}
+<link rel="stylesheet" href="{$moduleAttachUrl}/static/css/user.css">
+{/block}
+
+{block name="main"}
+{include file="pc/components/app-list-pages" /}
+<section>
+    <div class="user-center-main">
+
+        <div class="container">
+
+            <div class="user-inner flex">
+
+                <!-- 左侧菜单 -->
+                <div class="user-aside">
+                    {include file="pc/user/tpl/menu" /}
+                </div>
+
+                <!-- 右侧菜单 -->
+                <div class="user-main" id="orderWrapper" v-cloak>
+
+                    <div class="user-order-list">
+                        <div class="user-com-tab flex-between">
+
+                            <div class="order-status flex-row">
+                                <template v-if="serviceType === 1">
+                                    <div class="item" :class="{'on':parseInt(status) === 0}" @click="changeStatus(0)">全部订单</div>
+                                    <div class="item" :class="{'on':parseInt(status) === 1}" @click="changeStatus(1)">待付款</div>
+                                    <div class="item" :class="{'on':parseInt(status) === 2}" @click="changeStatus(2)">待发货</div>
+                                    <div class="item" :class="{'on':parseInt(status) === 3}" @click="changeStatus(3)">待收货</div>
+                                    <div class="item" :class="{'on':parseInt(status) === 4}" @click="changeStatus(4)">待评论</div>
+                                    <div class="item" :class="{'on':parseInt(status) === 5}" @click="changeStatus(5)">已完成</div>
+                                    <div class="item" :class="{'on':parseInt(status) === 6}" @click="changeStatus(6)">售后</div>
+                                </template>
+                                <template v-if="serviceType === 2">
+                                    <div class="item" :class="{'on':parseInt(status) === 0}" @click="changeStatus(0)">全部订单</div>
+                                    <div class="item" :class="{'on':parseInt(status) === 1}" @click="changeStatus(1)">待付款</div>
+                                    <div class="item" :class="{'on':parseInt(status) === 2}" @click="changeStatus(2)">已付款</div>
+                                </template>
+                            </div>
+
+                            <div class="service-types">
+                                <div class="select">
+                                    <div class="label">{{ parseInt(serviceType) === 1 ? '实物商品':'线上课程' }}<i class="iconfont" style="font-size: 14px;margin-left: 4px;">&#xe68d;</i></div>
+                                    <div class="option-box">
+                                        <div class="option" @click="changeServiceType(1)">实物商品</div>
+                                        <div class="option" @click="changeServiceType(2)">线上课程</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="order-list" :class="{'order-empty':orderList.length <= 0}">
+                            <template v-if="orderList.length > 0">
+                                <ul>
+                                    <li v-for="(item,index) in orderList" :key="index">
+                                        <div class="bd">
+                                            <div class="order-txt">
+                                                订单日期: {{ item.createtime }}
+                                                <span class="status">{{ item.status_val }}</span>
+                                            </div>
+                                            <div class="content">
+
+                                                <template v-if="parseInt(item.service_type) === 1">
+
+                                                    <div class="goods-item" v-for="(ogItem,ogIndex) in item.orderGoods" :key="ogIndex" @click="lookDetail(item.ordersn)">
+                                                        <div class="img-course"><img :src="ogItem.goods.thumb" :alt="ogItem.goods.title" onerror="this.src='{$moduleAttachUrl}/static/images/default-img.png'"></div>
+                                                        <div class="info-txt">
+                                                            <div class="title line2">{{ ogItem.goods.title }}</div>
+                                                            <div class="price">
+                                                                ¥ {{ ogItem.goods.marketprice }}
+                                                            </div>
+                                                            <span class="num">x{{ ogItem.total }}</span>
+                                                        </div>
+                                                    </div>
+
+                                                </template>
+
+                                                <template v-if="parseInt(item.service_type) === 2">
+                                                    <div class="goods-item" @click="lookDetail(item.ordersn)" @click="lookDetail(item.ordersn)">
+                                                        <div class="img-course"><img :src="item.goods.thumb" :alt="item.goods.title" onerror="this.src='{$moduleAttachUrl}/static/images/default-img.png'"></div>
+                                                        <div class="info-txt">
+                                                            <div class="title line2">{{ item.goods.title }}</div>
+                                                            <div class="price">
+                                                                ¥ {{ item.orderCourse.price }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </template>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="foot">
+                                            <p>
+                                                <span v-if="parseInt(item.service_type) === 1">共{{ item.orderTotal }}件商品，</span>总金额
+                                                <span>￥{{ item.price }} </span>
+                                            </p>
+
+                                            <div class="btn-wrapper">
+                                                <div class="rest" @click="cancelOrder(index)" v-if="item.status === 0">取消订单</div>
+                                                <div class="pay" @click="payOrder(item.ordersn)" v-if="item.status === 0">立即支付</div>
+                                                <div class="pay" @click="lookDetail(item.ordersn)" v-if="item.status !== -1">查看详情</div>
+                                            </div>
+                                        </div>
+                                    </li>
+
+                                </ul>
+                            </template>
+                            <template v-else>
+                                {include file="pc/common/_empty"/}
+                            </template>
+
+                            <!-- 分页 start -->
+                            <template v-if="orderList.length > 0">
+                                <app-list-pages></app-list-pages>
+                            </template>
+                            <!-- 分页 end -->
+
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+{/block}
+
+{block name="script"}
+<script>
+    require(['vue', 'h7.axios', 'jquery', 'tip'], (Vue, axios, $) => {
+
+        new Vue({
+            el: '#orderWrapper',
+            data: {
+                status: "{$_GET['status'] ? $_GET['status'] : 0}",
+                serviceType: 1,
+                orderList: []
+            },
+            mounted() {
+                this.getOrderList();
+            },
+            methods: {
+                changeStatus(status) {
+                    this.status = status;
+                    this.getOrderList();
+                },
+                getOrderList() {
+                    let url = "{:url('order/list')}";
+                    axios.post(url, {status: this.status, serviceType: this.serviceType}).then((res) => {
+                        this.orderList = res.orderList || [];
+                    });
+                },
+                changeServiceType(type) {
+                    this.status = 0;
+                    this.serviceType = type;
+                    this.getOrderList();
+                },
+                cancelOrder(index) {
+                    tip.confirm("确认要取消该订单么?", () => {
+                        let url = "{:url('order/cancel')}";
+                        axios.post(url, {ordersn: this.orderList[index].ordersn}).then((res) => {
+                            this.orderList[index].status_val = '已关闭';
+                        });
+                    });
+                },
+                payOrder(ordersn) {
+                    location.href = "{:url('order/payment')}?ordersn=" + ordersn;
+                },
+                lookDetail(ordersn) {
+                    location.href = "{:url('user/order_detail')}?ordersn=" + ordersn;
+                },
+            }
+        });
+
+    });
+</script>
+{/block}

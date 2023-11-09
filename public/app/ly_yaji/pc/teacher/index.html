@@ -1,0 +1,189 @@
+{extend name="pc/common/_base" /}
+
+{block name="title"}
+<title>{$pageTitle}-{$website['title']}</title>
+{/block}
+
+{block name="style"}
+<link rel="stylesheet" href="{$moduleAttachUrl}/static/css/teacher.css">
+<link rel="stylesheet" href="{$moduleAttachUrl}/static/components/swiper/swiper.min.css">
+{/block}
+
+{block name="main"}
+<section>
+    <div class="teacher-main">
+
+        <!-- 轮播图 -->
+        {if !empty($advList)}
+        <div class="bk"></div>
+        <div class="bgfff">
+            <div class="swiper">
+                <div class="swiper-wrapper">
+                    {volist name="advList" id="row"}
+                    <a class="swiper-slide" href="{if !empty($row['link'])}{:url($row['link'])}{else}javascript:;{/if}">
+                        <img src="{$row['thumb']}" alt="{$row['title']}" onerror="this.src='{$moduleAttachUrl}/static/images/bk.jpg'">
+                    </a>
+                    {/volist}
+                </div>
+                {if count($advList) > 1}
+                <div class="swiper-pagination"></div>
+                {/if}
+            </div>
+        </div>
+        {/if}
+        <!-- 轮播图 end -->
+
+        <div class="container">
+
+
+            <!--头部 start-->
+            <div class="header flex-column-center">
+                <div class="title">艺术家</div>
+                <div class="tab-list flex-around">
+                    <a class="tab-item flex-column-center {if empty($id)}active{/if}" href="{:url('artist/list')}">
+                        <div class="tab-name">全部</div>
+                        <div class="tab-total">共 {$total} 位</div>
+                    </a>
+                    <a class="tab-item flex-column-center {if $id == 1}active{/if}" href="{:url('artist/list',['id' => 1])}">
+                        <div class="tab-name">书法</div>
+                        <div class="tab-total">共 {$total1} 位</div>
+                    </a>
+                    <a class="tab-item flex-column-center {if $id == 2}active{/if}" href="{:url('artist/list',['id' => 2])}">
+                        <div class="tab-name">国画</div>
+                        <div class="tab-total">共 {$total2} 位</div>
+                    </a>
+                    <a class="tab-item flex-column-center {if $id == 3}active{/if}" href="{:url('artist/list',['id' => 3])}">
+                        <div class="tab-name">西画</div>
+                        <div class="tab-total">共 {$total3} 位</div>
+                    </a>
+                </div>
+
+                <form class="search-box" method="get">
+                    {if !empty($id)}
+                    <input type="hidden" name="id" value="{$id}">
+                    {/if}
+                    <div class="search-info">
+                        <input type="text" name="keyword" class="search-input" placeholder="请输入艺术家姓名" value="{$keyword}">
+                        <button class="icon-box flex-center" type="submit">
+                            <img src="{$moduleAttachUrl}/static/images/icon/search.png" alt="搜索" class="icon-search">
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+            <!--头部 end-->
+
+            <div class="teacher-content" >
+
+                {if !empty($list1)}
+                <!-- 书法艺术家 -->
+                <div class="teacher-block">
+                    <div class="title-box flex-between">
+                        <div class="left">
+                            <div class="title">艺术家 / 书法</div>
+                            <div class="total">共 {$total1} 位</div>
+                        </div>
+                        {if empty($id)}
+                        <a class="right" href="{:url('artist/list',['id' => 1])}">查看更多</a>
+                        {/if}
+                    </div>
+
+                    <div class="teacher-list flex-between">
+                        {foreach $list1 as $key => $row}
+                        <a class="teacher-item flex-column-center" href="{:url('artist/detail',['id' => $row['id']])}">
+                            <div class="teacher-avatar-box" style="width: 225px;height: 225px;overflow: hidden;border-radius: 100%;">
+                                <img class="teacher-avatar" src="{$moduleAttachUrl}/static/images/default-img.png" data-original="{$row['avatar']}" alt="{$row['name']}">
+                            </div>
+                            <div class="teacher-name">{$row['name']}</div>
+                            <div class="works-total">{$row['works_total']}件作品</div>
+                        </a>
+                        {/foreach}
+
+                        <div class="teacher-item"></div>
+                        <div class="teacher-item"></div>
+                        <div class="teacher-item"></div>
+                    </div>
+                </div>
+                {/if}
+
+                {if !empty($list2)}
+                <!-- 国画艺术家 -->
+                <div class="teacher-block">
+                    <div class="title-box flex-between">
+                        <div class="left">
+                            <div class="title">艺术家 / 国画</div>
+                            <div class="total">共 {$total2} 位</div>
+                        </div>
+                        <a class="right" href="{:url('artist/list',['id' => 2])}">查看更多</a>
+                    </div>
+
+                    <div class="teacher-list flex-between">
+                        {foreach $list2 as $key => $row}
+                        <a class="teacher-item flex-column-center" href="{:url('artist/detail',['id' => $row['id']])}">
+                            <div class="teacher-avatar-box" style="width: 225px;height: 225px;overflow: hidden;border-radius: 100%;">
+                                <img class="teacher-avatar" src="{$moduleAttachUrl}/static/images/default-img.png" data-original="{$row['avatar']}" alt="{$row['name']}">
+                            </div>
+                            <div class="teacher-name">{$row['name']}</div>
+                            <div class="works-total">{$row['works_total']}件作品</div>
+                        </a>
+                        {/foreach}
+
+                        <div class="teacher-item"></div>
+                        <div class="teacher-item"></div>
+                        <div class="teacher-item"></div>
+                    </div>
+                </div>
+                {/if}
+
+
+                {if !empty($list3)}
+                <!-- 西画艺术家 -->
+                <div class="teacher-block">
+                    <div class="title-box flex-between">
+                        <div class="left">
+                            <div class="title">艺术家 / 西画</div>
+                            <div class="total">共 {$total2} 位</div>
+                        </div>
+                        <a class="right" href="{:url('artist/list',['id' => 3])}">查看更多</a>
+                    </div>
+
+                    <div class="teacher-list flex-between">
+                        {foreach $list3 as $key => $row}
+                        <a class="teacher-item flex-column-center" href="{:url('artist/detail',['id' => $row['id']])}">
+                            <div class="teacher-avatar-box" style="width: 225px;height: 225px;overflow: hidden;border-radius: 100%;">
+                                <img class="teacher-avatar" src="{$moduleAttachUrl}/static/images/default-img.png" data-original="{$row['avatar']}" alt="{$row['name']}">
+                            </div>
+
+                            <div class="teacher-name">{$row['name']}</div>
+                            <div class="works-total">{$row['works_total']}件作品</div>
+                        </a>
+                        {/foreach}
+
+                        <div class="teacher-item"></div>
+                        <div class="teacher-item"></div>
+                        <div class="teacher-item"></div>
+                    </div>
+
+                </div>
+                {/if}
+
+                {if empty($list1) && empty($list2) && empty($list3)}
+                <div class="teacher-block">
+                    {include file="pc/common/_empty"/}
+                </div>
+                {/if}
+
+            </div>
+
+
+        </div>
+
+
+
+    </div>
+</section>
+{/block}
+
+{block name="script"}
+<script src="{$moduleAttachUrl}/static/js/app/teacher.js"></script>
+{/block}

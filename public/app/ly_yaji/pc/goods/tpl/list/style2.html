@@ -1,0 +1,115 @@
+<!-- 图书 -->
+<div class="goods-box">
+    <div class="goods-wrap">
+        <div class="goods-list">
+            {foreach $goodsList as $key => $item}
+            <div class="goods-item">
+                <div class="hover-item"></div>
+                <div class="goods-info">
+                    <div class="p-img">
+                        <a target="_blank" title="{$item['title']}" href="{:url('product/'.$item['id'])}">
+                            <img src="{$moduleAttachUrl}/static/images/default-img.png" data-original="{$item['thumb']}" alt="{$item['title']}" onerror="this.src='{$moduleAttachUrl}/static/images/default-img.png'">
+                        </a>
+                    </div>
+                    <div class="title text-over-1">
+                        <a target="_blank" title="{$item['title']}" href="{:url('product/'.$item['id'])}">{$item['title']}</a>
+                    </div>
+                    <div class="subtitle text-over-3">{$item['subtitle']}</div>
+                    <div class="price">¥ {$item['marketprice']}</div>
+                </div>
+            </div>
+            {/foreach}
+        </div>
+    </div>
+</div>
+
+<style>
+    .goods-box {
+        background-color: var(--background-white-color);
+        margin-top: 20px;
+        margin-bottom: 30px;
+    }
+
+    .goods-box, .goods-list, .goods-wrap {
+        width: 100%;
+    }
+
+    .goods-list {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .goods-item {
+        width: 235px;
+        position: relative;
+        padding: 30px 24px 12px 24px;
+        box-sizing: border-box;
+        border: 1px solid var(--border-base-color);
+        margin-left: -1px;
+        margin-top: -1px;
+        z-index: 0;
+    }
+
+    .goods-item .hover-item {
+        width: 0;
+        height: 0;
+    }
+
+    .goods-item:hover .hover-item {
+        height: 100%;
+        width: 100%;
+
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 2;
+        border: 1px solid var(--primary-color);
+    }
+
+    .goods-item .goods-info {
+        box-sizing: border-box;
+        position: relative;
+        z-index: 3;
+    }
+
+    .goods-item .goods-info .p-img {
+        width: 185px;
+        height: 185px;
+        overflow: hidden;
+        border: 1px solid var(--border-base-color);
+        margin-bottom: 10px;
+    }
+
+    .goods-item .goods-info .p-img a {
+        display: flex;
+        height: 100%;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .goods-item .goods-info .p-img img {
+        height: 100%;
+    }
+
+    .goods-item .goods-info .title {
+        line-height: 30px;
+        font-size: 14px;
+        color: var(--primary-black-color);
+    }
+
+    .goods-item .goods-info .subtitle {
+        height: 90px;
+        line-height: 30px;
+        font-size: 14px;
+        color: var(--primary-grey-color);
+    }
+
+    .goods-item .goods-info .price {
+        font-size: 16px;
+        color: var(--primary-color);
+    }
+</style>

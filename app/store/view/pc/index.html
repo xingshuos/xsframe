@@ -1,0 +1,32 @@
+{extend name="pc/common/_base" /}
+
+{block name="main"}
+
+{include file='pc/template/common-head'}
+
+<style>
+    .product-main {
+        padding: 20px;
+    }
+</style>
+<section class="product-main">
+
+    <div class="container">
+
+        {include file="pc/template/search-menu"/}
+
+        {include file="pc/template/app-card"/}
+
+        {include file="pc/common/_pager" pager="$pager"/}
+
+    </div>
+
+</section>
+
+{/block}
+
+{block name="script"}
+<script>
+
+</script>
+{/block}

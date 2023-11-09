@@ -1,0 +1,377 @@
+<template id="app-course-aliplayer">
+    <div class='prism-player' :id='playerId' :style='playStyle'></div>
+</template>
+
+<script>
+    require(['vue'], (Vue) => {
+        Vue.component('app-course-aliplayer', {
+            template: '#app-course-aliplayer',
+            props: {
+                playStyle: {
+                    type: String,
+                    default: ''
+                },
+                aliplayerSdkPath: {
+                    // Aliplayer 代码的路径
+                    type: String,
+                    default: '//g.alicdn.com/de/prismplayer/2.9.3/aliplayer-min.js'
+                },
+                autoplay: {
+                    //播放器是否自动播放，在移动端autoplay属性会失效
+                    type: Boolean,
+                    default: false
+                },
+                isLive: {
+                    type: Boolean,
+                    default: false
+                },
+                playsinline: {
+                    type: Boolean,
+                    default: false
+                },
+                width: {
+                    type: String,
+                    default: '100%'
+                },
+                height: {
+                    type: String,
+                    default: '100%'
+                },
+                control_bar_visibility: {
+                    // 控制面板的实现，默认值为：hover。取值：
+                    // click：点击。
+                    // hover：停留。
+                    // always：一直。
+                    type: String,
+                    default: 'hover'
+                },
+                use_h5_prism: {
+                    // h5播放
+                    type: Boolean,
+                    default: false
+                },
+                use_flash_prism: {
+                    //flash播放
+                    type: Boolean,
+                    default: false
+                },
+                vid: {
+                    //媒体转码服务的媒体Id
+                    type: String,
+                    default: ''
+                },
+                playauth: {
+                    //播放权证
+                    type: String,
+                    default: ''
+                },
+                source: {
+                    //视频播放地址url
+                    type: String,
+                    default: ''
+                },
+                cover: {
+                    //播放器默认封面图片，请填写正确的图片url地址。需要autoplay值为false时，才生效
+                    type: String,
+                    default: ''
+                },
+                media_type: {
+                    //指定播放类型
+                    type: String,
+                    default: 'video'
+                },
+                encrypt_type: {
+                    // 是否播放加密视频 0否 1是
+                    type: Number,
+                    default: 0,
+                },
+                re_play: {
+                    //重复播放
+                    type: Boolean,
+                    default: false
+                },
+                format: {
+                    //指定播放地址格式
+                    type: String,
+                    default: ''
+                },
+                x5_video_position: {
+                    type: String,
+                    default: 'top'
+                },
+                x5_type: {
+                    type: String,
+                    default: 'h5'
+                },
+                x5_fullscreen: {
+                    type: Boolean,
+                    default: false
+                },
+                x5_orientation: {
+                    type: Number,
+                    default: 2
+                },
+                auto_play_delay: {
+                    type: Number,
+                    default: 0
+                },
+                auto_play_delay_display_text: {
+                    type: String
+                }
+            },
+            data() {
+                return {
+                    playerId: "aliplayer_" + Math.random().toString(36).substr(2),
+                    scriptTagStatus: 0,
+                    instance: null,
+                }
+            },
+            created() {
+                if (window.Aliplayer !== undefined) {
+                    // 如果全局对象存在，说明编辑器代码已经初始化完成，直接加载编辑器
+                    this.scriptTagStatus = 2;
+                    this.initAliplayer();
+                } else {
+                    // 如果全局对象不存在，说明编辑器代码还没有加载完成，需要加载编辑器代码
+                    this.insertScriptTag()
+                }
+            },
+            mounted() {
+                if (window.Aliplayer !== undefined) {
+                    // 如果全局对象存在，说明编辑器代码已经初始化完成，直接加载编辑器
+                    this.scriptTagStatus = 2;
+                    this.initAliplayer()
+                } else {
+                    // 如果全局对象不存在，说明编辑器代码还没有加载完成，需要加载编辑器代码
+                    this.insertScriptTag()
+                }
+            },
+            unmounted() {
+                this.ended()
+            },
+            methods: {
+                insertScriptTag() {
+                    const _this = this;
+                    window.define = null;
+                    let playerScriptTag = document.getElementById('playerScriptTag');
+                    // 如果这个tag不存在，则生成相关代码tag以加载代码
+                    if (playerScriptTag === null) {
+                        playerScriptTag = document.createElement('script');
+                        playerScriptTag.type = 'text/javascript';
+                        playerScriptTag.src = this.aliplayerSdkPath;
+                        playerScriptTag.id = 'playerScriptTag';
+                        let s = document.getElementsByTagName('head')[0];
+                        s.appendChild(playerScriptTag);
+                    }
+                    if (playerScriptTag.loaded) {
+                        _this.scriptTagStatus++
+                    } else {
+                        playerScriptTag.addEventListener('load', () => {
+                            _this.scriptTagStatus++;
+                            playerScriptTag.loaded = true;
+                            _this.initAliplayer()
+                        })
+                    }
+                    _this.initAliplayer()
+                },
+                initAliplayer() {
+                    const _this = this;
+                    // scriptTagStatus 为 2 的时候，说明两个必需引入的 js 文件都已经被引入，且加载完成
+                    if (_this.scriptTagStatus === 2 && _this.instance === null) {
+                        // Vue 异步执行 DOM 更新，这样一来代码执行到这里的时候可能 template 里面的 script 标签还没真正创建
+                        // 所以，我们只能在 nextTick 里面初始化 Aliplayer
+                        _this.$nextTick(() => {
+                            _this.instance = window.Aliplayer({
+                                id: _this.playerId,
+                                autoplay: _this.autoplay,
+                                isLive: _this.isLive,
+                                playsinline: _this.playsinline,
+                                format: _this.format,
+                                mediaType: _this.media_type,
+                                encryptType: _this.encrypt_type,
+                                rePlay: _this.re_play,
+                                width: _this.width,
+                                height: _this.height,
+                                controlBarVisibility: _this.control_bar_visibility,
+                                useH5Prism: _this.use_h5_prism,
+                                useFlashPrism: _this.use_flash_prism,
+                                vid: _this.vid,
+                                playauth: _this.playauth,
+                                source: _this.source,
+                                cover: _this.cover,
+                                x5_video_position: _this.x5_video_position,
+                                x5_type: _this.x5_type,
+                                x5_fullscreen: _this.x5_fullscreen,
+                                x5_orientation: _this.x5_orientation,
+                                autoPlayDelay: _this.auto_play_delay,
+                                autoPlayDelayDisplayText: _this.auto_play_delay_display_text
+                            });
+                            // 绑定事件，当 AliPlayer 初始化完成后，将编辑器实例通过自定义的 ready 事件交出去
+                            _this.instance.on('ready', () => {
+                                this.$emit('ready', _this.instance)
+                            });
+                            _this.instance.on('play', () => {
+                                this.$emit('play', _this.instance)
+                            });
+                            _this.instance.on('pause', () => {
+                                this.$emit('pause', _this.instance)
+                            });
+                            _this.instance.on('ended', () => {
+                                this.$emit('ended', _this.instance)
+                            });
+                            _this.instance.on('liveStreamStop', () => {
+                                this.$emit('liveStreamStop', _this.instance)
+                            });
+                            _this.instance.on('m3u8Retry', () => {
+                                this.$emit('m3u8Retry', _this.instance)
+                            });
+                            _this.instance.on('hideBar', () => {
+                                this.$emit('hideBar', _this.instance)
+                            });
+                            _this.instance.on('waiting', () => {
+                                this.$emit('waiting', _this.instance)
+                            });
+                            _this.instance.on('snapshoted', () => {
+                                this.$emit('snapshoted', _this.instance)
+                            });
+                        })
+                    }
+                },
+                // 播放视频
+                play: function () {
+                    this.instance.play()
+                },
+                // 暂停视频
+                pause: function () {
+                    this.instance.pause()
+                },
+                // 结束视频
+                ended: function () {
+                    this.instance.dispose()
+                },
+                // 重播视频
+                replay: function () {
+                    this.instance.replay()
+                },
+                /**
+                 * 跳转到某个时刻进行播放
+                 * @argument time 的单位为秒
+                 */
+                seek: function (time) {
+                    this.instance.seek(time)
+                },
+                /**
+                 * 获取当前时间 单位秒
+                 */
+                getCurrentTime: function () {
+                    return this.instance.getCurrentTime()
+                },
+                /**
+                 *获取视频总时长，返回的单位为秒
+                 * @returns 返回的单位为秒
+                 */
+                getDuration: function () {
+                    return this.instance.getDuration()
+                },
+                /**
+                 获取当前的音量，返回值为0-1的实数ios和部分android会失效
+                 */
+                getVolume: function () {
+                    return this.instance.getVolume()
+                },
+                /**
+                 *直接播放视频url，time为可选值（单位秒）目前只支持同种格式（mp4/flv/m3u8）之间切换暂不支持直播rtmp流切换
+                 *@argument url 视频地址
+                 *@argument time 跳转到多少秒
+                 */
+                loadByUrl: function (url) {
+                    this.instance.loadByUrl(url)
+                },
+                /**
+                 * 直播流中断时触发。M3U8、FLV、RTMP在重试5次未成功后触发。提示上层流中断或需要重新加载视频。
+                 */
+                liveStreamStop: function () {
+                    this.instance.liveStreamStop()
+                },
+                /**
+                 * M3U8直播流中断后重试事件，每次断流只触发一次。
+                 */
+                m3u8Retry: function () {
+                    this.instance.m3u8Retry()
+                },
+                /**
+                 * 设置播放器大小w,h可分别为400px像素或60%百分比chrome浏览器下flash播放器分别不能小于397x297
+                 *@argument w 播放器宽度
+                 *@argument h 播放器高度
+                 */
+                setPlayerSize: function (w, h) {
+                    this.instance.setPlayerSize(w, h)
+                },
+                /**
+                 * 目前只支持HTML5界面上的重载功能,暂不支持直播rtmp流切换m3u8）之间切换,暂不支持直播rtmp流切换
+                 *@argument vid 视频id
+                 *@argument playauth 播放凭证
+                 */
+                reloaduserPlayInfoAndVidRequestMts: function (vid, playauth) {
+                    this.instance.reloaduserPlayInfoAndVidRequestMts(vid, playauth)
+                },
+
+                // 测试方法
+                test() {
+                    console.log('test 6666');
+                }
+            }
+        });
+    });
+</script>
+
+<style>
+    /*参考文档https://blog.csdn.net/weixin_50450473/article/details/125552654*/
+    @import url(//g.alicdn.com/de/prismplayer/2.9.18/skins/default/aliplayer-min.css);
+
+    .prism-player {
+        position: unset;
+    }
+
+    .prism-player .prism-animation {
+        position: unset;
+        display: none;
+    }
+
+    .prism-player video {
+        background: none;
+        border: none;
+        outline: none;
+        color: inherit;
+        display: inline-block;
+        font-size: inherit;
+        line-height: inherit;
+        text-transform: none;
+        text-decoration: none;
+        transition: none;
+        appearance: none;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .prism-player video {
+        vertical-align: bottom;
+        transform: unset;
+        top: 0;
+        left: 0;
+    }
+
+    .prism-player video {
+        width: 100%;
+        height: 100%;
+    }
+
+    .prism-player video {
+        height: 100%;
+    }
+
+    .prism-player .prism-cover {
+        background-size: contain;
+        z-index: auto;
+    }
+</style>

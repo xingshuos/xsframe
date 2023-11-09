@@ -1,0 +1,121 @@
+{extend name="../../admin/view/public/admin"}
+
+{block name='content'}
+
+
+<style>
+    .multi-item {
+        margin-bottom: 18px;
+    }
+</style>
+
+<div class="page-header">
+    当前位置：<span class="text-primary">{if !empty($item)}编辑{else}新建{/if}应用
+    	<small>{if !empty($item)}(名称: {$item['name']}){/if}</small>
+    </span>
+</div>
+
+<div class="page-content">
+
+    <form action="" method="post" class="form-validate form-horizontal ">
+        <input type="hidden" name="id" value="{$item['id']}"/>
+
+        <div class="tab-content">
+
+            <div class="form-group-title">应用基本信息</div>
+
+            <div class="form-group">
+                <label class="col-lg control-label">应用标识</label>
+                <div class="col-sm-9 col-xs-12">
+                    <div class="form-control-static">{$item['identifie']}</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg control-label">应用版本</label>
+                <div class="col-sm-9 col-xs-12">
+                    <div class="form-control-static">{$item['version']}</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-lg control-label must">应用LOGO</label>
+                <div class="col-sm-9 col-xs-12">
+                    {:tpl_form_field_image('logo', $item['logo'])}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-lg control-label must">应用名称</label>
+                <div class="col-sm-9 col-xs-12">
+                    <input type="text" name="name" class="form-control" value="{$item['name']}" data-rule-required='true'/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-lg control-label must">应用作者</label>
+                <div class="col-sm-9 col-xs-12">
+                    <input type="text" name="author" class="form-control" value="{$item['author']}" data-rule-required='true'/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg control-label must">应用简介</label>
+                <div class="col-sm-9 col-xs-12">
+                    <textarea name="description" cols="30" rows="3" class="form-control" data-rule-required='true' >{$item['description']}</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg control-label">是否启用</label>
+                <div class="col-sm-9 col-xs-12">
+                    <label class="radio-inline">
+                        <input type="radio" name="status" value="0" {if $item['status']==0 || empty($item)}checked="checked"{/if}> 关闭
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="status" value="1" {if $item['status']==1}checked="checked"{/if}> 开启
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg control-label must">应用支持</label>
+                <div class="col-sm-9 col-xs-12">
+                    <label for="wechat_support" class="checkbox-inline">
+                        <input type="checkbox" name="wechat_support" value="1" id="wechat_support" {if $item['wechat_support'] == 1}checked{/if}/> 公众号
+                    </label>
+                    <label for="wxapp_support" class="checkbox-inline">
+                        <input type="checkbox" name="wxapp_support" value="1" id="wxapp_support" {if $item['wxapp_support'] == 1}checked{/if}/> 微信小程序
+                    </label>
+                    <label for="pc_support" class="checkbox-inline">
+                        <input type="checkbox" name="pc_support" value="1" id="pc_support" {if $item['pc_support'] == 1}checked{/if}/> PC
+                    </label>
+                    <label for="app_support" class="checkbox-inline">
+                        <input type="checkbox" name="app_support" value="1" id="app_support" {if $item['app_support'] == 1}checked{/if}/> APP
+                    </label>
+                    <label for="h5_support" class="checkbox-inline">
+                        <input type="checkbox" name="h5_support" value="1" id="h5_support" {if $item['h5_support'] == 1}checked{/if}/> H5
+                    </label>
+                    <label for="aliapp_support" class="checkbox-inline">
+                        <input type="checkbox" name="aliapp_support" value="1" id="aliapp_support" {if $item['aliapp_support'] == 1}checked{/if}/> 支付宝小程序
+                    </label>
+                    <label for="bdapp_support" class="checkbox-inline">
+                        <input type="checkbox" name="bdapp_support" value="1" id="bdapp_support" {if $item['bdapp_support'] == 1}checked{/if}/> 百度小程序
+                    </label>
+                    <label for="uniapp_support" class="checkbox-inline">
+                        <input type="checkbox" name="uniapp_support" value="1" id="uniapp_support" {if $item['uniapp_support'] == 1}checked{/if}/> UniApp
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-lg control-label"></label>
+                <div class="col-sm-9">
+                    <input type="submit" class="btn btn-primary" value="保存">
+                    <a class="btn btn-default" href="{:webUrl('admin/app/list')}">返回列表</a>
+                </div>
+            </div>
+
+        </div>
+
+    </form>
+</div>
+
+
+{/block}

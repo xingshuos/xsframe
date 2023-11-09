@@ -1,0 +1,63 @@
+{extend name="../../admin/view/public/admin"}
+
+{block name='content'}
+
+<div class="page-header">当前位置：<span class="text-primary">检测BOM异常</span></div>
+
+<style>
+
+</style>
+
+<div class="page-content">
+
+    <form action="" method="post" class="form-horizontal form-validate" enctype="multipart/form-data">
+
+        <div class="form-group">
+            <label class="col-lg control-label">操作说明</label>
+            <div class="alert alert-warning col-sm-9">
+                <p>{$systemName}系统使用utf-8无bom格式的文件编码方式, 如果使用编辑器修改配置或者查看文件时没有注意编辑器设置将可能在被编辑的文件上附加BOM头, 从而造成系统功能异常. </p>
+                <p><strong>注意: 使用 Windows 系统自带的记事本编辑{$systemName}源码可能会造成这样的问题. </strong></p>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-lg control-label">处理说明</label>
+            <div class="alert alert-info col-sm-10">
+                <p>为保证系统正常运行, 系统不会尝试修复检测出来的错误文件, 检测完成后请自行使用编辑器修改文件编码方式</p>
+            </div>
+        </div>
+
+        {if isset($bomTree)}
+        <div class="form-group">
+            <label class="col-lg control-label">检测结果</label>
+            <div class="col-sm-10">
+                {if empty($bomTree)}
+                <p><strong>没有检测到存在BOM的异常文件</strong></p>
+                {else}
+                <div class="alert alert-info" style="line-height:20px;">
+                    {volist name="bomtree" id="line"}
+                    <div>{$line}</div>
+                    {/volist}
+                </div>
+
+                {/if}
+                <div class=" alert alert-warning ">为保证系统正常运行, 系统不会尝试修复检测出来的错误文件, 检测完成后请自行使用编辑器修改文件编码方式</div>
+            </div>
+        </div>
+        {/if}
+
+        <div class="form-group">
+            <label class="col-lg control-label"></label>
+            <div class="col-sm-10">
+                <input type="submit" class="btn btn-primary" value="检测BOM异常">
+                {if isset($bomTree) && !empty($bomTree)}<input name="dispose" type="submit" class="btn btn-info " value="处理BOM异常"/>{/if}
+            </div>
+        </div>
+
+    </form>
+
+
+
+</div>
+
+{/block}

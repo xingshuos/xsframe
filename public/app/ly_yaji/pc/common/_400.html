@@ -1,0 +1,49 @@
+<style>
+    .page-empty {
+        width: 100%;
+    }
+
+    .page-empty .empty-content {
+        width: 100%;
+        padding: 60px 0;
+        flex-direction: column;
+    }
+
+    .page-empty .empty-content .title {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+        margin-top: 20px;
+        font-size: 20px;
+        color: var(--primary-grey-color);
+    }
+
+    .page-empty .empty-content .small {
+        width: 100%;
+        height: 28px;
+        line-height: 28px;
+        text-align: center;
+        margin: 12px 0 24px;
+        font-size: 14px;
+        color: var(--primary-grey-color);
+    }
+</style>
+
+<div class="page-empty">
+    <div class="container">
+
+        <div class="empty-content flex-center">
+
+            <div class="picture">
+                <img src="{$moduleAttachUrl}/static/images/400.png" alt="数据为空">
+            </div>
+
+            <div class="title">错误的请求</div>
+            <div class="small">请检查您的配置文件</div>
+            <a class="btn btn-default" href="{:url('/')}">返回首页</a>
+
+        </div>
+
+    </div>
+</div>

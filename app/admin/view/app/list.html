@@ -1,0 +1,281 @@
+{extend name="../../admin/view/public/admin"}
+
+{block name='style'}
+<style>
+    .nav-tabs-box {
+        padding-bottom: 30px;
+        box-sizing: border-box;
+    }
+
+    .letters-list {
+        padding-bottom: 30px;
+        display: block;
+        overflow: hidden;
+    }
+
+    .letters-list li {
+        width: 3.57143%;
+        text-align: center;
+        float: left;
+    }
+
+    .letters-list li.active, .letters-list .head .navbar-left > li:hover, .head .letters-list .navbar-left > li:hover, .letters-list .panel-menu li.list-group-item:not(.list-group-more):hover, .panel-menu .letters-list li.list-group-item:not(.list-group-more):hover {
+        color: #428bca;
+    }
+    .letters-list li.active a {
+        color: #44abf7;
+        font-weight: bold;
+    }
+    .letters-list li a {
+        display: block;
+    }
+</style>
+{/block}
+
+{block name='content'}
+<div class="page-header">当前位置：<span class="text-primary">应用管理</span></div>
+
+<div class="page-content">
+
+    <div class="nav-tabs-box">
+        <ul class="nav nav-tabs">
+            <li {if empty($do) || $do == 'installed'}class="active"{/if}><a href="{:url('admin/app/list',['do' => 'installed'])}">已安装应用 ({$total1})</a></li>
+            <li {if $do == 'not_installed'}class="active"{/if}><a href="{:url('admin/app/list',['do' => 'not_installed'])}">未安装应用 ({$total2})</a></li>
+            <li {if $do == 'recycle'}class="active"{/if}><a href="{:url('admin/app/list',['do' => 'recycle'])}">已停用应用 ({$total3})</a></li>
+            <li {if $do == 'delete'}class="active"{/if}><a href="{:url('admin/app/list',['do' => 'delete'])}">回收站 ({$total4})</a></li>
+        </ul>
+    </div>
+
+    <form action="" method="get" class="form-horizontal table-search" role="form">
+        <div class="page-toolbar">
+            <div class="col-md-12 input-group">
+                <div class="input-group-select">
+                    <select name="type" class="form-control">
+                        <option value="">选择应用类型</option>
+                        <option value="wechat" {if $type == 'wechat'}selected{/if}>微信公众号</option>
+                        <option value="wxapp" {if $type == 'wxapp'}selected{/if}>微信小程序</option>
+                        <option value="pc" {if $type == 'pc'}selected{/if}>PC</option>
+                        <option value="app" {if $type == 'app'}selected{/if}>APP</option>
+                        <option value="h5" {if $type == 'h5'}selected{/if}>H5</option>
+                        <option value="aliapp" {if $type == 'aliapp'}selected{/if}>支付宝小程序</option>
+                        <option value="bdapp" {if $type == 'bdapp'}selected{/if}>百度小程序</option>
+                        <option value="uniapp" {if $type == 'uniapp'}selected{/if}>UniApp</option>
+                    </select>
+                </div>
+                <input type="hidden" class="form-control " name="do" value="{$do}">
+                <input type="text" class="form-control " name="keyword" value="{$_GPC['keyword']}" placeholder="可搜索应用名称">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit"> 搜索</button>
+                </span>
+            </div>
+        </div>
+    </form>
+
+    <ul class="letters-list">
+        <li {if $nameInitial == ''}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => ''])}">全部</a></li>
+        <li {if $nameInitial == 'A'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'A'])}">A</a></li>
+        <li {if $nameInitial == 'B'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'B'])}">B</a></li>
+        <li {if $nameInitial == 'C'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'C'])}">C</a></li>
+        <li {if $nameInitial == 'D'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'D'])}">D</a></li>
+        <li {if $nameInitial == 'E'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'E'])}">E</a></li>
+        <li {if $nameInitial == 'F'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'F'])}">F</a></li>
+        <li {if $nameInitial == 'G'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'G'])}">G</a></li>
+        <li {if $nameInitial == 'H'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'H'])}">H</a></li>
+        <li {if $nameInitial == 'I'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'I'])}">I</a></li>
+        <li {if $nameInitial == 'J'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'J'])}">J</a></li>
+        <li {if $nameInitial == 'K'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'K'])}">K</a></li>
+        <li {if $nameInitial == 'L'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'L'])}">L</a></li>
+        <li {if $nameInitial == 'M'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'M'])}">M</a></li>
+        <li {if $nameInitial == 'N'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'N'])}">N</a></li>
+        <li {if $nameInitial == 'O'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'O'])}">O</a></li>
+        <li {if $nameInitial == 'P'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'P'])}">P</a></li>
+        <li {if $nameInitial == 'Q'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'Q'])}">Q</a></li>
+        <li {if $nameInitial == 'R'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'R'])}">R</a></li>
+        <li {if $nameInitial == 'S'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'S'])}">S</a></li>
+        <li {if $nameInitial == 'T'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'T'])}">T</a></li>
+        <li {if $nameInitial == 'U'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'U'])}">U</a></li>
+        <li {if $nameInitial == 'V'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'V'])}">V</a></li>
+        <li {if $nameInitial == 'W'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'W'])}">W</a></li>
+        <li {if $nameInitial == 'X'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'X'])}">X</a></li>
+        <li {if $nameInitial == 'Y'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'Y'])}">Y</a></li>
+        <li {if $nameInitial == 'Z'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'Z'])}">Z</a></li>
+    </ul>
+
+    {if empty($list)}
+        <div class="panel panel-default">
+            <div class="panel-body empty-data">未查询到相关数据</div>
+        </div>
+    {else}
+        <form action="" method="post">
+            <div class="page-table-header">
+                <input type='checkbox'/>
+                <div class="btn-group" style="margin-left: 15px;">
+                    <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('admin/app/change',array('type' => 'status','value'=>1))}"><i class='icow icow-xianshi'></i> 启用</button>
+                    <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('admin/app/change',array('type' => 'status','value'=>0))}"><i class='icow icow-yincang'></i> 禁用</button>
+                    <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('admin/app/change',['type' => 'is_deleted','value' => 1])}">
+                        <i class='icow icow-shanchu1'></i> 删除
+                    </button>
+                    {if $do == 'delete'}
+                        <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要恢复?" data-href="{:webUrl('admin/app/change',['type' => 'is_deleted','value' => 0])}">
+                            <i class='icon icon-reply'></i> 恢复
+                        </button>
+                    {/if}
+                </div>
+            </div>
+            <table class="table table-responsive table-hover">
+                <thead class="navbar-inner">
+                <tr>
+                    <th style="width:40px;"></th>
+                    <th style='width:60px'>ID</th>
+                    <th style='width:200px'>应用名称</th>
+                    <th style='width:120px'>应用标识</th>
+                    <th style='width:120px'>简介</th>
+                    <th style="width: 80px;">作者</th>
+                    <th style='width:80px;'>版本号</th>
+                    {if $do != 'not_installed'}
+                    <th style='width:80px;'>启用</th>
+                    {/if}
+                    <th style="width: 140px;">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $list as $key=>$row }
+                <tr>
+                    <td>
+                        <input type='checkbox' value="{$row['id']}"/>
+                    </td>
+                    <td class='full'>
+                        {$row['id']}
+                    </td>
+                    <td style="overflow: visible;white-space:normal;">
+                        <div rel="pop" style="display: flex" data-content="">
+                            <img class="img-40" src="{$row['logo']}" style='border-radius:50%;border:1px solid #efefef;' onerror="this.src='__ADMIN_IMG__/noface.png'"/>
+                            <span style="display: flex;flex-direction: column;justify-content: center;align-items: flex-start;padding-left: 5px">
+                                <span class="nickname">{$row['name']}</span>
+
+                                <span>
+                                    {if $row['wechat_support'] == 1}
+                                    <label class="label label-success">公众号</label>
+                                    {/if}
+                                    {if $row['wxapp_support'] == 1}
+                                    <label class="label label-wxapp">微信小程序</label>
+                                    {/if}
+                                    {if $row['pc_support'] == 1}
+                                    <label class="label label-primary">PC</label>
+                                    {/if}
+                                    {if $row['app_support'] == 1}
+                                    <label class="label label-info">APP</label>
+                                    {/if}
+                                    {if $row['h5_support'] == 1}
+                                    <label class="label label-warning">H5</label>
+                                    {/if}
+                                    {if $row['aliapp_support'] == 1}
+                                    <label class="label label-aliapp">支付宝小程序</label>
+                                    {/if}
+                                    {if $row['bdapp_support'] == 1}
+                                    <label class="label label-bdapp">百度小程序</label>
+                                    {/if}
+                                    {if $row['uniapp_support'] == 1}
+                                    <label class="label label-uniapp">UinApp</label>
+                                    {/if}
+                                </span>
+
+                            </span>
+                        </div>
+                    </td>
+                    <td style="overflow: visible;white-space:normal;">
+                        {$row['identifie']}
+                    </td>
+                    <td style="overflow: visible;white-space:normal;">
+                        {$row['description']}
+                    </td>
+                    <td>
+                        {$row['author']}
+                    </td>
+                    <td class="text-left">
+                        <span style="display: flex;flex-direction: column;justify-content: center;align-items: flex-start;padding-left: 5px">
+                            <span>版本：{$row['version']} </span>
+                            {if ( $do == 'installed' || empty($do) ) && $row['new_version']}
+                                <span class="text text-danger">发现新版本</span>
+                            {/if}
+                        </span>
+                    </td>
+                    {if $do != 'not_installed'}
+                    <td>
+                        <span class='label {if $row['status']==1}label-primary{else}label-default{/if}'
+                        data-toggle='ajaxSwitch'
+                        data-confirm = "确认{if $row['status']==1}禁用{else}启用{/if} “{$row['name']}”？"
+                        data-switch-refresh='true'
+                        data-switch-value='{$row['status']}'
+                        data-switch-value0='0|禁用|label label-default|{:url('admin/app/change',array('type'=> 'status','value'=>1,'id'=>$row['id']))}'
+                        data-switch-value1='1|已开启|label label-primary|{:url('admin/app/change',array('type'=>'status','value' =>0,'id'=>$row['id']))}'
+                        >
+                        {if $row['status']==1}已开启{else}禁用{/if}
+                        </span>
+                    </td>
+                    {/if}
+                    <td style="text-align:left;">
+                        {if $do == 'not_installed'}
+                            <a href="{:webUrl('admin/app/install', array('identifie' => $row['identifie'],'id' => $row['id']))}" data-toggle="ajaxPost" data-confirm="确认要安装 “{$row['name']}” 么 ?" class="btn btn-primary btn-op btn-operation">安装</a>
+                        {elseif $do == 'delete'}
+                            <a href="{:webUrl('admin/app/change', array('type' => 'is_deleted','value' => 0,'id' => $row['id']))}" data-toggle="ajaxPost" data-confirm="确认要恢复 “{$row['name']}” 么 ?" class="btn btn-default btn-op btn-operation">恢复</a>
+                        {else}
+                            {if $do == 'installed' || empty($do)}
+                                <a href="{:webUrl('admin/app/uninstall', array('identifie' => $row['identifie'],'id' => $row['id']))}" data-toggle="ajaxPost" data-confirm="卸载后将同时删除该应用所有数据,确认要卸载 “{$row['name']}” 么 ?" class="btn btn-danger btn-op btn-operation">卸载</a>
+                            {/if}
+                            {if ( $do == 'installed' || empty($do) ) && $row['new_version']}
+                                <a href="{:webUrl('admin/app/upgrade', array('identifie' => $row['identifie'],'id' => $row['id']))}" data-toggle="ajaxPost" data-confirm="确认要升级 “{$row['name']}” 到最新版本么 ?" class="btn btn-primary btn-op btn-operation">升级</a>
+                            {/if}
+                            <a href="{:webUrl('admin/app/edit', array('id' => $row['id']))}" class="btn btn-op btn-operation">
+                                <span data-toggle="tooltip" data-placement="top" data-original-title="修改">
+                                    <i class='icon icon-pencil'></i>
+                                </span>
+                            </a>
+                            <a data-toggle='ajaxRemove' href="{:webUrl('admin/app/change', array('type' => 'is_deleted','value' => 1,'id' => $row['id']))}" class="btn btn-op btn-operation" data-confirm='确认要删除此应用吗?'>
+                                <span data-toggle="tooltip" data-placement="top" data-original-title="删除">
+                                   <i class='icon icon-trash'></i>
+                                </span>
+                            </a>
+                            {if ( $do == 'installed' || empty($do) ) && !$row['new_version']}
+                                <a href="{:webUrl('admin/app/upgrade', array('identifie' => $row['identifie'],'id' => $row['id']))}" data-toggle="ajaxPost" data-confirm="确认要升级 “{$row['name']}” 到最新版本么 ?" class="btn btn-default btn-op btn-operation">
+                                    <span data-toggle="tooltip" data-placement="top" data-original-title="强制更新">
+                                       <i class='icon icon-refresh'></i>
+                                    </span>
+                                </a>
+                            {/if}
+                        {/if}
+                    </td>
+                </tr>
+                {/foreach}
+
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td colspan="4">
+                        <div class="btn-group">
+                            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('admin/app/change',array('type' => 'status','value'=>1))}"><i class='icow icow-xianshi'></i> 启用</button>
+                            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('admin/app/change',array('type' => 'status','value'=>0))}"><i class='icow icow-yincang'></i> 禁用</button>
+                            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('admin/app/change',['type' => 'is_deleted','value' => 1])}">
+                                <i class='icow icow-shanchu1'></i> 删除
+                            </button>
+                            {if $do == 'delete'}
+                            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要恢复?" data-href="{:webUrl('admin/app/change',['type' => 'is_deleted','value' => 0])}">
+                                <i class='icon icon-reply'></i> 恢复
+                            </button>
+                            {/if}
+                        </div>
+                    </td>
+                    <td colspan="{if $do != 'not_installed'}4{else}3{/if}" style="text-align: right">
+                        {$pager | raw}
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+        </form>
+    {/if}
+</div>
+
+
+{/block}
+

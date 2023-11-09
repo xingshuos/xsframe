@@ -1,0 +1,276 @@
+<?php
+
+namespace app\admin\controller;
+
+use xsframe\wrapper\AccountHostWrapper;
+use xsframe\wrapper\AttachmentWrapper;
+use xsframe\enum\SysSettingsKeyEnum;
+use xsframe\util\FileUtil;
+use think\facade\Cache;
+use think\facade\Db;
+
+class Sysset extends Base
+{
+    public function index()
+    {
+        return redirect('/admin/sysset/site');
+    }
+
+    // 附件设置
+    public function attachment()
+    {
+        $post_max_size       = ini_get('post_max_size');
+        $post_max_size       = $post_max_size > 0 ? byteCount($post_max_size) / 1024 : 0;
+        $upload_max_filesize = ini_get('upload_max_filesize');
+
+        $attachmentPath = IA_ROOT . "/public/attachment/";
+
+        if ($this->request->isPost()) {
+            $type = $this->params['type'];
+            # 测试配置
+            $attachmentController = new AttachmentWrapper();
+
+            $ret = [];
+            switch ($type) {
+                case 'alioss':
+                    $attachmentController->aliOss($this->params['key'], $this->params['secret'], $this->params['url'], $this->params['bucket']);
+                    show_json(1);
+                    break;
+                case 'qiniu':
+                    $attachmentController->qiNiu();
+                    break;
+                case 'cos':
+                    $attachmentController->cos();
+                    break;
+                case 'buckets':
+                    $ret = $attachmentController->buckets($this->params['key'], $this->params['secret']);
+                    show_json(1, ['data' => $ret]);
+                    break;
+                case 'upload_remote':
+                    $setting = $this->settingsController->getSysSettings(SysSettingsKeyEnum::ATTACHMENT_KEY);
+                    $attachmentController->fileDirRemoteUpload($setting, $attachmentPath, $attachmentPath . 'images');
+                    show_json(1, "上传成功");
+            }
+
+            $data = $this->params['data'];
+            $this->settingsController->setSysSettings(SysSettingsKeyEnum::ATTACHMENT_KEY, $data);
+            show_json(1, ["url" => url("sysset/attachment", ['tab' => str_replace("#tab_", "", $this->params['tab'])])]);
+        }
+
+        $localAttachment = FileUtil::fileDirExistImage($attachmentPath . 'images');
+
+        $accountSettings = $this->settingsController->getSysSettings(SysSettingsKeyEnum::ATTACHMENT_KEY);
+
+        $vars = [
+            'post_max_size'       => $post_max_size,
+            'upload_max_filesize' => $upload_max_filesize,
+            'accountSettings'     => $accountSettings,
+            'local_attachment'    => $localAttachment,
+        ];
+        return $this->template('attachment', $vars);
+    }
+
+    // 网站设置
+    public function site()
+    {
+        if ($this->request->isPost()) {
+            $data              = $this->params['data'];
+            $data['copyright'] = htmlspecialchars_decode($this->params['data_copyright']);
+
+            $this->settingsController->setSysSettings(SysSettingsKeyEnum::WEBSITE_KEY, $data);
+            show_json(1, ['url' => url('sysset/site')]);
+        }
+
+        $websiteSets = $this->settingsController->getSysSettings(SysSettingsKeyEnum::WEBSITE_KEY);
+        // dump($websiteSets);die;
+
+        $list = Db::name('sys_account')->where(['deleted' => 0])->order('uniacid desc')->select();
+
+        $vars = [
+            'data' => $websiteSets,
+            'list' => $list
+        ];
+        return $this->template('site', $vars);
+    }
+
+    // 域名设置
+    public function host()
+    {
+        $keyword = $this->params['keyword'] ?? '';
+        $uniacid = $this->params['uniacid'] ?? 0;
+
+        $condition = [];
+
+        if (!empty($uniacid)) {
+            $condition['uniacid'] = $uniacid;
+        }
+
+        if (!empty($keyword)) {
+            $condition[''] = Db::raw(" `host_url` like '%" . trim($keyword) . "%' ");
+        }
+
+        $list  = Db::name("sys_account_host")->where($condition)->order('id asc')->page($this->pIndex, $this->pSize)->select()->toArray();
+        $total = Db::name("sys_account_host")->where($condition)->count();
+        $pager = pagination2($total, $this->pIndex, $this->pSize);
+
+        $accountList = Db::name('sys_account')->where(['deleted' => 0])->order("displayorder desc")->select()->toArray();
+
+        foreach ($list as &$item) {
+            $item['account'] = Db::name('sys_account')->where(['uniacid' => $item['uniacid']])->find();
+            $item['module']  = Db::name('sys_modules')->where(['identifie' => $item['default_module']])->find();
+        }
+        unset($item);
+
+        $result = [
+            'list'        => $list,
+            'accountList' => $accountList,
+            'pager'       => $pager,
+            'total'       => $total,
+        ];
+
+        return $this->template('host', $result);
+    }
+
+    // 编辑
+    public function hostEdit()
+    {
+        $id = $this->params['id'];
+
+        if ($this->request->isPost()) {
+
+            $data = array(
+                "uniacid"        => trim($this->params["uniacid"]),
+                "host_url"       => trim($this->params["host_url"]),
+                "default_module" => trim($this->params["default_module"]),
+                "default_url"    => trim($this->params["default_url"]),
+                "displayorder"   => trim($this->params["displayorder"]),
+            );
+
+            if (!empty($id)) {
+                Db::name("sys_account_host")->where(["id" => $id])->update($data);
+            } else {
+                Db::name("sys_account_host")->insert($data);
+            }
+
+            $accountHostWrapper = new AccountHostWrapper();
+            $accountHostWrapper->setAccountHost();
+
+            $this->success(array("url" => webUrl("admin/sysset/host")));
+        }
+
+        $item = Db::name("sys_account_host")->where(['id' => $id])->find();
+
+        $accountList = Db::name('sys_account')->where(['deleted' => 0])->order("displayorder desc")->select()->toArray();
+
+        $modules = Db::name('sys_modules')->where(['identifie' => $item['default_module']])->select()->toArray();
+
+        foreach ($modules as &$module) {
+            $module['logo'] = !empty($module['logo']) ? tomedia($module['logo']) : $this->siteRoot . "/app/{$module['identifie']}/icon.png";
+        }
+
+        return $this->template('host', ['item' => $item, 'accountList' => $accountList, 'modules' => $modules]);
+    }
+
+    public function hostDelete()
+    {
+        $id = intval($this->params["id"]);
+
+        if (empty($id)) {
+            $id = $this->params["ids"];
+        }
+
+        if (empty($id)) {
+            $this->error("参数错误");
+        }
+
+        $items = Db::name('sys_account_host')->where(['id' => $id])->select();
+        foreach ($items as $item) {
+            Db::name('sys_account_host')->where(["id" => $item['id']])->delete();
+        }
+        $this->success(array("url" => referer()));
+    }
+
+    // 更新域名
+    public function hostChange()
+    {
+        $id = intval($this->params["id"]);
+
+        if (empty($id)) {
+            $id = $this->params["ids"];
+        }
+
+        if (empty($id)) {
+            $this->error("参数错误");
+        }
+
+        $type  = trim($this->params["type"]);
+        $value = trim($this->params["value"]);
+
+        $items = Db::name("sys_account_host")->where(['id' => $id])->select();
+        foreach ($items as $item) {
+            Db::name("sys_account_host")->where("id", '=', $item['id'])->update([$type => $value]);
+        }
+
+        $this->success();
+    }
+
+    // 图标
+    public function icon()
+    {
+        return $this->template('icon');
+    }
+
+    // 表单
+    public function form()
+    {
+        return $this->template('form');
+    }
+
+    // 模态框
+    public function model()
+    {
+        return $this->template('model');
+    }
+
+    // 创建静态资源
+    public function static()
+    {
+        $name = '静态资源';
+        $this->buildHtml('static', $this->iaRoot . '/app/admin/view/sysset/', $this->iaRoot . '/app/admin/view/tpl/static_tpl.html', ['name' => $name]);
+        return $this->template('static');
+    }
+
+    // 检测bom
+    public function bom()
+    {
+        $bomTree = Cache::get('bomTree');
+
+        if ($this->request->isPost()) {
+            $path    = $this->iaRoot;
+            $trees   = FileUtil::fileTree($path);
+            $bomTree = array();
+            foreach ($trees as $tree) {
+                $tree = str_replace($path, '', $tree);
+                $tree = str_replace('\\', '/', $tree);
+                if (strexists($tree, '.php')) {
+                    $fname = $path . $tree;
+                    $fp    = fopen($fname, 'r');
+                    if (!empty($fp)) {
+                        $bom = fread($fp, 3);
+                        fclose($fp);
+                        if ($bom == "\xEF\xBB\xBF") {
+                            $bomTree[] = $tree;
+                        }
+                    }
+                }
+            }
+            Cache::set('bomTree', $bomTree);
+            show_json(1, ['url' => url('sysset/bom')]);
+        }
+
+        $vars = [
+            'bomTree' => $bomTree
+        ];
+        return $this->template('bom', $vars);
+    }
+}

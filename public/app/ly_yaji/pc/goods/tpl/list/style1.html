@@ -1,0 +1,117 @@
+<!-- 文创 -->
+<div class="goods-box">
+    <div class="goods-wrap">
+        <div class="goods-list">
+            {foreach $goodsList as $key => $item}
+            <a class="goods-item" target="_blank" title="{$item['title']}" href="{:url('product/'.$item['id'])}">
+                <div class="hover-item"></div>
+                <div class="p-img">
+                    <img src="{$moduleAttachUrl}/static/images/default-img.png" data-original="{$item['thumb']}" alt="{$item['title']}" onerror="this.src='{$moduleAttachUrl}/static/images/default-img.png'">
+                </div>
+                <div class="goods-info">
+                    <div class="title text-over-2">{$item['title']}</div>
+                    <div class="price">¥ {$item['marketprice']}</div>
+                </div>
+            </a>
+            {/foreach}
+            <div class="goods-item-block"></div>
+            <div class="goods-item-block"></div>
+            <div class="goods-item-block"></div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .goods-box {
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+
+    .goods-box, .goods-list, .goods-wrap {
+        width: 100%;
+    }
+
+    .goods-list {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .goods-item {
+        width: 280px;
+        position: relative;
+        box-sizing: border-box;
+        z-index: 0;
+        background-color: var(--background-white-color);
+        /*box-shadow: 0 6px 10px 0 rgba(95, 101, 105, 0.15);*/
+        margin-bottom: 20px;
+        transition: transform 0.5s ease 0s;
+    }
+
+    .goods-item-block {
+        width: 280px;
+    }
+
+    .goods-item .hover-item {
+        height: 100%;
+        width: 100%;
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 2;
+        border: 1px solid var(--primary-color);
+    }
+
+    .goods-item:hover {
+        transform: translateY(-10px);
+        transition: all 0.5s ease 0s;
+        box-shadow: 0 6px 10px 0 rgba(95, 101, 105, 0.15);
+    }
+
+    .goods-item:hover .hover-item {
+        display: block;
+    }
+
+    .goods-item .p-img {
+        width: 280px;
+        height: 280px;
+        overflow: hidden;
+    }
+
+    .goods-item .p-img a {
+        display: flex;
+        height: 100%;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .goods-item .p-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .goods-item .goods-info {
+        position: relative;
+        z-index: 3;
+        padding: 15px 15px;
+        box-sizing: border-box;
+    }
+
+    .goods-item .goods-info .title {
+        height: 60px;
+        line-height: 30px;
+        margin-bottom: 12px;
+        color: var(--primary-grey-color);
+    }
+
+    .goods-item .goods-info .price {
+        font-size: 16px;
+        color: var(--primary-color);
+    }
+</style>

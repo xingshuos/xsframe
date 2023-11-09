@@ -1,0 +1,13 @@
+.vjs-poster {
+    background-size: cover;
+}
+
+.video-js .vjs-big-play-button{
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    border-radius: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}

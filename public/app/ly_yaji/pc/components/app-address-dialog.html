@@ -1,0 +1,472 @@
+<style>
+    .el-dialog__wrapper {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow: auto;
+        margin: 0;
+    }
+
+    .el-dialog {
+        position: relative;
+        margin: 0 auto 50px;
+        background: #fff;
+        border-radius: 2px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        box-sizing: border-box;
+        width: 50%;
+    }
+
+    .el-dialog__header {
+        padding: 20px 20px 10px;
+    }
+
+    .el-dialog__title {
+        line-height: 24px;
+        font-size: 18px;
+        color: #303133;
+    }
+
+    .el-dialog__headerbtn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        padding: 0;
+        background: transparent;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .el-dialog__headerbtn .el-dialog__close {
+        color: #909399;
+    }
+
+    .el-dialog__body {
+        padding: 30px 20px;
+        color: #606266;
+        font-size: 14px;
+        word-break: break-all;
+    }
+
+    .input-item {
+        margin-bottom: 20px;
+    }
+
+    .el-input__inner {
+        -webkit-appearance: none;
+        background-color: #fff;
+        background-image: none;
+        border-radius: 4px;
+        border: 1px solid #dcdfe6;
+        box-sizing: border-box;
+        color: #606266;
+        display: inline-block;
+        font-size: inherit;
+        height: 40px;
+        line-height: 40px;
+        outline: none;
+        padding: 0 15px;
+        transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
+        width: 100%;
+    }
+
+    .el-textarea__inner {
+        display: block;
+        resize: vertical;
+        padding: 10px 15px;
+        line-height: 1.5;
+        box-sizing: border-box;
+        width: 100%;
+        font-size: inherit;
+        color: var(--primary-black-color);
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #dcdfe6;
+        border-radius: 4px;
+        transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
+    }
+
+    .el-textarea__inner:hover {
+        border-color: #c0c4cc;
+    }
+
+    .el-textarea__inner:focus {
+        font-size: 14px;
+        border: 1px solid #e93323;
+    }
+
+    .el-textarea__inner::placeholder {
+        color: var(--primary-grey-color);
+        font-size: 14px;
+    }
+
+    .el-input {
+        position: relative;
+        font-size: 14px;
+        display: inline-block;
+        width: 100%;
+    }
+
+    .el-checkbox {
+        color: #606266;
+        font-weight: 500;
+        font-size: 14px;
+        position: relative;
+        cursor: pointer;
+        display: inline-block;
+        white-space: nowrap;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        margin-right: 30px;
+    }
+
+    .el-checkbox:last-of-type {
+        margin-right: 0;
+    }
+
+    .text-wrapper {
+        position: relative;
+        height: 40px;
+        line-height: 40px;
+        border: 1px solid #dcdfe6;
+        padding: 0 15px;
+        box-sizing: border-box;
+        border-radius: 4px;
+        color: #cfcfcf;
+    }
+
+    .text-wrapper p.active {
+        color: #333;
+    }
+
+    .el-textarea {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+        vertical-align: bottom;
+        font-size: 14px;
+    }
+
+    .el-dialog__footer {
+        padding: 10px 20px 20px;
+        text-align: right;
+        box-sizing: border-box;
+    }
+
+    .el-dialog__footer {
+        padding: 10px 20px 20px;
+        text-align: right;
+        box-sizing: border-box;
+    }
+
+    .el-button {
+        display: inline-block;
+        line-height: 1;
+        white-space: nowrap;
+        cursor: pointer;
+        background: #fff;
+        border: 1px solid #dcdfe6;
+        color: #606266;
+        -webkit-appearance: none;
+        text-align: center;
+        box-sizing: border-box;
+        outline: none;
+        margin: 0;
+        transition: .1s;
+        font-weight: 500;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        padding: 12px 20px;
+        font-size: 14px;
+        border-radius: 4px;
+    }
+
+    .el-button--primary {
+        color: #fff;
+        background-color: #e93323;
+        border-color: #e93323;
+    }
+
+    .el-button + .el-button {
+        margin-left: 10px;
+    }
+
+    .el-checkbox__label {
+        display: inline-block;
+        padding-left: 10px;
+        line-height: 19px;
+        font-size: 14px;
+    }
+
+    .el-checkbox__input.is-checked .el-checkbox__inner {
+        color: #e93323;
+    }
+
+    .el-checkbox__input.is-checked + .el-checkbox__label {
+        color: #e93323;
+    }
+
+    .el-checkbox__original {
+        opacity: 0;
+        outline: none;
+        position: absolute;
+        margin: 0;
+        width: 0;
+        height: 0;
+        z-index: -1;
+    }
+
+    .v-modal {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        opacity: .5;
+        background: #000;
+    }
+
+    .text-wrapper .select-wrapper {
+        z-index: 10;
+        position: absolute;
+        left: 0;
+        top: 45px;
+        width: 100%;
+        padding: 0 15px;
+        background: #fff;
+        border: 1px solid #e93323;
+        border-radius: 4px;
+        line-height: 2;
+    }
+
+    .text-wrapper .select-wrapper .title-box {
+        height: 40px;
+        line-height: 40px;
+        border-bottom: 1px solid #efefef;
+        font-size: 14px;
+    }
+
+    .text-wrapper .select-wrapper .title-box span {
+        margin-right: 8px;
+        color: #e93323;
+    }
+
+    .text-wrapper .select-wrapper .title-box span.active {
+        color: #666;
+    }
+
+    .text-wrapper .select-wrapper .label-txt {
+        margin: 8px 0 18px;
+        color: #666;
+        font-size: 14px;
+    }
+
+    .text-wrapper .select-wrapper .label-txt span {
+        margin-right: 10px;
+        cursor: pointer;
+    }
+
+    .text-wrapper .select-wrapper .label-txt span.active {
+        color: #e93323;
+    }
+</style>
+<template id="app-address-dialog">
+
+    <div class="app-address-dialog" :class="show ? 'show' : 'hide'">
+
+        <div class="el-dialog__wrapper" style="z-index: 2001;">
+
+            <div class="v-modal" tabindex="0" style="z-index: 1;" @click="cancel"></div>
+
+            <div role="dialog" aria-modal="true" aria-label="添加收货地址" class="el-dialog" style="margin-top: 15vh;z-index: 2;">
+                <div class="el-dialog__header"><span class="el-dialog__title">添加收货地址</span>
+                    <button type="button" aria-label="Close" class="el-dialog__headerbtn"><i class="iconfont el-dialog__close" @click="cancel">&#xe615;</i></button>
+                </div>
+                <div class="el-dialog__body">
+                    <div class="form-box">
+                        <div class="input-item" style="width: 48%; display: inline-block;">
+                            <div class="el-input">
+                                <input type="text" v-model="formData.realname" autocomplete="off" maxlength="25" placeholder="姓名" class="el-input__inner">
+                            </div>
+                        </div>
+                        <div class="input-item" style="width: 48%; display: inline-block; margin-left: 3%;">
+                            <div class="el-input">
+                                <input type="text" v-model="formData.mobile" autocomplete="off" placeholder="手机号" class="el-input__inner">
+                            </div>
+                        </div>
+                        <div class="input-item text-wrapper">
+                            <p v-if="!formData.province" @click="selectWrapper">请选择省/市/区/街道</p>
+                            <p v-if="formData.province" @click="selectWrapper" :class="{'active':formData.province}"><span v-if="formData.province">{{ formData.province }}/</span><span v-if="formData.city">{{ formData.city }}/</span><span v-if="formData.area">{{ formData.area }}</span></p>
+
+                            <div class="select-wrapper" v-if="showSelectWrapper">
+                                <div class="title-box">
+                                    <span :class="{'active':formData.province}">{{ formData.province ? formData.province : '选择省/自治区' }}</span>
+                                    <span :class="{'active':formData.city}" v-if="formData.province">{{ formData.city ? formData.city : '选择区县' }}</span>
+                                    <span :class="{'active':formData.area}" v-if="formData.city">{{ formData.area ? formData.area : '请选择配送区域' }}</span>
+                                </div>
+                                <div class="label-txt">
+                                    <span v-for="(item,index) in areaList" :key="index" @click="selectItem(item)" :class="{'active':item.id === selAreaId}">{{ item.area_name }}</span>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="input-item">
+                            <div class="el-textarea">
+                                <textarea autocomplete="off" rows="3" placeholder="详细地址" class="el-textarea__inner" v-model="formData.address"></textarea>
+                            </div>
+                        </div>
+                        <div class="input-item">
+                            <label class="el-checkbox">
+                            <span class="el-checkbox__input" :class="{'is-checked':formData.isdefault}" @click="formData.isdefault=!formData.isdefault">
+                                <span class="iconfont el-checkbox__inner">{{ formData.isdefault ? '&#xed1b;' : '&#xe720;' }}</span>
+                                <input type="checkbox" aria-hidden="false" class="el-checkbox__original" value="">
+                            </span>
+                                <span class="el-checkbox__label">设为默认</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="el-dialog__footer">
+                <span class="dialog-footer">
+                    <button type="button" class="el-button el-button--default" @click="cancel"><span>取 消</span></button>
+                    <button type="button" class="el-button el-button--primary" @click="confirm"><span>确 定</span></button>
+                </span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</template>
+
+<script>
+    require(['vue', 'h7.axios', 'jquery', 'tip'], (Vue, axios, $) => {
+        Vue.component('app-address-dialog', {
+            template: '#app-address-dialog',
+            props: {
+                show: Boolean,
+                addressid: {
+                    type: Number,
+                    default: 0,
+                },
+            },
+            data() {
+                return {
+                    formData:{
+                        id: 0,
+                        realname: '',
+                        mobile: '',
+                        province: '',
+                        city: '',
+                        area: '',
+                        address: '',
+                        isdefault: 0,
+                    },
+
+                    type: 'province',
+                    area_deep: 1,
+                    parentId: 0,
+                    areaList: [],
+                    selAreaId: 0,
+                    showSelectWrapper: false,
+                };
+            },
+            watch: {
+                show() {
+                    if (this.show) {
+                        if (this.addressid > 0) {
+                            this.getAddressDetail();
+                        }else{
+                            this.initData()
+                        }
+                    }
+                },
+            },
+            computed: {},
+            methods: {
+                selectItem(item) {
+                    this.area_deep = item.area_deep;
+                    this.selAreaId = item.id;
+                    if (item.area_deep === 1) {
+                        this.type = 'city';
+                        this.parentId = item.id;
+
+                        if( this.formData.province && this.formData.province !== item.area_name ){
+                            this.formData.city = '';
+                            this.formData.area = '';
+                        }
+
+                        this.formData.province = item.area_name;
+                        this.getArea();
+                    } else {
+                        if (item.area_deep === 2) {
+                            this.type = 'area';
+
+                            this.parentId = item.id;
+                            this.formData.city = item.area_name;
+
+                            this.getArea();
+                        } else {
+                            if (item.area_deep === 3) {
+                                this.formData.area = item.area_name;
+
+                                this.showSelectWrapper = false;
+                            }
+                        }
+                    }
+                },
+                selectWrapper() {
+                    this.showSelectWrapper = !this.showSelectWrapper;
+                    if (this.area_deep < 3) {
+                        this.getArea()
+                    }
+                },
+                getArea() {
+                    let url = "{:url('address/area')}";
+                    axios.post(url, {type: this.type, parentId: this.parentId}).then((res) => {
+                        this.areaList = res.list || [];
+                    });
+                },
+                confirm() {
+                    let url = "{:url('address/add')}";
+                    axios.post(url, this.formData).then((res) => {
+                        tip.msgbox.suc("地址更新成功");
+                        this.$emit('confirm', {addressId: res.addressId});
+                    });
+                },
+                cancel() {
+                    this.initData();
+                    this.$emit('cancel');
+                },
+                initData() {
+                    this.showSelectWrapper = false;
+
+                    this.type = 'province';
+                    this.area_deep = 1;
+                    this.parentId = 0;
+                    this.areaList = [];
+
+                    this.formData.realname = '';
+                    this.formData.mobile = '';
+                    this.formData.province = '';
+                    this.formData.city = '';
+                    this.formData.area = '';
+                    this.formData.address = '';
+                    this.formData.isdefault = 0;
+                },
+                getAddressDetail() {
+                    let url = "{:url('address/detail')}";
+                    axios.post(url, {id: this.addressid}).then((res) => {
+                        this.formData = res.addressInfo || {};
+                    });
+                }
+            }
+        });
+    });
+</script>

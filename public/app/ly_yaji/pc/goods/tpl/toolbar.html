@@ -1,0 +1,214 @@
+<div id="vToolbar" class="nc-appbar" v-cloak> <!--style="right: 244px;"-->
+
+    <div class="nc-appbar-tabs" id="appBarTabs">
+        <div class="border-right-line"></div>
+        <div class="user TA_delay" nctype="a-barUserInfo">
+            <div class="avatar"><img src="{$moduleAttachUrl}/static/images/logo.png" onerror="">
+            </div>
+            <p>我</p>
+        </div>
+
+        <div class="user-info" nctype="barUserInfo" style="display:none;"><i class="arrow"></i>
+            <div class="avatar"><img src="{$moduleAttachUrl}/static/images/logo.png" onerror="">
+                <div class="frame"></div>
+            </div>
+            {if !empty($memberInfo)}
+            <dl>
+                <dt>Hi, {$memberInfo['nickname']}</dt>
+                {if !empty($memberInfo['realname'])}
+                <dd>真实姓名：<strong>{$memberInfo['realname']}</strong></dd>
+                {else}
+                <dd>用户昵称：<strong>{$memberInfo['nickname']}</strong></dd>
+                {/if}
+                <dd>手机号码：<strong>{$memberInfo['mobile']}</strong></dd>
+            </dl>
+            {/if}
+        </div>
+
+        <ul class="tools">
+            <li>
+                <a id="rtoolbar_cart" class="cart TA_delay">
+                    <div class="tools_img TA"></div>
+                    <span class="TA">购物车</span><i id="rtoobar_cart_count" class="new_msg" :class="{'hide' : sumTotal <= 0}">{{ sumTotal }}</i>
+                </a>
+            </li>
+            <li>
+                <a href="javascript:void(0);" id="gotop" class="gotop TA_delay">
+                    <div class="tools_img TA"></div>
+                    <span class="TA">顶部</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="content-box flex-column" id="content-cart">
+            <div class="top">
+                <h3>我的购物车</h3>
+                <a href="javascript:void(0);" class="close" title="隐藏"></a>
+            </div>
+
+            <div class="cart-list">
+
+                <div class="goods-list">
+                    <div class="goods-item" v-for="(item,index) in cartList" :key="index">
+                        <div class="p-img">
+                            <a :href="item.url" target="_blank">
+                                <img :src="item.goods.thumb" width="50" height="50" alt="{{ item.goods.title }}">
+                            </a>
+                        </div>
+                        <div class="p-name text-over-2">
+                            <a :href="item.url" :title="item.goods.title" target="_blank">{{ item.goods.title }}</a>
+                        </div>
+                        <div class="p-price"><strong>¥{{ item.goods.marketprice }}</strong>×{{ item.total }}</div>
+                        <a href="#none" class="p-del" @click="removeProduct(index)">删除</a>
+                    </div>
+                </div>
+
+                <div class="tbar-tipbox2" v-if="cartList.length <= 0">
+                    <div class="tip-inner">
+                        <div class="tip-text"> 购物车空空的，赶快去挑选心仪的商品吧~<br>
+                            {if !empty($categoryInfo)}
+                            <a href="{:url('gcate/'.$categoryInfo['id'])}">去首页看看</a>
+                            {else}
+                            <a href="{:url('/')}">去首页看看</a>
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="cart-panel-footer">
+                <div class="cart-tbar-checkout">
+                    <div class="cart-number"><strong class="J-count">{{sumTotal}}</strong>件商品</div>
+                    <div class="cart-sum">共计：<strong class="J-total">￥{{ sumPrice }}</strong></div>
+                    <a class="cart-btn" href="{:url('cart/list')}" target="_blank">去购物车结算</a>
+                </div>
+            </div>
+
+        </div>
+
+        <a id="activator" href="javascript:void(0);" class="nc-appbar-hide TA"></a>
+    </div>
+
+    <div class="nc-hidebar" id="ncHideBar">
+        <div class="nc-hidebar-bg">
+            <div class="user-avatar"><img src="{$moduleAttachUrl}/static/images/logo.png" onerror=""></div>
+            <div class="frame"></div>
+            <div class="show"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    require(['vue', 'h7.axios', 'jquery'], (Vue, axios, $) => {
+
+        let VM = new Vue({
+            el: '#vToolbar',
+            data: {
+                goodsid: "{$goodsInfo['id']}",
+                cartList: [],
+                sumPrice: 0.00,
+                sumTotal: "{$cartTotal}",
+            },
+            mounted() {
+            },
+            methods: {
+                getCartList() {
+                    let url = "{:url('cart/list')}";
+                    axios.post(url).then((res) => {
+                        this.cartList = res.cartList;
+                        this.sumPrice = res.sumPrice;
+                        this.sumTotal = res.sumTotal;
+                    });
+                },
+                removeProduct(index) {
+                    console.log('removeProduct', index);
+                    let url = "{:url('cart/delete')}";
+                    axios.post(url, {id: this.cartList[index].id}).then((res) => {
+                        this.sumTotal--;
+                        this.cartList.splice(index, 1);
+                    });
+                }
+            }
+        });
+
+        //返回顶部
+        backTop = function (btnId) {
+            var btn = document.getElementById(btnId);
+            var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            window.onscroll = set;
+            btn.onclick = function () {
+                //btn.style.opacity="0.5";
+                window.onscroll = null;
+                this.timer = setInterval(function () {
+                    scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+                    scrollTop -= Math.ceil(scrollTop * 0.1);
+                    if (scrollTop === 0) clearInterval(btn.timer, window.onscroll = set);
+                    if (document.documentElement.scrollTop > 0) document.documentElement.scrollTop = scrollTop;
+                    if (document.body.scrollTop > 0) document.body.scrollTop = scrollTop;
+                }, 10);
+            };
+
+            function set() {
+                scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+                //btn.style.opacity=scrollTop?'1':"0.5";
+            }
+        };
+        backTop('gotop');
+
+        //动画显示边条内容区域
+        $('#activator').click(function () {
+            $('#content-cart').animate({'right': '-246px'});
+            $('#vToolbar').animate({'right': '-60px'}, 300,
+                function () {
+                    $('#ncHideBar').animate({'right': '59px'}, 300);
+                });
+            $('div[nctype^="bar"]').hide();
+        });
+        $('#ncHideBar').click(function () {
+            $('#ncHideBar').animate({
+                'right': '-350px'
+            }, 300, function () {
+                $('#content-cart').animate({'right': '-246px'});
+                $('#vToolbar').animate({'right': '0px'}, 300);
+            });
+        });
+        $(".close").click(function () {
+            $("#vToolbar").animate({right: '0px'});
+        });
+        $(".quick-menu dl").hover(function () {
+            $(this).addClass("hover");
+        }, function () {
+            $(this).removeClass("hover");
+        });
+        // 右侧bar用户信息
+        $('div[nctype="a-barUserInfo"]').click(function () {
+            $('div[nctype="barUserInfo"]').toggle();
+        });
+        $('#rtoolbar_cart').click(function () {
+            $('#vToolbar').animate({'right': '244px'});
+            VM.getCartList();
+        });
+        // 点击空白区域
+        $(document).bind("click", function (e) {
+            let target = $(e.target);
+
+            if (target.closest('#vToolbar').length === 0) {
+                $("#ncHideBar").animate({right: '-350px'});
+                $("#vToolbar").animate({right: '0px'});
+            }
+
+            if (target.closest('.user-info').length === 0 && target.closest('#appBarTabs').length === 0) {
+                let userInfoDom = $(".user-info");
+                // console.log(userInfoDom.css('display'));
+                if (userInfoDom.css('display') === 'block') {
+                    userInfoDom.hide();
+                }
+            }
+
+        });
+
+    });
+
+</script>

@@ -1,0 +1,210 @@
+{extend name="pc/common/_base" /}
+
+{block name="title"}
+<title>确认订单-{$website['title']}</title>
+{/block}
+
+{block name="style"}
+<link rel="stylesheet" href="{$moduleAttachUrl}/static/css/order.css">
+{/block}
+
+{block name="main"}
+
+{include file="pc/components/app-address-dialog" /}
+
+<div class="order-confirm">
+
+    <div class="container" id="orderConfirm" v-cloak>
+
+        <!-- 面包屑 -->
+        <div class="bread-crumb row">
+            <div class="detail-path">
+                <a href="{:url('/')}">首页</a>
+                <i class="icon iconfont">&#xe603;</i>
+                <a href="">购物车</a>
+                <i class="icon iconfont">&#xe603;</i>
+                <span>提交订单</span>
+            </div>
+        </div>
+        <!-- 面包屑end -->
+
+        <div class="content">
+
+            <div class="address">
+                <div class="title">收货地址</div>
+                <div class="lines">
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABLAAAAAECAYAAACeNca/AAAAAXNSR0IArs4c6QAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAEsKADAAQAAAABAAAABAAAAAAdekyeAAABbUlEQVR4Ae2asW3DMBBFSWqGACkzRHprgyCbZASPEHiRjJC4TlYIkD4zWIyPd8WXzcZKw+KpkSCIBPHw+HWimNP5eHj5nae6vNv1pqPW4/fhfr5sW98e51TK9n5TPeanz6t+Ga+Thq9zwAd8cAL4oBzIB3zAB+qHRH0W04B6soHAB3xYvRj4fnMc5AP5sJoYrD8YjoHfF8XGNy2nvZ23Hqcy7bttS+7f7z7cubnUbnvGG6zg20DgAz4EAXxQEOQDPuCDEsAHpUE+4AM+KAF8UBrkAz7ggxLAB6UxQD4U272Sct7puG66Pq/O/bzefVy2aX//0z/6td1Xz19X/TJeJw1f54AP+OAE8EE5kA/4gA/UD/b3lPrMZgL1ZMsDfIhYxAd8CBUcBN+bxoF8CCnIB58WY9cPhd0r4esAq4kxktWJ3W2Bg914DQQ+4IMGBD7gAz4oAXxQGuQDPuCDEsAHpUE+4AM+KAF8UBqj58MfRyl5tp+pqv4AAAAASUVORK5CYII=">
+                </div>
+                <div class="list acea-row row-middle">
+
+                    <template v-if="addressList && addressList.length > 0">
+                        <div class="item" :class="{'on':addressId === item.id}" v-for="(item,index) in addressList" :key="index" @click="selectAddress(item)">
+                            <div class="default bg-color" v-if="item.isdefault">{{ item.isdefault ? '默认' : '' }}</div>
+                            <div class="name line1">{{ item.realname }}</div>
+                            <div class="phone">{{ item.mobile }}</div>
+                            <div class="details line4">
+                                {{ item.province }}{{ item.city }}{{ item.area }}{{ item.address }}
+                            </div>
+                            <i class="iconfont icon-xuanzhong4 font-color" v-if="addressId === item.id">&#xeb0e;</i>
+                        </div>
+                    </template>
+
+                    <div class="item add" @click="addAddress()">
+                        <i class="iconfont">&#xe621;</i>
+                        <div class="tip">添加新地址</div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="wrapper">
+                <div class="title">订单信息</div>
+                <div class="order">
+                    <div class="list" v-if="cartList">
+
+                        <div class="item acea-row row-between-wrapper" v-for="(item,index) in cartList" :key="index">
+                            <div class="txtPic acea-row row-middle">
+                                <div class="pictrue"><img :src="item.goods.thumb"></div>
+                                <div class="text">
+                                    <div class="name line2">{{item.goods.title}}</div>
+                                    <div class="info">单位：{{item.goods.unit}}</div>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="money">¥{{item.goods.marketprice}}</span>
+                                <span class="num">x{{ item.total }}</span>
+                                <span class="font-color"> {{ Number((item.total * item.goods.marketprice).toFixed(2)) }}</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="coupon message acea-row">
+                        <div class="msgTitle">买家留言</div>
+                        <textarea placeholder="填写内容与商家协商并确认，限150字内~" maxlength="150" class="textarea" v-model="remark"></textarea>
+                    </div>
+
+                </div>
+
+                <div class="totalCon">
+                    <div class="total acea-row row-middle row-right">
+                        <div><span class="font-color">{{ sumTotal }} </span>件商品，总商品金额：</div>
+                        <div class="money">¥{{sumPrice}}</div>
+                    </div>
+                </div>
+
+                <div class="totalAmount">
+                    应付总额：<span class="money font-color">¥{{sumPrice}}</span>
+                </div>
+                <div class="bnt acea-row row-right">
+                    <a class="submit bg-color" @click="submitOrder()">
+                        提交订单
+                    </a>
+                </div>
+            </div>
+
+            <!-- 地址模板 start -->
+            <app-address-dialog :show="dialogShow" @confirm="confirmAddress" @cancel="cancelAddress"></app-address-dialog>
+            <!-- 地址模板 end -->
+
+        </div>
+
+    </div>
+
+</div>
+
+{/block}
+
+{block name="script"}
+<script>
+    require(['vue', 'h7.axios'], (Vue, axios) => {
+
+        new Vue({
+            el: '#orderConfirm',
+            data: {
+                dialogShow: false,
+
+                cartList: null,
+                addressList: null,
+
+                cartIds: "{$cartIds}",
+                addressId: 0,
+                remark: "",
+
+                sumTotal: 0,
+                sumPrice: 0.00,
+            },
+            computed: {},
+            mounted() {
+                this.$nextTick(() => {
+                    this.getCartList();
+                    this.getAddressList();
+                });
+            },
+            methods: {
+                submitOrder() {
+                    let url = "{:url('order/create')}";
+                    axios.post(url, {id: 0, type: 1, total: this.sumTotal, addressId: this.addressId, cartIds: this.cartIds, remark: this.remark}).then((res) => {
+                        location.href = "{:url('order/payment')}" + "?ordersn=" + res.ordersn;
+                    });
+                },
+
+                async getCartList() {
+                    new Promise((resolve, reject) => {
+                        let url = "{:url('cart/list')}";
+                        axios.post(url).then((res) => {
+                            this.cartList = res.cartList;
+                            this.changeSelectAll();
+                        });
+                    });
+                },
+
+                changeSelectAll() {
+                    let sumTotal = 0;
+                    let sumPrice = 0.00;
+                    this.cartList.map(item => {
+                        sumTotal++;
+                        sumPrice += Number((item.goods.marketprice * item.total).toFixed(2));
+                    });
+                    this.sumTotal = sumTotal;
+                    this.sumPrice = sumPrice;
+                },
+
+                selectAddress(item) {
+                    this.addressId = item.id
+                },
+                async getAddressList() {
+                    new Promise((resolve, reject) => {
+                        let url = "{:url('address/list')}";
+                        axios.post(url, {}).then((res) => {
+                            this.addressList = res.addressList || [];
+                            if (this.addressList.length > 0 && this.addressId <= 0) {
+                                this.addressList.map(item => {
+                                    if (item.isdefault) {
+                                        this.addressId = item.id
+                                    }
+                                })
+                            }
+                        });
+                    });
+                },
+                addAddress() {
+                    this.dialogShow = true
+                },
+                confirmAddress(o) {
+                    // console.log('confirmAddress',o.addressId);
+                    this.dialogShow = false;
+                    this.getAddressList();
+                    this.addressId = o.addressId;
+                },
+                cancelAddress() {
+                    this.dialogShow = false;
+                    this.getAddressList();
+                },
+
+            }
+        });
+
+    });
+</script>
+{/block}

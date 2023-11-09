@@ -1,0 +1,115 @@
+{extend name="pc/common/_base" /}
+
+{block name="title"}
+<title>{$teacherInfo['name']}-{$teacherInfo['sub_name']}-{$website['title']}</title>
+{/block}
+
+{block name="style"}
+<link rel="stylesheet" href="{$moduleAttachUrl}/static/css/teacher.css">
+<link rel="stylesheet" href="{$moduleAttachUrl}/static/components/swiper/swiper.min.css">
+{/block}
+
+{block name="main"}
+
+{include file="pc/components/tags-goods-list" /}
+
+<section>
+    <div class="teacher-main">
+
+        <!-- 轮播图 -->
+        {if !empty($advList)}
+        <div class="bk"></div>
+        <div class="bgfff">
+            <div class="swiper">
+                <div class="swiper-wrapper">
+                    {volist name="advList" id="row"}
+                    <a class="swiper-slide" href="{if !empty($row['link'])}{:url($row['link'])}{else}javascript:;{/if}"><img src="{$row['thumb']}" alt="{$row['title']}" onerror="this.src='{$moduleAttachUrl}/static/images/bk.jpg'"></a>
+                    {/volist}
+                </div>
+                {if count($advList) > 1}
+                <div class="swiper-pagination"></div>
+                {/if}
+            </div>
+        </div>
+        {/if}
+        <!-- 轮播图 end -->
+
+        <div class="container">
+
+            <div class="teacher-info-block">
+
+                <div class="teacher-info flex-column-center">
+                    <div class="teacher-avatar">
+                        <img src="{$teacherInfo['avatar']}" alt="{$teacherInfo['name']}" class="avatar">
+                    </div>
+                    <div class="teacher-name">{$teacherInfo['name']}</div>
+                    <div class="teacher-desc">{$teacherInfo['description'] | raw}</div>
+                    <a class="teacher-collect">
+                        <span class="iconfont">&#xe617;</span>
+                        <span class="name">收藏</span>
+                    </a>
+                </div>
+
+                {if !empty($teacherInfo['content'])}
+                <div class="teacher-content">
+                    {$teacherInfo['content']|raw}
+                </div>
+                {/if}
+
+            </div>
+
+            <div class="goods-list-bloack">
+
+                <!-- 内容列表 -->
+                <div id="tags-goods-list-main" v-cloak>
+                    <tags-goods-list :teacherid="teacherid" :title="'相关作品'"></tags-goods-list>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+{/block}
+
+{block name="script"}
+<script>
+    require(['jquery.lazyload'], function () {
+        $("img").lazyload({effect: "fadeIn", threshold: 180, failure_limit: 50});
+    });
+
+    require(['jquery', 'swiper'], function ($, Swiper) {
+        new Swiper('.swiper', {
+            autoplay: true, // 自动播放
+            speed: 1000, // 滑动速度
+            grabCursor: true, // 鼠标小手
+            loop: true,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            on: {
+                init: function () {
+
+                },
+                slideChangeTransitionEnd: function () {
+                    let activeIndex = this.activeIndex;
+                    let url = $(this.slides[activeIndex]).children()[0].getAttribute('src');
+                    $(".bk").css('background-image', "url(" + url + ")");
+                }
+            }
+        });
+    });
+
+    require(['vue', 'h7.axios'], (Vue) => {
+        new Vue({
+            el: '#tags-goods-list-main',
+            data: {
+                teacherid: "{$id}"
+            },
+            methods: {}
+        });
+    });
+</script>
+{/block}

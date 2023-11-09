@@ -1,0 +1,80 @@
+{extend name="pc/common/_base" /}
+
+{block name="title"}
+<title>我的优惠券-{$website['title']}</title>
+{/block}
+
+{block name="style"}
+<link rel="stylesheet" href="{$moduleAttachUrl}/static/css/user.css">
+{/block}
+
+{block name="main"}
+<section>
+    <div class="user-center-main user-coupon">
+
+        <div class="container">
+
+            <div class="user-inner flex">
+
+                <!-- 左侧菜单 -->
+                <div class="user-aside">
+                    {include file="pc/user/tpl/menu" /}
+                </div>
+
+                <!-- 右侧菜单 -->
+                <div class="user-main">
+
+                    <div class="sub-title">
+                        <span>我的优惠券</span>
+                    </div>
+
+                    <div class="content">
+
+<!--                        <div class="list flex-wrap">-->
+
+<!--                            <div class="item flex-wrap disabled">-->
+<!--                                <div class="text">-->
+<!--                                    <div class="label">品类券</div>-->
+<!--                                    <div class="text-cont flex-wrap flex-center">-->
+<!--                                        <div class="money">-->
+<!--                                            ￥<span class="num">100</span>-->
+<!--                                        </div>-->
+<!--                                        <div class="info">-->
+<!--                                            <div class="name">361品类券</div>-->
+<!--                                            <div class="sub-name">满101可用</div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="time">有效时间：2023/03/28-2023/04/02</div>-->
+<!--                                </div>-->
+<!--                                <div class="btn-tip flex-wrap flex-center">-->
+<!--                                    已过期-->
+<!--                                </div>-->
+<!--                            </div>-->
+
+<!--                        </div>-->
+
+                        {php}$emptyImg = $moduleAttachUrl . "/static/images/noCoupou.png";{/php}
+                        {php}$emptyTip = "亲，暂无可用的优惠券哟~";{/php}
+                        {include file="pc/common/_empty"/}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+</section>
+{/block}
+
+{block name="script"}
+<script>
+    require(['jquery', 'tip'], ($) => {
+        // tip.confirm("请输入意见内容");
+        // tip.alert("请输入意见内容");
+    });
+</script>
+{/block}

@@ -1,0 +1,165 @@
+{extend name="pc/common/_base" /}
+
+{block name="title"}
+<title>检索-{$website['title']}</title>
+{/block}
+
+{block name="style"}
+<link rel="stylesheet" href="{$moduleAttachUrl}/static/css/search.css">
+<style>
+    .ant-tabs-nav {
+        position: relative;
+        display: flex;
+        flex: none;
+        align-items: center;
+        margin: 20px 0;
+    }
+
+    .ant-tabs-nav-wrap {
+        position: relative;
+        display: flex;
+        flex: auto;
+        align-self: stretch;
+        white-space: nowrap;
+        transform: translate(0);
+        justify-content: center;
+    }
+
+    .ant-tabs-nav-list {
+        transition: transform .3s;
+    }
+
+    .ant-tabs-tab {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        background: transparent;
+        border: 0;
+        outline: none;
+        cursor: pointer;
+        padding: 16px 0;
+        font-size: 16px;
+    }
+
+    .ant-tabs-tab + .ant-tabs-tab {
+        margin: 0 0 0 32px;
+    }
+
+    .ant-tabs-tab-btn {
+        outline: none;
+        transition: all .3s;
+    }
+
+    .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+        color: var(--primary-main-color);
+        text-shadow: 0 0 .25px currentColor;
+    }
+
+    .ant-tabs-ink-bar {
+        height: 2px;
+        position: absolute;
+        background: var(--primary-main-color);
+        pointer-events: none;
+        transition: width .3s, left .3s, right .3s;
+    }
+</style>
+{/block}
+
+{block name="nav"}{/block}
+
+{block name="main"}
+
+{include file='pc/search/_nav'}
+
+{include file="pc/components/tags-goods-list" /}
+
+{include file="pc/components/app-teacher-list" /}
+
+<section>
+
+    <div class="container">
+
+        <!-- 内容列表 -->
+        <div id="tags-goods-list-main" v-cloak>
+
+            <div role="tablist" class="ant-tabs-nav">
+                <div class="ant-tabs-nav-wrap">
+                    <div class="ant-tabs-nav-list" style="transform: translate(0px, 0px);">
+
+                        {foreach $menuList as $key => $row}
+                        <div class="ant-tabs-tab" :class="tabIndex === {$key} ? 'ant-tabs-tab-active' : ''" @click="changeTab($event,'{$key}','{$row[\'title\']}','{$row[\'styleType\']}')">
+                            <div role="tab" aria-selected="true" class="ant-tabs-tab-btn" tabindex="0" id="rc-tabs-1-tab-suha" aria-controls="rc-tabs-1-panel-suha">{$row['title']}({$row['total']})</div>
+                        </div>
+                        {/foreach}
+
+                        <div class="ant-tabs-ink-bar ant-tabs-ink-bar-animated" :style="{left: tabLeft + 'px',width: '68px'}"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div v-show="parseInt(styleType) === 5">
+                <app-teacher-list :title="'艺术家'" :keyword="keyword" ref="appTeacherList"></app-teacher-list>
+            </div>
+            <div v-show="parseInt(styleType) !== 5">
+                <tags-goods-list :tagsid="tagsid" :title="title" :styletype="styleType" :keyword="keyword" ref="tagsGoodsList" :isshowempty="true"></tags-goods-list>
+            </div>
+
+        </div>
+        <!-- 内容列表 end -->
+
+    </div>
+
+</section>
+
+{/block}
+
+{block name="script"}
+<script>
+    require(['vue', 'h7.axios'], (Vue) => {
+        new Vue({
+            el: '#tags-goods-list-main',
+            data: {
+                title: "名家典藏",
+                styleType: 1,
+                keyword: "{$keyword}",
+                tagsid: 1,
+                tabIndex: 0,
+                tabLeft: 0
+            },
+            created() {
+                this.$nextTick(() => {
+
+                });
+            },
+            methods: {
+                changeTab(event, index, title, styleType = 1) {
+                    this.tabIndex = parseInt(index);
+                    this.title = title;
+                    this.styleType = styleType;
+
+                    const parentParentElement = event.target.parentNode.parentNode;
+                    const parentElement = event.target.parentNode;
+
+                    const parentParentRect = parentParentElement.getBoundingClientRect();
+                    const x0 = parseFloat(parentParentRect.left.toFixed(2));
+
+                    // 获取父级元素的左上角位置
+                    const parentRect = parentElement.getBoundingClientRect();
+                    const x = parseFloat(parentRect.left.toFixed(2));
+
+                    this.tabLeft = x - x0;
+
+                    if (parseInt(styleType) === 5) {
+                        this.$refs.appTeacherList.reloadTeacherList();
+                    } else {
+                        this.tagsid = styleType;
+                        this.$refs.tagsGoodsList.reloadGoodsList(styleType);
+                    }
+
+                }
+            }
+        });
+    });
+</script>
+{/block}
+

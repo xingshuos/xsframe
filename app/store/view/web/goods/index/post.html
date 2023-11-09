@@ -1,0 +1,371 @@
+{extend name="../../admin/view/public/admin"}
+{block name='content'}
+<style>
+    .input-string-width {
+        width: 200px;
+    }
+
+    .region-goods {
+        background: #f8f8f8;
+        margin-bottom: 10px;
+        padding: 0 10px;
+    }
+
+    .region-goods-left {
+    }
+
+    .region-goods-right {
+        border-left: 3px solid #fff;
+        padding: 10px 10px;
+    }
+
+    .region-inner {
+        text-align: center;
+        font-weight: bold;
+        color: #333;
+        font-size: 14px;
+        padding: 20px 0;
+    }
+
+    .pointer{
+        cursor: pointer;
+    }
+</style>
+
+<div class="page-header">
+    当前位置：<span>首页</span><span class="icon icon-angle-double-right" style="margin: 0 5px"></span><span>商品管理</span><span class="icon icon-angle-double-right" style="margin: 0 5px"></span><span>发布商品</span>
+</div>
+
+<div class="page-content">
+
+    <div class="row">
+        <div class="col-md-12" style="margin-bottom: 50px;">
+
+            <ul class="nav nav-tabs" id="myTab" style="width:100%;display: flex;">
+                <li id="basic_li" class="{if $_GET['tab']=='basic' || empty($_GET['tab'])}active{/if}" data-type="basic" style="flex: 1; text-align: center"><a href="#tab_basic">编辑基本信息</a></li>
+
+                <li id="specs_li" class="{if $_GET['tab']=='specs'}active{/if}" data-type="specs" style="flex: 1; text-align: center;{if $item['type'] == 2}display: none;{/if}"><a href="#tab_specs">规格/库存</a></li>
+
+                <li class="{if $_GET['tab']=='param'}active{/if}" data-type="param"><a href="#tab_param">参数</a></li>
+
+                <li id="chapters_li" class="{if $_GET['tab']=='chapters'}active{/if}" data-type="chapters" style="flex: 1; text-align: center;{if $item['type'] == 1 || empty($_GET['id'])}display: none;{/if}"><a href="#tab_chapters">课程目录</a></li>
+
+                <li id="detail_li" class="{if $_GET['tab']=='detail'}active{/if}" data-type="detail" style="flex: 1; text-align: center" class=""><a href="#tab_detail">编辑商品详情</a></li>
+            </ul>
+
+            <form action="" method="post" enctype="multipart/form-data" class="form-horizontal form-validate">
+                <input type="hidden" id="tab" name="tab" value="{if empty($_GET['tab'])}#tab_basic{else}#tab_{$_GET['tab']}{/if}" />
+                <div class="tab-content">
+
+                    <input type="hidden" name="id" value="{$_GET['id']}">
+                    <input type="hidden" id="tab" value="list">
+
+                    <div class="tab-pane {if $_GET['tab']=='basic' || empty($_GET['tab'])}active{/if}" id="tab_basic">
+                            <div class="panel-body region-goods row">
+                                <div class="col-md-2 region-goods-left">
+                                    <div class="region-inner">基本信息</div>
+                                </div>
+                                <div class="col-md-10 region-goods-right">
+                                    <div class="form-group row">
+                                        <label class="col-sm control-label must">商品名称</label>
+                                        <div class="col-md-10">
+                                            <div class="col-sm-8" style="padding:0;">
+                                                <input type="text" name="goodsname" id="goodsname" class="form-control" value="{$item['title']}" data-rule-required="true"/>
+                                            </div>
+                                            <div class="col-sm-2" style="padding-left:5px">
+                                                <input type="text" name="unit" id="unit" class="form-control" value="{$item['unit']}" placeholder="单位, 如: 个/件/包"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm control-label">副标题</label>
+                                        <div class="col-sm-8 subtitle">
+                                            <textarea id="" name="subtitle" id="subtitle" rows="5" class="form-control" data-parent=".subtitle" maxlength="100" data-rule-maxlength="100">{$item['subtitle']}</textarea>
+                                            <div class="help-block">副标题的长度请控制在100字以内</div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm control-label">关键字</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" name="keywords" class="form-control" value="{$item['keywords']}"/>
+                                            <div class="help-block">商品关键字,能准确搜到商品的,比如 : 文玩|书法|国画 之类的</div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm control-label">商品类型</label>
+                                        <div class="col-md-10">
+                                            <input type="hidden" name="goodstype" value="{$item['type']}">
+                                            <label class="radio-inline"><input type="radio" name="type" value="1" {if !empty($item['id'])}disabled{/if} {if empty($item['type']) || $item['type'] == 1} checked="true"{/if} /> 实体商品</label>
+                                            <label class="radio-inline"><input type="radio" name="type" value="2" {if !empty($item['id'])}disabled{/if} {if $item['type'] == 2} checked="true"{/if} /> 线上课程</label>
+                                            <span class="help-block">商品类型，商品保存后无法修改，请谨慎选择</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-sm control-label">艺术家</label>
+                                        <div class="col-md-10">
+                                            <select name='teacherid' class="form-control">
+                                                <option value="0">选择艺术家</option>
+                                                {foreach $teacherList as $key => $teacher}
+                                                <option value="{$teacher['id']}" {if $teacher['id'] == $item['teacherid']}selected{/if} >{$teacher['name']}</option>
+                                                {/foreach}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm control-label must">标签组</label>
+                                    <div class="col-md-10">
+                                        <select id="tags_id" name='tags_id' class="form-control" style='width:605px;'>
+                                            <option value="0"  {if empty($item['tags_id'])}selected{/if}>请选择</option>
+                                            {foreach $tags as $key => $tag}
+                                            <option value="{$tag['id']}" {if $item['tags_id'] == $tag['id']}selected{/if} >{$tag['name']}</option>
+                                            {/foreach}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-sm control-label">商品分类</label>
+                                        <div class="col-md-10">
+                                            <select id="cates" name='cates[]' class="form-control select2" style='width:605px;' multiple=''>
+                                                {foreach $category as $key => $c}
+                                                <option value="{$c['id']}" {if is_array($cates) && in_array($c['id'],$cates)}selected{/if} >{$c['name']}</option>
+                                                {/foreach}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-sm control-label must">商品主图</label>
+                                        <div class="col-md-9">
+                                            {:tpl_form_field_image('thumb',$item['thumb'])}
+                                            <span class="help-block">商品主图就是列表中用户看到的图片</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-sm control-label"></label>
+                                        <div class="col-md-10">
+                                            <label class="checkbox-inline"><input type="checkbox" name="thumb_first" value="1" {if $item['thumb_first'] == 1}checked="true"{/if}/> 详情显示首图</label>
+                                            <span class="help-block"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-sm control-label">商品附图</label>
+                                        <div class="col-md-9 gimgs">
+                                            {:tpl_form_field_multi_image('thumbs',$picList)}
+                                            <span class="help-block image-block">建议为正方型图片，商品详情页中展示的其他图片，保持图片大小一致</span>
+                                            <span class="help-block">您可以拖动图片改变其显示顺序 </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-sm control-label">作品原图</label>
+                                        <div class="col-md-9">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control valid" name="thumb_original" id="thumb_original" readonly="readonly" value="{$thumbOriginal['thumb']}" placeholder="上传作品原始图片" autocomplete="off" aria-invalid="false">
+                                                <input type="hidden" name="thumb_original_width" id="thumb_original_width" value="{$thumbOriginal['width']}">
+                                                <input type="hidden" name="thumb_original_height" id="thumb_original_height" value="{$thumbOriginal['height']}">
+                                                <input type="hidden" name="thumb_original_size" id="thumb_original_size" value="{$thumbOriginal['size']}">
+                                                <span class="input-group-btn">
+                                                    <button class="btn btn-primary" type="button" onclick="ajaxModel(this)" data-url="{:webUrl('web.goods.uploadPicture/index',array('goodsid'=>$id))}">选择图片</button>
+                                                </span>
+                                            </div>
+                                            <span class="help-block">如果当前商品是艺术家作品，请上传作品大尺寸图片（图片大小不超过10MB） </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm control-label">商品属性</label>
+                                        <div class="col-md-10">
+                                            <label for="isrecommand" class="checkbox-inline">
+                                                <input type="checkbox" name="isrecommand" value="1" id="isrecommand" {if $item['isrecommand'] == 1}checked="true"{/if}/> 推荐
+                                            </label>
+                                            <label for="isnew" class="checkbox-inline">
+                                                <input type="checkbox" name="isnew" value="1" id="isnew" {if $item['isnew'] == 1}checked="true"{/if}/> 新品
+                                            </label>
+                                            <label for="ishot" class="checkbox-inline">
+                                                <input type="checkbox" name="ishot" value="1" id="ishot" {if $item['ishot'] == 1}checked="true"{/if}/> 热卖
+                                            </label>
+
+                                            <label for="issendfree" class="checkbox-inline">
+                                                <input type="checkbox" name="issendfree" value="1" id="issendfree" {if $item['issendfree'] == 1}checked="true"{/if}/> 包邮
+                                            </label>
+
+                                            <span class="help-block">有助于商品的排序和展示 </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-body region-goods row">
+                                <div class="col-md-2 region-goods-left">
+                                    <div class="region-inner">商品信息</div>
+                                </div>
+                                <div class="col-md-10 region-goods-right ">
+
+                                    <div class="form-group row goodsPrice">
+                                        <label class="col-sm control-label must">商品价格</label>
+                                        <div class="col-md-6">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">售价</span>
+                                                <input type="text" name="marketprice" id="marketprice" class="form-control" value="{$item['marketprice']}" data-rule-required="true"/>
+                                                <span class="input-group-addon">元 原价</span>
+                                                <input type="text" name="originalprice" id="originalprice" class="form-control" value="{$item['originalprice']}"/>
+                                                <span class="input-group-addon">元</span>
+                                            </div>
+                                            <span class='help-block'>尽量填写完整，有助于于商品销售的数据分析</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" style="display: none;">
+                                        <label class="col-sm control-label"></label>
+                                        <div class="col-sm-10">
+                                            <label class="checkbox-inline" {if $item['type'] == 2}style="display:none;"{/if}>
+                                            <input type="checkbox" name="cash" value="2" {if $item['cash'] =='2'}checked="true"{/if} /> 支持货到付款
+                                            </label>
+                                            <label class="checkbox-inline">
+                                                <input type="checkbox" name="invoice" value="1" {if !empty($item['invoice'])}checked="true"{/if}/> 支持发票
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-sm control-label">上架</label>
+                                        <div class="col-sm-10">
+                                            <label class="radio-inline"><input type="radio" name="status" value="0" {if empty($item['status'])}checked="true"{/if} /> 否</label>
+                                            <label class="radio-inline"><input type="radio" name="status" value="1" {if $item['status'] == 1}checked="true"{/if}/> 上架</label>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    <!--商品规格-->
+                    <div class="tab-pane {if $_GET['tab']=='specs'}active{/if}" {if $item['type'] == 2}style="display:none;"{/if} id="tab_specs">
+                        <div class="panel-body region-goods">{include file='web/goods/index/tab/option'}</div>
+                    </div>
+
+                    <!--商品参数-->
+                    <div class="tab-pane {if $_GET['tab']=='param'}active{/if}" {if $item['type'] == 3}style="display:none;"{/if} id="tab_param">
+                        <div class="panel-body region-goods">{include file='web/goods/index/tab/param'}</div>
+                    </div>
+
+                    <!--课程章节-->
+                    <div class="tab-pane {if $_GET['tab']=='chapters'}active{/if}" {if $item['type'] == 1}style="display:none;"{/if} id="tab_chapters">
+                        <div class="panel-body region-goods" style='padding:0;'>{include file='web/goods/index/tab/chapters'}</div>
+                    </div>
+
+                    <!--商品详情-->
+                    <div class="tab-pane {if $_GET['tab']=='detail'}active{/if}" id="tab_detail">
+                        <div class="panel-body region-goods">
+                            <div class="col-md-2 region-goods-left">
+                                <div class="region-inner">商品详情</div>
+                            </div>
+                            <div class="col-md-10 region-goods-right">
+                                <div class="form-group row">
+                                    <div class="col-md-10">
+                                        {:tpl_ueditor('content',$item['content'],array('height'=>'300'))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-footer col-md-12">
+                    <input type="submit" value="保存商品" class="btn btn-primary btn-lg"/>
+                    <a href="javascript:void(0);" class="btn btn-default btn-lg" onclick='history.back()' style='margin-left:10px;'>返回列表</a>
+                </div>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    require(['jquery.ui'], function () {
+        $('.multi-img-details').sortable({scroll: 'false'});
+    });
+
+    require(['bootstrap'], function () {
+        $('#myTab a').click(function (e) {
+            $('#tab').val( $(this).attr('href'));
+            e.preventDefault();
+            $(this).tab('show');
+        })
+    });
+
+    $(function () {
+
+        /*
+        * 商品类型选择
+        * */
+        $("input[name=type]").off("click").on("click", function () {
+            let goodsType = $(this).val();
+
+            if (goodsType == 1) { // 实体商品
+                $("#specs_li").show();
+                $("#chapters_li").hide();
+                // $("#selectTeacher").hide();
+            } else {
+                if (goodsType == 2) { // 课程
+                    $("#specs_li").hide();
+                    $("#chapters_li").show();
+                    // $("#selectTeacher").show();
+                }
+            }
+        });
+
+        $('form').submit(function(){
+            let goodsname = $("#goodsname").val();
+            let thumb = $("input[name='thumb']").val();
+            let marketprice = parseFloat($("#marketprice").val()).toFixed(2);
+
+            $('form').attr('stop',0);
+
+            if (goodsname == undefined) {
+                $('#myTab a[href="#tab_basic"]').tab('show');
+                $('form').attr('stop',1);
+                $(this).focus(),$('form').attr('stop',1),tip.msgbox.err('请填写商品名称!');
+                return false;
+            }
+
+            if (thumb == undefined) {
+                $('#myTab a[href="#tab_basic"]').tab('show');
+                $('form').attr('stop',1);
+                $(this).focus(),$('form').attr('stop',1),tip.msgbox.err('请填写商品图片!');
+                return false;
+            }
+
+            if (marketprice <= 0 || isNaN(marketprice)) {
+                $('#myTab a[href="#tab_basic"]').tab('show');
+                $('form').attr('stop',1);
+                $(this).focus(),$('form').attr('stop',1),tip.msgbox.err('请填写商品售价!');
+                return false;
+            }
+        });
+
+        require(['jquery.ui'], function () {
+            $('#chapters').sortable({
+                stop: function () {
+                    refreshOptions();
+                }
+            });
+            $('.chapter_item_items').sortable(
+                {
+                    handle: '.fa-arrows',
+                    stop: function () {
+                        refreshOptions();
+                    }
+                }
+            );
+        });
+
+    });
+</script>
+{/block}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>{$title}</title>
+    <meta name="keywords" content="{$keywords}">
+    <meta name="description" content="{$description}">
+
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="{$moduleAttachUrl}/static/components/bootstrap/bootstrap.min.css">
+
+    <link rel="stylesheet" href="{$moduleAttachUrl}/static/css/common.css">
+
+    <script type="text/javascript" src="{$moduleAttachUrl}/static/js/require.js"></script>
+    <script src="{$moduleAttachUrl}/static/js/config.js"></script>
+
+    <script type="text/javascript">
+        if (navigator.appName === 'Microsoft Internet Explorer') {
+            if (navigator.userAgent.indexOf("MSIE 5.0") > 0 || navigator.userAgent.indexOf("MSIE 6.0") > 0 || navigator.userAgent.indexOf("MSIE 7.0") > 0) {
+                alert('您使用的 IE 浏览器版本过低, 推荐使用 Chrome 浏览器或 IE8 及以上版本浏览器.')
+            }
+        }
+        if (window.console) {
+            console.groupCollapsed('%c星数为来数字化开发引擎', 'color:#2d8cf0; font-size: 28px; font-weight: 300');
+            console.log('%chttps://xsframe.cn\n-------------\nQQ交流群(一):832904316, QQ交流群(二): 744718382', 'color:#2d8cf0');
+            console.groupEnd();
+        }
+    </script>
+
+    {block name="style"}{/block}
+</head>
+
+<body>
+    <noscript><strong>Please enable JavaScript to continue.</strong></noscript>
+
+    {block name="nav"}
+        {include file='pc/common/_nav'}
+    {/block}
+
+    <main class="content">
+        {block name="main"}{/block}
+    </main>
+
+    {block name="footer"}
+        {include file='pc/common/_footer'}
+    {/block}
+
+    {block name="script"}{/block}
+</body>
+
+</html>

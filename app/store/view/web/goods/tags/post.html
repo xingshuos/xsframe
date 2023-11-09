@@ -1,0 +1,120 @@
+{extend name="../../admin/view/public/admin"}
+
+{block name='content'}
+
+<div class="page-header">
+    当前位置：<span class="text-primary">{if !empty($item)}编辑{else}新建{/if}商品标签
+    	<small>{if !empty($item)}(名称: {$item['name']}){/if}</small>
+    </span>
+</div>
+
+<div class="page-content">
+    <div class="page-sub-toolbar">
+		<span class=''>
+            <a class="btn btn-primary btn-sm" href="{:webUrl('web.goods.category/add')}">添加新标签</a>
+		</span>
+    </div>
+    <form action="" method="post" class="form-horizontal form-validate" enctype="multipart/form-data" >
+
+    {if !empty($item['id'])}
+    <div class="form-group">
+        <label class="col-sm-2 control-label">标签链接(点击复制)</label>
+        <div class="col-sm-9 col-xs-12">
+            <div class='form-control-static'>
+                <a class=" js-clip" data-url="gcate/{$item['id']}" title='复制链接'>gcate/{$item['id']}</a>
+            </div>
+        </div>
+    </div>
+    {/if}
+
+    {if !empty($parentid)}
+    <div class="form-group">
+        <label class="col-sm-2 control-label">上级标签</label>
+        <div class="col-sm-9 col-xs-12 control-label" style="text-align:left;">
+            {if !empty($parent1)}{$parent1['name']} >> {/if}
+            {$parent['name']}
+        </div>
+    </div>
+    {/if}
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">排序</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type="text" name="displayorder" class="form-control" value="{$item['displayorder']}"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label must">标签名称</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type="text" name="name" class="form-control" value="{$item['name']}" data-rule-required='true'/>
+        </div>
+    </div>
+
+    {if empty($parentid)}
+<!--        <div class="form-group">-->
+<!--            <label class="col-sm-2 control-label">标签描述</label>-->
+<!--            <div class="col-sm-9 col-xs-12">-->
+<!--                <textarea name="description" id="" rows="4" class="form-control">{$item['description']}</textarea>-->
+<!--            </div>-->
+<!--        </div>-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">展示类型</label>
+            <div class="col-sm-9 col-xs-12">
+                <label class='radio-inline'>
+                    <input type='radio' name='style_type' value='1' {if $item['style_type']==1 || empty($item['style_type'])}checked{/if} /> 名家典藏
+                </label>
+                <label class='radio-inline'>
+                    <input type='radio' name='style_type' value='2' {if $item['style_type']==2}checked{/if} /> 限量版
+                </label>
+                <label class='radio-inline'>
+                    <input type='radio' name='style_type' value='3' {if $item['style_type']==3}checked{/if} /> 鹿隐版
+                </label>
+                <label class='radio-inline'>
+                    <input type='radio' name='style_type' value='4' {if $item['style_type']==4}checked{/if} /> 雅集
+                </label>
+            </div>
+        </div>
+    {else /}
+        {if $parent['style_type'] == 3}
+            <div class="form-group">
+                <label class="col-sm-2 control-label">标签图标(默认)</label>
+                <div class="col-sm-9 col-xs-12">
+                    {:tpl_form_field_image('thumb', $item['thumb'])}
+                    <span class="help-block">建议尺寸: 100*100，或正方型图片 </span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">标签图标(选中)</label>
+                <div class="col-sm-9 col-xs-12">
+                    {:tpl_form_field_image('thumb_sel', $item['thumb_sel'])}
+                    <span class="help-block">建议尺寸: 100*100，或正方型图片 </span>
+                </div>
+            </div>
+        {/if}
+    {/if}
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">是否显示</label>
+        <div class="col-sm-9 col-xs-12">
+            <label class='radio-inline'>
+                <input type='radio' name='enabled' value='1' {if $item['enabled']==1}checked{/if} /> 是
+            </label>
+            <label class='radio-inline'>
+                <input type='radio' name='enabled' value='0' {if $item['enabled']==0}checked{/if} /> 否
+            </label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label"></label>
+        <div class="col-sm-9 col-xs-12">
+            <input type="submit" value="提交" class="btn btn-primary"/>
+            <input type="button" name="back" onclick='history.back()' style='margin-left:10px;' value="返回列表" class="btn btn-default"/>
+        </div>
+    </div>
+
+    </form>
+</div>
+
+
+{/block}

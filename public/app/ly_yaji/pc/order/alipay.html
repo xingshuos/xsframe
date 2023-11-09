@@ -1,0 +1,108 @@
+{extend name="pc/common/_base" /}
+
+{block name="title"}
+<title>支付宝支付-{$website['title']}</title>
+{/block}
+
+{block name="style"}
+<link rel="stylesheet" href="{$moduleAttachUrl}/static/css/pay.css">
+{/block}
+
+{block name="main"}
+<div class="payment-pay">
+
+    <div class="container">
+
+        <!-- 面包屑 -->
+        <div class="bread-crumb row">
+            <div class="detail-path">
+                <a href="{:url('/')}">首页</a>
+                <i class="icon iconfont">&#xe603;</i>
+                <span>确认订单</span>
+                <i class="icon iconfont">&#xe603;</i>
+                <span>订单支付</span>
+                <i class="icon iconfont">&#xe603;</i>
+                <span>订单编号：{$ordersn}</span>
+            </div>
+        </div>
+        <!-- 面包屑end -->
+
+        <div class="wrapper">
+            <div class="title flex flex-between">
+                <div>支付宝支付</div>
+                <div class="amount">应付金额：<span class="num font-color">{$price}</span>元</div>
+            </div>
+            <div class="flex flex-center">
+                <div class="wx">
+                    <div class="pictrue flex-center">
+                        {if !empty($codeUrl)}
+                            <iframe src="{$codeUrl}" frameborder="0" class="bicode" width="280" height="280" scrolling="no"></iframe>
+                        {else}
+                            <div>参数错误</div>
+                        {/if}
+                    </div>
+                    <div class="text ali-text flex flex-center">
+                        <div class="iconfont icon-saoyisao"></div>
+                        <div>
+                            <div>请使用支付宝扫一扫</div>
+                            <div class="tip">扫描二维码支付</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="phone"><img src="{$moduleAttachUrl}/static/images/alipay.png"></div>
+            </div>
+            <div class="selectPay flex" onclick="history.back()"><span class="iconfont">&#xeb15;</span>选择其他支付方式</div>
+        </div>
+
+    </div>
+
+</div>
+
+{/block}
+
+{block name="script"}
+<script>
+    let timer = null;
+    require(['jquery'], ($) => {
+
+        $(() => {
+            require(['jquery.qrcode'], () => {
+                $(".bicode").qrcode({
+                    render: "canvas",
+                    text: "{$codeUrl}",
+                    width: "260",   // 宽度
+                    height: "260",  // 高度
+                    typeNumber: -1, // 计算模式
+                    correctLevel: 2,// 二维码纠错级别
+                    background: "#ffffff",// 背景颜色
+                    foreground: "#333333" // 二维码颜色
+                });
+            });
+
+            doTimer();
+
+            function doTimer() {
+                timer = setTimeout(() => {
+                    orderCheck();
+                    clearTimeout(timer)
+                }, 3000)
+            }
+
+            function orderCheck() {
+                require(['ajax'], () => {
+                    // 轮训请求订单支付情况
+                    let url = "{:url('order/check')}";
+                    ajax.post(url, {ordersn: "{$ordersn}"}, (json) => {
+                        // console.log('res', json.data.isPay);
+                        if (json.data.isPay) {
+                            location.href = json.data.url;
+                        } else {
+                            doTimer();
+                        }
+                    });
+                });
+            }
+        });
+    });
+</script>
+{/block}

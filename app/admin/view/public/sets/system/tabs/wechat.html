@@ -1,0 +1,13 @@
+<div class="form-group">
+    <label class="col-lg control-label must">AppID</label>
+    <div class="col-sm-9 col-xs-12">
+        <input type='text' value="{$accountSettings['wechat']['appid']}" name='data[wechat][appid]' class="form-control" data-rule-required='true' {if !empty($accountSettings['wechat']['appid'])}readonly ondblclick="this.readOnly=false" οnchange="this.readOnly=true" data-toggle="tooltip" data-placement="top" data-original-title="双击修改"{/if}/>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-lg control-label must">AppSecret</label>
+    <div class="col-sm-9 col-xs-12">
+        <input type='text' value="{$accountSettings['wechat']['secret']}" name='data[wechat][secret]' class="form-control" data-rule-required='true' {if !empty($accountSettings['wechat']['secret'])}readonly ondblclick="this.readOnly=false" οnchange="this.readOnly=true" data-toggle="tooltip" data-placement="top" data-original-title="双击修改"{/if}/>
+    </div>
+</div>

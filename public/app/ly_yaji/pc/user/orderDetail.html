@@ -1,0 +1,277 @@
+{extend name="pc/common/_base" /}
+
+{block name="title"}
+<title>订单详情-{$website['title']}</title>
+{/block}
+
+{block name="style"}
+<link rel="stylesheet" href="{$moduleAttachUrl}/static/css/order_detail.css">
+{/block}
+
+{block name="main"}
+<section>
+    <div class="content-main">
+
+        <div class="container">
+
+            <div class="order-detail" id="orderDetailWrapper" v-cloak>
+                <div class="section process bag-f">
+                    <div class="section-hd">
+                        订单状态：{{ orderInfo.status_val }}
+                    </div>
+
+                    <div class="section-bd">
+                        <ul>
+                            <template v-if="parseInt(orderInfo.service_type) === 1">
+                                <li class="old" :class="{'now':parseInt(orderInfo.status) >= 0}">
+                                    <div class="line"></div>
+                                    <div class="iconfont">&#xe627;</div>
+                                    <div class="iconfont">
+                                        &#xe627;<div class="arrow" :style="parseInt(orderInfo.status) > 0 ? 'width:214px' : ''"></div>
+                                    </div>
+                                    <div class="info">
+                                        <div>待付款</div>
+                                        <div>{{ orderInfo.createtime }}</div>
+                                    </div>
+                                </li>
+                                <li class="old" :class="{'now':parseInt(orderInfo.status) === 1}">
+                                    <div class="line"></div>
+                                    <div class="iconfont">&#xe707;</div>
+                                    <div class="iconfont">
+                                        &#xe707;<div class="arrow"></div>
+                                    </div>
+                                    <div class="info">
+                                        <div>待发货</div>
+                                        <div>{{ orderInfo.paytime }}</div>
+                                    </div>
+                                </li>
+                                <li class="old" :class="{'now':parseInt(orderInfo.status) >= 2}">
+                                    <div class="line"></div>
+                                    <div class="iconfont">&#xe602;</div>
+                                    <div class="iconfont icon-fahuo">
+                                        &#xe602;<div class="arrow"></div>
+                                    </div>
+                                    <div class="info">
+                                        <div>待收货</div>
+                                        <div></div>
+                                    </div>
+                                </li>
+                                <li class="old" :class="{'now':parseInt(orderInfo.status) >= 3}">
+                                    <div class="line"></div>
+                                    <div class="iconfont">&#xe608;</div>
+                                    <div class="iconfont">
+                                        &#xe608;<div class="arrow"></div>
+                                    </div>
+                                    <div class="info">
+                                        <div>待评价</div>
+                                        <div></div>
+                                    </div>
+                                </li>
+                                <li class="old" :class="{'now':parseInt(orderInfo.status) >= 3}">
+                                    <div class="iconfont">&#xe616;</div>
+                                    <div class="iconfont">&#xe616;</div>
+                                    <div class="info">
+                                        <div>已完成</div>
+                                        <div></div>
+                                    </div>
+                                </li>
+                            </template>
+
+                            <template v-if="parseInt(orderInfo.service_type) === 2">
+                                <li class="old" :class="{'now':parseInt(orderInfo.status) >= 0}">
+                                    <div class="line" style="width: 851px;"></div>
+                                    <div class="iconfont">&#xe627;</div>
+                                    <div class="iconfont">
+                                        &#xe627;<div class="arrow" :style="parseInt(orderInfo.status) > 0 ? 'width:850px' : 'width:400px'"></div>
+                                    </div>
+                                    <div class="info">
+                                        <div>待付款</div>
+                                        <div>{{ orderInfo.createtime }}</div>
+                                    </div>
+                                </li>
+                                <li class="old" :class="{'now':parseInt(orderInfo.status) === 1}" style="margin-left: 850px;">
+                                    <div class="iconfont">&#xe62a;</div>
+                                    <div class="iconfont">
+                                        &#xe689;
+                                    </div>
+                                    <div class="info">
+                                        <div>已支付</div>
+                                        <div>{{ orderInfo.paytime }}</div>
+                                    </div>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </div>
+                <div class="section bag-f">
+                    <div class="section-hd">订单信息</div>
+                    <div class="section-bd">
+                        <ul>
+                            <li class="flex-wrap flex-center">
+                                <div>订单编号：</div>
+                                <div>{{ orderInfo.ordersn }}</div>
+                            </li>
+                            <li class="flex-wrap flex-center">
+                                <div>订单日期：</div>
+                                <div>{{ orderInfo.createtime }}</div>
+                            </li>
+                            <li class="flex-wrap flex-center">
+                                <div>支付状态：</div>
+                                <div>{{ orderInfo.status_val }}</div>
+                            </li>
+                            <li class="flex-wrap flex-center">
+                                <div>支付方式：</div>
+                                <div>{{ orderInfo.paytype_val }}</div>
+                            </li>
+                            <li class="flex-wrap flex-center">
+                                <div>订单金额：</div>
+                                <div class="money">￥0.01</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="section bag-f" v-if="parseInt(orderInfo.service_type) === 1">
+                    <div class="section-hd">收货信息</div>
+                    <div class="section-bd">
+                        <ul>
+                            <li class="flex-wrap flex-center">
+                                <div>收货人：</div>
+                                <div>{{ orderInfo.orderData.address.realname }}</div>
+                            </li>
+                            <li class="flex-wrap flex-center">
+                                <div>联系电话：</div>
+                                <div>{{ orderInfo.orderData.address.mobile }}</div>
+                            </li>
+                            <li class="flex-wrap">
+                                <div>收货地址：</div>
+                                <div>{{ orderInfo.orderData.address.province }} {{ orderInfo.orderData.address.city }} {{ orderInfo.orderData.address.area }} {{ orderInfo.orderData.address.address }}</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="section bag-f">
+                    <div class="section-hd">商品信息</div>
+                    <div class="section-bd">
+
+                        <ul class="goods">
+
+                            <template v-if="parseInt(orderInfo.service_type) === 1">
+                                <li class="flex-wrap flex-center" v-for="(item,index) in orderInfo.orderGoods" :key="index">
+                                    <div class="goods-thumb"><img :src="item.goods.thumb"></div>
+                                    <div>
+                                        <div>{{ item.goods.title }}</div>
+                                        <div class="info">
+                                            <span class="cart-num">x{{ item.total }}</span></div>
+                                        <div class="pice">
+                                            <div><span class="money">￥{{ item.price }}</span>
+                                                <del>￥{{ item.goods.originalprice }}</del>
+                                            </div>
+                                            <div class="pice-btn">
+                                                <div class="split_btn"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </template>
+
+                            <template v-if="parseInt(orderInfo.service_type) === 2">
+                                <li class="flex-wrap flex-center">
+                                    <div class="course-thumb"><img :src="orderInfo.goods.thumb"></div>
+                                    <div>
+                                        <div>{{ orderInfo.goods.title }}</div>
+                                        <div class="pice">
+                                            <div><span class="money">￥{{ orderInfo.course.price }}</span>
+                                                <del>￥{{ orderInfo.goods.marketprice }}</del>
+                                            </div>
+                                            <div class="pice-btn">
+                                                <div class="split_btn"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </template>
+
+                        </ul>
+
+                        <!--<ul v-if="parseInt(orderInfo.service_type) === 1">
+                            <li class="flex-wrap flex-center">
+                                <div>运费：</div>
+                                <div>
+                                    包邮
+                                </div>
+                            </li>
+                        </ul>-->
+
+                        <ul class="total">
+                            <li class="flex-wrap flex-center flex-between">
+                                <div>
+                                    <span v-if="parseInt(orderInfo.service_type) === 1">共{{ orderInfo.orderTotal }}件商品，</span>订单总金额为：<span class="money">￥<b>{{ orderInfo.price }}</b></span></div>
+                                <div class="footerState flex-wrap flex-center">
+                                    <div class="orderBnt" @click="cancelOrder(orderInfo.ordersn)" v-if="orderInfo.status === 0">
+                                        取消订单
+                                    </div>
+                                    <div class="orderBnt on" @click="payOrder(orderInfo.ordersn)" v-if="orderInfo.status === 0">
+                                        立即付款
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+{/block}
+
+{block name="script"}
+<script>
+    require(['vue', 'h7.axios', 'jquery', 'tip'], (Vue, axios, $) => {
+
+        new Vue({
+            el: '#orderDetailWrapper',
+            data: {
+                ordersn: "{$ordersn}",
+                orderInfo: [],
+                orderData: null,
+            },
+            mounted() {
+                this.getOrderDetail();
+            },
+            methods: {
+                cancelOrder(ordersn) {
+                    tip.confirm("确认要取消该订单么?", () => {
+                        let url = "{:url('order/cancel')}";
+                        axios.post(url, {ordersn: ordersn}).then((res) => {
+                            this.orderInfo.status = '-1';
+                            this.orderInfo.status_val = '已关闭';
+                        });
+                    });
+                },
+                payOrder(ordersn) {
+                    location.href = "{:url('order/payment')}?ordersn=" + ordersn;
+                },
+                getOrderDetail() {
+                    let url = "{:url('order/detail')}";
+                    axios.post(url, {ordersn: this.ordersn}).then((res) => {
+                        this.orderInfo = res.orderInfo || [];
+                        this.getOrderData();
+                    });
+                },
+                async getOrderData() {
+                    new Promise((resolve, reject) => {
+                        let url = "{:url('order/data')}";
+                        axios.post(url, {orderid: this.orderInfo.id}).then((res) => {
+                            this.orderData = res.orderData || {};
+                        });
+                    });
+                },
+            }
+        });
+
+    });
+</script>
+{/block}

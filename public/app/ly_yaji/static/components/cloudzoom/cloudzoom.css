@@ -1,0 +1,52 @@
+/*
+ Cloud Zoom CSS. (c)2012-2013 Star Plugins.
+*/
+
+/* CSS for lens */
+.cloudzoom-lens {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #eee;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.20);
+    cursor: crosshair;
+    z-index: 10;
+}
+/* CSS for zoom window. */
+.cloudzoom-zoom {
+    background: #fff;
+    border: 1px solid #EEE;
+    width: 360px;
+    height: 360px;
+    z-index: 200;
+    box-shadow: 0 8px 16px 0 rgba(7, 17, 27, 0.05);
+}
+
+/* CSS for zoom window in 'inside' mode. */
+.cloudzoom-zoom-inside {
+    border: none;
+    box-shadow: none;
+}
+
+/* CSS for captions */
+.cloudzoom-caption {
+    display: none;
+    text-align: center;
+    background-color: #fff7d1;
+    color: #FF5C4D;
+    top: 20px;
+    font-weight: bold;
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+/* A blank image */
+.cloudzoom-blank {
+    background-image: url(blank.png);
+}
+
+/* The animated ajax loading image */
+.cloudzoom-ajax-loader {
+    background-image: url(ajax-loader.gif);
+    width: 32px;
+    height: 32px;
+}

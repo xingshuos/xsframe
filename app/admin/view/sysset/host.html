@@ -1,0 +1,249 @@
+{extend name="../../admin/view/public/admin"}
+
+{block name='content'}
+
+<div class="page-header">当前位置：<span class="text-primary">域名管理</span></div>
+
+<div class="page-content">
+
+    {if $action == 'host'}
+
+        <form action="" method="get" class="form-horizontal form-search" role="form">
+
+            <div class="page-toolbar">
+                <div class="pull-left">
+                    <a class='btn btn-primary btn-sm' href="{:webUrl('admin/sysset/hostEdit')}"><i class='fa fa-plus'></i> 添加域名</a>
+                </div>
+                <div class="pull-right col-md-8">
+                    <div class="input-group">
+                        <div class="input-group-select">
+                            <select name="uniacid" class='form-control'>
+                                <option value="0" {if empty($_GET['uniacid'])}selected{/if}>选择项目</option>
+                                {foreach $accountList as $key => $row}
+                                <option value="{$row['uniacid']}" {if $row['uniacid']==$_GET['uniacid']}selected{/if}>{$row['name']}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                        <input type="text" class="form-control" name='keyword' value="{$_GET['keyword']}" placeholder="请输入域名查询"/>
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary" type="submit"> 搜索</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        {if empty($list)}
+        <div class="panel panel-default">
+            <div class="panel-body empty-data">未查询到相关数据</div>
+        </div>
+        {else}
+        <form action="" method="post">
+            <table class="table table-responsive table-hover">
+                <thead class="navbar-inner">
+                <tr>
+                    <th style="width:50px;"></th>
+                    <th style='width:100px'>顺序</th>
+                    <th style='width:120px'>域名</th>
+                    <th style='width:120px'>指定项目</th>
+                    <th style='width:120px;'>默认应用</th>
+                    <th style="width: 100px;">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $list as $key => $row}
+                <tr>
+                    <td>
+                        <input type='checkbox' value="{$row['id']}"/>
+                    </td>
+                    <td class='full'>
+                        <a href='javascript:;' data-toggle="ajaxEdit" data-href="{:webUrl('admin/sysset/hostChange',array('type'=>'displayorder','id'=>$row['id']))}">{$row['displayorder']}</a>
+                        <i class="icow icow-weibiaoti-- " data-toggle="ajaxEdit2"></i>
+                    </td>
+                    <td>
+                        {$row['host_url']}
+                    </td>
+                    <td>
+                        {$row['account']['name']}（{$row['account']['uniacid']}）
+                    </td>
+                    <td>
+                        {$row['module']['name']}（{$row['default_module'] ? $row['default_module'] : '未设置'}）
+                    </td>
+                    <td style="text-align:left;">
+                        <a href="{:webUrl('admin/sysset/hostEdit', array('id' => $row['id']))}" class="btn btn-op btn-operation">
+                            <span data-toggle="tooltip" data-placement="top" data-original-title="修改">
+                                <i class='icow icow-bianji2'></i>
+                            </span>
+                        </a>
+                        <a data-toggle='ajaxRemove' href="{:webUrl('admin/sysset/hostDelete', array('id' => $row['id']))}" class="btn btn-op btn-operation" data-confirm='确认要删除此域名吗?'>
+                            <span data-toggle="tooltip" data-placement="top" data-original-title="删除">
+                                <i class='icow icow-shanchu1'></i>
+                            </span>
+                        </a>
+                    </td>
+                </tr>
+                {/foreach}
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td colspan="3">
+                        <div class="btn-group">
+                            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('admin/sysset/hostChange',array('type' => 'deleted','value'=>1))}">
+                                <i class='icow icow-shanchu1'></i> 删除
+                            </button>
+                        </div>
+                    </td>
+                    <td colspan="2" style="text-align: right">
+                        {$pager | raw}
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+        </form>
+        {/if}
+    {/if}
+
+    {if $action == 'hostedit'}
+
+        <div class="page-content">
+
+            <form action="" method="post" class="form-validate form-horizontal ">
+                <input type="hidden" name="id" value="{$item['id']}"/>
+                <div class="form-group">
+                    <label class="col-lg control-label must">排序</label>
+                    <div class="col-sm-9 col-xs-12">
+                        <input type="text" name="displayorder" class="form-control" value="{:intval($item['displayorder'])}" data-rule-required='true'/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg control-label must">域名</label>
+                    <div class="col-sm-9 col-xs-12">
+                        <input type="text" name="host_url" class="form-control" value="{$item['host_url']}"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg control-label must">项目</label>
+                    <div class="col-sm-9 col-xs-12">
+                        <select name="uniacid" class='form-control' id="selectUniacid">
+                            <option value="0" {if empty($_GET['uniacid'])}selected{/if}>选择项目</option>
+                            {foreach $accountList as $key => $row}
+                            <option value="{$row['uniacid']}" {if $row['uniacid']==$item['uniacid']}selected{/if}>{$row['name']}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-lg control-label">默认应用</label>
+                    <div class="col-sm-9">
+                        <div class="form-group" style="height: auto; display: block;">
+                            <div class="col-sm-12 col-xs-12">
+                                <div class="input-group">
+                                    <input type="text" id="goodsid_text" name="goodsid_text" value="" class="form-control text" readonly="">
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-primary select_modules" type="button">选择应用</button>
+                                    </div>
+                                </div>
+                                <div class="input-group multi-img-details container ui-sortable goods_show">
+                                    {if !empty($modules)}
+                                    {foreach $modules as $k => $g}
+                                    <div class="multi-item" data-id="{$g['id']}" data-name="goodsid" id="{$g['id']}">
+                                        <img class="img-responsive img-thumbnail" src="{$g['logo']}" onerror="this.src='/app/admin/static/images/nopic.png'" style="width:100px;height:100px;">
+                                        <div class="img-nickname">{$g['name']}</div>
+                                        <input type="hidden" value="{$g['identifie']}" name="modulesids[]">
+                                        <em onclick="remove({$g['id']})" class="close">×</em>
+                                        <div style="clear:both;"></div>
+                                    </div>
+                                    {/foreach}
+                                    {/if}
+                                </div>
+
+                                <script>
+                                    // 多图片排序问题
+                                    require(['jquery.ui'],function(){
+                                        $('.multi-img-details').sortable({scroll:'false'});
+                                        $('.multi-img-details').sortable('option', 'scroll', false);
+                                    })
+                                    $(function(){
+                                        var title = '';
+                                        $('.img-nickname').each(function(){
+                                            title += $(this).html()+';';
+                                        });
+                                        $('#goodsid_text').val(title);
+                                    });
+                                    require(['js/web/module_selector','tip'],function (Gselector) {
+                                        $('.select_modules').click(function () {
+                                            let ids = select_modules_ids();
+                                            let uniacid = $("#selectUniacid").val();
+                                            if( parseInt(uniacid) > 0 ){
+                                                Gselector.open('modules_show','',0,true,'../util/accountModuleSelector?uniacid=' + uniacid,ids);
+                                            }else{
+                                                tip.msgbox.err("请先选择项目");
+                                            }
+                                        });
+                                    });
+                                    function modules_show(data) {
+                                        // console.log('data',data);
+                                        if(data.act == 1){
+                                            var html = '<div class="multi-item" data-id="'+data.id+'" data-name="goodsid" id="'+data.id+'">'
+                                                +'<img class="img-responsive img-thumbnail" src="'+data.logo+'" onerror="this.src=\'/app/admin/static/images/nopic.png\'" style="width:100px;height:100px;">'
+                                                +'<div class="img-nickname">'+data.name+'</div>'
+                                                +'<input type="hidden" value="'+data.identifie+'" name="default_module">'
+                                                +'<em onclick="removeHtml('+data.id+')" class="close">×</em>'
+                                                +'</div>';
+
+                                            $('.goods_show').append(html);
+                                            var title = '';
+                                            $('.img-nickname').each(function(){
+                                                title += $(this).html()+';';
+                                            });
+                                            $('#goodsid_text').val(title);
+                                        }else if(data.act == 0){
+                                            remove(data.id);
+                                        }
+                                    }
+                                    function removeHtml(id){
+                                        $("[id='"+id+"']").remove();
+                                        var title = '';
+                                        $('.img-nickname').each(function(){
+                                            title += $(this).html()+';';
+                                        });
+                                        $('#goodsid_text').val(title);
+                                    }
+                                    function remove(id){
+                                        $("[id='"+id+"']").remove();
+                                        var title = '';
+                                        $('.img-nickname').each(function(){
+                                            title += $(this).html()+';';
+                                        });
+                                        $('#goodsid_text').val(title);
+                                    }
+                                    function select_modules_ids(){
+                                        var goodsids = [];
+                                        $(".multi-item").each(function(){
+                                            goodsids.push($(this).attr('data-id'));
+                                        });
+                                        return goodsids;
+                                    }
+                                </script>
+                                <span class="help-block">第一次访问默认访问该应用</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-lg control-label"></label>
+                    <div class="col-sm-9">
+                        <input type="submit" class="btn btn-primary" value="保存">
+                        <a class="btn btn-default" href="{:webUrl('admin/sysset/host')}">返回列表</a>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    {/if}
+</div>
+
+{/block}

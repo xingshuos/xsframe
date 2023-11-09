@@ -1,0 +1,420 @@
+{extend name="../../admin/view/public/admin"}
+
+
+{block name='style'}
+<style type="text/css">
+    .icon-ul, .icon-li {
+        padding: 0;
+        margin: 0;
+        list-style: none
+    }
+
+    .icon-li {
+        float: left;
+        width: 190px;
+        /*height: 80px;*/
+
+        background: #f7f7f7;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        margin-right: 20px;
+        margin-bottom: 20px;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    .icon-li i {
+        height: 40px;
+        line-height: 40px;
+        font-size: 30px;
+    }
+
+    .icon-li span {
+        width: 100%;
+        height: 30px;
+        line-height: 30px;
+        font-size: 16px;
+        cursor: pointer;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: center;
+    }
+</style>
+{/block}
+
+{block name='content'}
+<div class="page-header">当前位置：<span class="text-primary">系统图标</span></div>
+<div class="alert alert-primary">
+    <p>图标使用：Font Awesome 3.2.0</p>
+</div>
+<div class="page-content">
+    <ul class="icon-ul">
+        <li class="icon-li js-clip" data-url="icon-glass"><i class="icon icon-glass"></i><span>icon-glass</span></li>
+        <li class="icon-li js-clip" data-url="icon-music"><i class="icon icon-music"></i><span>icon-music</span></li>
+        <li class="icon-li js-clip" data-url="icon-search"><i class="icon icon-search"></i><span>icon-search</span></li>
+        <li class="icon-li js-clip" data-url="icon-envelope-alt"><i class="icon icon-envelope-alt"></i><span>icon-envelope-alt</span></li>
+        <li class="icon-li js-clip" data-url="icon-heart"><i class="icon icon-heart"></i><span>icon-heart</span></li>
+        <li class="icon-li js-clip" data-url="icon-star"><i class="icon icon-star"></i><span>icon-star</span></li>
+        <li class="icon-li js-clip" data-url="icon-star-empty"><i class="icon icon-star-empty"></i><span>icon-star-empty</span></li>
+        <li class="icon-li js-clip" data-url="icon-user"><i class="icon icon-user"></i><span>icon-user</span></li>
+        <li class="icon-li js-clip" data-url="icon-film"><i class="icon icon-film"></i><span>icon-film</span></li>
+        <li class="icon-li js-clip" data-url="icon-th-large"><i class="icon icon-th-large"></i><span>icon-th-large</span></li>
+        <li class="icon-li js-clip" data-url="icon-th"><i class="icon icon-th"></i><span>icon-th</span></li>
+        <li class="icon-li js-clip" data-url="icon-th-list"><i class="icon icon-th-list"></i><span>icon-th-list</span></li>
+        <li class="icon-li js-clip" data-url="icon-ok"><i class="icon icon-ok"></i><span>icon-ok</span></li>
+        <li class="icon-li js-clip" data-url="icon-remove"><i class="icon icon-remove"></i><span>icon-remove</span></li>
+        <li class="icon-li js-clip" data-url="icon-zoom-in"><i class="icon icon-zoom-in"></i><span>icon-zoom-in</span></li>
+        <li class="icon-li js-clip" data-url="icon-zoom-out"><i class="icon icon-zoom-out"></i><span>icon-zoom-out</span></li>
+        <li class="icon-li js-clip" data-url="icon-off"><i class="icon icon-off"></i><span>icon-off</span></li>
+        <li class="icon-li js-clip" data-url="icon-signal"><i class="icon icon-signal"></i><span>icon-signal</span></li>
+        <li class="icon-li js-clip" data-url="icon-cog"><i class="icon icon-cog"></i><span>icon-cog</span></li>
+        <li class="icon-li js-clip" data-url="icon-trash"><i class="icon icon-trash"></i><span>icon-trash</span></li>
+        <li class="icon-li js-clip" data-url="icon-home"><i class="icon icon-home"></i><span>icon-home</span></li>
+        <li class="icon-li js-clip" data-url="icon-file-alt"><i class="icon icon-file-alt"></i><span>icon-file-alt</span></li>
+        <li class="icon-li js-clip" data-url="icon-time"><i class="icon icon-time"></i><span>icon-time</span></li>
+        <li class="icon-li js-clip" data-url="icon-road"><i class="icon icon-road"></i><span>icon-road</span></li>
+        <li class="icon-li js-clip" data-url="icon-download-alt"><i class="icon icon-download-alt"></i><span>icon-download-alt</span></li>
+        <li class="icon-li js-clip" data-url="icon-download"><i class="icon icon-download"></i><span>icon-download</span></li>
+        <li class="icon-li js-clip" data-url="icon-upload"><i class="icon icon-upload"></i><span>icon-upload</span></li>
+        <li class="icon-li js-clip" data-url="icon-inbox"><i class="icon icon-inbox"></i><span>icon-inbox</span></li>
+        <li class="icon-li js-clip" data-url="icon-play-circle"><i class="icon icon-play-circle"></i><span>icon-play-circle</span></li>
+        <li class="icon-li js-clip" data-url="icon-repeat"><i class="icon icon-repeat"></i><span>icon-repeat</span></li>
+        <li class="icon-li js-clip" data-url="icon-refresh"><i class="icon icon-refresh"></i><span>icon-refresh</span></li>
+        <li class="icon-li js-clip" data-url="icon-list-alt"><i class="icon icon-list-alt"></i><span>icon-list-alt</span></li>
+        <li class="icon-li js-clip" data-url="icon-lock"><i class="icon icon-lock"></i><span>icon-lock</span></li>
+        <li class="icon-li js-clip" data-url="icon-flag"><i class="icon icon-flag"></i><span>icon-flag</span></li>
+        <li class="icon-li js-clip" data-url="icon-headphones"><i class="icon icon-headphones"></i><span>icon-headphones</span></li>
+        <li class="icon-li js-clip" data-url="icon-volume-off"><i class="icon icon-volume-off"></i><span>icon-volume-off</span></li>
+        <li class="icon-li js-clip" data-url="icon-volume-down"><i class="icon icon-volume-down"></i><span>icon-volume-down</span></li>
+        <li class="icon-li js-clip" data-url="icon-volume-up"><i class="icon icon-volume-up"></i><span>icon-volume-up</span></li>
+        <li class="icon-li js-clip" data-url="icon-qrcode"><i class="icon icon-qrcode"></i><span>icon-qrcode</span></li>
+        <li class="icon-li js-clip" data-url="icon-barcode"><i class="icon icon-barcode"></i><span>icon-barcode</span></li>
+        <li class="icon-li js-clip" data-url="icon-tag"><i class="icon icon-tag"></i><span>icon-tag</span></li>
+        <li class="icon-li js-clip" data-url="icon-tags"><i class="icon icon-tags"></i><span>icon-tags</span></li>
+        <li class="icon-li js-clip" data-url="icon-book"><i class="icon icon-book"></i><span>icon-book</span></li>
+        <li class="icon-li js-clip" data-url="icon-bookmark"><i class="icon icon-bookmark"></i><span>icon-bookmark</span></li>
+        <li class="icon-li js-clip" data-url="icon-print"><i class="icon icon-print"></i><span>icon-print</span></li>
+        <li class="icon-li js-clip" data-url="icon-camera"><i class="icon icon-camera"></i><span>icon-camera</span></li>
+        <li class="icon-li js-clip" data-url="icon-font"><i class="icon icon-font"></i><span>icon-font</span></li>
+        <li class="icon-li js-clip" data-url="icon-bold"><i class="icon icon-bold"></i><span>icon-bold</span></li>
+        <li class="icon-li js-clip" data-url="icon-italic"><i class="icon icon-italic"></i><span>icon-italic</span></li>
+        <li class="icon-li js-clip" data-url="icon-text-height"><i class="icon icon-text-height"></i><span>icon-text-height</span></li>
+        <li class="icon-li js-clip" data-url="icon-text-width"><i class="icon icon-text-width"></i><span>icon-text-width</span></li>
+        <li class="icon-li js-clip" data-url="icon-align-left"><i class="icon icon-align-left"></i><span>icon-align-left</span></li>
+        <li class="icon-li js-clip" data-url="icon-align-center"><i class="icon icon-align-center"></i><span>icon-align-center</span></li>
+        <li class="icon-li js-clip" data-url="icon-align-right"><i class="icon icon-align-right"></i><span>icon-align-right</span></li>
+        <li class="icon-li js-clip" data-url="icon-align-justify"><i class="icon icon-align-justify"></i><span>icon-align-justify</span></li>
+        <li class="icon-li js-clip" data-url="icon-list"><i class="icon icon-list"></i><span>icon-list</span></li>
+        <li class="icon-li js-clip" data-url="icon-indent-left"><i class="icon icon-indent-left"></i><span>icon-indent-left</span></li>
+        <li class="icon-li js-clip" data-url="icon-indent-right"><i class="icon icon-indent-right"></i><span>icon-indent-right</span></li>
+        <li class="icon-li js-clip" data-url="icon-facetime-video"><i class="icon icon-facetime-video"></i><span>icon-facetime-video</span></li>
+        <li class="icon-li js-clip" data-url="icon-picture"><i class="icon icon-picture"></i><span>icon-picture</span></li>
+        <li class="icon-li js-clip" data-url="icon-pencil"><i class="icon icon-pencil"></i><span>icon-pencil</span></li>
+        <li class="icon-li js-clip" data-url="icon-map-marker"><i class="icon icon-map-marker"></i><span>icon-map-marker</span></li>
+        <li class="icon-li js-clip" data-url="icon-adjust"><i class="icon icon-adjust"></i><span>icon-adjust</span></li>
+        <li class="icon-li js-clip" data-url="icon-tint"><i class="icon icon-tint"></i><span>icon-tint</span></li>
+        <li class="icon-li js-clip" data-url="icon-edit"><i class="icon icon-edit"></i><span>icon-edit</span></li>
+        <li class="icon-li js-clip" data-url="icon-share"><i class="icon icon-share"></i><span>icon-share</span></li>
+        <li class="icon-li js-clip" data-url="icon-check"><i class="icon icon-check"></i><span>icon-check</span></li>
+        <li class="icon-li js-clip" data-url="icon-move"><i class="icon icon-move"></i><span>icon-move</span></li>
+        <li class="icon-li js-clip" data-url="icon-step-backward"><i class="icon icon-step-backward"></i><span>icon-step-backward</span></li>
+        <li class="icon-li js-clip" data-url="icon-fast-backward"><i class="icon icon-fast-backward"></i><span>icon-fast-backward</span></li>
+        <li class="icon-li js-clip" data-url="icon-backward"><i class="icon icon-backward"></i><span>icon-backward</span></li>
+        <li class="icon-li js-clip" data-url="icon-play"><i class="icon icon-play"></i><span>icon-play</span></li>
+        <li class="icon-li js-clip" data-url="icon-pause"><i class="icon icon-pause"></i><span>icon-pause</span></li>
+        <li class="icon-li js-clip" data-url="icon-stop"><i class="icon icon-stop"></i><span>icon-stop</span></li>
+        <li class="icon-li js-clip" data-url="icon-forward"><i class="icon icon-forward"></i><span>icon-forward</span></li>
+        <li class="icon-li js-clip" data-url="icon-fast-forward"><i class="icon icon-fast-forward"></i><span>icon-fast-forward</span></li>
+        <li class="icon-li js-clip" data-url="icon-step-forward"><i class="icon icon-step-forward"></i><span>icon-step-forward</span></li>
+        <li class="icon-li js-clip" data-url="icon-eject"><i class="icon icon-eject"></i><span>icon-eject</span></li>
+        <li class="icon-li js-clip" data-url="icon-chevron-left"><i class="icon icon-chevron-left"></i><span>icon-chevron-left</span></li>
+        <li class="icon-li js-clip" data-url="icon-chevron-right"><i class="icon icon-chevron-right"></i><span>icon-chevron-right</span></li>
+        <li class="icon-li js-clip" data-url="icon-plus-sign"><i class="icon icon-plus-sign"></i><span>icon-plus-sign</span></li>
+        <li class="icon-li js-clip" data-url="icon-minus-sign"><i class="icon icon-minus-sign"></i><span>icon-minus-sign</span></li>
+        <li class="icon-li js-clip" data-url="icon-remove-sign"><i class="icon icon-remove-sign"></i><span>icon-remove-sign</span></li>
+        <li class="icon-li js-clip" data-url="icon-ok-sign"><i class="icon icon-ok-sign"></i><span>icon-ok-sign</span></li>
+        <li class="icon-li js-clip" data-url="icon-question-sign"><i class="icon icon-question-sign"></i><span>icon-question-sign</span></li>
+        <li class="icon-li js-clip" data-url="icon-info-sign"><i class="icon icon-info-sign"></i><span>icon-info-sign</span></li>
+        <li class="icon-li js-clip" data-url="icon-screenshot"><i class="icon icon-screenshot"></i><span>icon-screenshot</span></li>
+        <li class="icon-li js-clip" data-url="icon-remove-circle"><i class="icon icon-remove-circle"></i><span>icon-remove-circle</span></li>
+        <li class="icon-li js-clip" data-url="icon-ok-circle"><i class="icon icon-ok-circle"></i><span>icon-ok-circle</span></li>
+        <li class="icon-li js-clip" data-url="icon-ban-circle"><i class="icon icon-ban-circle"></i><span>icon-ban-circle</span></li>
+        <li class="icon-li js-clip" data-url="icon-arrow-left"><i class="icon icon-arrow-left"></i><span>icon-arrow-left</span></li>
+        <li class="icon-li js-clip" data-url="icon-arrow-right"><i class="icon icon-arrow-right"></i><span>icon-arrow-right</span></li>
+        <li class="icon-li js-clip" data-url="icon-arrow-up"><i class="icon icon-arrow-up"></i><span>icon-arrow-up</span></li>
+        <li class="icon-li js-clip" data-url="icon-arrow-down"><i class="icon icon-arrow-down"></i><span>icon-arrow-down</span></li>
+        <li class="icon-li js-clip" data-url="icon-share-alt"><i class="icon icon-share-alt"></i><span>icon-share-alt</span></li>
+        <li class="icon-li js-clip" data-url="icon-resize-full"><i class="icon icon-resize-full"></i><span>icon-resize-full</span></li>
+        <li class="icon-li js-clip" data-url="icon-resize-small"><i class="icon icon-resize-small"></i><span>icon-resize-small</span></li>
+        <li class="icon-li js-clip" data-url="icon-plus"><i class="icon icon-plus"></i><span>icon-plus</span></li>
+        <li class="icon-li js-clip" data-url="icon-minus"><i class="icon icon-minus"></i><span>icon-minus</span></li>
+        <li class="icon-li js-clip" data-url="icon-asterisk"><i class="icon icon-asterisk"></i><span>icon-asterisk</span></li>
+        <li class="icon-li js-clip" data-url="icon-exclamation-sign"><i class="icon icon-exclamation-sign"></i><span>icon-exclamation-sign</span></li>
+        <li class="icon-li js-clip" data-url="icon-gift"><i class="icon icon-gift"></i><span>icon-gift</span></li>
+        <li class="icon-li js-clip" data-url="icon-leaf"><i class="icon icon-leaf"></i><span>icon-leaf</span></li>
+        <li class="icon-li js-clip" data-url="icon-fire"><i class="icon icon-fire"></i><span>icon-fire</span></li>
+        <li class="icon-li js-clip" data-url="icon-eye-open"><i class="icon icon-eye-open"></i><span>icon-eye-open</span></li>
+        <li class="icon-li js-clip" data-url="icon-eye-close"><i class="icon icon-eye-close"></i><span>icon-eye-close</span></li>
+        <li class="icon-li js-clip" data-url="icon-warning-sign"><i class="icon icon-warning-sign"></i><span>icon-warning-sign</span></li>
+        <li class="icon-li js-clip" data-url="icon-plane"><i class="icon icon-plane"></i><span>icon-plane</span></li>
+        <li class="icon-li js-clip" data-url="icon-calendar"><i class="icon icon-calendar"></i><span>icon-calendar</span></li>
+        <li class="icon-li js-clip" data-url="icon-random"><i class="icon icon-random"></i><span>icon-random</span></li>
+        <li class="icon-li js-clip" data-url="icon-comment"><i class="icon icon-comment"></i><span>icon-comment</span></li>
+        <li class="icon-li js-clip" data-url="icon-magnet"><i class="icon icon-magnet"></i><span>icon-magnet</span></li>
+        <li class="icon-li js-clip" data-url="icon-chevron-up"><i class="icon icon-chevron-up"></i><span>icon-chevron-up</span></li>
+        <li class="icon-li js-clip" data-url="icon-chevron-down"><i class="icon icon-chevron-down"></i><span>icon-chevron-down</span></li>
+        <li class="icon-li js-clip" data-url="icon-retweet"><i class="icon icon-retweet"></i><span>icon-retweet</span></li>
+        <li class="icon-li js-clip" data-url="icon-shopping-cart"><i class="icon icon-shopping-cart"></i><span>icon-shopping-cart</span></li>
+        <li class="icon-li js-clip" data-url="icon-folder-close"><i class="icon icon-folder-close"></i><span>icon-folder-close</span></li>
+        <li class="icon-li js-clip" data-url="icon-folder-open"><i class="icon icon-folder-open"></i><span>icon-folder-open</span></li>
+        <li class="icon-li js-clip" data-url="icon-resize-vertical"><i class="icon icon-resize-vertical"></i><span>icon-resize-vertical</span></li>
+        <li class="icon-li js-clip" data-url="icon-resize-horizontal"><i class="icon icon-resize-horizontal"></i><span>icon-resize-horizontal</span></li>
+        <li class="icon-li js-clip" data-url="icon-bar-chart"><i class="icon icon-bar-chart"></i><span>icon-bar-chart</span></li>
+        <li class="icon-li js-clip" data-url="icon-twitter-sign"><i class="icon icon-twitter-sign"></i><span>icon-twitter-sign</span></li>
+        <li class="icon-li js-clip" data-url="icon-facebook-sign"><i class="icon icon-facebook-sign"></i><span>icon-facebook-sign</span></li>
+        <li class="icon-li js-clip" data-url="icon-camera-retro"><i class="icon icon-camera-retro"></i><span>icon-camera-retro</span></li>
+        <li class="icon-li js-clip" data-url="icon-key"><i class="icon icon-key"></i><span>icon-key</span></li>
+        <li class="icon-li js-clip" data-url="icon-cogs"><i class="icon icon-cogs"></i><span>icon-cogs</span></li>
+        <li class="icon-li js-clip" data-url="icon-comments"><i class="icon icon-comments"></i><span>icon-comments</span></li>
+        <li class="icon-li js-clip" data-url="icon-thumbs-up-alt"><i class="icon icon-thumbs-up-alt"></i><span>icon-thumbs-up-alt</span></li>
+        <li class="icon-li js-clip" data-url="icon-thumbs-down-alt"><i class="icon icon-thumbs-down-alt"></i><span>icon-thumbs-down-alt</span></li>
+        <li class="icon-li js-clip" data-url="icon-star-half"><i class="icon icon-star-half"></i><span>icon-star-half</span></li>
+        <li class="icon-li js-clip" data-url="icon-heart-empty"><i class="icon icon-heart-empty"></i><span>icon-heart-empty</span></li>
+        <li class="icon-li js-clip" data-url="icon-signout"><i class="icon icon-signout"></i><span>icon-signout</span></li>
+        <li class="icon-li js-clip" data-url="icon-linkedin-sign"><i class="icon icon-linkedin-sign"></i><span>icon-linkedin-sign</span></li>
+        <li class="icon-li js-clip" data-url="icon-pushpin"><i class="icon icon-pushpin"></i><span>icon-pushpin</span></li>
+        <li class="icon-li js-clip" data-url="icon-external-link"><i class="icon icon-external-link"></i><span>icon-external-link</span></li>
+        <li class="icon-li js-clip" data-url="icon-signin"><i class="icon icon-signin"></i><span>icon-signin</span></li>
+        <li class="icon-li js-clip" data-url="icon-trophy"><i class="icon icon-trophy"></i><span>icon-trophy</span></li>
+        <li class="icon-li js-clip" data-url="icon-github-sign"><i class="icon icon-github-sign"></i><span>icon-github-sign</span></li>
+        <li class="icon-li js-clip" data-url="icon-upload-alt"><i class="icon icon-upload-alt"></i><span>icon-upload-alt</span></li>
+        <li class="icon-li js-clip" data-url="icon-lemon"><i class="icon icon-lemon"></i><span>icon-lemon</span></li>
+        <li class="icon-li js-clip" data-url="icon-phone"><i class="icon icon-phone"></i><span>icon-phone</span></li>
+        <li class="icon-li js-clip" data-url="icon-check-empty"><i class="icon icon-check-empty"></i><span>icon-check-empty</span></li>
+        <li class="icon-li js-clip" data-url="icon-bookmark-empty"><i class="icon icon-bookmark-empty"></i><span>icon-bookmark-empty</span></li>
+        <li class="icon-li js-clip" data-url="icon-phone-sign"><i class="icon icon-phone-sign"></i><span>icon-phone-sign</span></li>
+        <li class="icon-li js-clip" data-url="icon-twitter"><i class="icon icon-twitter"></i><span>icon-twitter</span></li>
+        <li class="icon-li js-clip" data-url="icon-facebook"><i class="icon icon-facebook"></i><span>icon-facebook</span></li>
+        <li class="icon-li js-clip" data-url="icon-github"><i class="icon icon-github"></i><span>icon-github</span></li>
+        <li class="icon-li js-clip" data-url="icon-unlock"><i class="icon icon-unlock"></i><span>icon-unlock</span></li>
+        <li class="icon-li js-clip" data-url="icon-credit-card"><i class="icon icon-credit-card"></i><span>icon-credit-card</span></li>
+        <li class="icon-li js-clip" data-url="icon-rss"><i class="icon icon-rss"></i><span>icon-rss</span></li>
+        <li class="icon-li js-clip" data-url="icon-hdd"><i class="icon icon-hdd"></i><span>icon-hdd</span></li>
+        <li class="icon-li js-clip" data-url="icon-bullhorn"><i class="icon icon-bullhorn"></i><span>icon-bullhorn</span></li>
+        <li class="icon-li js-clip" data-url="icon-bell"><i class="icon icon-bell"></i><span>icon-bell</span></li>
+        <li class="icon-li js-clip" data-url="icon-certificate"><i class="icon icon-certificate"></i><span>icon-certificate</span></li>
+        <li class="icon-li js-clip" data-url="icon-hand-right"><i class="icon icon-hand-right"></i><span>icon-hand-right</span></li>
+        <li class="icon-li js-clip" data-url="icon-hand-left"><i class="icon icon-hand-left"></i><span>icon-hand-left</span></li>
+        <li class="icon-li js-clip" data-url="icon-hand-up"><i class="icon icon-hand-up"></i><span>icon-hand-up</span></li>
+        <li class="icon-li js-clip" data-url="icon-hand-down"><i class="icon icon-hand-down"></i><span>icon-hand-down</span></li>
+        <li class="icon-li js-clip" data-url="icon-circle-arrow-left"><i class="icon icon-circle-arrow-left"></i><span>icon-circle-arrow-left</span></li>
+        <li class="icon-li js-clip" data-url="icon-circle-arrow-right"><i class="icon icon-circle-arrow-right"></i><span>icon-circle-arrow-right</span></li>
+        <li class="icon-li js-clip" data-url="icon-circle-arrow-up"><i class="icon icon-circle-arrow-up"></i><span>icon-circle-arrow-up</span></li>
+        <li class="icon-li js-clip" data-url="icon-circle-arrow-down"><i class="icon icon-circle-arrow-down"></i><span>icon-circle-arrow-down</span></li>
+        <li class="icon-li js-clip" data-url="icon-globe"><i class="icon icon-globe"></i><span>icon-globe</span></li>
+        <li class="icon-li js-clip" data-url="icon-wrench"><i class="icon icon-wrench"></i><span>icon-wrench</span></li>
+        <li class="icon-li js-clip" data-url="icon-tasks"><i class="icon icon-tasks"></i><span>icon-tasks</span></li>
+        <li class="icon-li js-clip" data-url="icon-filter"><i class="icon icon-filter"></i><span>icon-filter</span></li>
+        <li class="icon-li js-clip" data-url="icon-briefcase"><i class="icon icon-briefcase"></i><span>icon-briefcase</span></li>
+        <li class="icon-li js-clip" data-url="icon-fullscreen"><i class="icon icon-fullscreen"></i><span>icon-fullscreen</span></li>
+        <li class="icon-li js-clip" data-url="icon-group"><i class="icon icon-group"></i><span>icon-group</span></li>
+        <li class="icon-li js-clip" data-url="icon-link"><i class="icon icon-link"></i><span>icon-link</span></li>
+        <li class="icon-li js-clip" data-url="icon-cloud"><i class="icon icon-cloud"></i><span>icon-cloud</span></li>
+        <li class="icon-li js-clip" data-url="icon-beaker"><i class="icon icon-beaker"></i><span>icon-beaker</span></li>
+        <li class="icon-li js-clip" data-url="icon-cut"><i class="icon icon-cut"></i><span>icon-cut</span></li>
+        <li class="icon-li js-clip" data-url="icon-copy"><i class="icon icon-copy"></i><span>icon-copy</span></li>
+        <li class="icon-li js-clip" data-url="icon-paper-clip"><i class="icon icon-paper-clip"></i><span>icon-paper-clip</span></li>
+        <li class="icon-li js-clip" data-url="icon-save"><i class="icon icon-save"></i><span>icon-save</span></li>
+        <li class="icon-li js-clip" data-url="icon-sign-blank"><i class="icon icon-sign-blank"></i><span>icon-sign-blank</span></li>
+        <li class="icon-li js-clip" data-url="icon-reorder"><i class="icon icon-reorder"></i><span>icon-reorder</span></li>
+        <li class="icon-li js-clip" data-url="icon-list-ul"><i class="icon icon-list-ul"></i><span>icon-list-ul</span></li>
+        <li class="icon-li js-clip" data-url="icon-list-ol"><i class="icon icon-list-ol"></i><span>icon-list-ol</span></li>
+        <li class="icon-li js-clip" data-url="icon-strikethrough"><i class="icon icon-strikethrough"></i><span>icon-strikethrough</span></li>
+        <li class="icon-li js-clip" data-url="icon-underline"><i class="icon icon-underline"></i><span>icon-underline</span></li>
+        <li class="icon-li js-clip" data-url="icon-table"><i class="icon icon-table"></i><span>icon-table</span></li>
+        <li class="icon-li js-clip" data-url="icon-magic"><i class="icon icon-magic"></i><span>icon-magic</span></li>
+        <li class="icon-li js-clip" data-url="icon-truck"><i class="icon icon-truck"></i><span>icon-truck</span></li>
+        <li class="icon-li js-clip" data-url="icon-pinterest"><i class="icon icon-pinterest"></i><span>icon-pinterest</span></li>
+        <li class="icon-li js-clip" data-url="icon-pinterest-sign"><i class="icon icon-pinterest-sign"></i><span>icon-pinterest-sign</span></li>
+        <li class="icon-li js-clip" data-url="icon-google-plus-sign"><i class="icon icon-google-plus-sign"></i><span>icon-google-plus-sign</span></li>
+        <li class="icon-li js-clip" data-url="icon-google-plus"><i class="icon icon-google-plus"></i><span>icon-google-plus</span></li>
+        <li class="icon-li js-clip" data-url="icon-money"><i class="icon icon-money"></i><span>icon-money</span></li>
+        <li class="icon-li js-clip" data-url="icon-caret-down"><i class="icon icon-caret-down"></i><span>icon-caret-down</span></li>
+        <li class="icon-li js-clip" data-url="icon-caret-up"><i class="icon icon-caret-up"></i><span>icon-caret-up</span></li>
+        <li class="icon-li js-clip" data-url="icon-caret-left"><i class="icon icon-caret-left"></i><span>icon-caret-left</span></li>
+        <li class="icon-li js-clip" data-url="icon-caret-right"><i class="icon icon-caret-right"></i><span>icon-caret-right</span></li>
+        <li class="icon-li js-clip" data-url="icon-columns"><i class="icon icon-columns"></i><span>icon-columns</span></li>
+        <li class="icon-li js-clip" data-url="icon-sort"><i class="icon icon-sort"></i><span>icon-sort</span></li>
+        <li class="icon-li js-clip" data-url="icon-sort-down"><i class="icon icon-sort-down"></i><span>icon-sort-down</span></li>
+        <li class="icon-li js-clip" data-url="icon-sort-up"><i class="icon icon-sort-up"></i><span>icon-sort-up</span></li>
+        <li class="icon-li js-clip" data-url="icon-envelope"><i class="icon icon-envelope"></i><span>icon-envelope</span></li>
+        <li class="icon-li js-clip" data-url="icon-linkedin"><i class="icon icon-linkedin"></i><span>icon-linkedin</span></li>
+        <li class="icon-li js-clip" data-url="icon-undo"><i class="icon icon-undo"></i><span>icon-undo</span></li>
+        <li class="icon-li js-clip" data-url="icon-legal"><i class="icon icon-legal"></i><span>icon-legal</span></li>
+        <li class="icon-li js-clip" data-url="icon-dashboard"><i class="icon icon-dashboard"></i><span>icon-dashboard</span></li>
+        <li class="icon-li js-clip" data-url="icon-comment-alt"><i class="icon icon-comment-alt"></i><span>icon-comment-alt</span></li>
+        <li class="icon-li js-clip" data-url="icon-comments-alt"><i class="icon icon-comments-alt"></i><span>icon-comments-alt</span></li>
+        <li class="icon-li js-clip" data-url="icon-bolt"><i class="icon icon-bolt"></i><span>icon-bolt</span></li>
+        <li class="icon-li js-clip" data-url="icon-sitemap"><i class="icon icon-sitemap"></i><span>icon-sitemap</span></li>
+        <li class="icon-li js-clip" data-url="icon-umbrella"><i class="icon icon-umbrella"></i><span>icon-umbrella</span></li>
+        <li class="icon-li js-clip" data-url="icon-paste"><i class="icon icon-paste"></i><span>icon-paste</span></li>
+        <li class="icon-li js-clip" data-url="icon-lightbulb"><i class="icon icon-lightbulb"></i><span>icon-lightbulb</span></li>
+        <li class="icon-li js-clip" data-url="icon-exchange"><i class="icon icon-exchange"></i><span>icon-exchange</span></li>
+        <li class="icon-li js-clip" data-url="icon-cloud-download"><i class="icon icon-cloud-download"></i><span>icon-cloud-download</span></li>
+        <li class="icon-li js-clip" data-url="icon-cloud-upload"><i class="icon icon-cloud-upload"></i><span>icon-cloud-upload</span></li>
+        <li class="icon-li js-clip" data-url="icon-user-md"><i class="icon icon-user-md"></i><span>icon-user-md</span></li>
+        <li class="icon-li js-clip" data-url="icon-stethoscope"><i class="icon icon-stethoscope"></i><span>icon-stethoscope</span></li>
+        <li class="icon-li js-clip" data-url="icon-suitcase"><i class="icon icon-suitcase"></i><span>icon-suitcase</span></li>
+        <li class="icon-li js-clip" data-url="icon-bell-alt"><i class="icon icon-bell-alt"></i><span>icon-bell-alt</span></li>
+        <li class="icon-li js-clip" data-url="icon-coffee"><i class="icon icon-coffee"></i><span>icon-coffee</span></li>
+        <li class="icon-li js-clip" data-url="icon-food"><i class="icon icon-food"></i><span>icon-food</span></li>
+        <li class="icon-li js-clip" data-url="icon-file-text-alt"><i class="icon icon-file-text-alt"></i><span>icon-file-text-alt</span></li>
+        <li class="icon-li js-clip" data-url="icon-building"><i class="icon icon-building"></i><span>icon-building</span></li>
+        <li class="icon-li js-clip" data-url="icon-hospital"><i class="icon icon-hospital"></i><span>icon-hospital</span></li>
+        <li class="icon-li js-clip" data-url="icon-ambulance"><i class="icon icon-ambulance"></i><span>icon-ambulance</span></li>
+        <li class="icon-li js-clip" data-url="icon-medkit"><i class="icon icon-medkit"></i><span>icon-medkit</span></li>
+        <li class="icon-li js-clip" data-url="icon-fighter-jet"><i class="icon icon-fighter-jet"></i><span>icon-fighter-jet</span></li>
+        <li class="icon-li js-clip" data-url="icon-beer"><i class="icon icon-beer"></i><span>icon-beer</span></li>
+        <li class="icon-li js-clip" data-url="icon-h-sign"><i class="icon icon-h-sign"></i><span>icon-h-sign</span></li>
+        <li class="icon-li js-clip" data-url="icon-plus-sign-alt"><i class="icon icon-plus-sign-alt"></i><span>icon-plus-sign-alt</span></li>
+        <li class="icon-li js-clip" data-url="icon-double-angle-left"><i class="icon icon-double-angle-left"></i><span>icon-double-angle-left</span></li>
+        <li class="icon-li js-clip" data-url="icon-double-angle-right"><i class="icon icon-double-angle-right"></i><span>icon-double-angle-right</span></li>
+        <li class="icon-li js-clip" data-url="icon-double-angle-up"><i class="icon icon-double-angle-up"></i><span>icon-double-angle-up</span></li>
+        <li class="icon-li js-clip" data-url="icon-double-angle-down"><i class="icon icon-double-angle-down"></i><span>icon-double-angle-down</span></li>
+        <li class="icon-li js-clip" data-url="icon-angle-left"><i class="icon icon-angle-left"></i><span>icon-angle-left</span></li>
+        <li class="icon-li js-clip" data-url="icon-angle-right"><i class="icon icon-angle-right"></i><span>icon-angle-right</span></li>
+        <li class="icon-li js-clip" data-url="icon-angle-up"><i class="icon icon-angle-up"></i><span>icon-angle-up</span></li>
+        <li class="icon-li js-clip" data-url="icon-angle-down"><i class="icon icon-angle-down"></i><span>icon-angle-down</span></li>
+        <li class="icon-li js-clip" data-url="icon-desktop"><i class="icon icon-desktop"></i><span>icon-desktop</span></li>
+        <li class="icon-li js-clip" data-url="icon-laptop"><i class="icon icon-laptop"></i><span>icon-laptop</span></li>
+        <li class="icon-li js-clip" data-url="icon-tablet"><i class="icon icon-tablet"></i><span>icon-tablet</span></li>
+        <li class="icon-li js-clip" data-url="icon-mobile-phone"><i class="icon icon-mobile-phone"></i><span>icon-mobile-phone</span></li>
+        <li class="icon-li js-clip" data-url="icon-circle-blank"><i class="icon icon-circle-blank"></i><span>icon-circle-blank</span></li>
+        <li class="icon-li js-clip" data-url="icon-quote-left"><i class="icon icon-quote-left"></i><span>icon-quote-left</span></li>
+        <li class="icon-li js-clip" data-url="icon-quote-right"><i class="icon icon-quote-right"></i><span>icon-quote-right</span></li>
+        <li class="icon-li js-clip" data-url="icon-spinner"><i class="icon icon-spinner"></i><span>icon-spinner</span></li>
+        <li class="icon-li js-clip" data-url="icon-circle"><i class="icon icon-circle"></i><span>icon-circle</span></li>
+        <li class="icon-li js-clip" data-url="icon-reply"><i class="icon icon-reply"></i><span>icon-reply</span></li>
+        <li class="icon-li js-clip" data-url="icon-github-alt"><i class="icon icon-github-alt"></i><span>icon-github-alt</span></li>
+        <li class="icon-li js-clip" data-url="icon-folder-close-alt"><i class="icon icon-folder-close-alt"></i><span>icon-folder-close-alt</span></li>
+        <li class="icon-li js-clip" data-url="icon-folder-open-alt"><i class="icon icon-folder-open-alt"></i><span>icon-folder-open-alt</span></li>
+        <li class="icon-li js-clip" data-url="icon-expand-alt"><i class="icon icon-expand-alt"></i><span>icon-expand-alt</span></li>
+        <li class="icon-li js-clip" data-url="icon-collapse-alt"><i class="icon icon-collapse-alt"></i><span>icon-collapse-alt</span></li>
+        <li class="icon-li js-clip" data-url="icon-smile"><i class="icon icon-smile"></i><span>icon-smile</span></li>
+        <li class="icon-li js-clip" data-url="icon-frown"><i class="icon icon-frown"></i><span>icon-frown</span></li>
+        <li class="icon-li js-clip" data-url="icon-meh"><i class="icon icon-meh"></i><span>icon-meh</span></li>
+        <li class="icon-li js-clip" data-url="icon-gamepad"><i class="icon icon-gamepad"></i><span>icon-gamepad</span></li>
+        <li class="icon-li js-clip" data-url="icon-keyboard"><i class="icon icon-keyboard"></i><span>icon-keyboard</span></li>
+        <li class="icon-li js-clip" data-url="icon-flag-alt"><i class="icon icon-flag-alt"></i><span>icon-flag-alt</span></li>
+        <li class="icon-li js-clip" data-url="icon-flag-checkered"><i class="icon icon-flag-checkered"></i><span>icon-flag-checkered</span></li>
+        <li class="icon-li js-clip" data-url="icon-terminal"><i class="icon icon-terminal"></i><span>icon-terminal</span></li>
+        <li class="icon-li js-clip" data-url="icon-code"><i class="icon icon-code"></i><span>icon-code</span></li>
+        <li class="icon-li js-clip" data-url="icon-reply-all"><i class="icon icon-reply-all"></i><span>icon-reply-all</span></li>
+        <li class="icon-li js-clip" data-url="icon-mail-reply-all"><i class="icon icon-mail-reply-all"></i><span>icon-mail-reply-all</span></li>
+        <li class="icon-li js-clip" data-url="icon-star-half-empty"><i class="icon icon-star-half-empty"></i><span>icon-star-half-empty</span></li>
+        <li class="icon-li js-clip" data-url="icon-location-arrow"><i class="icon icon-location-arrow"></i><span>icon-location-arrow</span></li>
+        <li class="icon-li js-clip" data-url="icon-crop"><i class="icon icon-crop"></i><span>icon-crop</span></li>
+        <li class="icon-li js-clip" data-url="icon-code-fork"><i class="icon icon-code-fork"></i><span>icon-code-fork</span></li>
+        <li class="icon-li js-clip" data-url="icon-unlink"><i class="icon icon-unlink"></i><span>icon-unlink</span></li>
+        <li class="icon-li js-clip" data-url="icon-question"><i class="icon icon-question"></i><span>icon-question</span></li>
+        <li class="icon-li js-clip" data-url="icon-info"><i class="icon icon-info"></i><span>icon-info</span></li>
+        <li class="icon-li js-clip" data-url="icon-exclamation"><i class="icon icon-exclamation"></i><span>icon-exclamation</span></li>
+        <li class="icon-li js-clip" data-url="icon-superscript"><i class="icon icon-superscript"></i><span>icon-superscript</span></li>
+        <li class="icon-li js-clip" data-url="icon-subscript"><i class="icon icon-subscript"></i><span>icon-subscript</span></li>
+        <li class="icon-li js-clip" data-url="icon-eraser"><i class="icon icon-eraser"></i><span>icon-eraser</span></li>
+        <li class="icon-li js-clip" data-url="icon-puzzle-piece"><i class="icon icon-puzzle-piece"></i><span>icon-puzzle-piece</span></li>
+        <li class="icon-li js-clip" data-url="icon-microphone"><i class="icon icon-microphone"></i><span>icon-microphone</span></li>
+        <li class="icon-li js-clip" data-url="icon-microphone-off"><i class="icon icon-microphone-off"></i><span>icon-microphone-off</span></li>
+        <li class="icon-li js-clip" data-url="icon-shield"><i class="icon icon-shield"></i><span>icon-shield</span></li>
+        <li class="icon-li js-clip" data-url="icon-calendar-empty"><i class="icon icon-calendar-empty"></i><span>icon-calendar-empty</span></li>
+        <li class="icon-li js-clip" data-url="icon-fire-extinguisher"><i class="icon icon-fire-extinguisher"></i><span>icon-fire-extinguisher</span></li>
+        <li class="icon-li js-clip" data-url="icon-rocket"><i class="icon icon-rocket"></i><span>icon-rocket</span></li>
+        <li class="icon-li js-clip" data-url="icon-maxcdn"><i class="icon icon-maxcdn"></i><span>icon-maxcdn</span></li>
+        <li class="icon-li js-clip" data-url="icon-chevron-sign-left"><i class="icon icon-chevron-sign-left"></i><span>icon-chevron-sign-left</span></li>
+        <li class="icon-li js-clip" data-url="icon-chevron-sign-right"><i class="icon icon-chevron-sign-right"></i><span>icon-chevron-sign-right</span></li>
+        <li class="icon-li js-clip" data-url="icon-chevron-sign-up"><i class="icon icon-chevron-sign-up"></i><span>icon-chevron-sign-up</span></li>
+        <li class="icon-li js-clip" data-url="icon-chevron-sign-down"><i class="icon icon-chevron-sign-down"></i><span>icon-chevron-sign-down</span></li>
+        <li class="icon-li js-clip" data-url="icon-html5"><i class="icon icon-html5"></i><span>icon-html5</span></li>
+        <li class="icon-li js-clip" data-url="icon-css3"><i class="icon icon-css3"></i><span>icon-css3</span></li>
+        <li class="icon-li js-clip" data-url="icon-anchor"><i class="icon icon-anchor"></i><span>icon-anchor</span></li>
+        <li class="icon-li js-clip" data-url="icon-unlock-alt"><i class="icon icon-unlock-alt"></i><span>icon-unlock-alt</span></li>
+        <li class="icon-li js-clip" data-url="icon-bullseye"><i class="icon icon-bullseye"></i><span>icon-bullseye</span></li>
+        <li class="icon-li js-clip" data-url="icon-ellipsis-horizontal"><i class="icon icon-ellipsis-horizontal"></i><span>icon-ellipsis-horizontal</span></li>
+        <li class="icon-li js-clip" data-url="icon-ellipsis-vertical"><i class="icon icon-ellipsis-vertical"></i><span>icon-ellipsis-vertical</span></li>
+        <li class="icon-li js-clip" data-url="icon-rss-sign"><i class="icon icon-rss-sign"></i><span>icon-rss-sign</span></li>
+        <li class="icon-li js-clip" data-url="icon-play-sign"><i class="icon icon-play-sign"></i><span>icon-play-sign</span></li>
+        <li class="icon-li js-clip" data-url="icon-ticket"><i class="icon icon-ticket"></i><span>icon-ticket</span></li>
+        <li class="icon-li js-clip" data-url="icon-minus-sign-alt"><i class="icon icon-minus-sign-alt"></i><span>icon-minus-sign-alt</span></li>
+        <li class="icon-li js-clip" data-url="icon-check-minus"><i class="icon icon-check-minus"></i><span>icon-check-minus</span></li>
+        <li class="icon-li js-clip" data-url="icon-level-up"><i class="icon icon-level-up"></i><span>icon-level-up</span></li>
+        <li class="icon-li js-clip" data-url="icon-level-down"><i class="icon icon-level-down"></i><span>icon-level-down</span></li>
+        <li class="icon-li js-clip" data-url="icon-check-sign"><i class="icon icon-check-sign"></i><span>icon-check-sign</span></li>
+        <li class="icon-li js-clip" data-url="icon-edit-sign"><i class="icon icon-edit-sign"></i><span>icon-edit-sign</span></li>
+        <li class="icon-li js-clip" data-url="icon-external-link-sign"><i class="icon icon-external-link-sign"></i><span>icon-external-link-sign</span></li>
+        <li class="icon-li js-clip" data-url="icon-share-sign"><i class="icon icon-share-sign"></i><span>icon-share-sign</span></li>
+        <li class="icon-li js-clip" data-url="icon-compass"><i class="icon icon-compass"></i><span>icon-compass</span></li>
+        <li class="icon-li js-clip" data-url="icon-collapse"><i class="icon icon-collapse"></i><span>icon-collapse</span></li>
+        <li class="icon-li js-clip" data-url="icon-collapse-top"><i class="icon icon-collapse-top"></i><span>icon-collapse-top</span></li>
+        <li class="icon-li js-clip" data-url="icon-expand"><i class="icon icon-expand"></i><span>icon-expand</span></li>
+        <li class="icon-li js-clip" data-url="icon-eur"><i class="icon icon-eur"></i><span>icon-eur</span></li>
+        <li class="icon-li js-clip" data-url="icon-gbp"><i class="icon icon-gbp"></i><span>icon-gbp</span></li>
+        <li class="icon-li js-clip" data-url="icon-usd"><i class="icon icon-usd"></i><span>icon-usd</span></li>
+        <li class="icon-li js-clip" data-url="icon-inr"><i class="icon icon-inr"></i><span>icon-inr</span></li>
+        <li class="icon-li js-clip" data-url="icon-jpy"><i class="icon icon-jpy"></i><span>icon-jpy</span></li>
+        <li class="icon-li js-clip" data-url="icon-cny"><i class="icon icon-cny"></i><span>icon-cny</span></li>
+        <li class="icon-li js-clip" data-url="icon-krw"><i class="icon icon-krw"></i><span>icon-krw</span></li>
+        <li class="icon-li js-clip" data-url="icon-btc"><i class="icon icon-btc"></i><span>icon-btc</span></li>
+        <li class="icon-li js-clip" data-url="icon-file"><i class="icon icon-file"></i><span>icon-file</span></li>
+        <li class="icon-li js-clip" data-url="icon-file-text"><i class="icon icon-file-text"></i><span>icon-file-text</span></li>
+        <li class="icon-li js-clip" data-url="icon-sort-by-alphabet"><i class="icon icon-sort-by-alphabet"></i><span>icon-sort-by-alphabet</span></li>
+        <li class="icon-li js-clip" data-url="icon-sort-by-alphabet-alt"><i class="icon icon-sort-by-alphabet-alt"></i><span>icon-sort-by-alphabet-alt</span></li>
+        <li class="icon-li js-clip" data-url="icon-sort-by-attributes"><i class="icon icon-sort-by-attributes"></i><span>icon-sort-by-attributes</span></li>
+        <li class="icon-li js-clip" data-url="icon-sort-by-attributes-alt"><i class="icon icon-sort-by-attributes-alt"></i><span>icon-sort-by-attributes-alt</span></li>
+        <li class="icon-li js-clip" data-url="icon-sort-by-order"><i class="icon icon-sort-by-order"></i><span>icon-sort-by-order</span></li>
+        <li class="icon-li js-clip" data-url="icon-sort-by-order-alt"><i class="icon icon-sort-by-order-alt"></i><span>icon-sort-by-order-alt</span></li>
+        <li class="icon-li js-clip" data-url="icon-thumbs-up"><i class="icon icon-thumbs-up"></i><span>icon-thumbs-up</span></li>
+        <li class="icon-li js-clip" data-url="icon-thumbs-down"><i class="icon icon-thumbs-down"></i><span>icon-thumbs-down</span></li>
+        <li class="icon-li js-clip" data-url="icon-youtube-sign"><i class="icon icon-youtube-sign"></i><span>icon-youtube-sign</span></li>
+        <li class="icon-li js-clip" data-url="icon-youtube"><i class="icon icon-youtube"></i><span>icon-youtube</span></li>
+        <li class="icon-li js-clip" data-url="icon-xing"><i class="icon icon-xing"></i><span>icon-xing</span></li>
+        <li class="icon-li js-clip" data-url="icon-xing-sign"><i class="icon icon-xing-sign"></i><span>icon-xing-sign</span></li>
+        <li class="icon-li js-clip" data-url="icon-youtube-play"><i class="icon icon-youtube-play"></i><span>icon-youtube-play</span></li>
+        <li class="icon-li js-clip" data-url="icon-dropbox"><i class="icon icon-dropbox"></i><span>icon-dropbox</span></li>
+        <li class="icon-li js-clip" data-url="icon-stackexchange"><i class="icon icon-stackexchange"></i><span>icon-stackexchange</span></li>
+        <li class="icon-li js-clip" data-url="icon-instagram"><i class="icon icon-instagram"></i><span>icon-instagram</span></li>
+        <li class="icon-li js-clip" data-url="icon-flickr"><i class="icon icon-flickr"></i><span>icon-flickr</span></li>
+        <li class="icon-li js-clip" data-url="icon-adn"><i class="icon icon-adn"></i><span>icon-adn</span></li>
+        <li class="icon-li js-clip" data-url="icon-bitbucket"><i class="icon icon-bitbucket"></i><span>icon-bitbucket</span></li>
+        <li class="icon-li js-clip" data-url="icon-bitbucket-sign"><i class="icon icon-bitbucket-sign"></i><span>icon-bitbucket-sign</span></li>
+        <li class="icon-li js-clip" data-url="icon-tumblr"><i class="icon icon-tumblr"></i><span>icon-tumblr</span></li>
+        <li class="icon-li js-clip" data-url="icon-tumblr-sign"><i class="icon icon-tumblr-sign"></i><span>icon-tumblr-sign</span></li>
+        <li class="icon-li js-clip" data-url="icon-long-arrow-down"><i class="icon icon-long-arrow-down"></i><span>icon-long-arrow-down</span></li>
+        <li class="icon-li js-clip" data-url="icon-long-arrow-up"><i class="icon icon-long-arrow-up"></i><span>icon-long-arrow-up</span></li>
+        <li class="icon-li js-clip" data-url="icon-long-arrow-left"><i class="icon icon-long-arrow-left"></i><span>icon-long-arrow-left</span></li>
+        <li class="icon-li js-clip" data-url="icon-long-arrow-right"><i class="icon icon-long-arrow-right"></i><span>icon-long-arrow-right</span></li>
+        <li class="icon-li js-clip" data-url="icon-apple"><i class="icon icon-apple"></i><span>icon-apple</span></li>
+        <li class="icon-li js-clip" data-url="icon-windows"><i class="icon icon-windows"></i><span>icon-windows</span></li>
+        <li class="icon-li js-clip" data-url="icon-android"><i class="icon icon-android"></i><span>icon-android</span></li>
+        <li class="icon-li js-clip" data-url="icon-linux"><i class="icon icon-linux"></i><span>icon-linux</span></li>
+        <li class="icon-li js-clip" data-url="icon-dribbble"><i class="icon icon-dribbble"></i><span>icon-dribbble</span></li>
+        <li class="icon-li js-clip" data-url="icon-skype"><i class="icon icon-skype"></i><span>icon-skype</span></li>
+        <li class="icon-li js-clip" data-url="icon-foursquare"><i class="icon icon-foursquare"></i><span>icon-foursquare</span></li>
+        <li class="icon-li js-clip" data-url="icon-trello"><i class="icon icon-trello"></i><span>icon-trello</span></li>
+        <li class="icon-li js-clip" data-url="icon-female"><i class="icon icon-female"></i><span>icon-female</span></li>
+        <li class="icon-li js-clip" data-url="icon-male"><i class="icon icon-male"></i><span>icon-male</span></li>
+        <li class="icon-li js-clip" data-url="icon-gittip"><i class="icon icon-gittip"></i><span>icon-gittip</span></li>
+        <li class="icon-li js-clip" data-url="icon-sun"><i class="icon icon-sun"></i><span>icon-sun</span></li>
+        <li class="icon-li js-clip" data-url="icon-moon"><i class="icon icon-moon"></i><span>icon-moon</span></li>
+        <li class="icon-li js-clip" data-url="icon-archive"><i class="icon icon-archive"></i><span>icon-archive</span></li>
+        <li class="icon-li js-clip" data-url="icon-bug"><i class="icon icon-bug"></i><span>icon-bug</span></li>
+        <li class="icon-li js-clip" data-url="icon-vk"><i class="icon icon-vk"></i><span>icon-vk</span></li>
+        <li class="icon-li js-clip" data-url="icon-weibo"><i class="icon icon-weibo"></i><span>icon-weibo</span></li>
+        <li class="icon-li js-clip" data-url="icon-renren"><i class="icon icon-renren"></i><span>icon-renren</span></li>
+    </ul>
+</div>
+{/block}

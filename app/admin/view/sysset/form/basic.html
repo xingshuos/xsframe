@@ -1,0 +1,99 @@
+<div class="panel-body">
+    <div class="form-group-title">表单基本组件</div>
+
+    <div class="form-group">
+        <label class="col-lg control-label must">文本</label>
+        <div class="col-sm-9 col-xs-12">
+            <div class="form-control-static">这是静态的不可编辑的内容</div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label must">输入框</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type="text" name="company" class="form-control" value="" data-rule-required="true"/>
+            <span class="help-block">这是输入框提示信息</span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">复选框</label>
+        <div class="col-sm-9 col-xs-12">
+            <textarea name="description" rows="10" placeholder="请输入公司简介" class="form-control" data-rule-required="true"></textarea>
+            <span class="help-block">这是复选框提示信息</span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">单选按钮</label>
+        <div class="col-sm-9 col-xs-12">
+            <label class="radio-inline">
+                <input type="radio" name="enabled" value="1"> 显示
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="enabled" value="0"> 隐藏
+            </label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">复选框</label>
+
+        <div class="col-sm-9 col-xs-12">
+            <label for="isrecommand" class="checkbox-inline">
+                <input type="checkbox" name="isrecommand" value="1" id="isrecommand"/> 推荐
+            </label>
+
+            <label for="isnew" class="checkbox-inline">
+                <input type="checkbox" name="isnew" value="1" id="isnew"/> 新品
+            </label>
+
+            <label for="ishot" class="checkbox-inline">
+                <input type="checkbox" name="ishot" value="1" id="ishot"/> 热卖
+            </label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">普通下拉框</label>
+
+        <div class="col-sm-9 col-xs-12">
+
+            <select class="form-control" name="select">
+                <option value="0">默认模板</option>
+                <option value="1">模板1</option>
+                <option value="2">模板2</option>
+            </select>
+
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">单选下拉框(搜索)</label>
+
+        <div class="col-sm-9 col-xs-12">
+
+            <select class="form-control select2" name="style">
+                <option value="0">默认模板</option>
+                <option value="1">模板1</option>
+                <option value="2">模板2</option>
+            </select>
+
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">多选下拉框(搜索)</label>
+
+        <div class="col-sm-9 col-xs-12">
+
+            <select class="form-control select2" name="styles[]" multiple=''>
+                <option value="0">默认模板</option>
+                <option value="1">模板1</option>
+                <option value="2">模板2</option>
+            </select>
+
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,49 @@
+
+<div id="footer-add" v-cloak>
+    <haha></haha>
+</div>
+
+<!--<script type="text/html" id="footer-tpl">-->
+<!--    <div @click="btnShow">哈哈</div>-->
+<!--</script>-->
+
+<template id="footer-tpl">
+    <div @click="btnShow">哈哈</div>
+</template>
+
+<script>
+    require(['vue'], (Vue) => {
+        new Vue({
+            el: '#footer-add',
+            components:{
+                "haha":{
+                    // template:`<div @click="btnShow">哈哈</div>`,
+                    template:document.getElementById("footer-tpl").innerHTML,
+                    methods:{
+                        btnShow(){
+                            console.log('点了哈哈部分')
+                        }
+                    },
+                    created(){
+                        console.log('created')
+                    },
+                    beforeCreate(){
+                        console.log('beforeCreate')
+                    },
+                    beforeMount(){
+                        console.log('beforeMount')
+                    },
+                    mounted(){
+                        console.log('mounted')
+                    },
+                    beforeUnmount(){
+                        console.log('beforeUnmount')
+                    },
+                    unmountd(){
+                        console.log('unmountd')
+                    },
+                }
+            }
+        })
+    });
+</script>

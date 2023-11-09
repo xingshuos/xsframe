@@ -1,0 +1,81 @@
+{include file="pc/components/app-goods-detail" /}
+{include file="pc/components/app-course-chapters" /}
+{include file="pc/components/app-teacher-detail" /}
+
+<div class="goods-main row">
+
+    <!--课程播放 start-->
+    <div class="video-box">
+
+        <a class="video-info" href="{:url('course/play')}?id={$goodsInfo['id']}" target="blank">
+            <img src="{$goodsInfo['thumb']}" class="video-poster" alt="{$goodsInfo['title']}">
+
+            <div class="vjs-big-play-button">
+                <i class="iconfont">&#xea82;</i>
+            </div>
+        </a>
+
+        {if empty($isPlay)}
+        <div class="section-apply">
+            <div class="apply-bar-workspace apply-bar">
+                <div class="apply-bar-main">
+                    <div class="main-left">
+                        <div class="js-course-price normal-course course-price">
+                            <div class="course-price-discount">
+                                <div class="basic-bar-layout">
+                                    <div class="basic-bar-layout-main">
+                                        <div class="basic-price">
+                                            <p id="course-price" class="basic-price-discount price-container">¥{$goodsInfo['marketprice']}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="dividing">|</p>
+                        <ul class="apply-promise">
+                            <li class="apply-promise-tt"><a href="javascript:;" rel="noreferrer">课后有回放</a></li>
+                            <li class="apply-promise-slash">·</li>
+                            <li class="apply-promise-tt"><a href="javascript:;" rel="noreferrer">不支持退款（已结课）</a></li>
+                        </ul>
+                    </div>
+                    <div class="main-right">
+                        <div class="apply-btn-box" onclick="buyGoods()">立即购买</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {/if}
+
+        <div class="video-mask hide">
+            <div class="video-mask-bg"></div>
+            <div class="video-mask-info">
+                <div class="video-mask-title">该课程需要购买后续看</div>
+                <div class="video-mask-btn">
+                    <div class="whole-buy">全课购买</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--课程播放 end-->
+
+    <!--商品详情 start-->
+    <div id="goods-detail-main">
+        <app-goods-detail></app-goods-detail>
+    </div>
+    <!--商品详情 end -->
+</div>
+
+<script>
+    require(['vue', 'h7.axios', 'jquery.gcjs'], (Vue, axios, $) => {
+
+        new Vue({
+            el: '#goods-detail-main',
+            data: {},
+            methods: {}
+        });
+    });
+
+    function buyGoods() {
+        location.href = "{:url('order/confirm')}?id={$goodsInfo['id']}";
+    }
+</script>

@@ -1,0 +1,34 @@
+{if $item['status'] == 0}
+    <!--未付款-->
+
+    <a class="btn btn-primary btn-xs" data-toggle="ajaxPost" href="{:webUrl('web.order.op/pay', array('id' => $item['id']))}" data-confirm="确认此订单已付款吗？">确认付款</a>
+
+{elseif $item['status'] == 1}
+    <!--已付款-->
+
+    {if $item['service_type'] == 1}
+        {if !empty($item['address']) }
+            <!--快递 发货-->
+            <a class="btn btn-primary btn-xs" data-toggle="ajaxModal" href="{:webUrl('web.order.op/send', array('id' => $item['id']))}">确认发货</a>
+        {else}
+            <!--自提 确认取货-->
+            <a class="btn btn-primary btn-xs" data-toggle='ajaxPost' href="{:webUrl('web.order.op/fetch', array('id' => $item['id']))}" data-confirm="确认取货吗？">确认取货</a>
+        {/if}
+
+        {if $item['sendtype'] > 0}
+            <a class="text-primary" data-toggle='ajaxModal' href="{:webUrl('web.order.op/sendcancel', array('id' => $item['id']))}">取消发货</a>
+        {/if}
+    {/if}
+
+{elseif $item['status'] == 2 }
+    <!--已发货-->
+
+    {if !empty($item['data']['addressid'])}
+        <a class="btn btn-primary btn-xs" data-toggle='ajaxPost' href="{:webUrl('web.order.op/finish', array('id' => $item['id']))}" data-confirm="确认订单收货吗？">确认收货</a><br/>
+        <a class="text-primary" data-toggle="ajaxModal" href="{:webUrl('web.order.op/changeexpress', array('id' => $item['id']))}">修改物流</a>
+        <a class="text-primary" data-toggle='ajaxModal' href="{:webUrl('web.order.op/sendcancel', array('id' => $item['id']))}">取消发货</a>
+    {else}
+        <a class="btn btn-primary btn-xs" data-toggle='ajaxPost' href="{:webUrl('web.order.op/finish', array('id' => $item['id']))}" data-confirm="确认完成订单吗？">确认完成</a>
+    {/if}
+
+{/if}

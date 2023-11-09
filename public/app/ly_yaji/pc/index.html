@@ -1,0 +1,120 @@
+{extend name="pc/common/_base" /}
+
+{block name="title"}
+<title>首页-{$website['title']}</title>
+{/block}
+
+{block name="style"}
+<link rel="stylesheet" href="{$moduleAttachUrl}/static/components/swiper/swiper.min.css">
+<link rel="stylesheet" href="{$moduleAttachUrl}/static/css/index.css">
+
+<style>
+    body{
+        background: #fff;
+    }
+</style>
+{/block}
+
+{block name="main"}
+
+{include file="pc/components/tags-goods-list" /}
+
+<section>
+
+    <!-- 轮播图 -->
+    {if !empty($advList)}
+    <div class="bk"></div>
+    <div class="bgfff">
+        <div class="swiper">
+            <div class="swiper-wrapper">
+                {volist name="advList" id="row"}
+                <a class="swiper-slide" href="{if !empty($row['link'])}{:url($row['link'])}{else}javascript:;{/if}"><img src="{$row['thumb']}" alt="{$row['title']}" onerror="this.src='{$moduleAttachUrl}/static/images/bk.jpg'"></a>
+                {/volist}
+            </div>
+            {if count($advList) > 1}
+            <div class="swiper-pagination"></div>
+            {/if}
+        </div>
+    </div>
+    {/if}
+    <!-- 轮播图 end -->
+    <div class="container">
+
+        <div class="goods-category-block" style="padding: 30px;">
+            <div class="menu-list all-category flex-around">
+
+                {foreach $menuList as $key => $row}
+                <a class="menu-item flex-column-center" href="{:url($row['link'])}">
+                    <img class="item-img" src="{$moduleAttachUrl}/static/images/default-img.png" data-original="{:tomedia($row['thumb'])}" alt="{$row['title']}">
+                    <div class="item-name">{$row['title']}</div>
+                    <div class="item-total">共 {$row['total']} 件</div>
+                </a>
+                {/foreach}
+
+            </div>
+        </div>
+
+        <!-- 内容列表 -->
+        <div id="tags-goods-list-main" v-cloak>
+            {if $isLogin}
+                <tags-goods-list :tagsid="0" :ishistory="true" :title="'最近浏览'" :styletype="1"></tags-goods-list>
+            {/if}
+
+            <tags-goods-list :tagsid="1" :title="'名家典藏'" :styletype="1" :titlemore="true"></tags-goods-list>
+            <tags-goods-list :tagsid="2" :title="'限量版'" :styletype="2" :titlemore="true"></tags-goods-list>
+            <tags-goods-list :tagsid="3" :title="'鹿隐版'" :styletype="3" :titlemore="true"></tags-goods-list>
+            <tags-goods-list :tagsid="4" :title="'雅集'" :styletype="4" :titlemore="true"></tags-goods-list>
+        </div>
+
+        <!-- 内容列表 end -->
+
+    </div>
+
+</section>
+
+{/block}
+
+{block name="script"}
+<script>
+    require(['jquery', 'swiper','jquery.lazyload'], function ($, Swiper) {
+
+        $(".item-img").lazyload({effect: "fadeIn", threshold: 180, failure_limit: 50});
+
+        new Swiper('.swiper', {
+            autoplay: true, // 自动播放
+            speed: 1000, // 滑动速度
+            grabCursor: true, // 鼠标小手
+            loop: true,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            on: {
+                init: function () {
+
+                },
+                slideChangeTransitionEnd: function () {
+                    let activeIndex = this.activeIndex;
+                    let url = $(this.slides[activeIndex]).children()[0].getAttribute('src');
+                    $(".bk").css('background-image', "url(" + url + ")");
+                }
+            }
+        });
+    });
+
+    require(['vue', 'h7.axios'], (Vue) => {
+        new Vue({
+            el: '#tags-goods-list-main',
+            data: {
+                title: "{$tagsInfo['name']}",
+                tagsid: "{$id}",
+                styleType: "{$tagsInfo['style_type']}",
+            },
+            methods: {
+
+            }
+        });
+    });
+</script>
+{/block}
+

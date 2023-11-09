@@ -1,0 +1,650 @@
+<template id="tags-goods-list">
+    <div class="goods-box">
+
+        <template v-if="goodsList.length > 0">
+            <div class="goods-wrap">
+
+                <div class="title-block flex-between">
+                    <div class="left">
+                        <div class="title">{{ title }}</div>
+                        <div class="tip">共{{ goodsTotal }}件</div>
+                    </div>
+
+                    <template v-if="titlemore">
+                        <a class="right">查看更多▪▪▪</a>
+                    </template>
+                </div>
+
+                <!-- 展示风格 1名家典藏  2限量版  3鹿隐版 4雅集 -->
+
+                <!-- 雅集类型是固定的 -->
+                <template v-if="parseInt(styletype) === 4">
+                    <div class="goods-list">
+                        <a class="goods-item" target="_blank" :title="item.title" :href="item.url" v-for="(item,index) in goodsList" :key="index">
+                            <div class="hover-item"></div>
+                            <div class="p-img">
+                                <!--<img :src="item.thumb" :data-original="item.thumb" :alt="item.title" style="display: inline;" onerror="this.src='{$moduleAttachUrl}/static/images/default-img.png'">-->
+                                <img :class="'loadImg_' + styletype + '_' + tagsid" src="{$moduleAttachUrl}/static/images/default-img.png" :data-original="item.thumb" :alt="item.title">
+                            </div>
+                            <div class="goods-info">
+                                <div class="author text-over-2 flex-between">
+                                    <span class="name">{{ item.teacherInfo.name }}</span>
+                                    <span class="viewcount flex-center"><span class="iconfont">&#xe64c;</span><span style="margin-left: 4px;">{{ item.viewcount }}</span></span>
+                                </div>
+                                <div class="title text-over-1">{{ item.title }}</div>
+                                <div class="row-info flex-start-center">
+                                    <span class="name">价格：</span>
+                                    <span class="price">¥ {{ item.marketprice }}</span>
+                                </div>
+                                <div class="row-info flex-start-center">
+                                    <span class="name">编号：</span>
+                                    <span class="text">{{ item.goodssn }}</span>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a class="goods-item-block"></a>
+                        <a class="goods-item-block"></a>
+                        <a class="goods-item-block"></a>
+                    </div>
+                </template>
+
+                <!--其他类型都是随机显示商品-->
+                <template v-else>
+                    <div class="ant-main" style="width: 100%">
+                        <div class="ant-row" v-for="(item,index) in goodsList" :key="index" :dataType="item.type">
+
+                            <div class="ant-col" :class="item1.col" v-for="(item1,index1) in item.list" :key="index1" :style="item.type === 1 ? 'height: 665px;' : 'height: 365px;'" :dataType="item1.type">
+                                <div class="resource-card">
+                                    <a target="_blank" :title="item1.title" :href="item1.url">
+                                        <!--<div class="resource-cover" :style="{height:item.type === 1  ? '525px' : '225px','background':'url('+item1.thumb+') center/cover no-repeat'}"></div>-->
+                                        <img :class="'resource-cover loadImg_' + styletype + '_' + tagsid" src="{$moduleAttachUrl}/static/images/default-img.png" :data-original="item1.thumb" :alt="item1.title" :style="{width:'100%',height:item1.type === 1  ? '525px' : '225px','object-fit' : 'cover'}">
+                                    </a>
+
+                                    <div class="goods-info">
+                                        <div class="author text-over-2 flex-between">
+                                            <span class="name">{{ item1.teacherInfo.name }}</span>
+                                            <span class="viewcount flex-center"><span class="iconfont">&#xe64c;</span><span style="margin-left: 4px;">{{ item1.viewcount }}</span></span>
+                                        </div>
+                                        <div class="title text-over-1">{{ item1.title }}</div>
+                                        <div class="row-info flex-start-center">
+                                            <span class="name">价格：</span>
+                                            <span class="price">¥ {{ item1.marketprice }}</span>
+                                        </div>
+                                        <div class="row-info flex-start-center">
+                                            <span class="name">编号：</span>
+                                            <span class="text">{{ item1.goodssn }}</span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </template>
+
+            </div>
+        </template>
+
+        <template v-else>
+            <template v-if="isshowempty">
+                {include file="pc/common/_empty"/}
+            </template>
+        </template>
+
+    </div>
+</template>
+
+<script>
+    require(['vue', 'h7.axios', 'jquery', 'tip', 'jquery.lazyload'], (Vue, axios, $) => {
+        Vue.component('tags-goods-list', {
+            template: '#tags-goods-list',
+            props: {
+                show: Boolean,
+                title: {
+                    type: String,
+                    default: '',
+                },
+                keyword: {
+                    type: String,
+                    default: '',
+                },
+                titlemore: {
+                    type: Boolean,
+                    default: false,
+                },
+                styletype: {
+                    type: Number,
+                    default: 0,
+                },
+                tagsid: {
+                    type: Number,
+                    default: 0,
+                },
+                teacherid: {
+                    type: Number,
+                    default: 0,
+                },
+                isshowempty: {
+                    type: Boolean,
+                    default: false,
+                },
+                // 最近浏览记录
+                ishistory: {
+                    type: Boolean,
+                    default: false,
+                },
+            },
+            data() {
+                return {
+                    page: 1,
+                    goodsList: [],
+                    goodsTotal: 0,
+                };
+            },
+            watch: {
+                show() {
+                    if (this.show) {
+                        if (!this.goodsList) {
+                            this.getTagsGoodsList()
+                        }
+                    }
+                },
+            },
+            computed: {},
+            mounted() {
+                window.addEventListener('scroll', this.throttleHandleScroll);
+                this.getTagsGoodsList();
+            },
+            beforeDestroy() {
+                window.removeEventListener('scroll', this.throttleHandleScroll);
+            },
+            methods: {
+                // 重新加载数据
+                reloadGoodsList(tagsid) {
+                    this.page = 1;
+                    this.tagsid = tagsid;
+                    this.goodsList = [];
+
+                    this.getTagsGoodsList(true);
+                },
+                getTagsGoodsList(isReload = false) {
+                    let _this = this;
+                    let url = "{:url('goods/getGoodsList')}";
+
+                    axios.post(url, {tagsid: this.tagsid, teacherid: this.teacherid, keyword: this.keyword, ishistory: this.ishistory ? 1 : 0, page: this.page}).then((res) => {
+
+                        this.goodsTotal = res.goodsTotal || 0;
+
+                        let goodsList = res.goodsList || [];
+
+                        if (parseInt(this.styletype) === 4) {
+                            this.goodsList = this.goodsList.concat(goodsList);
+                        } else {
+                            goodsList = this.getNewGoodsList(goodsList);
+                            this.goodsList = this.goodsList.concat(goodsList);
+                        }
+
+                        _this.$nextTick(() => {
+                            // effect 渐现，show(直接显示),fadeIn(淡入),slideDown(下拉)
+                            // threshold 预加载，在图片距离屏幕180px时提前载入
+                            // failure_limit 当找到第N个并未显示加载的 img时,就会停止往下查找
+
+                            $(".loadImg_" + _this.styletype + '_' + _this.tagsid).lazyload({
+                                effect: "slideDown",
+                                threshold: 180,
+                                failure_limit: 50,
+                            });
+                        });
+
+                    });
+                },
+                jumpUrl(item, type = 1) {
+                    let url = `{:url('course/play')}?id=${item.goodsid}&itemId=${item.id}`;
+                    switch (type) {
+                        case 1:
+                            location.href = url;
+                            break;
+                        case 2:
+                            window.open(url, "_blank");
+                            break;
+                    }
+                },
+
+                onScrollBottom() {
+                    // 获取窗口的高度和滚动条的位置
+                    let windowHeight = window.innerHeight;
+                    let scrollTop = document.documentElement.scrollTop || document.body.scrollTop || 0;
+                    let scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight || 0;
+
+                    // 判断滚动条是否滚动到底部
+                    if (scrollTop + windowHeight >= scrollHeight - 320) {
+                        // 处理滚动到底部的事件
+                        this.page++;
+                        this.getTagsGoodsList()
+                    }
+                },
+
+                throttleHandleScroll() {
+                    throttle(this.onScrollBottom(), 10000);
+                },
+
+                // 组装数据
+                getNewGoodsList(imagesArr) {
+
+                    // console.log('getNewGoodsList',imagesArr);
+
+                    imagesArr.map(item => {
+                        item.rate = (item.thumb_size.width / item.thumb_size.height).toFixed(2);
+
+                        if (item.rate > 1.2) {
+                            item.type = 'rectangle_2'
+                        } else {
+                            if (0.8 <= item.rate && item.rate <= 1.2) {
+                                item.type = 'square'
+                            } else {
+                                item.type = 'rectangle_1'
+                            }
+                        }
+
+                        return item
+                    });
+
+                    // console.log('imagesArr',imagesArr)
+
+                    // 原始的数据
+                    const originalData = imagesArr;
+
+                    // 初始化新的二维数组
+                    const newData = [];
+                    let currentGroup = [];
+
+                    originalData.forEach((data, index) => {
+                        // 当前组的类型
+                        const currentGroupType = currentGroup.length > 0 ? currentGroup[0].type : null;
+
+                        if (currentGroup.length === 0) {
+                            // 第一条数据直接加入当前组
+                            currentGroup.push(data);
+                        } else {
+                            // 根据数据类型进行匹配
+                            if (currentGroupType === 'square') {
+                                if (data.type === 'rectangle_1' && currentGroup.length < 3) {
+                                    currentGroup.push(data);
+                                } else {
+                                    // 当无法继续匹配时，将当前组加入新的数组
+                                    newData.push(currentGroup);
+                                    currentGroup = [data];
+                                }
+                            } else if (currentGroupType === 'rectangle_1') {
+                                if (data.type === 'rectangle_1' && currentGroup.length < 3) {
+                                    currentGroup.push(data);
+                                } else if (data.type === 'square' && currentGroup.length < 2) {
+                                    currentGroup.push(data);
+                                } else {
+                                    // 当无法继续匹配时，将当前组加入新的数组
+                                    newData.push(currentGroup);
+                                    currentGroup = [data];
+                                }
+                            } else if (currentGroupType === 'rectangle_2') {
+                                if (data.type === 'square' && currentGroup.length < 2) {
+                                    currentGroup.push(data);
+                                } else if (data.type === 'rectangle_2' && currentGroup.length < 2) {
+                                    currentGroup.push(data);
+                                } else {
+                                    // 当无法继续匹配时，将当前组加入新的数组
+                                    newData.push(currentGroup);
+                                    currentGroup = [data];
+                                }
+                            }
+                        }
+
+                        // 当组满3条数据或是最后一条数据，将当前组加入新的数组
+                        if (currentGroup.length === 3 || index === originalData.length - 1) {
+                            newData.push(currentGroup);
+                            currentGroup = [];
+                        }
+                    });
+
+                    // 1.处理拿到所有单独的正方形组组成新的数组，并且去掉数组中这部分数据
+                    let newData1 = [];
+                    let squareGroup = [];
+
+                    newData.forEach((data, index) => {
+                        if (data.length === 1) {
+                            squareGroup.push(data)
+                        } else {
+                            newData1.push(data)
+                        }
+                    });
+
+                    // 2.补充不满足数量的组中的剩余正方形
+                    for (let i = 0; i < newData1.length; i++) {
+                        const group = newData1[i];
+
+                        if (group.length < 3) {
+                            if (group[0].type === 'rectangle_1' || group[0].type === 'rectangle_2') {
+
+                                if (squareGroup.length > 0) {
+                                    group.push(squareGroup[0][0]);
+                                    squareGroup = squareGroup.slice(1);
+                                }
+
+                            }
+                        }
+                    }
+
+                    // 3.合并新数组
+                    let newSquareGroup = [];
+                    squareGroup.forEach(item => {
+                        newSquareGroup.push(item[0])
+                    });
+
+                    let newData2 = newData1.concat([newSquareGroup]);
+
+                    console.log('New newData2:', newData2);
+                    console.log('New squareGroup:', squareGroup);
+                    console.log('New newSquareGroup:', newSquareGroup);
+
+                    // 4.重新组装数据判断容器高度
+                    let newData3 = [];
+                    newData2.forEach((data, index) => {
+
+                        let isExit = data.find(obj => obj.type === 'rectangle_2');
+                        let type = 3;
+
+                        if (isExit) {
+                            type = 2
+                        } else {
+                            isExit = data.find(obj => obj.type === 'rectangle_1');
+                            if (isExit) {
+                                type = 1
+                            }
+                        }
+
+                        data.forEach((item, itemIndex) => {
+                            if (type === 1) {
+                                if (item.type === 'square') {
+                                    item.col = 'ant-col-lg-12'
+                                } else {
+                                    if (item.type === 'rectangle_1') {
+                                        item.col = 'ant-col-lg-6'
+                                    }
+                                }
+                            } else {
+                                if (type === 2) {
+
+                                    if (item.type === 'square') {
+                                        item.col = 'ant-col-lg-6'
+                                    } else {
+                                        let total = this.countValues(data, 'rectangle_2');
+                                        let total1 = this.countValues(data, 'rectangle_1');
+
+                                        if (total > 1 || total1 > 0) {
+                                            if (data[2] && data[2].type === 'rectangle_2') {
+                                                data[0].col = 'ant-col-lg-6';
+                                                if (data[1]) data[1].col = 'ant-col-lg-6';
+                                                if (data[2]) data[2].col = 'ant-col-lg-12'
+                                            } else {
+                                                if (data[1].type === 'rectangle_2') {
+                                                    data[0].col = 'ant-col-lg-6';
+                                                    if (data[1]) data[1].col = 'ant-col-lg-12';
+                                                    if (data[2]) data[2].col = 'ant-col-lg-6'
+                                                } else {
+                                                    if (data[0].type === 'rectangle_2') {
+                                                        data[0].col = 'ant-col-lg-12';
+                                                        if (data[1]) data[1].col = 'ant-col-lg-6';
+                                                        if (data[2]) data[2].col = 'ant-col-lg-6'
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            item.col = 'ant-col-lg-12'
+                                        }
+                                    }
+                                } else {
+                                    item.col = 'ant-col-lg-6'
+                                }
+                            }
+                        });
+
+                        newData3.push({
+                            type: type,
+                            list: data
+                        })
+                    });
+
+                    // 打印组装好的数据
+                    console.log('New newData3:', JSON.stringify(newData3));
+
+                    return newData3;
+                },
+
+                countValues(data, value) {
+                    let count = 0;
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].type === value) {
+                            count++;
+                        }
+                    }
+                    return count;
+                }
+            }
+        });
+    });
+
+    // 节流
+    function throttle(f, w) {
+        let t = null;
+        return function () {
+            if (t) {
+                return;
+            }
+            t = setTimeout(() => {
+                //执行操作(使用apply重新绑定this的指向)
+                f.apply(this, arguments);
+                t = null;
+            }, w);
+        };
+    }
+</script>
+
+<style>
+    .goods-box {
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+
+    .goods-box, .goods-list, .goods-wrap {
+        width: 100%;
+    }
+
+    .goods-box .title-block {
+        width: 100%;
+        height: 60px;
+        margin-bottom: 20px;
+        padding: 0 15px;
+        box-sizing: border-box;
+    }
+
+    .title-block .title {
+        line-height: 30px;
+        font-size: 20px;
+        font-weight: bold;
+        color: var(--primary-black-color);
+    }
+
+    .title-block .tip {
+        line-height: 30px;
+        font-size: 15px;
+        color: var(--primary-grey-color);
+    }
+
+    .title-block .right {
+        line-height: 60px;
+        font-size: 14px;
+        color: var(--primary-grey-color);
+    }
+
+    .goods-list {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .goods-item {
+        width: 280px;
+        position: relative;
+        box-sizing: border-box;
+        z-index: 0;
+        background-color: var(--background-white-color);
+        box-shadow: 0 6px 10px 0 rgba(95, 101, 105, 0.15);
+        margin-bottom: 20px;
+        transition: transform 0.5s ease 0s;
+    }
+
+    .goods-item-block {
+        width: 280px;
+    }
+
+    .goods-item .hover-item {
+        height: 100%;
+        width: 100%;
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 2;
+        border: 1px solid var(--primary-color);
+    }
+
+    .goods-item:hover {
+        transform: translateY(-10px);
+        transition: all 0.5s ease 0s;
+        box-shadow: 0 6px 10px 0 rgba(95, 101, 105, 0.15);
+    }
+
+    .goods-item:hover .hover-item {
+        display: block;
+    }
+
+    .goods-item .p-img {
+        width: 280px;
+        height: 280px;
+        overflow: hidden;
+    }
+
+    .goods-item .p-img a {
+        display: flex;
+        height: 100%;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .goods-item .p-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .goods-info {
+        position: relative;
+        z-index: 3;
+        padding: 15px 15px;
+        box-sizing: border-box;
+    }
+
+    .goods-info .author {
+        height: 30px;
+        line-height: 30px;
+        color: var(--primary-grey-color);
+    }
+
+    .goods-info .title {
+        height: 30px;
+        line-height: 30px;
+        color: var(--primary-black-color);
+        font-weight: bold;
+    }
+
+    .goods-info .title .viewcount {
+        height: 30px;
+    }
+
+    .goods-info .row-info .name {
+        height: 30px;
+        line-height: 30px;
+        font-size: 16px;
+        color: var(--primary-grey-color);
+    }
+
+    .goods-info .row-info .text {
+        font-size: 16px;
+        color: var(--primary-grey-color);
+    }
+
+    .goods-info .row-info .price {
+        font-size: 16px;
+        color: var(--primary-price-color);
+    }
+
+    /* 自适应图片 */
+    .ant-row {
+        display: flex;
+        flex-flow: row wrap;
+    }
+
+    .ant-row .ant-col {
+        padding-left: 15px !important;
+        padding-right: 12.5px !important;
+        margin-bottom: 50px;
+    }
+
+    .ant-row .ant-col a {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .ant-row .ant-col a .resource-cover {
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .ant-row .ant-col:hover a .resource-cover {
+        transform: scale(1.2);
+    }
+
+    .resource-card {
+        cursor: pointer;
+        overflow: hidden;
+        padding: 0;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .4);
+        transition: all .4s cubic-bezier(.68, -.55, .27, 1.55);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .ant-col-lg-12 {
+        display: block;
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    .ant-col-lg-6 {
+        display: block;
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+
+    .ant-main {
+        width: 1200px;
+        margin: 0 auto;
+    }
+</style>

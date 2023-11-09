@@ -1,0 +1,266 @@
+{extend name="pc/common/_base" /}
+
+{block name="title"}
+<title>{$articleInfo['title']}-{$website['title']}</title>
+<meta name="referrer" content="never">
+{/block}
+
+{block name="keywords"}
+<meta name="keywords" content="{$articleInfo['keywords']}-{$website['title']}">
+{/block}
+
+{block name="description"}
+<meta name="description" content="{$articleInfo['description']}-{$website['title']}">
+{/block}
+
+{block name="style"}
+<style>
+
+    .article-main {
+        margin-bottom: 80px;
+    }
+
+    .article-center {
+        width: 100%;
+    }
+
+    .detail-content-wrap {
+        width: 100%;
+        background: var(--background-white-color);
+        box-sizing: border-box;
+        box-shadow: 0 8px 16px 0 rgba(7, 17, 27, 0.05);
+        padding: 24px 40px 24px 40px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* 面包屑 */
+    .bread-crumb {
+        margin: 0 auto;
+        padding: 20px 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .bread-crumb .detail-path {
+        margin: 0 auto;
+    }
+
+    .bread-crumb .detail-path, .detail-path a, .detail-path i {
+        font-size: 14px;
+        color: var(--primary-grey-color);
+        line-height: 24px;
+        position: relative;
+        z-index: 10;
+    }
+
+    /* 面包屑 end */
+
+    /* 文章标题栏 */
+
+    .article-detail-head {
+        width: 100%;
+    }
+
+    .detail-title-wrap .detail-title {
+        font-size: 32px;
+        color: var(--background-black-color);
+        line-height: 70px;
+        word-wrap: break-word;
+        word-break: break-all;
+        border-bottom: 1px solid var(--border-divider-color);
+        text-align: center;
+    }
+
+    .detail-title-wrap .dc-profile {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        font-size: 13px;
+        color: var(--primary-grey-color);
+        text-align: center;
+    }
+
+    .detail-title-wrap .dc-profile .spacer {
+        margin-right: 20px;
+    }
+
+    /* 文章标题栏 end */
+
+    /* 文章内容 */
+    .article-detail-content {
+        padding: 20px 0;
+        box-sizing: border-box;
+    }
+
+    .article-detail-content p {
+        width: 100%;
+    }
+
+    .article-detail-content img {
+        width: 100%;
+        display: block;
+        margin: 0 auto;
+    }
+
+    .video-box {
+        width: 100%;
+        padding-bottom: 20px;
+    }
+
+    .video-box .video {
+        max-width: 100%;
+        height: auto;
+    }
+
+    p img {
+        width: 100%;
+    }
+
+    /* 文章内容 end */
+</style>
+{/block}
+
+{block name="main"}
+<div class="content-body">
+
+    <div class="container" style="background: none;">
+
+        <!-- 面包屑 -->
+        <div class="bread-crumb row">
+            <div class="detail-path">
+                <a href="{:url('/')}">首页</a>
+                <i class="icon iconfont">&#xe603;</i>
+                {if !empty($categoryInfo)}
+                <a href="{:url('artcate/'.$categoryInfo['id'])}">{$categoryInfo['name']}</a>
+                <i class="icon iconfont">&#xe603;</i>
+                {/if}
+                <span>{$articleInfo['title']}</span>
+            </div>
+        </div>
+        <!-- 面包屑end -->
+
+        <div class="article-main row">
+
+            <!--文章详情-->
+            <div class="article-center">
+
+                <div class="detail-content-wrap">
+
+                    <div class="article-detail-head">
+                        <div class="detail-title-wrap">
+                            <h1 class="detail-title">
+                                <span class="d-t js-title">{$articleInfo['title']}</span>
+                            </h1>
+                            <div class="dc-profile">
+                                <div class="l">
+                                    {if !empty($articleInfo['author'])}
+                                    <span class="spacer">作者: {$articleInfo['author']}</span>
+                                    {/if}
+                                    {if !empty($articleInfo['editor'])}
+                                    <span class="spacer">编辑: {$articleInfo['editor']}</span>
+                                    {/if}
+                                    {if !empty($articleInfo['article_mp'])}
+                                    <span class="spacer">来源: {$articleInfo['article_mp']}</span>
+                                    {/if}
+                                    <span class="spacer">阅读: {$articleInfo['viewcount'] + $articleInfo['viewcount_v'] + 1}</span>
+                                    <span class="spacer">发表时间: {$articleInfo['showtime']|date='Y-m-d H:i'}</span>
+                                </div>
+                                <div class="r path-right-box">
+                                    <div class="rinfo l">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="article-detail-content">
+
+                        {if !empty($articleInfo['video_url'])}
+                        <div class="video-box">
+                            <video class="video" width="100%" height="auto" controls="" src="{$articleInfo['video_url']}" poster="{$articleInfo['video_poster']}" controlslist="nodownload"></video>
+                        </div>
+                        {/if}
+
+                        {$articleInfo['content']|raw}
+                    </div>
+                </div>
+
+            </div>
+            <!--文章详情 end -->
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    // 解决引用微信文章图片不存在问题
+    addHeadMeta();
+
+    function addHeadMeta() {
+        // <meta name="referrer" content="never">
+        const meta = (name, content) => {
+            const meta = document.createElement('meta');
+            meta.content = content;
+            meta.name = name;
+            document.getElementsByTagName('head')[0].appendChild(meta);
+        };
+        meta(
+            'referrer',
+            'never'
+        );
+    }
+
+    // fancybox配置
+    require(['jquery.fancybox', 'jquery.lazyload'], function () {
+
+        $("img").lazyload({effect: "fadeIn", threshold: 180, failure_limit: 50});
+
+        $('.article-detail-content img').each(function () {
+            let img = $(this);
+            // let src = img.attr('src');
+            let src = img.attr('data-original');
+
+            img.wrap('<a data-fancybox="gallery" href="' + src + '"></a>');
+        });
+
+        $('[data-fancybox="gallery"]').fancybox({
+            infobar: false,
+            thumbs: {
+                hideOnClose: false
+            },
+            touch: {
+                vertical: false
+            },
+            buttons: [
+                // "zoom",
+                // "share",
+                "slideShow",
+                // "fullScreen",
+                // "download",
+                "thumbs",
+                "close"
+            ],
+            arrows: true,
+            keyboard: true,
+            protect: false,
+            modal: false,
+            loop: true,
+            animationEffect: "fade",
+            transitionEffect: false,
+            idleTime: true,
+            gutter: 0,
+            // Customize caption area
+            caption: function (instance,item) {
+                return '<h3></h3>'; // 图片备注信息
+            },
+            preload: false,
+        });
+    });
+
+</script>
+
+{/block}

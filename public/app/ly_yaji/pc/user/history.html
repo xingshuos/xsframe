@@ -1,0 +1,86 @@
+{extend name="pc/common/_base" /}
+
+{block name="title"}
+<title>观看历史-{$website['title']}</title>
+{/block}
+
+{block name="style"}
+<link rel="stylesheet" href="{$moduleAttachUrl}/static/css/user.css">
+{/block}
+
+{block name="main"}
+{include file="pc/components/app-course-list"/}
+{include file="pc/components/app-list-pages" /}
+<section>
+    <div class="user-center-main">
+
+        <div class="container">
+
+            <div class="user-inner flex">
+
+                <!-- 左侧菜单 -->
+                <div class="user-aside">
+                    {include file="pc/user/tpl/menu" /}
+                </div>
+
+                <!-- 右侧菜单 -->
+                <div class="user-main" id="courseWrapper">
+
+                    <div class="sub-title">
+                        <span>观看历史</span>
+                    </div>
+
+                    <div class="content">
+
+                        <template v-if="courseList.length > 0">
+                            <app-course-list :list="courseList"></app-course-list>
+                        </template>
+
+                        <template v-else>
+                            {include file="pc/common/_empty"/}
+                        </template>
+
+                        <!-- 分页 start -->
+                        <template v-if="courseList.length > 0">
+                            <app-list-pages></app-list-pages>
+                        </template>
+                        <!-- 分页 end -->
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+</section>
+{/block}
+
+{block name="script"}
+<script>
+    require(['vue', 'h7.axios', 'jquery', 'tip'], (Vue, axios, $) => {
+
+        new Vue({
+            el: '#courseWrapper',
+            data: {
+                courseList: []
+            },
+            mounted() {
+                this.getCourseList();
+            },
+            methods: {
+                getCourseList() {
+                    let url = "{:url('course/history')}";
+                    axios.post(url, {status: this.status, serviceType: this.serviceType}).then((res) => {
+                        this.courseList = res.courseList || [];
+                    });
+                },
+            }
+        });
+
+    });
+</script>
+{/block}

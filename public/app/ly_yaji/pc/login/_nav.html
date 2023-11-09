@@ -1,0 +1,113 @@
+<style>
+
+    /* nav */
+    nav.navbar-inverse {
+        background-color: var(--background-white-color);
+        border-color: #fff;
+        box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    nav.navbar-inverse .navbar-brand {
+        max-width: 280px;
+        height: 60px;
+        padding: 5px 0 5px 20px;
+    }
+
+    nav.navbar-inverse .navbar-brand .logo {
+        width: 40px;
+        height: 40px;
+        margin-right: 12px;
+        border-radius: 100%;
+    }
+
+    nav.navbar-inverse .navbar-brand .title {
+        color: var(--primary-black-color);
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    nav.navbar-inverse .navbar-brand .host {
+        color: var(--primary-black-color);
+        font-size: 14px;
+        font-weight: 500;
+        margin-left: 12px;
+    }
+
+    nav.navbar-inverse .navbar-nav > li > a {
+        height: 60px;
+        line-height: 27px;
+        font-size: 16px;
+        color: #333333;
+        padding: 15px 20px;
+    }
+
+    nav.navbar-inverse .navbar-nav > li > a:before {
+        height: 0;
+        visibility: hidden;
+        overflow: hidden;
+        user-select: none;
+        pointer-events: none;
+        font-weight: 600;
+    }
+
+    nav.navbar-inverse .navbar-nav > li > a:hover, .navbar-inverse .navbar-nav > li > a:focus {
+        color: var(--primary-grey-color);
+    }
+
+    nav.navbar-inverse .navbar-nav > .active > a {
+        background-color: inherit;
+        color: var(--primary-color);
+        font-weight: 500;
+    }
+
+    nav.navbar-inverse .nav-login {
+        height: 32px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 14px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 4px;
+    }
+    nav.navbar-inverse .nav-login  > li > a {
+        font-size: 15px;
+        color: var(--primary-grey-color);
+    }
+    nav.navbar-inverse .nav-login  > li > a span{
+        color: var(--primary-color);
+    }
+    nav.navbar-inverse .nav-login  > li > a i{
+        font-size: 15px;
+    }
+</style>
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">
+                    <img src="{$moduleAttachUrl}/static/images/logo.png" alt="" class="logo">
+                </span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <a class="navbar-brand flex-start-center" href="{:url('/')}">
+                <img src="{$website['logo']}" alt="{$website['title']}" class="logo">
+                <span class="title">{$website['title']}</span>
+                <span class="host">欢迎登录</span>
+            </a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav navbar-right nav-login">
+                {if $action == 'index'}
+                <li class=""><a href="{:url('user/register')}">没有账号？ <span>立即注册</span><i class="icon iconfont">&#xe603;</i></a></li>
+                {else}
+                <li class=""><a href="{:url('user/login')}">已有账号？ <span>立即登录</span><i class="icon iconfont">&#xe603;</i></a></li>
+                {/if}
+            </ul>
+        </div>
+    </div>
+</nav>

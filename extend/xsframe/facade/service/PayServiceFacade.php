@@ -1,0 +1,31 @@
+<?php
+
+// +----------------------------------------------------------------------
+// | 星数 [ WE CAN DO IT JUST THINK ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2020~2021 http://xsframe.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+// +----------------------------------------------------------------------
+// | Author: guiHai <786824455@qq.com>
+// +----------------------------------------------------------------------
+
+namespace xsframe\facade\service;
+
+
+use xsframe\service\PayService;
+use think\Facade;
+
+/**
+ * @method static wxNative($ordersn, $price, $serviceType, $title = '')
+ * @method static aliPagePay($ordersn, $price, $serviceType, $title = '', string $returnUrl = '', bool $returnQrcode = false, int $qrcodeWidth = 300)
+ * @method static aliRsaCheck(array $get, $signType = 'RSA2')
+ * @method static wxPay(string $ordersn, float $price, string $title, int $service_type, string $openid = '')
+ */
+class PayServiceFacade extends Facade
+{
+    protected static function getFacadeClass()
+    {
+        return PayService::class;
+    }
+}

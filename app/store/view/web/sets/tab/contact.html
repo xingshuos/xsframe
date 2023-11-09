@@ -1,0 +1,16 @@
+
+<div class="form-group">
+    <label class="col-lg control-label must">公众号二维码</label>
+    <div class="col-sm-9 col-xs-12">
+        {:tpl_form_field_image("data[website][contact][wechat_qrcode]", $moduleSettings['website']['contact']['wechat_qrcode'])}
+        <span class="help-block">微信公众号二维码: 1:1，例如:320px * 320px </span>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-lg control-label must">联系客服</label>
+    <div class="col-sm-9 col-xs-12">
+        {:tpl_form_field_image("data[website][contact][qrcode]", $moduleSettings['website']['contact']['qrcode'])}
+        <span class="help-block">联系客服微信二维码: 1:1，例如:320px * 320px </span>
+    </div>
+</div>

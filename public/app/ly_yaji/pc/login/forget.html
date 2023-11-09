@@ -1,0 +1,190 @@
+{extend name="pc/common/_base" /}
+
+{block name="title"}
+<title>个人注册-{$website['title']}</title>
+{/block}
+
+{block name="style"}
+<link rel="stylesheet" href="{$moduleAttachUrl}/static/css/login.css">
+{/block}
+
+{block name="nav"}
+{include file='pc/login/_nav'}
+{/block}
+
+{block name="main"}
+<section>
+    <div class="register-main">
+
+        <div class="container">
+
+            <div class="login-form-box">
+
+                <div class="login-title">找回密码</div>
+
+                <div class="login-form">
+
+                    <div class="input-box">
+                        <div class="mobile-code">+86</div>
+                        <input type="text" name="mobile" placeholder="请输入手机号">
+                        <div class="mobile-clear"><i class="iconfont">&#xe637;</i></div>
+                        <div class="help-block">请输入正确的手机号</div>
+                    </div>
+
+                    <div class="input-box">
+                        <input type="text" name="verifyCode" placeholder="请输入验证码" style="padding-left: 15px;">
+                        <div class="mobile-verifyCode" id="sendMobile">获取验证码</div>
+                        <div class="help-block">请输入正确的短信验证码</div>
+                    </div>
+
+                    <div class="input-box">
+                        <div class="mobile-code"><i class="iconfont">&#xe61b;</i></div>
+                        <input type="password" name="password" placeholder="请输入密码" autocomplete="off">
+                        <div class="help-block">请输入正确的密码(6~20位数)</div>
+                    </div>
+
+                    <div class="input-box">
+                        <div class="mobile-code"><i class="iconfont">&#xe61b;</i></div>
+                        <input type="password" name="pwdRepeat" placeholder="请再次输入密码" autocomplete="off">
+                        <div class="help-block">两次密码输入不一致</div>
+                    </div>
+
+                    <div class="btn-box">
+
+                        <div class="inp"><input type="hidden" name="sendUrl" value="{:url('sms/forget')}"></div>
+                        <div class="inp"><input type="hidden" name="forgetUrl" value="{:url('user/forget')}"></div>
+                        <div class="inp"><input type="hidden" name="loginUrl" value="{:url('user/login')}"></div>
+
+                        <div class="login-btn submit">立即找回</div>
+                    </div>
+
+                </div>
+
+                <div class="login-footer">
+                    <div class="pop-login-signup-box">
+                        <a class="xa-showSignup" href="{:url('user/login')}">已有账号？ <span> 立即登录</span></a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+{/block}
+
+{block name="script"}
+<script>
+    require(['jquery', 'tip', 'ajax'], ($) => {
+
+        // 发验证码
+        $("#sendMobile").on("click", function () {
+
+            let mobile = checkMobile();
+            let url = $(" input[ name='sendUrl' ] ").val();
+
+            if (mobile) {
+                ajax.post(url, {'mobile': mobile}, (json) => {
+                    tip.msgbox.err("短信验证码已发送，请查收");
+                    verifyCode();
+                });
+            }
+        });
+
+        //注册
+        $(".submit").on("click", function () {
+            let forgetUrl = $(" input[ name='forgetUrl' ] ").val();
+            let verifyCode = $(" input[ name='verifyCode' ] ").val();
+            let loginUrl = $(" input[ name='loginUrl' ] ").val();
+            let password = $(" input[ name='password' ] ").val();
+            let pwdRepeat = $(" input[ name='pwdRepeat' ] ").val();
+            let mobile = checkMobile();
+
+            if (mobile) {
+                if (password !== pwdRepeat) {
+                    tip.msgbox.err("两次输入密码不一致");
+                    return false;
+                }
+                if (password === '') {
+                    tip.msgbox.err("请输入密码");
+                    return false;
+                }
+                if (verifyCode === '') {
+                    tip.msgbox.err("请输入验证码");
+                    return false;
+                }
+                if (password.length < 6) {
+                    tip.msgbox.err("请输入大于6位的密码");
+                    return false;
+                }
+
+                ajax.post(forgetUrl, {'mobile': mobile, 'code': verifyCode, 'password': password}, (json) => {
+                    tip.msgbox.suc("修改成功");
+                    setTimeout(() => {
+                        jump(loginUrl);
+                    }, 1500);
+                });
+
+            }
+        });
+
+        $(" input[ name='mobile' ] ").on('input', function () {
+            let mobile = $(this).val();
+
+            if (!(/^1[3|4|5|6|7|8|9][0-9]{9}$/.test(mobile)) && mobile) {
+                $(this).parent().children('.help-block').show();
+                $(this).parent().children('.mobile-clear').show();
+            } else {
+                $(this).parent().children('.help-block').hide();
+                $(this).parent().children('.mobile-clear').hide();
+            }
+        });
+
+        $(".mobile-clear").click(function () {
+            let obj = $(this);
+            obj.parent().children('input').val("");
+            obj.parent().children('.help-block').hide();
+            obj.parent().children('.mobile-clear').hide();
+        });
+
+        function checkMobile() {
+            let mobile = $(" input[ name='mobile' ] ").val();
+            if (mobile !== undefined) {
+                mobile = mobile.replace(/\D/g, ""); /* 替换手机号中的空格*/
+            }
+
+            if (!(/^1[3|4|5|6|7|8|9][0-9]{9}$/.test(mobile))) {
+                tip.msgbox.err("请输入正确的手机号");
+                $(" input[ name='mobile' ] ").parent().children('.help-block').show();
+                return false;
+            } else {
+                $(" input[ name='mobile' ] ").parent().children('.help-block').hide();
+            }
+            return mobile;
+        }
+
+        function jump(loginurl) {
+            location.href = loginurl;
+        }
+
+        //验证码倒计时
+        let modal = {
+            seconds: 60,
+        };
+
+        function verifyCode() {
+            modal.seconds--;
+            // console.log(modal.seconds);
+            if (modal.seconds > 0) {
+                $('#sendMobile').html(modal.seconds + '秒后重发').addClass('disabled').attr('disabled', 'disabled');
+                setTimeout(() => {
+                    verifyCode();
+                }, 1000)
+            } else {
+                $('#sendMobile').html('获取验证码').removeClass('disabled').removeAttr('disabled');
+                modal.seconds = 60;
+            }
+        }
+    });
+</script>
+{/block}

@@ -1,0 +1,34 @@
+{extend name="../../admin/view/public/admin"}
+
+{block name='content'}
+
+<div class="page-header">当前位置：<span class="text-primary">系统设置</span></div>
+
+<style>
+    .tabs-container .form-group {overflow: hidden;}
+    .tabs-container .tabs-left > .nav-tabs {}
+    .tab-goods .nav li {float:left;}
+</style>
+
+<div class="page-content">
+
+    <form action="" method="post" class="form-horizontal form-validate" enctype="multipart/form-data">
+        <input type="hidden" id="tab" name="tab" value="{if empty($_GPC['tab'])}#tab_wxapp{else}#tab_{$_GPC['tab']}{/if}" />
+
+
+            <span class="text text-default">暂无系统设置</span>
+
+<!--        <div class="form-group">-->
+<!--            <label class="col-lg control-label"></label>-->
+<!--            <div class="col-sm-9 col-xs-12">-->
+<!--                <input type="submit" value="提交" class="btn btn-primary"/>-->
+<!--            </div>-->
+<!--        </div>-->
+
+    </form>
+
+
+
+</div>
+
+{/block}

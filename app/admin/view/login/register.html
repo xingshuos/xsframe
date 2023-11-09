@@ -1,0 +1,212 @@
+{extend name="../../admin/view/public/admin"}
+
+{block name='content'}
+
+<div class="loader" style="display:none;">
+    <div class="la-ball-clip-rotate">
+        <div></div>
+    </div>
+</div>
+
+<div class="system-login-new system-login-new--half auto" style="height: 491px;">
+
+    <div class="login-bg-box" style="background-image: url( __ADMIN_IMG__/login_board.png );"></div>
+
+    <div class="login-panel">
+        <div class="title">
+            账号注册
+        </div>
+        <form id="login-form" action="" method="post" class="we7-form">
+            <div class="input-group-vertical">
+                <div class="form-group">
+                    <input name="username" type="text" class="form-control " placeholder="请输入手机号">
+                    <div class="help-block">请输入手机号</div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <input name="verify" type="text" class="form-control" placeholder="请输入验证码">
+                        <a href="javascript:;" id="toggle" class="input-group-btn imgverify">
+                            <img id="imgverify"
+                                 src="{:url('admin/login/verify')}"
+                                 title="点击图片更换验证码"
+                                 onerror="this.src='__ADMIN_IMG__/noface.png'">
+                        </a>
+                    </div>
+                    <div class="help-block">请输入验证码</div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="text" class="form-control ng-pristine ng-untouched ng-valid ng-empty" placeholder="请输入短信验证码" ng-model="code">
+                        <a href="javascript:;" class="input-group-btn">
+                            <input type="button" class="btn btn-primary send-code" ng-disabled="isDisable" ng-click="sendMessage()" value="免费获取验证码">
+                            <span class="js-timer"></span>
+                        </a>
+                    </div>
+                    <div class="help-block">请输入短信验证码</div>
+                </div>
+
+                <div class="form-group">
+                    <input name="password" type="text" class="form-control " placeholder="请输入密码">
+                    <div class="help-block">请输入密码</div>
+                </div>
+
+                <div class="form-group">
+                    <input name="confirmPassword" type="text" class="form-control " placeholder="请再次确认密码">
+                    <div class="help-block">请再次确认密码</div>
+                </div>
+
+                <div class="login-submit text-center" style="margin-top: 30px;">
+                    <input type="submit" class="btn btn-primary btn-block " value="注册">
+                    <div class="text-left we7-margin-bottom">
+                        已有账号？
+                        <a href="{:url('admin/login/index')}" class="color-default">去登陆</a>
+                    </div>
+                    <input name="token" value="16cf854f" type="hidden">
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+</div>
+
+<script>
+    function detectCapsLock(event) {
+        var e = event || window.event;
+        var o = e.target || e.srcElement;
+        var oTip = o.nextElementSibling;
+        var keyCode = e.keyCode || e.switch;
+        var isShift = e.shiftKey || (keyCode == 16) || false;
+        if (((keyCode >= 65 && keyCode <= 90) && !isShift) || ((keyCode >= 97 && keyCode <= 122) && isShift)) {
+            oTip.style.display = '';
+        } else {
+            oTip.style.display = 'none';
+        }
+    }
+
+    var loginAction = function (e) {
+        var verify = $(':text[name="verify"]').val();
+        if (verify == '') {
+            alert('请填写验证码');
+            return false;
+        }
+        e.preventDefault();
+        var postData = $("#login-form input").serializeArray();
+        var postInit = {}
+        for (var key in postData) {
+            var data = postData[key]
+            $('[name="' + data.name + '"]').parents('.form-group').removeClass('error')
+            if (!data.value && data.name != 'referer') {
+                $('[name="' + data.name + '"]').parents('.form-group').addClass('error')
+                return false
+            }
+            postInit[data.name] = data.value
+        }
+        if (postInit['rember']) {
+            util.cookie.set('remember-username', postInit['username']);
+        } else {
+            util.cookie.del('remember-username');
+        }
+        if ($('input[name="smscode"]').val()) {
+            postInit.smscode = $('input[name="smscode"]').val()
+        }
+        $.post('', postInit, function (data) {
+            if (!data || !data.message) {
+                return false
+            }
+            if (data.message.errno == 0) {
+                if (data.message.message.status == -1) {
+                    var showLabel = '';
+                    if (data.message.message.extend_buttons.status_store_button) {
+                        showLabel += '<a href="' + data.message.message.extend_buttons.status_store_button.url + '"class="btn btn-primary">去续费</a>';
+                    }
+                    showLabel += '<a href="' + data.message.message.extend_buttons.cancel.url + '" class="btn btn-default">取消</a>';
+                    $('#user-expired').find('.modal-footer').html(showLabel);
+                    $('#user-expired').find('.content').html(data.message.message.message);
+                    $('#user-expired').modal('show')
+                    if (data.message.message.redirect) {
+                        setTimeout(function () {
+                            window.location.href = data.message.message.redirect;
+                        }, 5000);
+                    }
+                    return;
+                }
+                util.message(data.message.message, data.redirect, 'success')
+            } else if (data.message.errno == -3) {
+                $('#mobile')[0].innerText = data.message.message.mobile
+                $('#show-code').modal('show')
+                $('#imgverify').prop('src', './index.php?c=utility&a=code&r=' + Math.round(new Date().getTime()));
+            } else {
+                util.message(data.message.message)
+                $('#imgverify').prop('src', './index.php?c=utility&a=code&r=' + Math.round(new Date().getTime()));
+            }
+        }, 'json')
+    }
+    $('#login-form').on('submit', loginAction)
+    $('.js-showPass').on('click', function () {
+        var passwordeye = $('.js-showPass');
+        var password = $('#password');
+        if (passwordeye.hasClass('fa-eye')) {
+            passwordeye.removeClass('fa-eye').addClass('fa-eye-slash')
+            password.prop('type', 'password')
+        } else {
+            passwordeye.removeClass('fa-eye-slash').addClass('fa-eye')
+            password.prop('type', 'text')
+        }
+    })
+    $('input').on('focus', function () {
+        $(this).parents('.form-group').removeClass('error')
+    })
+    $('.js-login').click(loginAction)
+    $('.js-send-code').click(function () {
+        $.post('./index.php?c=utility&a=verifycode&do=send_code', function (data) {
+            if (data.message && data.message.errno == 0) {
+                util.message(data.message.message, '', 'success')
+                window.expire = 120
+                var time = setInterval(function () {
+                    $('.js-send-code').attr("disabled", true);
+                    $('.js-send-code').val(window.expire + '秒后重新获取');
+                    window.expire--;
+                    if (window.expire <= 0) {
+                        $('.js-send-code').attr("disabled", false);
+                        $('.js-send-code').val('重新获取验证码');
+                        clearInterval(time)
+                    }
+                }, 1000);
+            } else {
+                util.message(data.message ? data.message.message : '发送失败', '')
+            }
+        }, 'json')
+    })
+    $('#show-code').on('hide.bs.modal', function (e) {
+        $('input[name="smscode"]').val('')
+    })
+
+    function formcheck() {
+        if ($('#remember:checked').length == 1) {
+            cookie.set('remember-username', $(':text[name="username"]').val());
+        } else {
+            cookie.del('remember-username');
+        }
+        return true;
+    }
+
+    $('#toggle').click(function () {
+        $('#imgverify').prop('src', "{:url('admin/login/verify')}?" + Math.round(new Date().getTime()));
+        return false;
+    });
+    $('#form1').submit(function () {
+        var verify = $(':text[name="verify"]').val();
+        if (verify == '') {
+            alert('请填写验证码');
+            return false;
+        }
+    });
+    $(function () {
+        $('.system-login-new.auto').height($('.login-panel').outerHeight())
+    })
+</script>
+
+{/block}

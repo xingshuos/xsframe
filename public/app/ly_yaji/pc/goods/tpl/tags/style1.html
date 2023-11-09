@@ -1,0 +1,75 @@
+<style>
+    [v-cloak] {
+        display: none;
+    }
+
+    body{
+        background-color: #ffffff;
+    }
+
+    .goods-category-block .menu-list {
+        background-color: #ffffff;
+        padding: 0 25px;
+    }
+
+    .goods-category-block .all-category {
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+    .goods-category-block .menu-list .menu-item {
+        padding: 5px 25px;
+        line-height: 46px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .goods-category-block .menu-list .menu-item .item-img {
+        width: 175px;
+        height: 175px;
+        border-radius: 100%;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+
+    .goods-category-block .menu-list .menu-item .item-name {
+        font-size: 20px;
+        font-weight: bold;
+        color: var(--primary-black-color);
+    }
+
+    .goods-category-block .menu-list .menu-item .item-total {
+        font-size: 18px;
+        color: var(--primary-grey-color);
+    }
+</style>
+
+<div class="goods-category-block">
+
+    <div class="menu-list all-category flex-around">
+
+        <a class="menu-item flex-column-center">
+            <img src="{$categoryList['书法']['thumb']}" alt="" class="item-img">
+            <div class="item-name">书法</div>
+            <div class="item-total">共 {$categoryList['书法']['total']} 件</div>
+        </a>
+        <a class="menu-item flex-column-center">
+            <img src="{$categoryList['国画']['thumb']}" alt="" class="item-img">
+            <div class="item-name">国画</div>
+            <div class="item-total">共 {$categoryList['国画']['total']} 件</div>
+        </a>
+        <a class="menu-item flex-column-center">
+            <img src="{$categoryList['西画']['thumb']}" alt="" class="item-img">
+            <div class="item-name">西画</div>
+            <div class="item-total">共 {$categoryList['西画']['total']} 件</div>
+        </a>
+
+        <a class="menu-item flex-column-center" href="{:url('artist/list')}">
+            <img src="{$teacherThumb}" alt="" class="item-img">
+            <div class="item-name">艺术家</div>
+            <div class="item-total">共 {$teacherTotal} 位</div>
+        </a>
+    </div>
+
+</div>

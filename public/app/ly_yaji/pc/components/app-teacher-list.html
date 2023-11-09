@@ -1,0 +1,228 @@
+<template id="app-teacher-list">
+    <div class="goods-box">
+
+        <template v-if="teacherList.length > 0">
+            <div class="goods-wrap">
+
+                <div class="title-block flex-between">
+                    <div class="left">
+                        <div class="title">{{ title }}</div>
+                        <div class="tip">共{{ teacherTotal }}人</div>
+                    </div>
+                </div>
+
+                <div class="teacher-block">
+                    <div class="teacher-list flex-between">
+
+                        <a class="teacher-item flex-column-center" target="_blank" :href="item.url" v-for="(item,index) in teacherList" :key="index">
+                            <div class="teacher-avatar-box" style="width: 225px;height: 225px;overflow: hidden;border-radius: 100%;">
+                                <img :src="item.avatar" :alt="item.name" class="teacher-avatar">
+                            </div>
+                            <div class="teacher-name">{{item.name}}</div>
+                            <div class="works-total">{{item.works_total}}件作品</div>
+                        </a>
+
+                        <div class="teacher-item"></div>
+                        <div class="teacher-item"></div>
+                        <div class="teacher-item"></div>
+                    </div>
+                </div>
+
+
+            </div>
+        </template>
+
+        <template v-else>
+            <template v-if="isshowempty">
+                {include file="pc/common/_empty"/}
+            </template>
+        </template>
+
+    </div>
+</template>
+
+<script>
+    require(['vue', 'h7.axios', 'jquery', 'tip'], (Vue, axios, $) => {
+        Vue.component('app-teacher-list', {
+            template: '#app-teacher-list',
+            props: {
+                show: Boolean,
+                title: {
+                    type: String,
+                    default: '',
+                },
+                keyword: {
+                    type: String,
+                    default: '',
+                },
+                isshowempty: {
+                    type: Boolean,
+                    default: false,
+                },
+            },
+            data() {
+                return {
+                    page: 1,
+                    teacherList: [],
+                    teacherTotal: 0,
+                };
+            },
+            watch: {
+                show() {
+                    if (this.show) {
+                        if (!this.teacherList) {
+                            this.getTeacherList()
+                        }
+                    }
+                },
+            },
+            computed: {},
+            mounted() {
+                window.addEventListener('scroll', this.throttleHandleScroll);
+            },
+            beforeDestroy() {
+                window.removeEventListener('scroll', this.throttleHandleScroll);
+            },
+            methods: {
+                // 重新加载数据
+                reloadTeacherList() {
+                    this.page = 1;
+                    this.teacherList = [];
+
+                    this.getTeacherList()
+                },
+                getTeacherList() {
+                    let url = "{:url('artist/getList')}";
+                    axios.post(url, {keyword: this.keyword, page: this.page}).then((res) => {
+                        this.teacherTotal = res.teacherTotal || 0;
+
+                        let teacherList = res.teacherList || [];
+                        this.teacherList = this.teacherList.concat(teacherList);
+                    });
+                },
+                jumpUrl(item, type = 1) {
+                    let url = `{:url('artist/detail')}?id=${item.id}`;
+                    switch (type) {
+                        case 1:
+                            location.href = url;
+                            break;
+                        case 2:
+                            window.open(url, "_blank");
+                            break;
+                    }
+                },
+
+                onScrollBottom() {
+                    // 获取窗口的高度和滚动条的位置
+                    let windowHeight = window.innerHeight;
+                    let scrollTop = document.documentElement.scrollTop || document.body.scrollTop || 0;
+                    let scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight || 0;
+
+                    // 判断滚动条是否滚动到底部
+                    if (scrollTop + windowHeight >= scrollHeight - 320) {
+                        // 处理滚动到底部的事件
+                        this.page ++;
+                        this.getTeacherList()
+                    }
+                },
+                throttleHandleScroll() {
+                    throttle(this.onScrollBottom(), 10000);
+                },
+            }
+        });
+    });
+
+    // 节流
+    function throttle(f, w) {
+        let t = null;
+        return function () {
+            if (t) {
+                return;
+            }
+            t = setTimeout(() => {
+                //执行操作(使用apply重新绑定this的指向)
+                f.apply(this, arguments);
+                t = null;
+            }, w);
+        };
+    }
+</script>
+
+<style>
+    .goods-box {
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+
+    .goods-box, .goods-list, .goods-wrap {
+        width: 100%;
+    }
+
+    .goods-box .title-block {
+        width: 100%;
+        height: 60px;
+        margin-bottom: 20px;
+        padding: 0 15px;
+        box-sizing: border-box;
+    }
+
+    .title-block .title {
+        line-height: 30px;
+        font-size: 20px;
+        font-weight: bold;
+        color: var(--primary-black-color);
+    }
+
+    .title-block .tip {
+        line-height: 30px;
+        font-size: 15px;
+        color: var(--primary-grey-color);
+    }
+
+    .title-block .right {
+        line-height: 60px;
+        font-size: 14px;
+        color: var(--primary-grey-color);
+    }
+
+
+    .teacher-block .teacher-list {
+        width: 100%;
+        padding: 30px 0;
+        box-sizing: border-box;
+        flex-wrap: wrap;
+    }
+
+    .teacher-block .teacher-list .teacher-item {
+        width: 250px;
+        margin-top: 50px;
+    }
+
+    .teacher-block .teacher-list .teacher-item .teacher-avatar {
+        width: 225px;
+        height: 225px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .teacher-block .teacher-list .teacher-item .teacher-avatar {
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .teacher-block .teacher-list .teacher-item:hover .teacher-avatar {
+        transform: scale(1.2);
+    }
+
+    .teacher-block .teacher-list .teacher-item .teacher-name {
+        font-size: 18px;
+        color: var(--primary-black-color);
+        font-weight: bold;
+        margin-top: 40px;
+    }
+
+    .teacher-block .teacher-list .teacher-item .works-total {
+        font-size: 15px;
+        color: var(--primary-grey-color);
+        margin-top: 16px;
+    }
+</style>

@@ -1,0 +1,13 @@
+<a class="user-menu-title" href="{:url('user/center')}">个人中心</a>
+
+<div class="user-menu-list">
+    <a class="user-menu-item {if $rule == 'user/info'}active{/if}" href="{:url('user/info')}">我的账号</a>
+    <a class="user-menu-item {if $rule == 'user/order'}active{/if}" href="{:url('user/order')}">我的订单</a>
+    <a class="user-menu-item {if $rule == 'user/favorite'}active{/if}" href="{:url('user/favorite')}">我的收藏</a>
+    <a class="user-menu-item {if $rule == 'user/address'}active{/if}" href="{:url('user/address')}">地址管理</a>
+    <a class="user-menu-item {if $rule == 'user/course'}active{/if}" href="{:url('user/course')}">我的课程</a>
+    <a class="user-menu-item {if $rule == 'user/history'}active{/if}" href="{:url('user/history')}">观看历史</a>
+    <a class="user-menu-item {if $rule == 'user/balance'}active{/if}" href="{:url('user/balance')}">我的余额</a>
+    <a class="user-menu-item {if $rule == 'user/coupon'}active{/if}" href="{:url('user/coupon')}">我的优惠券</a>
+    <a class="user-menu-item {if $rule == 'user/coupon_get'}active{/if}" href="{:url('user/coupon_get')}">领取优惠券</a>
+</div>

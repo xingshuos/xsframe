@@ -1,0 +1,118 @@
+{extend name="pc/common/_base" /}
+
+{block name="title"}
+<title>我的账号-{$website['title']}</title>
+{/block}
+
+{block name="style"}
+<link rel="stylesheet" href="{$moduleAttachUrl}/static/css/user.css">
+{/block}
+
+{block name="main"}
+<section>
+    <div class="user-center-main">
+
+        <div class="container">
+
+            <div class="user-inner flex">
+
+                <!-- 左侧菜单 -->
+                <div class="user-aside">
+                    {include file="pc/user/tpl/menu" /}
+                </div>
+
+                <!-- 右侧菜单 -->
+                <div class="user-main">
+                    <div class="sub-title"><span>我的账号</span></div>
+
+                    <div class="member-form">
+
+                        <div class="l-form-group">
+                            <label class="l-control-label">账号:</label>
+                            <div class="l-control-input">
+                                <div class="l-control-static">{$memberInfo['username']}</div>
+                            </div>
+                        </div>
+
+                        <div class="l-form-group">
+                            <label class="l-control-label">昵称:</label>
+                            <div class="l-control-input">
+                                <input type="text" name="nickname" autocomplete="off" class="l-form-control" value="{$memberInfo['nickname']}" placeholder="请输入昵称">
+                            </div>
+                        </div>
+
+                        <div class="l-form-group">
+                            <label class="l-control-label">姓名:</label>
+                            <div class="l-control-input">
+                                <input type="text" name="realname" autocomplete="off" class="l-form-control" value="{$memberInfo['realname']}" placeholder="请输入姓名">
+                            </div>
+                        </div>
+
+                        <div class="l-form-group">
+                            <label class="l-control-label">性别:</label>
+                            <div class="l-control-input">
+                                <label class="radio-inline">
+                                    <input type="radio" name='gender' value="1" {if $memberInfo['gender']==1}checked{/if} /> 男
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name='gender' value="2" {if $memberInfo['gender']==2}checked{/if} /> 女
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name='gender' value="0" {if empty($memberInfo['gender'])}checked{/if} /> 未知
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="l-form-group" style="margin-top: 20px">
+                            <label class="l-control-label"></label>
+                            <div class="l-control-btn">
+                                <div class="inp"><input type="hidden" name="userUrl" value="{:url('user/info')}"></div>
+                                <div class="inp"><input type="hidden" name="logoutUrl" value="{:url('user/logout')}"></div>
+                                <div class="btn btn-confirm l-form-control-btn">保存</div>
+                                <div class="btn btn-default out-login" style="margin-left: 20px;"><span>退出登录</span></div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+{/block}
+{block name="script"}
+<script>
+    require(['jquery', 'tip', 'ajax'], ($) => {
+
+        $(".l-form-control-btn").on("click", function () {
+            let nickname = $(" input[ name='nickname' ] ").val();
+            let realname = $(" input[ name='realname' ] ").val();
+            let gender = $(" input[ name='gender' ]:checked ").val();
+            let userUrl = $(" input[ name='userUrl' ] ").val();
+
+            if (nickname === '') {
+                tip.msgbox.err("请输入昵称");
+                return false;
+            }
+
+            ajax.post(userUrl, {nickname: nickname, realname: realname, gender: gender}, (json) => {
+                tip.msgbox.suc("保存成功");
+            });
+        });
+
+        $(".out-login").on("click", function () {
+            let logoutUrl = $(" input[ name='logoutUrl' ] ").val();
+            tip.confirm("确认退出登录么?", () => {
+                ajax.post(logoutUrl, {}, (json) => {
+                    location.href = "{:url('user/login')}"
+                });
+            });
+        });
+
+    });
+</script>
+{/block}
