@@ -1,0 +1,280 @@
+{extend name="../../admin/view/public/admin"}
+
+{block name='content'}
+
+<div class="page-header">当前位置：<span class="text-primary">应用管理</span></div>
+
+<div class="page-content">
+
+    <div class="fixed-header">
+        <div style="width:40px;"></div>
+        <div style="width:120px;text-align:center;">排序</div>
+        <div style="width:80px;">应用</div>
+        <div class="flex1">&nbsp;</div>
+        <div style="width: 140px;">价格</div>
+        <div style="width: 80px;">销量</div>
+        {if $goodsFrom!='cycle'}
+        <div style="width:80px;">状态</div>
+        {/if}
+        <div style="width:150px;">属性</div>
+        <div style="width: 120px;">操作</div>
+    </div>
+
+    <form action="" method="get" class="form-horizontal form-search" role="form">
+        <div class="page-toolbar">
+            <span class="pull-left" style="margin-right:30px;">
+                <a class='btn btn-sm btn-primary' href="{:webUrl('web.goods.index/add')}"><i class='icon icon-plus'></i> 添加应用</a>
+            </span>
+            <div class="input-group col-sm-8 pull-right">
+                <span class="input-group-select">
+                    <select name="type" class='form-control select2' style="width:200px;" data-placeholder="应用类型">
+                        <option value="" {if empty($_GET['type'])}selected{/if}>应用类型</option>
+                        <option value="1" {if $_GET['type'] == 1}selected{/if}>实体应用</option>
+                        <option value="2" {if $_GET['type'] == 2}selected{/if}>线上课程</option>
+                    </select>
+                </span>
+                <span class="input-group-select">
+                    <select name="attribute" class='form-control select2' style="width:200px;" data-placeholder="应用属性">
+                        <option value="" {if empty($_GET['attribute'])}selected{/if}>应用属性</option>
+                        <option value="new" {if $_GET['attribute']=='new'}selected{/if}>新品</option>
+                        <option value="hot" {if $_GET['attribute']=='hot'}selected{/if} >热卖</option>
+                        <option value="recommand" {if $_GET['attribute']=='recommand'}selected{/if} >推荐</option>
+                        <option value="sendfree" {if $_GET['attribute']== 'sendfree'}selected{/if} >包邮</option>
+                    </select>
+                </span>
+                <span class="input-group-select">
+                    <select name="cate" class='form-control select2' style="width:200px;" data-placeholder="应用分类">
+                        <option value="" {if empty($_GET['cate'])}selected{/if} >应用分类</option>
+                        {foreach $category as $key => $c}
+                        <option value="{$c['id']}" {if $_GET['cate']==$c['id']}selected{/if} >{$c['name']}</option>
+                        {/foreach}
+                    </select>
+                </span>
+                <input type="text" class="input-sm form-control" name='keyword' value="{$_GET['keyword']}" placeholder="ID/名称">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit"> 搜索</button>
+                </span>
+            </div>
+        </div>
+    </form>
+    {if count($list)>0}
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-responsive">
+                <thead class="navbar-inner">
+                <tr>
+                    <th style="width:40px;"></th>
+                    <th style="width:120px;text-align:center;">排序</th>
+                    <th style="width:80px;">应用</th>
+                    <th style="">&nbsp;</th>
+                    <th style="width: 140px;">价格</th>
+                    <th style="width: 140px;">库存</th>
+                    <th style="width: 80px;">销量</th>
+                    {if $goodsFrom!='cycle'}
+                    <th style="width:80px;">状态</th>
+                    {/if}
+                    <th style="width:150px;">属性</th>
+                    <th style="width: 120px;">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $list as $key => $item}
+                <tr>
+                    <td>
+                        <input type='checkbox' value="{$item['id']}"/>
+                    </td>
+                    <td style='text-align:center;'>
+                        <a href='javascript:;' data-toggle='ajaxEdit' data-href="{:webUrl('web.goods.index/change',array('type'=>'displayorder','id'=>$item['id']))}">{$item['displayorder']}</a>
+                        <i class="icow icow-weibiaoti-- " data-toggle="ajaxEdit2"></i>
+                    </td>
+                    <td>
+                        <a href="{:webUrl('web.goods.index/edit', array('id' => $item['id'],'goodsFrom'=>$goodsFrom,'page'=>$page))}">
+                            <img src="{:tomedia($item['thumb'])}" style="width:72px;height:72px;padding:1px;border:1px solid #efefef;margin: 7px 0;object-fit: contain;" onerror="this.src='/app/admin/static/images/default-pic.jpg'" />
+                        </a>
+                        {if !empty($item['newgoods'])}
+                        <!--新-->
+                        <div class="newgoodsflag">新</div>
+                        {/if}
+                    </td>
+                    <td class='full'>
+                        <span>
+                            <span style="display: block;width: 100%;">
+                                <a href='javascript:;' data-toggle='ajaxEdit' data-edit='textarea' data-href="{:webUrl('web.goods.index/change',array('type'=>'title','id'=>$item['id']))}" style="overflow : hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp: 2;-webkit-box-orient: vertical;">
+                                    {$item['title']}
+                                </a>
+                                <span class="catetag">
+                                    <span class="text-primary">{$item['tags_name']}</span>
+                                </span>
+                                <span class="catetag">
+                                    {foreach $item['allcates'] as $index => $item1}
+                                        {if $category[$item['allcates'][$index]]['level'] ==1}
+                                            <span class="text-danger">[{$category[$item['allcates'][$index]]['name']}]</span>
+                                        {elseif $category[$item['allcates'][$index]]['level'] ==2}
+                                            <span class="text-info">[{$category[$item['allcates'][$index]]['name']}]</span>
+                                        {elseif  $category[$item['allcates'][$index]]['level'] ==3}
+                                            <span class="text-info">[{$category[$item['allcates'][$index]]['name']}]</span>
+                                        {/if}
+                                    {/foreach}
+                                </span>
+                            </span>
+                             <i class="icow icow-weibiaoti-- " data-toggle="ajaxEdit2"></i>
+                        </span>
+                    </td>
+                    <td>&yen;
+                        {if $item['hasoption']==1}
+                            <span data-toggle='tooltip' title='多规格不支持快速修改'>{$item['marketprice']}</span>
+                        {else}
+                            <a href='javascript:;' data-toggle='ajaxEdit' data-href="{:webUrl('web.goods.index/change',array('type'=>'marketprice','id'=>$item['id']))}">{$item['marketprice']}</a>
+                            <i class="icow icow-weibiaoti-- " data-toggle="ajaxEdit2"></i>
+                        {/if}
+                    </td>
+
+                    <td>
+                        {if !empty($item['hoteldaystock'])}
+                            <span data-toggle='tooltip' title='民宿类应用显示每日库存'>{$item['hoteldaystock']}/日</span>
+                        {elseif $item['hasoption']==1}
+                            <span data-toggle='tooltip' title='多规格不支持快速修改'>
+                                {if $item['total']<=$goodstotal}<span class="text-danger">{$item['total']}</span>{else}{$item['total']}{/if}
+                            </span>
+                        {else}
+                            <a href='javascript:;' data-toggle='ajaxEdit' data-href="{:webUrl('web.goods.index/change',array('type'=>'total','id'=>$item['id']))}">
+                                {if $item['total']<=$goodstotal}<span class="text-danger">{$item['total']}</span>{else}{$item['total']}{/if}
+                            </a>
+                            <i class="icow icow-weibiaoti-- " data-toggle="ajaxEdit2"></i>
+                        {/if}
+                    </td>
+
+                    <td>{$item['salesreal']}</td>
+
+                    {if $goodsFrom!='cycle'}
+                    <td style="overflow:visible;">
+                        {if $item['status']==2}
+                        <span class="label label-danger">赠品</span>
+                        {else}
+                        <span class='label {if $item['status']==1}label-primary{else}label-default{/if}'
+                        data-toggle='ajaxSwitch'
+                        data-confirm = "确认是{if $item['status']==1}下架{else}上架{/if}？"
+                        data-switch-refresh='true'
+                        data-switch-value='{$item['status']}'
+                        data-switch-value0='0|下架|label label-default|{:webUrl('web.goods.index/change',array('type' => 'status','value'=>1,'id'=>$item['id']))}'
+                        data-switch-value1='1|上架|label label-success|{:webUrl('web.goods.index/change',array('type' => 'status','value'=>0,'id'=>$item['id']))}'
+                        >
+                        {if $item['status']==1}上架{else}下架{/if}
+                        </span>
+                        {/if}
+                    </td>
+                    {/if}
+
+                    <td class="goods_attribute">
+                        <a class='{if $item['isnew']==1}text-danger{else}text-default{/if}'
+                        data-toggle='ajaxSwitch'
+                        data-switch-value='{$item['isnew']}'
+                        data-switch-value0='0||text-default|{:webUrl('web.goods.index/change',array('type'=>'isnew', 'value'=>1,'id'=>$item['id']))}'
+                        data-switch-value1='1||text-danger|{:webUrl('web.goods.index/change',array('type'=>'isnew','value'=>0,'id'=>$item['id']))}'
+                        >新品</a>
+                        <a class='{if $item['ishot']==1}text-danger{else}text-default{/if}'
+                        data-toggle='ajaxSwitch'
+                        data-switch-value='{$item['ishot']}'
+                        data-switch-value0='0||text-default|{:webUrl('web.goods.index/change',array('type'=>'ishot', 'value'=>1,'id'=>$item['id']))}'
+                        data-switch-value1='1||text-danger|{:webUrl('web.goods.index/change',array('type'=>'ishot','value'=>0,'id'=>$item['id']))}'
+                        >热卖</a>
+                        <a class='{if $item['isrecommand']==1}text-danger{else}text-default{/if}'
+                        data-toggle='ajaxSwitch'
+                        data-switch-value='{$item['isrecommand']}'
+                        data-switch-value0='0||text-default|{:webUrl('web.goods.index/change',array('type'=>'isrecommand', 'value'=>1,'id'=>$item['id']))}'
+                        data-switch-value1='1||text-danger|{:webUrl('web.goods.index/change',array('type'=>'isrecommand','value'=>0,'id'=>$item['id']))}'
+                        >推荐</a>
+                        {if $item['type'] == 1}
+                        <a class='{if $item['issendfree']==1}text-danger{else}text-default{/if}'
+                        data-toggle='ajaxSwitch'
+                        data-switch-value='{$item['issendfree']}'
+                        data-switch-value0='0||text-default|{:webUrl('web.goods.index/change',array('type'=>'issendfree', 'value'=>1,'id'=>$item['id']))}'
+                        data-switch-value1='1||text-danger|{:webUrl('web.goods.index/change',array('type'=>'issendfree','value'=>0,'id'=>$item['id']))}'
+                        >包邮</a>
+                        {/if}
+                    </td>
+
+                    <td style="overflow:visible;position:relative">
+                        <a class='btn btn-op btn-operation' href="{:webUrl('web.goods.index/edit', array('id' => $item['id'],'goodsFrom'=>$goodsFrom,'page'=>$page))}">
+                            <span data-toggle="tooltip" data-placement="top" title="" data-original-title="编辑">
+                                <i class="icow icow-bianji2"></i>
+                            </span>
+                        </a>
+                        {if $goodsFrom=='cycle'}
+                            <a class='btn  btn-op btn-operation' data-toggle='ajaxRemove' href="{:webUrl('web.goods.index/restore', array('id' => $item['id']))}" data-confirm='确认要恢复?'>
+                                <span data-toggle="tooltip" data-placement="top" title="" data-original-title="恢复">
+                                    <i class='icow icow-huifu1'></i>
+                                </span>
+                            </a>
+
+                            <a class='btn  btn-op btn-operation' data-toggle='ajaxRemove' href="{:webUrl('web.goods.index/destroy', array('id' => $item['id']))}" data-confirm='如果此应用存在购买记录，会无法关联到应用, 确认要彻底删除吗?？'>
+                                <span data-toggle="tooltip" data-placement="top" title="" data-original-title="彻底删除">
+                                    <i class='icow icow-shanchu1'></i>
+                                </span>
+                            </a>
+                        {else}
+                            <a class='btn  btn-op btn-operation' data-toggle='ajaxRemove' href="{:webUrl('web.goods.index/delete', array('id' => $item['id']))}" data-confirm='确认彻底删除此应用？'>
+                                <span data-toggle="tooltip" data-placement="top" title="" data-original-title="删除">
+                                     <i class='icow icow-shanchu1'></i>
+                                </span>
+                            </a>
+                        {/if}
+
+                    </td>
+                </tr>
+                {/foreach}
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td {if $goodsFrom!='cycle' }colspan="4" {else}colspan="3"{/if}>
+                    <div class="btn-group">
+                        {if $goodsFrom=='sale'}
+                            <button class="btn btn-default btn-sm  btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('web.goods.index/change',array('type' => 'status','value'=>0))}">
+                                <i class='icow icow-xiajia3'></i> 下架
+                            </button>
+                        {/if}
+                        {if $goodsFrom=='stock'}
+                            <button class="btn btn-default btn-sm  btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('web.goods.index/change',array('type' => 'status','value'=>1))}">
+                                <i class='icow icow-shangjia2'></i> 上架
+                            </button>
+                        {/if}
+                        {if $goodsFrom=='cycle'}
+                            <button class="btn btn-default btn-sm  btn-operation" type="button" data-toggle='batch-remove' data-confirm="如果应用存在购买记录，会无法关联到应用, 确认要彻底删除吗?" data-href="{:webUrl('web.goods.index/destroy')}">
+                                <i class='icow icow-shanchu1'></i> 彻底删除
+                            </button>
+                            <button class="btn btn-default btn-sm  btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要恢复?" data-href="{:webUrl('web.goods.index/restore')}">
+                                <i class='icow icow-huifu1'></i> 恢复到仓库
+                            </button>
+                        {else}
+                            <button class="btn btn-default btn-sm  btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除吗?" data-href="{:webUrl('web.goods.index/delete')}">
+                                <i class='icow icow-shanchu1'></i> 删除
+                            </button>
+                        {/if}
+                        <!--<button class="btn btn-default btn-sm  btn-operation" type="button" data-toggle='batch-group' id="batchcatesbut">批量分类</button>-->
+                    </div>
+                    </td>
+                    <td colspan="5" style="text-align: right">
+                        {$pager}
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    {else}
+        <div class="panel panel-default">
+            <div class="panel-body empty-data">暂时没有任何应用!</div>
+        </div>
+    {/if}
+</div>
+
+<script>
+    $(function () {
+        $(window).scroll(function () {
+            200 < $(window).scrollTop() ? $(".fixed-header").addClass("active") : $(".fixed-header").removeClass("active")
+        })
+    });
+</script>
+
+{/block}

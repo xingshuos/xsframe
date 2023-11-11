@@ -1,0 +1,143 @@
+{extend name="../../admin/view/public/admin"}
+
+{block name='content'}
+
+<div class="page-header">
+    <span>
+        当前位置：<span class="text-primary">文章列表</span>
+    </span>
+    <span>
+        全文章数:  <span class='text-danger'>{$total}</span>
+    </span>
+</div>
+<div class="page-content">
+
+    <form action="" method="get" class="form-horizontal table-search" role="form">
+        <div class="page-toolbar">
+            <div class="col-sm-4">
+                <a class="btn btn-primary btn-sm" href="{:webUrl('web.article.index/add')}"><i class="icon icon-plus"></i> 添加文章</a>
+            </div>
+            <div class="col-md-8 input-group">
+                <div class="input-group-select">
+                    <select name='status' class='form-control' style="width:120px;">
+                        <option value="">显示状态</option>
+                        <option value='0' {if $status=='0'}selected{/if}>未显示</option>
+                        <option value='1' {if $status=='1'}selected{/if}>已显示</option>
+                    </select>
+                </div>
+                <input type="text" class="form-control " name="keyword" value="{$_GPC['keyword']}" placeholder="可搜索文章名称">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit"> 搜索</button>
+                </span>
+            </div>
+        </div>
+    </form>
+
+    {if empty($list)}
+    <div class="panel panel-default">
+        <div class="panel-body empty-data">未查询到相关数据</div>
+    </div>
+    {else/}
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-responsive">
+                <thead>
+                <tr>
+                    <th style="width:40px;"></th>
+                    <th style='width:40px'>ID</th>
+                    <th style='width:100px'>顺序</th>
+                    <th style="width: 200px;">标题</th>
+                    <th style="width: 60px;">状态</th>
+                    <th style="width: 100px;">发布日期</th>
+                    <th style="width: 120px;text-align: center;">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $list as $key=>$row }
+                <tr>
+                    <td style="position: relative; ">
+                        <input type='checkbox' value="{$row['id']}" class="checkone"/>
+                    </td>
+                    <td>
+                        {$row['id']}
+                    </td>
+                    <td class='full'>
+                        <a href='javascript:;' data-toggle="ajaxEdit" data-href="{:webUrl('web.article.index/change',array('type'=>'displayorder','id'=>$row['id']))}" >{$row['displayorder']}</a>
+                        <i class="icow icow-weibiaoti-- " data-toggle="ajaxEdit2"></i>
+                    </td>
+                    <td class='full'>
+                        <span>
+                            <span style="display: block;width: 100%;">
+                                <a href='javascript:;' data-toggle="ajaxEdit" data-href="{:webUrl('web.article.index/change',array('type'=>'title','id'=>$row['id']))}" >{$row['title']}</a>
+                                <i class="icow icow-weibiaoti-- " data-toggle="ajaxEdit2"></i>
+                            </span>
+                            {if $row['category_name']}
+                            <span class="catetag">
+                                 <span class="text-danger">[{$row['category_name']}]</span>
+                            </span>
+                            {/if}
+                        </span>
+                    </td>
+                    <td>
+                        <span class='label {if $row['enabled']==1}label-primary{else}label-default{/if}'
+                        data-toggle='ajaxSwitch'
+                        data-switch-value='{$row['enabled']}'
+                        data-switch-value0='0|隐藏|label label-default|{:webUrl('web.article.index/change',array('type' => 'enabled','value'=>1,'id'=>$row['id']))}'
+                        data-switch-value1='1|显示|label label-primary|{:webUrl('web.article.index/change',array('type'=>'enabled','value' => 0,'id'=>$row['id']))}'
+                        >
+                        {if $row['enabled']==1}显示{else}隐藏{/if}
+                        </span>
+                    </td>
+                    <td>
+                        {:date('Y-m-d H:i:s',$row['showtime'])}
+                    </td>
+                    <td style="overflow:visible;text-align: center;">
+                        <div class="btn-group">
+                            <a href="javascript:;" class='btn  btn-op btn-operation js-clip' data-url="article/{$row['id']}">
+                                <span data-toggle="tooltip" data-placement="top"  data-original-title="复制内部链接">
+                                    <i class='icon icon-link'></i>
+                                </span>
+                            </a>
+                            <a class='btn btn-op btn-operation' href="{:webUrl('web.article.index/edit', array('id' => $row['id'],'page'=>$page))}">
+                                <span data-toggle="tooltip" data-placement="top" title="" data-original-title="编辑">
+                                    <i class="icon icon-edit"></i>
+                                </span>
+                            </a>
+                            <a class="btn btn-op btn-operation" data-toggle='ajaxRemove' href="{:url('web.article.index/delete',array('id' => $row['id']));}" data-confirm="确定要删除该文章吗？">
+                                 <span data-toggle="tooltip" data-placement="top" title="" data-original-title="删除文章">
+                                   <i class='icon icon-trash'></i>
+                                </span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {/foreach}
+
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td colspan="3">
+                        <div class="btn-group">
+                            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:url('web.article.index/delete')}">
+                                <i class="icow icow-shanchu1"></i> 批量删除
+                            </button>
+                            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要批量显示?" data-href="{:url('web.article.index/change',array('type'=> 'enabled','value'=>1))}">
+                                <i class="icon icon-ok"></i> 批量显示
+                            </button>
+                            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要批量批量隐藏?" data-href="{:url('web.article.index/change',array('type'=> 'enabled','value'=>-1))}">
+                                <i class="icon icon-remove"></i> 批量批量隐藏
+                            </button>
+                        </div>
+                    </td>
+                    <td colspan="3" class="text-right">
+                        {$pager | raw}
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    {/if}
+</div>
+{/block}

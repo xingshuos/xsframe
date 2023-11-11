@@ -1,0 +1,26 @@
+{extend name="../../admin/view/public/admin"}
+
+{block name='content'}
+
+<div class="page-header">当前位置：<span class="text-primary">访问入口</span></div>
+
+<div class="page-content">
+
+    <form action="" method="post" class="form-horizontal form-validate" enctype="multipart/form-data">
+
+        <div class="form-group">
+            <label class="col-lg control-label">访问地址</label>
+            <div class="col-sm-9 col-xs-12">
+                <p class='form-control-static'>
+                    <a href='javascript:;' class="js-clip" data-url="{$coverUrl}" data-toggle="tooltip" data-placement="top" data-original-title="点击复制链接">{$coverUrl}</a>
+                </p>
+            </div>
+        </div>
+
+    </form>
+
+
+
+</div>
+
+{/block}

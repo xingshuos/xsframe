@@ -1,0 +1,61 @@
+<div class="alert alert-info">目前仅支持阿里云短信通道</div>
+
+<div class="form-group-title">阿里云签名</div>
+
+<div class="form-group">
+    <label class="col-lg control-label must">accessKeyId</label>
+    <div class="col-sm-9 col-xs-12">
+        <input type='text' value="{$moduleSettings['sms']['accessKeyId']}" name='data[sms][accessKeyId]' class="form-control" data-rule-required='true'/>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-lg control-label must">accessKeySecret</label>
+    <div class="col-sm-9 col-xs-12">
+        <input type='text' value="{$moduleSettings['sms']['accessKeySecret']}" name='data[sms][accessKeySecret]' class="form-control" data-rule-required='true'/>
+    </div>
+</div>
+
+<div class="form-group-title">验证码模板</div>
+
+<div class="form-group">
+    <label class="col-lg control-label must">短信签名</label>
+    <div class="col-sm-9 col-xs-12">
+        <input type='text' value="{$moduleSettings['sms']['sign']}" name='data[sms][sign]' class="form-control" data-rule-required='true'/>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-lg control-label">登录确认验证码</label>
+    <div class="col-sm-9 col-xs-12">
+        <input type='text' value="{$moduleSettings['sms']['login_code']}" name='data[sms][login_code]' class="form-control"/>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-lg control-label">用户注册验证码</label>
+    <div class="col-sm-9 col-xs-12">
+        <input type='text' value="{$moduleSettings['sms']['register_code']}" name='data[sms][register_code]' class="form-control"/>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-lg control-label">修改密码验证码</label>
+    <div class="col-sm-9 col-xs-12">
+        <input type='text' value="{$moduleSettings['sms']['update_code']}" name='data[sms][update_code]' class="form-control"/>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-lg control-label">信息变更验证码</label>
+    <div class="col-sm-9 col-xs-12">
+        <input type='text' value="{$moduleSettings['sms']['change_code']}" name='data[sms][change_code]' class="form-control"/>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-lg control-label">身份验证验证码</label>
+    <div class="col-sm-9 col-xs-12">
+        <input type='text' value="{$moduleSettings['sms']['auth_code']}" name='data[sms][auth_code]' class="form-control"/>
+    </div>
+</div>
