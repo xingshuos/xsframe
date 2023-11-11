@@ -38,3 +38,7 @@ GitHub.sublime-settings
 *.log
 .env
 .DS_Store
+
+# sxframe
+app/*
+!app/admin
