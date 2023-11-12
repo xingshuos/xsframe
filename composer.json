@@ -1,0 +1,72 @@
+{
+  "name": "topthink/think",
+  "description": "the new thinkphp framework",
+  "type": "project",
+  "keywords": [
+    "framework",
+    "thinkphp",
+    "ORM"
+  ],
+  "homepage": "http://thinkphp.cn/",
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "liu21st",
+      "email": "liu21st@gmail.com"
+    },
+    {
+      "name": "yunwuxin",
+      "email": "448901948@qq.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.1.0",
+    "topthink/framework": "^6.0.0",
+    "topthink/think-orm": "^2.0",
+    "topthink/think-multi-app": "^1.0",
+    "topthink/think-view": "^1.0",
+    "ext-gd": "*",
+    "ext-json": "*",
+    "ext-openssl": "*",
+    "ext-curl": "*",
+    "ext-libxml": "*",
+    "ext-simplexml": "*",
+    "ext-iconv": "*",
+    "topthink/think-captcha": "^3.0",
+    "ext-exif": "*",
+    "ext-xmlwriter": "*",
+    "topthink/think-image": "^1.0",
+    "ext-mcrypt": "*",
+    "ext-zlib": "*",
+    "phpoffice/phpspreadsheet": "^1.19",
+    "ext-zip": "*",
+    "aliyuncs/oss-sdk-php": "^2.4",
+    "ext-mysqli": "*",
+    "ext-dom": "*",
+    "topthink/think-helper": "^3.1",
+    "alibabacloud/vod-20170321": "2.16.12",
+    "alibabacloud/iot": "^1.8",
+    "ext-imagick": "*"
+  },
+  "require-dev": {
+    "symfony/var-dumper": "^4.2",
+    "topthink/think-trace": "^1.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "app\\": "app"
+    },
+    "psr-0": {
+      "": "extend/"
+    }
+  },
+  "config": {
+    "preferred-install": "dist"
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "@php think service:discover",
+      "@php think vendor:publish"
+    ]
+  }
+}
