@@ -38,6 +38,7 @@ GitHub.sublime-settings
 *.log
 .env
 .DS_Store
+composer.lock
 
 # sxframe
 app/*
