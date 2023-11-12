@@ -42,3 +42,4 @@ GitHub.sublime-settings
 # sxframe
 app/*
 !app/admin
+.gitmodules
