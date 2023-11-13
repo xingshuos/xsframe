@@ -46,6 +46,7 @@ abstract class AdminBaseController extends BaseController
     public function _admin_initialize()
     {
         $this->checkAuth();
+
         if ($this->module == 'admin') {
             $this->isSystem = true;
         }
@@ -162,13 +163,17 @@ abstract class AdminBaseController extends BaseController
     protected function checkUniacid()
     {
         $uniacid = $_GET['i'] ?? ($_COOKIE['uniacid'] ?? 0);
+
         if (empty($uniacid)) {
             $uniacid = UserWrapper::getUserUniacid($this->userId);
             if (!empty($uniacid)) {
                 isetcookie('uniacid', $uniacid);
                 $this->uniacid = $uniacid;
             }
+        }else{
+            $this->uniacid = $uniacid;
         }
+
         return $uniacid;
     }
 
@@ -176,6 +181,7 @@ abstract class AdminBaseController extends BaseController
     protected function getUserUniacid()
     {
         $uniacid = $this->uniacid;
+
         if (empty($uniacid)) {
             $uniacid = UserWrapper::getUserUniacid($this->userId);
         }

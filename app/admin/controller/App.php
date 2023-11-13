@@ -70,15 +70,14 @@ class App extends Base
         $total = Db::name("sys_modules")->where($condition)->count();
         $pager = pagination2($total, $this->pIndex, $this->pSize);
 
-        if (!empty($list)) {
-            $list = $list->toArray();
-            foreach ($list as &$item) {
-                $item['logo'] = !empty($item['logo']) ? tomedia($item['logo']) : $this->siteRoot . "/app/{$item['identifie']}/icon.png";
+        $list = $list->toArray();
 
-                $manifest = $modulesController->extModuleManifest($item['identifie']);
-                if (!empty($manifest) && version_compare($manifest['application']['version'], $item['version'], '>')) {
-                    $item['new_version'] = 1;
-                }
+        foreach ($list as &$item) {
+            $item['logo'] = tomedia($item['logo']);
+
+            $manifest = $modulesController->extModuleManifest($item['identifie']);
+            if (!empty($manifest) && version_compare($manifest['application']['version'], $item['version'], '>')) {
+                $item['new_version'] = 1;
             }
         }
 

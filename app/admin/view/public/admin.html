@@ -99,7 +99,7 @@
             </li>
         {/foreach}
 
-        {if $userInfo['role'] == 'manager'}
+        {if in_array($userInfo['role'],['owner','manager'])}
         <li class="sysset wb-nav-system" data-module="{$module}" {if $selSystemNav}style="background-color:#161f29;"{/if}>
             <a href="">
                 <i class="icow icow-qiehuan"></i>

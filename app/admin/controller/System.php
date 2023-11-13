@@ -31,6 +31,7 @@ class System extends AdminBaseController
     // 应用列表
     public function index()
     {
+
         $condition = [
             'am.uniacid' => $this->uniacid,
             'am.deleted' => 0

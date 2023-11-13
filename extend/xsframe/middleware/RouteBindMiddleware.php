@@ -63,6 +63,11 @@ class RouteBindMiddleware
             exit(new SiteMapWrapper($request));
         }
 
+        # 验证.env文件是否存在
+        if( !is_file(root_path() . ".env") ){
+            exit('<!DOCTYPE html> <html> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <title>缺失文件</title> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"> <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"> <style> html{height:100%;}@media only screen and (max-width: 320px){html {font-size: 28px !important; }}@media (min-width: 320.99px) and (max-width: 428px){html {font-size: 30px !important;}}@media (min-width: 428.99px) and (max-width: 481px){html { font-size: 32px !important; }}@media (min-width: 481.99px) and (max-width: 640.99px){html {font-size: 35px !important; }}@media (min-width: 641px){html {font-size: 40px !important; }}p img{max-width:100%;max-height:300px;}p{height:auto;width:100%;font-size: .6rem;}body{height:96%;}.pic{ position: absolute;top: 50%;left: 50%;-webkit-transform: translate(-50%, -50%);-moz-transform: translate(-50%, -50%);-ms-transform: translate(-50%, -50%);-o-transform: translate(-50%, -50%);transform: translate(-50%, -50%); }@media (max-width:767px){.pic{ position: absolute;top:50%;width:96%}} </style> </head> <body oncontextmenu="self.event.returnValue=false" onselectstart="return false"> <div class="pic"> <p > 是的，正如你所见—我们的网站无法正常运行。 <br> <br> 幸运的是，我们发现了问题所在， <br> <br> 请检查网站根目录配置'.root_path() . ".env".' 是否创建！ <br> <br> </p> </div> </body> </html>');
+        }
+
         return $next($request);
     }
 

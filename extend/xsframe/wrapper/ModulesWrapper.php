@@ -70,8 +70,8 @@ class ModulesWrapper
     public function buildUnInstalledModule()
     {
         $moduleList = Db::name('sys_modules')->column('*', 'identifie');
-
-        $module_root      = IA_ROOT . '/app/';
+        // dump($moduleList);
+        $module_root      = IA_ROOT . '/app';
         $module_path_list = glob($module_root . '/*');
         if (empty($module_path_list)) {
             return true;
@@ -142,7 +142,21 @@ class ModulesWrapper
         $xml = $this->extModuleManifestParse($xml);
 
         if (!empty($xml)) {
-            $xml['application']['logo'] = tomedia("app/" . $moduleName . '/icon.png');
+            $xml['application']['logo'] = "app/" . $moduleName . '/icon.png';
+
+            $appLogoPath =  $root . '/icon.png';
+
+            if( is_file($appLogoPath) ){
+                $publicAppPath = IA_ROOT . "/public/app/{$moduleName}";
+                $publicAppLogoPath = IA_ROOT . "/public/app/{$moduleName}"  . '/icon.png';
+
+                if (!is_dir($publicAppPath)) {
+                    FileUtil::mkDirs($publicAppPath);
+                }
+
+                @copy($appLogoPath, $publicAppLogoPath);
+            }
+
             if (empty($xml['platform']['supports'])) {
                 $xml['platform']['supports'][] = 'app';
             }
@@ -239,7 +253,7 @@ class ModulesWrapper
                     $manifest['versions'][] = $v;
                 }
             }
-            $manifest['versions'][] = '2.0';
+            // $manifest['versions'][] = '2.0';
             $manifest['versions']   = array_unique($manifest['versions']);
         }
 

@@ -216,7 +216,7 @@ if (!function_exists('tomedia')) {
             return $src;
         }
 
-        if (strexists($src, '/app/')) {
+        if (substr($src, 0, 4) === "app/") {
             $hostUrl = getAttachmentUrl(false, $uniacid);
         } else {
             $hostUrl = getAttachmentUrl(true, $uniacid);
