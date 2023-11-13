@@ -43,4 +43,6 @@ composer.lock
 # sxframe
 app/*
 !app/admin
+public/app/*
+!public/app/admin
 .gitmodules
