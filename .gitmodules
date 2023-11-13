@@ -1,0 +1,9 @@
+[submodule "app/xs_cloud"]
+	path = app/xs_cloud
+	url = https://gitee.com/xingshuos/xs_cloud.git
+[submodule "app/xs_store"]
+	path = app/xs_store
+	url = https://gitee.com/xingshuos/xs_store.git
+[submodule "app/xs_developer"]
+	path = app/xs_developer
+	url = https://gitee.com/xingshuos/xs_developer.git
