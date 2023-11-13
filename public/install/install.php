@@ -11,7 +11,8 @@ $ispost  = strtolower($_SERVER['REQUEST_METHOD']) == 'post';
 
 if (file_exists(PATH_ROOT . '/install/install.lock') && $action != 'finish') {
     @header("Content-type: text/html; charset=UTF-8");
-    echo "系统已经安装过了，如果要重新安装，那么请删除public/install目录下的install.lock文件";
+    // echo "系统已经安装过了，如果要重新安装，那么请删除public/install目录下的install.lock文件";
+    header("location:" . "/");
     exit;
 }
 
