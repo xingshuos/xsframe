@@ -66,11 +66,12 @@ class FileUtil
             $dp = dir($path);
             while ($file = $dp->read()) {
                 $tmpFile = $path . "/" . $file;
+                $fileName    = basename($tmpFile);
 
                 $isSvnPath = strpos($tmpFile, ".svn") !== false;
                 $isGitPath = strpos($tmpFile, ".git") !== false;
 
-                if ($isSvnPath || $isGitPath || strexists($tmpFile, "/web")) {
+                if ($isSvnPath || $isGitPath || in_array($fileName,['install.php','uninstall.php','upgrade.php','manifest.xml']) ) {
                     continue;
                 }
 
@@ -84,12 +85,11 @@ class FileUtil
                         }
                         self::oldDirToNewDir($tmpPath, $newPath, $oldPath);
                     } elseif (is_file($tmpPath)) {
-                        $fileName    = basename($tmpFile);
                         $pathName    = substr($pathName, 0, strrpos($pathName, "/"));
                         $newFilePath = str_replace("//", '/', $newPath . $pathName . "/" . $fileName);
 
                         if (!is_file($newFilePath) || md5_file($tmpFile) != md5_file($newFilePath)) {
-                            copy($tmpFile, $newFilePath);
+                            @copy($tmpFile, $newFilePath);
                         }
                     }
                 }

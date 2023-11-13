@@ -47,8 +47,8 @@ class ModulesWrapper
     public function moveDirToPublic($moduleName)
     {
         $modulePath     = IA_ROOT . '/app/' . $moduleName;
-        $moduleViewPath = $modulePath . '/view/';
-        $moduleDirList  = glob($moduleViewPath . '*');
+        $modulePackagesPath = $modulePath . '/packages/';
+        $moduleDirList  = glob($modulePackagesPath . '*');
         if (empty($moduleDirList)) {
             return true;
         }
@@ -62,7 +62,7 @@ class ModulesWrapper
             copy($modulePath . "/icon.png", $targetDirPath . "/icon.png");
         }
 
-        FileUtil::oldDirToNewDir($moduleViewPath, $targetDirPath);
+        FileUtil::oldDirToNewDir($modulePackagesPath, $targetDirPath);
         return true;
     }
 
@@ -84,7 +84,7 @@ class ModulesWrapper
                 continue;
             }
 
-            if (!file_exists($path . '/manifest.xml')) {
+            if (!file_exists($path . '/packages/manifest.xml')) {
                 continue;
             }
 
@@ -132,7 +132,7 @@ class ModulesWrapper
 
     public function extModuleManifest($moduleName)
     {
-        $root     = IA_ROOT . '/app/' . $moduleName;
+        $root     = IA_ROOT . '/app/' . $moduleName . "/packages";
         $filename = $root . '/manifest.xml';
         if (!file_exists($filename)) {
             return array();
@@ -171,7 +171,7 @@ class ModulesWrapper
             return false;
         }
         $moduleName = $manifest['application']['identifie'];
-        $modulePath = IA_ROOT . '/app/' . $moduleName . '/';
+        $modulePath = IA_ROOT . '/app/' . $moduleName . "/packages/";
 
         if (!empty($manifest[$scriptType])) {
             if (strexists($manifest[$scriptType], '.php')) {
@@ -180,14 +180,20 @@ class ModulesWrapper
                     $installSqlArray = $this->sqlParse($sql);
                     foreach ($installSqlArray as $sql) {
                         try {
-                            Db::execute($sql);
+                            $sql = trim($sql);
+                            if( !empty($sql) ){
+                                Db::execute($sql);
+                            }
                         } catch (\Exception $e) {
                         }
                     }
                 }
             } else {
                 try {
-                    Db::execute($manifest[$scriptType]);
+                    $sql = trim($manifest[$scriptType]);
+                    if( !empty($sql) ){
+                        Db::execute($sql);
+                    }
                 } catch (\Exception $e) {
                 }
             }
@@ -204,7 +210,7 @@ class ModulesWrapper
     // 删除安装文件
     private function extModuleScriptClean($moduleName, $manifest)
     {
-        $moduleDir             = IA_ROOT . '/app/' . $moduleName . '/';
+        $moduleDir             = IA_ROOT . '/app/' . $moduleName . '/packages/';
         $manifest['install']   = trim($manifest['install']);
         $manifest['uninstall'] = trim($manifest['uninstall']);
         $manifest['upgrade']   = trim($manifest['upgrade']);
