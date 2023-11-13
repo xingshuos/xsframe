@@ -1,6 +1,6 @@
 <?php
 
-namespace app\store\controller\web\article;
+namespace app\xs_cloud\controller\web\article;
 
 use xsframe\base\AdminBaseController;
 use think\facade\Db;

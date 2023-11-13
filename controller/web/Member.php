@@ -1,6 +1,6 @@
 <?php
 
-namespace app\store\controller\web;
+namespace app\xs_cloud\controller\web;
 
 use app\store\facade\service\MemberServiceFacade;
 use xsframe\base\AdminBaseController;

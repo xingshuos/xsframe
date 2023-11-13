@@ -1,10 +1,10 @@
 <?php
 
-namespace app\store\controller\web;
+namespace app\xs_cloud\controller\web;
 
-use app\store\facade\service\GoodsCategoryServiceFacade;
-use app\store\facade\service\GoodsServiceFacade;
-use app\store\facade\service\TeacherServiceFacade;
+use app\xs_cloud\facade\service\GoodsCategoryServiceFacade;
+use app\xs_cloud\facade\service\GoodsServiceFacade;
+use app\xs_cloud\facade\service\TeacherServiceFacade;
 use xsframe\base\AdminBaseController;
 use xsframe\util\ExcelUtil;
 use think\facade\Db;

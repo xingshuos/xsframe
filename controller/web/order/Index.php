@@ -1,6 +1,6 @@
 <?php
 
-namespace app\store\controller\web\order;
+namespace app\xs_cloud\controller\web\order;
 
 use app\store\facade\service\CouponServiceFacade;
 use app\store\facade\service\DispatchServiceFacade;

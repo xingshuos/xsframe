@@ -10,7 +10,7 @@
 // | Author: guiHai <786824455@qq.com>
 // +----------------------------------------------------------------------
 
-namespace app\store\controller\web;
+namespace app\xs_cloud\controller\web;
 
 use xsframe\base\AdminBaseController;
 use xsframe\enum\UserRoleKeyEnum;

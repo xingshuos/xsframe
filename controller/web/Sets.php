@@ -1,6 +1,6 @@
 <?php
 
-namespace app\store\controller\web;
+namespace app\xs_cloud\controller\web;
 
 use xsframe\base\AdminBaseController;
 use xsframe\util\RandomUtil;

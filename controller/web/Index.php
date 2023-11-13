@@ -1,7 +1,7 @@
 <?php
 declare (strict_types=1);
 
-namespace app\store\controller\web;
+namespace app\xs_cloud\controller\web;
 
 use xsframe\base\AdminBaseController;
 

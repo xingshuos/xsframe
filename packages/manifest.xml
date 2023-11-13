@@ -2,7 +2,7 @@
 <manifest xmlns="https://www.xsframe.cn" versionCode="1.0">
     <application setting="true">
         <name><![CDATA[云更新]]></name>
-        <identifie><![CDATA[cloud]]></identifie>
+        <identifie><![CDATA[xs_cloud]]></identifie>
         <version><![CDATA[1.0.1]]></version>
         <type><![CDATA[business]]></type>
         <ability><![CDATA[云更新（官网）]]></ability>

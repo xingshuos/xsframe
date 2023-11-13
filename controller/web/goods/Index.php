@@ -1,6 +1,6 @@
 <?php
 
-namespace app\store\controller\web\goods;
+namespace app\xs_cloud\controller\web\goods;
 
 use app\store\facade\service\ChaptersItemServiceFacade;
 use app\store\facade\service\ChaptersServiceFacade;

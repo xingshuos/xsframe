@@ -1,6 +1,6 @@
 <?php
 
-namespace app\store\controller\web\goods;
+namespace app\xs_cloud\controller\web\goods;
 
 use AlibabaCloud\SDK\Vod\V20170321\Models\CreateUploadVideoRequest;
 use AlibabaCloud\SDK\Vod\V20170321\Models\RefreshUploadVideoRequest;
