@@ -49,10 +49,6 @@ CREATE TABLE `#__sys_account_modules`
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8 COMMENT ='模块与企业对应表，多对多关系';
 
-insert into `#__sys_account_modules`(`id`, `uniacid`, `module`, `settings`, `is_default`, `deleted`, `displayorder`)
-values (13, 1, 'ly_yaji',
-        'a:5:{s:5:\"basic\";a:3:{s:4:\"logo\";s:45:\"images/1/ly_yaji/2023/09/L44Z7pIF3zjOnvrM.jpg\";s:4:\"name\";s:12:\"鹿隐雅集\";s:9:\"copyright\";s:12:\"鹿隐雅集\";}s:7:\"contact\";a:3:{s:13:\"wechat_qrcode\";s:45:\"images/1/ly_yaji/2023/09/o47H7hZr4P207bbW.png\";s:6:\"qrcode\";s:45:\"images/1/ly_yaji/2023/09/Iddujz7BuJ17su9c.jpg\";s:5:\"about\";s:0:\"\";}s:7:\"website\";a:9:{s:7:\"contact\";a:2:{s:13:\"wechat_qrcode\";s:45:\"images/1/ly_yaji/2023/09/o47H7hZr4P207bbW.png\";s:6:\"qrcode\";s:45:\"images/1/ly_yaji/2023/09/Iddujz7BuJ17su9c.jpg\";}s:4:\"logo\";s:45:\"images/1/ly_yaji/2023/09/xEaMjJPhuHHPDDd6.png\";s:7:\"favicon\";s:45:\"images/1/ly_yaji/2023/09/CwmzWK5W84vb835X.png\";s:10:\"themeColor\";s:7:\"#8DC332\";s:5:\"title\";s:12:\"鹿隐雅集\";s:11:\"description\";s:12:\"鹿隐雅集\";s:8:\"keywords\";s:12:\"鹿隐雅集\";s:13:\"filing_number\";s:24:\"浙ICP备2020035193号-5\";s:9:\"copyright\";s:174:\"<p style=\"line-height: 2em;\"><span style=\"font-size: 15px;\">Copyright ©2020-2023.All Rights Reserved. 鹿隐雅集&nbsp;版权所有 浙ICP备2020035193号-5<br/></span></p>\";}s:3:\"sms\";a:8:{s:11:\"accessKeyId\";s:0:\"\";s:15:\"accessKeySecret\";s:0:\"\";s:4:\"sign\";s:0:\"\";s:10:\"login_code\";s:0:\"\";s:13:\"register_code\";s:0:\"\";s:11:\"update_code\";s:0:\"\";s:11:\"change_code\";s:0:\"\";s:9:\"auth_code\";s:0:\"\";}s:6:\"alivod\";a:2:{s:11:\"accessKeyId\";s:0:\"\";s:15:\"accessKeySecret\";s:0:\"\";}}',
-        1, 0, 1);
 
 DROP TABLE IF EXISTS `#__sys_account_perm_role`;
 
@@ -71,9 +67,6 @@ CREATE TABLE `#__sys_account_perm_role`
 ) ENGINE = MyISAM
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8;
-
-insert into `#__sys_account_perm_role`(`id`, `uniacid`, `rolename`, `status`, `perms`, `deleted`)
-values (1, 7, '开发', 1, 'xpp_qula,xpp_qula.device,xpp_qula.device.main,xpp_qula.device.view,xpp_qula.device.add,xpp_qula.device.edit,xpp_qula.device.delete', 0);
 
 DROP TABLE IF EXISTS `#__sys_account_perm_user`;
 
@@ -123,8 +116,8 @@ CREATE TABLE `#__sys_area`
     `area_deep`      tinyint(1) unsigned DEFAULT '1' COMMENT '地区深度，从1开始',
     PRIMARY KEY (`id`),
     KEY `area_parent_id` (`area_parent_id`)
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 45243
+) ENGINE = MyISAM
+  AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8 COMMENT ='地区表';
 
 insert into `#__sys_area`(`id`, `letter`, `area_name`, `keyword`, `area_parent_id`, `area_sort`, `area_deep`)
@@ -3579,11 +3572,6 @@ CREATE TABLE `#__sys_settings`
     PRIMARY KEY (`key`)
 ) ENGINE = MyISAM
   DEFAULT CHARSET = utf8 COMMENT ='系统配置信息表';
-
-insert into `#__sys_settings`(`key`, `value`)
-values ('website_sets', 'a:7:{s:6:\"status\";s:1:\"1\";s:7:\"uniacid\";s:1:\"1\";s:4:\"logo\";s:42:\"images/global/2023/08/rZPcbXPivvb1qNXB.png\";s:4:\"name\";s:18:\"禾擎软件服务\";s:8:\"keywords\";s:18:\"禾擎软件服务\";s:11:\"description\";s:18:\"禾擎软件服务\";s:9:\"copyright\";s:0:\"\";}'),
-       ('attachment_sets',
-        'a:2:{s:5:\"image\";a:4:{s:9:\"is_reduce\";s:1:\"0\";s:5:\"width\";s:0:\"\";s:10:\"extentions\";s:0:\"\";s:5:\"limit\";s:0:\"\";}s:6:\"remote\";a:4:{s:4:\"type\";s:1:\"0\";s:6:\"alioss\";a:5:{s:3:\"key\";s:16:\"LTAICXFVhh13ZP0V\";s:6:\"secret\";s:30:\"Ek0rrw0NdWLnKwxW4k3ETlVpnM1zmZ\";s:8:\"internal\";s:1:\"0\";s:6:\"bucket\";s:38:\"xingsebuluo-oss-files@@oss-cn-hangzhou\";s:3:\"url\";s:26:\"https://file.xingsedao.com\";}s:5:\"qiniu\";a:4:{s:9:\"accesskey\";s:0:\"\";s:9:\"secretkey\";s:0:\"\";s:6:\"bucket\";s:0:\"\";s:3:\"url\";s:0:\"\";}s:3:\"cos\";a:6:{s:5:\"appid\";s:0:\"\";s:8:\"secretid\";s:0:\"\";s:9:\"secretkey\";s:0:\"\";s:6:\"bucket\";s:0:\"\";s:5:\"local\";s:0:\"\";s:3:\"url\";s:0:\"\";}}}');
 
 DROP TABLE IF EXISTS `#__sys_sitemap_url`;
 

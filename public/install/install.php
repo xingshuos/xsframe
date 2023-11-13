@@ -989,7 +989,7 @@ function tpl_install_finish($url = '')
     echo <<<EOF
 	<div class="page-header"><h3>安装完成</h3></div>
 	<div class="alert alert-success">
-		恭喜您!已成功安装“星数（xsframe）软件开发开源系统”系统，您现在可以: <a target="_self" class="btn btn-success" href="$url/home">访问网站首页</a>
+		恭喜您!已成功安装“星数（xsframe）软件开发开源系统”系统，您现在可以: <a target="_self" class="btn btn-success" href="$url/home/index">访问网站首页</a>
 		<a target="_self" class="btn btn-success" href="$url/admin/index">访问管理后台</a>
 	</div>
 	<div class="form-group">
