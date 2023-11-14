@@ -20,7 +20,9 @@ return [
 
     // 应用映射（自动多应用模式有效）
     'app_map'          => [
-        'yaji' => 'ly_yaji',
+        'store'     => 'xs_store',
+        'developer' => 'xs_developer',
+        'cloud'     => 'xs_cloud',
     ],
     // 域名绑定（自动多应用模式有效）
     'domain_bind'      => [],
