@@ -33,14 +33,6 @@ class RouteBindMiddleware
      */
     public function handle($request, \Closure $next)
     {
-        // 解决跨域问题 start
-        // 已开启系统全局跨域请求 config \think\middleware\AllowCrossDomain::class
-        // header('Content-Type: text/html;charset=utf-8');
-        // header('Access-Control-Allow-Origin:*');
-        // header('Access-Control-Allow-Methods:GET, POST, PATCH, PUT, DELETE, OPTIONS');
-        // header('Access-Control-Allow-Headers: Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since, X-CSRF-TOKEN, X-Requested-With , X-Access-Token,Content-Length,Accept-Encoding,Origin');
-        // 解决跨域问题 end
-
         $pathInfo = Request::pathinfo();
 
         # 微信支付
