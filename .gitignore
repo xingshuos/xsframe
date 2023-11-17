@@ -41,6 +41,7 @@ GitHub.sublime-settings
 composer.lock
 
 # sxframe
+/public/attachment
 app/*
 !app/admin
 public/app/*
