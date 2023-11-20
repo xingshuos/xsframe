@@ -28,7 +28,7 @@ define('APP_PATH', IA_ROOT . "/app");
 if (!function_exists('realModuleName')) {
     function realModuleName($moduleName)
     {
-        $map            = config("app.app_map");
+        $map = config("app.app_map");
         $realModuleName = array_search($moduleName, $map);
         return $realModuleName ? $realModuleName : $moduleName;
     }
@@ -161,7 +161,7 @@ if (!function_exists('referer')) {
         $referer = $_SERVER['HTTP_REFERER'] ?? '';
         $referer = substr($referer, -1) == '?' ? substr($referer, 0, -1) : $referer;
         $referer = str_replace('&amp;', '&', $referer);
-        $reurl   = parse_url($referer);
+        $reurl = parse_url($referer);
 
         if (!empty($reurl['host']) && !in_array($reurl['host'], array($_SERVER['HTTP_HOST'], 'www.' . $_SERVER['HTTP_HOST'])) && !in_array($_SERVER['HTTP_HOST'], array($reurl['host'], 'www.' . $reurl['host']))) {
             $referer = getSiteRoot();
@@ -235,7 +235,7 @@ if (!function_exists('getAttachmentUrl')) {
         $hostUrl = request()->domain() . ($isAttachment ? "/attachment" : '');
 
         if (empty($uniacid)) {
-            $module  = app('http')->getName();
+            $module = app('http')->getName();
             $uniacid = $_W['uniacid'] ?? ($_COOKIE['uniacid'] ?? 0);
 
             if ($module == 'admin') {
@@ -246,7 +246,7 @@ if (!function_exists('getAttachmentUrl')) {
         $settings = [];
         if ($uniacid > 0) {
             $settingsController = new SettingsWrapper();
-            $settings           = $settingsController->getAccountSettings($uniacid, 'settings');
+            $settings = $settingsController->getAccountSettings($uniacid, 'settings');
 
             if (empty($settings) || empty($settings['remote'])) {
                 $settings = $settingsController->getSysSettings(SysSettingsKeyEnum::ATTACHMENT_KEY);
@@ -305,9 +305,9 @@ if (!function_exists('mobileUrl')) {
 if (!function_exists('filePrivateKeyA')) {
     function filePrivateKeyA($filename)
     {
-        $time     = strtotime("+8 hours");
-        $key      = env('site.fileRootPrivateKey');
-        $md5      = md5("/" . $filename . "-" . $time . "-0-0-" . $key);
+        $time = strtotime("+8 hours");
+        $key = env('site.fileRootPrivateKey');
+        $md5 = md5("/" . $filename . "-" . $time . "-0-0-" . $key);
         $auth_key = "?auth_key=" . $time . "-0-0-" . $md5;
         return $auth_key;
     }
@@ -398,6 +398,7 @@ if (!function_exists('is_array2')) {
         return false;
     }
 }
+
 if (!function_exists('iserializer')) {
     function iserializer($value)
     {
@@ -449,7 +450,7 @@ if (!function_exists('is_serialized')) {
             }
         } else {
             $semicolon = strpos($data, ';');
-            $brace     = strpos($data, '}');
+            $brace = strpos($data, '}');
             if (false === $semicolon && false === $brace)
                 return false;
             if (false !== $semicolon && $semicolon < 3)
@@ -480,24 +481,25 @@ if (!function_exists('is_serialized')) {
         return false;
     }
 }
+
 if (!function_exists('authcode')) {
     function authcode($string, $operation = 'DECODE', $key = 'xsframe', $expiry = 0)
     {
         $ckey_length = 4;
-        $key         = md5($key != 'xsframe' ? $key : 'xsframe');
-        $keya        = md5(substr($key, 0, 16));
-        $keyb        = md5(substr($key, 16, 16));
-        $operation   = strtoupper($operation);
-        $keyc        = $ckey_length ? ($operation == 'DECODE' ? substr($string, 0, $ckey_length) : substr(md5(microtime()), -$ckey_length)) : '';
+        $key = md5($key != 'xsframe' ? $key : 'xsframe');
+        $keya = md5(substr($key, 0, 16));
+        $keyb = md5(substr($key, 16, 16));
+        $operation = strtoupper($operation);
+        $keyc = $ckey_length ? ($operation == 'DECODE' ? substr($string, 0, $ckey_length) : substr(md5(microtime()), -$ckey_length)) : '';
 
-        $cryptkey   = $keya . md5($keya . $keyc);
+        $cryptkey = $keya . md5($keya . $keyc);
         $key_length = strlen($cryptkey);
 
-        $string        = $operation == 'DECODE' ? base64_decode(substr($string, $ckey_length)) : sprintf('%010d', $expiry ? $expiry + time() : 0) . substr(md5($string . $keyb), 0, 16) . $string;
+        $string = $operation == 'DECODE' ? base64_decode(substr($string, $ckey_length)) : sprintf('%010d', $expiry ? $expiry + time() : 0) . substr(md5($string . $keyb), 0, 16) . $string;
         $string_length = strlen($string);
 
         $result = '';
-        $box    = range(0, 255);
+        $box = range(0, 255);
 
         $rndkey = array();
         for ($i = 0; $i <= 255; $i++) {
@@ -505,19 +507,19 @@ if (!function_exists('authcode')) {
         }
 
         for ($j = $i = 0; $i < 256; $i++) {
-            $j       = ($j + $box[$i] + $rndkey[$i]) % 256;
-            $tmp     = $box[$i];
+            $j = ($j + $box[$i] + $rndkey[$i]) % 256;
+            $tmp = $box[$i];
             $box[$i] = $box[$j];
             $box[$j] = $tmp;
         }
 
         for ($a = $j = $i = 0; $i < $string_length; $i++) {
-            $a       = ($a + 1) % 256;
-            $j       = ($j + $box[$a]) % 256;
-            $tmp     = $box[$a];
+            $a = ($a + 1) % 256;
+            $j = ($j + $box[$a]) % 256;
+            $tmp = $box[$a];
             $box[$a] = $box[$j];
             $box[$j] = $tmp;
-            $result  .= chr(ord($string[$i]) ^ ($box[($box[$a] + $box[$j]) % 256]));
+            $result .= chr(ord($string[$i]) ^ ($box[($box[$a] + $box[$j]) % 256]));
         }
 
         if ($operation == 'DECODE') {
@@ -541,7 +543,7 @@ if (!function_exists('is_mobile_request')) {
     function is_mobile_request()
     {
         $_SERVER['ALL_HTTP'] = isset($_SERVER['ALL_HTTP']) ? $_SERVER['ALL_HTTP'] : '';
-        $mobile_browser      = '0';
+        $mobile_browser = '0';
         if (preg_match('/(up.browser|up.link|mmp|symbian|smartphone|midp|wap|phone|iphone|ipad|ipod|android|xoom)/i', strtolower($_SERVER['HTTP_USER_AGENT'])))
             $mobile_browser++;
         if ((isset($_SERVER['HTTP_ACCEPT'])) and (strpos(strtolower($_SERVER['HTTP_ACCEPT']), 'application/vnd.wap.xhtml+xml') !== false))
@@ -550,7 +552,7 @@ if (!function_exists('is_mobile_request')) {
             $mobile_browser++;
         if (isset($_SERVER['HTTP_PROFILE']))
             $mobile_browser++;
-        $mobile_ua     = strtolower(substr($_SERVER['HTTP_USER_AGENT'], 0, 4));
+        $mobile_ua = strtolower(substr($_SERVER['HTTP_USER_AGENT'], 0, 4));
         $mobile_agents = array(
             'w3c ', 'acs-', 'alav', 'alca', 'amoi', 'audi', 'avan', 'benq', 'bird', 'blac',
             'blaz', 'brew', 'cell', 'cldc', 'cmd-', 'dang', 'doco', 'eric', 'hipt', 'inno',
@@ -671,5 +673,20 @@ if (!function_exists('starts_with')) {
             }
         }
         return false;
+    }
+}
+
+if (!function_exists('searchUrl')) {
+    /**
+     * Url生成 保留其他参数
+     * @param string $url 路由地址
+     * @param array $vars 变量
+     * @param bool|string $suffix 生成的URL后缀
+     * @param bool|string $domain 域名
+     */
+    function searchUrl(string $url = '', array $vars = [], $suffix = true, $domain = false)
+    {
+        $params = request()->param();
+        return \think\facade\Route::buildUrl($url, array_filter(array_merge($params, $vars)))->suffix($suffix)->domain($domain);
     }
 }
