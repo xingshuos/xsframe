@@ -101,8 +101,8 @@ class ArrayUtil
             return $list;
         }
         self::validateData($list, $keyField);
-        $data          = [];
-        $getKeyField   = 'get' . ucfirst($keyField);
+        $data = [];
+        $getKeyField = 'get' . ucfirst($keyField);
         $getValueField = 'get' . ucfirst($valueField);
         if (self::$type == 'Object') {
             foreach ($list as $item) {
@@ -134,12 +134,12 @@ class ArrayUtil
      */
     protected static function validateData(array $list, $field)
     {
-        $list  = array_values($list);
+        $list = array_values($list);
         $first = $list [0];
         if (is_object($first)) {
             self::$type = 'Object';
-            $className  = get_class($first);
-            $class      = new  \ReflectionClass($className);
+            $className = get_class($first);
+            $class = new  \ReflectionClass($className);
             if (!$class->hasProperty($field)) {
                 throw new \Exception("Object has not property {$field}");
             }
@@ -169,11 +169,11 @@ class ArrayUtil
             return [];
         }
         $column1 = self::getColumn($data, $fieldName1);
-        $sort1   = ($sort1 === 'asc') ? SORT_ASC : SORT_DESC;
+        $sort1 = ($sort1 === 'asc') ? SORT_ASC : SORT_DESC;
         $column2 = [];
         if ($filedName2 && $sort2) {
             $column2 = self::getColumn($data, $filedName2);
-            $sort2   = ($sort2 === 'asc') ? SORT_ASC : SORT_DESC;
+            $sort2 = ($sort2 === 'asc') ? SORT_ASC : SORT_DESC;
         }
         if ($column2) {
             array_multisort($column1, $sort1, $column2, $sort2, $data);
@@ -196,14 +196,14 @@ class ArrayUtil
         for ($i = 1; $i < $count; ++$i) {
             for ($j = $count - 1; $j >= $i; --$j) {
                 if ($data[$j]->get . $orderFirst() > $data[$j - 1]->get . $orderFirst()) {
-                    $temp         = $data[$j - 1];
+                    $temp = $data[$j - 1];
                     $data[$j - 1] = $data[$j];
-                    $data[$j]     = $temp;
+                    $data[$j] = $temp;
                 } elseif ($data[$j]->get . $orderFirst() == $data[$j - 1]->get . $orderFirst()) {
                     if ($data[$j]->get . $orderSecond() > $data[$j - 1]->get . $orderSecond()) {
-                        $temp         = $data[$j - 1];
+                        $temp = $data[$j - 1];
                         $data[$j - 1] = $data[$j];
-                        $data[$j]     = $temp;
+                        $data[$j] = $temp;
                     }
                 }
             }
@@ -451,7 +451,7 @@ class ArrayUtil
     public static function convertUrlQuery($query)
     {
         $queryParts = explode('&', $query);
-        $params     = array();
+        $params = array();
         foreach ($queryParts as $param) {
             $item = explode('=', $param);
             if (is_array($item)) {
@@ -486,7 +486,7 @@ class ArrayUtil
         $replaceStr = $array;
         if (is_array($array)) {
             $replaceStr = json_encode($array);
-            $newStr     = str_replace("\\n", "", $replaceStr);
+            $newStr = str_replace("\\n", "", $replaceStr);
             return json_decode($newStr, true);
         } else {
             $newStr = str_replace("\\n", "", $replaceStr);
@@ -564,7 +564,7 @@ class ArrayUtil
             }
         } else {
             $semicolon = strpos($data, ';');
-            $brace     = strpos($data, '}');
+            $brace = strpos($data, '}');
             if (false === $semicolon && false === $brace)
                 return false;
             if (false !== $semicolon && $semicolon < 3)

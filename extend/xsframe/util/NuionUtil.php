@@ -41,6 +41,11 @@ class NuionUtil
         return $xml;
     }
 
+    /**
+     * 将xml转为数组
+     * @param $xmlSrc
+     * @return array|false
+     */
     public function parseXML($xmlSrc){
         if(empty($xmlSrc)){
             return false;

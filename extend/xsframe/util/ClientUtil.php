@@ -14,6 +14,10 @@ namespace xsframe\util;
 
 class ClientUtil
 {
+    /**
+     * 获取当前访问ip
+     * @return mixed|string
+     */
     public static function getIp()
     {
         static $ip = '';
@@ -33,6 +37,10 @@ class ClientUtil
         return $ip;
     }
 
+    /**
+     * 是否微信端访问
+     * @return bool
+     */
     public static function isWeixin()
     {
         if (empty($_SERVER['HTTP_USER_AGENT']) || strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') === false && strpos($_SERVER['HTTP_USER_AGENT'], 'Windows Phone') === false) {
@@ -41,6 +49,24 @@ class ClientUtil
         return true;
     }
 
+    // 必须是微信浏览器
+    public static function mustBeWechat($msg = null)
+    {
+        if (!self::isWeixin()) {
+            $msg = $msg ?? '请在微信客户端打开链接';
+            die("<!DOCTYPE html>
+                <html><head><title>抱歉，出错了</title><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1, user-scalable=0\"><link rel=\"stylesheet\" type=\"text/css\" href=\"https://res.wx.qq.com/open/libs/weui/0.4.1/weui.css\"></head>
+                    <body>
+                        <div class=\"weui_msg\"><div class=\"weui_icon_area\"><i class=\"weui_icon_info weui_icon_msg\"></i></div><div class=\"weui_text_area\"><h4 class=\"weui_msg_title\">{$msg}</h4></div></div>
+                    </body>
+                </html>");
+        }
+    }
+
+    /**
+     * 是否h5访问
+     * @return bool
+     */
     public static function isH5app()
     {
         if (!empty($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'], 'CK 2.0')) {
@@ -49,6 +75,10 @@ class ClientUtil
         return false;
     }
 
+    /**
+     * 是否ios访问
+     * @return bool
+     */
     public static function isIos()
     {
         if (strpos($_SERVER['HTTP_USER_AGENT'], 'iPhone') || strpos($_SERVER['HTTP_USER_AGENT'], 'iPad')) {
@@ -57,6 +87,10 @@ class ClientUtil
         return false;
     }
 
+    /**
+     * 是否手机端访问
+     * @return bool
+     */
     public static function isMobile()
     {
         $useragent = $_SERVER['HTTP_USER_AGENT'];

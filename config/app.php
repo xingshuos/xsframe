@@ -23,6 +23,7 @@ return [
         'store'     => 'xs_store',
         'developer' => 'xs_developer',
         'cloud'     => 'xs_cloud',
+        'doc'       => 'xs_doc',
     ],
     // 域名绑定（自动多应用模式有效）
     'domain_bind'      => [],

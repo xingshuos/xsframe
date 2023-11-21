@@ -690,3 +690,22 @@ if (!function_exists('searchUrl')) {
         return \think\facade\Route::buildUrl($url, array_filter(array_merge($params, $vars)))->suffix($suffix)->domain($domain);
     }
 }
+
+if (!function_exists('viewOther')) {
+    /**
+     * 引入其他模板文件
+     * @param $template
+     * @param $vars
+     * @param $code
+     * @param $filter
+     * @return \think\response\View
+     */
+    function viewOther($template = '', $vars = [], $code = 200, $filter = null)
+    {
+        if (!('' == pathinfo($template, PATHINFO_EXTENSION))) {
+            $moduleName = app('http')->getName();
+            $template = APP_PATH . "/" . $moduleName . "/view/" . ltrim($template, '/');
+        }
+        return view($template, $vars, $code, $filter);
+    }
+}

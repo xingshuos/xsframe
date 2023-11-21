@@ -21,7 +21,7 @@ class PriceUtil
      * @param bool $isReserveNum 是否保留位数
      * @return float
      */
-    public static function numberFormat($money, $precision = 2, $isReserveNum = false)
+    public static function numberFormat($money, int $precision = 2, bool $isReserveNum = false): float
     {
         $price = round($money, $precision);
         if ($isReserveNum) {
@@ -36,7 +36,7 @@ class PriceUtil
      * @param $money
      * @return int
      */
-    public static function yuan2jiao($money)
+    public static function yuan2jiao($money): int
     {
         return intval(round(floatval($money) * 10));
     }
@@ -45,9 +45,9 @@ class PriceUtil
      * 角转元
      *
      * @param $money
-     * @return int
+     * @return float
      */
-    public static function jiao2yuan($money)
+    public static function jiao2yuan($money): float
     {
         return round($money / 10, 2);
     }
@@ -58,7 +58,7 @@ class PriceUtil
      * @param $money
      * @return int
      */
-    public static function yuan2fen($money)
+    public static function yuan2fen($money): int
     {
         return intval(round(floatval($money) * 100));
     }
@@ -67,22 +67,22 @@ class PriceUtil
      * 分转元
      *
      * @param $money
-     * @return int
+     * @return float
      */
-    public static function fen2yuan($money)
+    public static function fen2yuan($money): float
     {
         return round($money / 100, 2);
     }
 
     /**
      * 通过类型计算金额
-     * @param $basePrice
-     * @param $numberPrice
+     * @param float $basePrice
+     * @param float $numberPrice
      * @param int $calcType
      * @param int $digits
      * @return float
      */
-    public static function getMoney($basePrice = 0.00, $numberPrice = 0.00, $calcType = 1, $digits = 100)
+    public static function getMoney(float $basePrice = 0.00, float $numberPrice = 0.00, int $calcType = 1, int $digits = 100): float
     {
         $money = 0.00;
         if ($calcType == 1) { // 固定金额

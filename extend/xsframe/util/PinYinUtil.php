@@ -16,7 +16,8 @@ use xsframe\enum\ChinesePinyinEnum;
 
 class PinYinUtil
 {
-    public static function getFirstPinyin($string)
+    // 获取首字母
+    public static function getFirstPinyin($string): string
     {
         $first  = '';
         $pinyin = self::ChineseToPinyin($string);

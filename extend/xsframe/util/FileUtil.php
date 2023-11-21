@@ -17,6 +17,7 @@ use think\Exception;
 
 class FileUtil
 {
+    // 创建目录
     public static function mkDirs($path)
     {
         if (!is_dir($path)) {
@@ -26,6 +27,7 @@ class FileUtil
         return is_dir($path);
     }
 
+    // 删除目录
     public static function rmDirs($path, $clean = false)
     {
         if (!is_dir($path)) {

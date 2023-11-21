@@ -21,12 +21,26 @@ class PhoneUtil
      * @param $phone
      * @return string
      */
-    public static function desensitize($phone)
+    public static function desensitize($phone): string
     {
         if (empty($phone) || StringUtil::emptyStr($phone)) {
             return '';
         }
 
         return substr($phone, 0, 3) . '****' . substr($phone, -4, 4);
+    }
+
+    /**
+     * 手机号验证
+     *
+     * @param $mobile
+     * @return bool
+     */
+    public static function isMobile($mobile): bool
+    {
+        if (!preg_match("/^1[3456789]{1}\d{9}$/", $mobile)) {
+            return false;
+        }
+        return true;
     }
 }
