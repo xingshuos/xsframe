@@ -15,7 +15,7 @@ namespace xsframe\base;
 use think\App;
 use think\Request;
 
-abstract class PcBaseController extends BaseController
+abstract class WebBaseController extends BaseController
 {
     protected $pIndex;
     protected $pSize;
