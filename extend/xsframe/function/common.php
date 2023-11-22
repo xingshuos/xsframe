@@ -1,8 +1,6 @@
 <?php
 
-
 error_reporting(E_ALL ^ E_NOTICE);
-
 
 use xsframe\wrapper\SettingsWrapper;
 use xsframe\enum\SysSettingsKeyEnum;
@@ -23,6 +21,7 @@ use think\facade\Env;
 
 define('IA_ROOT', str_replace("\\", '/', dirname(dirname(dirname(dirname(__FILE__))))));
 define('APP_PATH', IA_ROOT . "/app");
+define('TIMESTAMP', time());
 
 // 获取真实应用名称
 if (!function_exists('realModuleName')) {

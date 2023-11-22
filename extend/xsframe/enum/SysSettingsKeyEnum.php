@@ -24,6 +24,9 @@ class SysSettingsKeyEnum extends BaseEnum
     # 站点设置
     const WEBSITE_KEY = 'website_sets';
 
+    # 配置信息
+    const SETTING_KEY = 'settings';
+
     # 附件设置
     const ATTACHMENT_KEY = 'attachment_sets';
 

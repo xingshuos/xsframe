@@ -38,7 +38,6 @@ abstract class BaseController extends Controller
     protected $action;
 
     protected $url;
-    protected $pathUrl;
 
     protected $userId;
     protected $iaRoot;
@@ -47,14 +46,12 @@ abstract class BaseController extends Controller
     protected $moduleIaRoot;
     protected $authkey;
     protected $expire;
-    protected $shopSet;
-    protected $shopShare;
-    protected $channel;
     protected $settingsController;
     protected $attachment;
 
     protected $websiteSets = [];
     protected $account = [];
+    protected $accountSetting = [];
     protected $moduleInfo = [];
     protected $moduleSetting = [];
 
@@ -95,11 +92,9 @@ abstract class BaseController extends Controller
         $this->moduleAttachUrl = $this->siteRoot . "/app/" . $this->module;
         $this->moduleIaRoot = $this->iaRoot . "/app/" . $this->module;
 
-
         $this->controller = strtolower($this->request->controller());
         $this->action = strtolower($this->request->action());
         $this->url = $this->request->url();
-        $this->pathUrl = rtrim($this->request->pathinfo(), ".html");
 
         $this->checkCors();
         $this->autoLoad();
@@ -146,15 +141,19 @@ abstract class BaseController extends Controller
     {
         global $_W;
 
-        # 网站设置
+        # 系统网站设置
         $this->websiteSets = $this->settingsController->getSysSettings(SysSettingsKeyEnum::WEBSITE_KEY);
+
         # 设置模块
         $uniacid = $this->getUniacid();
 
         # 附件设置
         $attachmentSets = $this->settingsController->getSysSettings(SysSettingsKeyEnum::ATTACHMENT_KEY);
+
         # 项目信息
         $this->account = $this->settingsController->getAccountSettings($uniacid);
+        $this->accountSetting = $this->settingsController->getAccountSettings($uniacid, SysSettingsKeyEnum::SETTING_KEY);
+
         # 模块信息
         $this->moduleInfo = $this->settingsController->getModuleInfo($this->module);
         $this->moduleSetting = $this->getModuleSettings($uniacid);
