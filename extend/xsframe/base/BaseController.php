@@ -210,7 +210,7 @@ abstract class BaseController extends Controller
     }
 
     // 校验插件路由
-    protected function checkAppRouter()
+    protected function checkAppRouter(): string
     {
         $url = $this->url;
 
