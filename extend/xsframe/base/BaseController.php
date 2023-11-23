@@ -73,9 +73,6 @@ abstract class BaseController extends Controller
 
     protected function _initialize()
     {
-        global $_GPC;
-        $_GPC = $this->params;
-
         $this->authkey = "xsframe_";
         $this->expire = 3600 * 24 * 10; // 10天有效期
 
@@ -139,8 +136,6 @@ abstract class BaseController extends Controller
     // 加载默认配置信息
     protected function getDefaultSets()
     {
-        global $_W;
-
         # 系统网站设置
         $this->websiteSets = $this->settingsController->getSysSettings(SysSettingsKeyEnum::WEBSITE_KEY);
 
@@ -166,7 +161,6 @@ abstract class BaseController extends Controller
         }
 
         $this->attachment = $attachmentSets;
-        $_W['attachment'] = $this->attachment;
     }
 
     // 获取模块配置信息
@@ -185,8 +179,6 @@ abstract class BaseController extends Controller
     // 获取项目uniacid
     protected function getUniacid()
     {
-        global $_W;
-
         $uniacid = isset($this->params['uniacid']) ? $this->params['uniacid'] : ($_GET['i'] ?? ($_COOKIE['uniacid'] ?? 0));
 
         # 校验域名路由 start
@@ -205,7 +197,6 @@ abstract class BaseController extends Controller
             # 缓存当前所选商户uniacid
             if (!empty($uniacid)) {
                 isetcookie('uniacid', $uniacid);
-                $_W['uniacid'] = $uniacid;
             }
         }
 

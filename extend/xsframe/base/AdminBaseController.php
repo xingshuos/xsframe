@@ -64,7 +64,7 @@ abstract class AdminBaseController extends BaseController
             }
 
             $this->adminSession = $loginResult['adminSession'];
-            $this->userId       = $this->adminSession['uid'];
+            $this->userId = $this->adminSession['uid'];
         } else {
             $loginResult = UserWrapper::checkUser();
             if ($loginResult['isLogin'] && (!in_array($this->action, ['logout', 'verify']))) {
@@ -91,10 +91,10 @@ abstract class AdminBaseController extends BaseController
     {
         $templateVars = $this->getDefaultVars($templateVars);
 
-        $content  = View::fetch($templateFile, $templateVars);
+        $content = View::fetch($templateFile, $templateVars);
         $htmlPath = !empty($htmlPath) ? $htmlPath : './appTemplate/';
         $htmlFile = $htmlPath . $htmlFile . '.' . config('view.view_suffix');
-        $File     = new \think\template\driver\File();
+        $File = new \think\template\driver\File();
         $File->write($htmlFile, $content);
         return $content;
     }
@@ -111,32 +111,25 @@ abstract class AdminBaseController extends BaseController
 
     private function getDefaultVars($params = null)
     {
-        global $_GPC;
-        global $_W;
-
-        $_W['token'] = RandomUtil::random(8);
-
         if (!empty($this->moduleSetting['basic'])) {
             $this->moduleInfo = array_merge(!empty($this->moduleInfo) ? $this->moduleInfo : [], $this->moduleSetting['basic']);
         }
 
-        $var                    = [];
-        $var['_GPC']            = $_GPC;
-        $var['_W']              = $_W;
-        $var['module']          = $this->module;
-        $var['controller']      = $this->controller;
-        $var['action']          = $this->action;
-        $var['uniacid']         = $this->uniacid;
-        $var['uid']             = $this->userId;
-        $var['url']             = $this->url;
-        $var['siteRoot']        = $this->siteRoot;
-        $var['moduleSiteRoot']  = $this->moduleSiteRoot;
+        $var = [];
+        $var['module'] = $this->module;
+        $var['controller'] = $this->controller;
+        $var['action'] = $this->action;
+        $var['uniacid'] = $this->uniacid;
+        $var['uid'] = $this->userId;
+        $var['url'] = $this->url;
+        $var['siteRoot'] = $this->siteRoot;
+        $var['moduleSiteRoot'] = $this->moduleSiteRoot;
         $var['moduleAttachUrl'] = $this->moduleAttachUrl;
-        $var['token']           = $_W['token'];
-        $var['isSystem']        = $this->isSystem;
-        $var['menusList']       = MenuWrapper::getMenusList($this->adminSession['role'], $this->module, $this->controller, $this->action);
-        $var['userInfo']        = $this->adminSession;
-        $var['websiteSets']     = $this->settingsController->getSysSettings(SysSettingsKeyEnum::WEBSITE_KEY);
+        $var['token'] = RandomUtil::random(8);
+        $var['isSystem'] = $this->isSystem;
+        $var['menusList'] = MenuWrapper::getMenusList($this->adminSession['role'], $this->module, $this->controller, $this->action);
+        $var['userInfo'] = $this->adminSession;
+        $var['websiteSets'] = $this->settingsController->getSysSettings(SysSettingsKeyEnum::WEBSITE_KEY);
 
         # 收缩菜单
         $var['foldNav'] = intval($_COOKIE["foldnav"] ?? 0);
@@ -144,9 +137,9 @@ abstract class AdminBaseController extends BaseController
         # 选中系统菜单
         $var['selSystemNav'] = intval($_COOKIE[$this->module . "_systemnav"]);
 
-        $var['account']    = $this->account;
+        $var['account'] = $this->account;
         $var['moduleInfo'] = $this->moduleInfo;
-        $var['attachUrl']  = getAttachmentUrl() . "/";
+        $var['attachUrl'] = getAttachmentUrl() . "/";
 
         // dump($this->moduleInfo);die;
         // dump($var['menusList']);die;
@@ -170,7 +163,7 @@ abstract class AdminBaseController extends BaseController
                 isetcookie('uniacid', $uniacid);
                 $this->uniacid = $uniacid;
             }
-        }else{
+        } else {
             $this->uniacid = $uniacid;
         }
 

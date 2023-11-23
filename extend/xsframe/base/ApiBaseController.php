@@ -43,9 +43,9 @@ abstract class ApiBaseController extends BaseController
      * @param array $data
      * @param string $code
      * @param string $message
-     * @return array
+     * @return \think\response\Json
      */
-    protected function success($data = [], $code = "200", $message = 'success')
+    protected function success(array $data = [], string $code = "200", string $message = 'success'): \think\response\Json
     {
         $code    = $data['code'] ?? $code;
         $message = $data['msg'] ?? $message;
@@ -62,11 +62,10 @@ abstract class ApiBaseController extends BaseController
     /**
      * 错误的数组数据
      * @param string $message
-     * @param array $data
      * @param string $code
      * @return array
      */
-    protected function error($message = 'fail', $code = "404")
+    protected function error(string $message = 'fail', string $code = "404"): array
     {
         $code    = $data['code'] ?? $code;
         $message = $data['msg'] ?? $message;
