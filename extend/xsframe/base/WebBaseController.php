@@ -77,14 +77,14 @@ abstract class WebBaseController extends BaseController
         $baseVar['action'] = $this->action;
         $baseVar['isLogin'] = $this->isLogin;
         $baseVar['siteRoot'] = $this->siteRoot;
+
         $var['moduleSiteRoot'] = $this->moduleSiteRoot;
         $var['moduleAttachUrl'] = $this->moduleAttachUrl;
 
         $website = $this->moduleSetting['website'] ?? [];
         if (!empty($website)) {
-            $baseVar['title'] = $website['title'];
-            $baseVar['keywords'] = $website['keywords'];
-            $baseVar['description'] = $website['description'];
+            $website = set_medias($website, ['logo', 'favicon']);
+            $baseVar = array_merge($baseVar, $website);
         }
 
         $var = array_merge($baseVar, $var);
