@@ -27,10 +27,7 @@ class PayWechatNotifyWrapper
     {
         $get = $this->get;
 
-        // echo 3;die;
-
         // $get = $this->getTextXml();
-
         // LoggerUtil::warning('start');
         // LoggerUtil::warning($get);
         // LoggerUtil::warning('end');
@@ -41,8 +38,6 @@ class PayWechatNotifyWrapper
 
         $get = ArrayUtil::xml2array($get);
 
-        // dump($get);
-        // die;
         if (empty($get['result_code'])) {
             $this->fail();
         }
