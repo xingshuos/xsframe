@@ -2,6 +2,7 @@
 
 namespace xsframe\traits;
 
+use think\db\exception\DbException;
 use think\facade\Db;
 
 trait ServiceTraits
@@ -58,7 +59,7 @@ trait ServiceTraits
                 $list = Db::name($this->tableName)->field($field)->where($condition)->order($order)->select()->toArray();
             } else {
                 $temp = Db::name($this->tableName)->field($field)->where($condition)->order($order)->select()->toArray();
-                $rs   = array();
+                $rs = array();
                 if (!empty($temp)) {
                     foreach ($temp as $key => &$row) {
                         if (isset($row[$keyField])) {
@@ -79,13 +80,14 @@ trait ServiceTraits
     /**
      * 获取数据数量
      * @param $condition
+     * @param string $field
      * @return int
-     * @throws \think\db\exception\DbException
+     * @throws DbException
      */
-    public function getTotal($condition)
+    public function getTotal($condition, string $field = "*"): int
     {
-        $total = Db::name($this->tableName)->where($condition)->count();
-        return $total ? $total : 0;
+        $total = Db::name($this->tableName)->where($condition)->count($field);
+        return intval($total);
     }
 
     /**
