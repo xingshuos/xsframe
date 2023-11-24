@@ -176,9 +176,16 @@ class PermWrapper
             ),
         ];
 
+//        dump($module);
+//        dump($moduleMenus);
+//        die;
+
         if (!empty($moduleMenus)) {
             foreach ($moduleMenus as $key => $menu) {
 
+                // TODO 主菜单权限
+
+                // 子菜单权限
                 foreach ($menu['items'] as $item) {
                     $perm = $item['perm'];
 
@@ -198,7 +205,6 @@ class PermWrapper
 
                         $newModuleMenus[$itemKey] = $newModuleMenusItem;
                     }
-
                 }
 
             }

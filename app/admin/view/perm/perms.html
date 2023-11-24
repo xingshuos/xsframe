@@ -1,4 +1,4 @@
-{if !empty($perms['parent']) && $userInfo['role'] != 'operator'}
+{if !empty($perms['parent']) || $userInfo['role'] == 'operator'}
 
 <div class="form-group">
     <label class="col-lg control-label"></label>
