@@ -158,7 +158,13 @@ class PermWrapper
     // 获取插件菜单信息
     public function getModuleMenus($module, $moduleName)
     {
-        $moduleMenus = require APP_PATH . "/{$module}/config/menu.php";
+        $menuPath = APP_PATH . "/{$module}/config/menu.php";
+
+        if (!is_file($menuPath)) {
+            return [];
+        }
+
+        $moduleMenus = require $menuPath;
 
         $oldModuleMenus = [
             'text' => $moduleName
@@ -176,9 +182,9 @@ class PermWrapper
             ),
         ];
 
-//        dump($module);
-//        dump($moduleMenus);
-//        die;
+        //        dump($module);
+        //        dump($moduleMenus);
+        //        die;
 
         if (!empty($moduleMenus)) {
             foreach ($moduleMenus as $key => $menu) {
