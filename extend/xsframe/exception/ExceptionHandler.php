@@ -28,8 +28,8 @@ class ExceptionHandler extends Handle
     {
         // 数据验证异常
         if ($e instanceof ValidateException) {
-            $code   = intval(ExceptionEnum::API_PARAMS_ERROR_CODE);
-            $msg    = $e->getError();
+            $code = intval(ExceptionEnum::API_PARAMS_ERROR_CODE);
+            $msg = $e->getError();
             $result = [
                 'code' => $code,
                 'msg'  => $msg,
@@ -40,7 +40,7 @@ class ExceptionHandler extends Handle
         // HTTP异常
         if ($e instanceof HttpException && $request->isAjax()) {
             $code = intval($e->getStatusCode());
-            $msg  = $e->getMessage();
+            $msg = $e->getMessage();
 
             $result = [
                 'code' => $code,
@@ -50,14 +50,21 @@ class ExceptionHandler extends Handle
         }
 
         // BaseException请求异常POST
-        if ($e instanceof BaseException && ( $request->isPost() || $request->isGet())) {
+        if ($e instanceof BaseException && ($request->isPost() || $request->isGet())) {
             $code = intval(intval($e->code));
-            $msg  = $e->msg;
+            $msg = $e->msg;
 
-            $result = [
-                'code' => $code,
-                'msg'  => $msg,
-            ];
+            $result = [];
+            $result['code'] = $code;
+            $result['msg'] = $msg;
+
+            if (env('APP_DEBUG')) {
+                $result['error'] = [
+                    'file'  => $e->getFile(),
+                    'line'  => $e->getLine(),
+                    'trace' => $e->getTraceAsString(),
+                ];
+            }
             return json($result, $code);
         }
 
