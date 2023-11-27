@@ -47,9 +47,9 @@ abstract class ApiBaseController extends BaseController
      */
     protected function success(array $data = [], string $code = "200", string $message = 'success'): \think\response\Json
     {
-        $code    = $data['code'] ?? $code;
+        $code = $data['code'] ?? $code;
         $message = $data['msg'] ?? $message;
-        $data    = $data['data'] ?? $data;
+        $data = $data['data'] ?? $data;
 
         $retData = [
             'code' => (string)$code,
@@ -67,7 +67,7 @@ abstract class ApiBaseController extends BaseController
      */
     protected function error(string $message = 'fail', string $code = "404"): array
     {
-        $code    = $data['code'] ?? $code;
+        $code = $data['code'] ?? $code;
         $message = $data['msg'] ?? $message;
 
         $retData = [
@@ -76,5 +76,13 @@ abstract class ApiBaseController extends BaseController
             'data' => [],
         ];
         die(json_encode($retData));
+    }
+
+    // 默认获取userid
+    protected function getUserId()
+    {
+        $token = $this->params['token'] ?? '';
+        $this->userId = authcode(base64_decode($token), "DECODE", $this->module);
+        return $this->userId;
     }
 }
