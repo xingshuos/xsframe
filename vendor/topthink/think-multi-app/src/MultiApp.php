@@ -70,7 +70,7 @@ class MultiApp
     {
         $scriptName = $this->getScriptName();
         $defaultApp = $this->app->config->get('app.default_app') ?: 'index';
-        $appName    = $this->app->http->getName();
+        $appName = $this->app->http->getName();
 
         if ($appName || ($scriptName && !in_array($scriptName, ['index', 'router', 'think']))) {
             $appName = $appName ?: $scriptName;
@@ -85,7 +85,7 @@ class MultiApp
             if (!empty($bind)) {
                 // 获取当前子域名
                 $subDomain = $this->app->request->subDomain();
-                $domain    = $this->app->request->host(true);
+                $domain = $this->app->request->host(true);
 
                 if (isset($bind[$domain])) {
                     $appName = $bind[$domain];
@@ -101,7 +101,7 @@ class MultiApp
 
             if (!$this->app->http->isBind()) {
                 $path = $this->app->request->pathinfo();
-                $map  = $this->app->config->get('app.app_map', []);
+                $map = $this->app->config->get('app.app_map', []);
                 $deny = $this->app->config->get('app.deny_app_list', []);
                 $name = current(explode('/', $path));
 
@@ -111,7 +111,7 @@ class MultiApp
 
                 if (isset($map[$name])) {
                     if ($map[$name] instanceof Closure) {
-                        $result  = call_user_func_array($map[$name], [$this->app]);
+                        $result = call_user_func_array($map[$name], [$this->app]);
                         $appName = $result ?: $name;
                     } else {
                         $appName = $map[$name];
@@ -218,8 +218,8 @@ class MultiApp
         }
 
         # 星数自定义provider类 start 20230706
-        $rootPath         = str_replace('\\', '/', dirname($appPath));
-        $baseProviderPath = $rootPath . "extend/xsframe/base/BaseProvider.php";
+        $rootPath = str_replace("\\", '/', dirname(dirname(dirname(dirname(dirname(__FILE__))))));
+        $baseProviderPath = $rootPath . "/extend/xsframe/base/BaseProvider.php";
         if (is_file($baseProviderPath)) {
             $this->app->bind(include $baseProviderPath);
         }
