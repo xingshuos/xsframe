@@ -62,7 +62,7 @@ class ExceptionHandler extends Handle
                 $result['error'] = [
                     'file'  => $e->getFile(),
                     'line'  => $e->getLine(),
-                    'trace' => $e->getTraceAsString(),
+                    'trace' => $e->getTrace(),
                 ];
             }
             return json($result, $code);
