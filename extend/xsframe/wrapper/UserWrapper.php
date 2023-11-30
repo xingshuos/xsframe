@@ -27,13 +27,13 @@ class UserWrapper
     // 校验登录
     public static function checkUser($url = null)
     {
-        $isLogin      = true;
+        $isLogin = true;
         $adminSession = $_COOKIE[self::$session_key] ?? '';
         if (!empty($adminSession)) {
             $adminSession = json_decode(authcode($adminSession), true);
 
             $usersInfoKey = self::$session_key . "_" . $adminSession['username'];
-            $usersInfo    = Cache::get($usersInfoKey);
+            $usersInfo = Cache::get($usersInfoKey);
 
             if (empty($usersInfo) || ($usersInfo && $adminSession['hash'] != md5($usersInfo['password'] . $usersInfo['salt']))) {
                 $usersInfo = Db::name('sys_users')->field("id,username,password,role,salt")->where(['id' => $adminSession['uid']])->find();
@@ -76,12 +76,17 @@ class UserWrapper
 
         $url = self::getLoginReturnUrl($userInfo['role'], $userInfo['id']);
 
-        $cookie             = array();
-        $cookie['uid']      = $userInfo['id'];
+        if (ErrorUtil::isError($url)) {
+            show_json(-1, $url['msg']);
+        }
+
+        $cookie = array();
+        $cookie['uid'] = $userInfo['id'];
         $cookie['username'] = $username;
-        $cookie['role']     = $userInfo['role'];
-        $cookie['hash']     = md5($userInfo['password'] . $userInfo['salt']);
-        $session            = authcode(json_encode($cookie), 'encode');
+        $cookie['role'] = $userInfo['role'];
+        $cookie['hash'] = md5($userInfo['password'] . $userInfo['salt']);
+        $cookie['uniacid'] = self::getUserUniacid($userInfo['id']);
+        $session = authcode(json_encode($cookie), 'encode');
 
         isetcookie(self::$session_key, $session, 7 * 86400, true);
 
@@ -97,11 +102,11 @@ class UserWrapper
         $moduleMenuConfigFile = IA_ROOT . "/app/" . $moduleName . "/config/menu.php";
 
         $appMaps = Config::get('app.app_map') ?? [];
-        $appKey  = array_search($moduleName, $appMaps);
+        $appKey = array_search($moduleName, $appMaps);
 
         if (is_file($moduleMenuConfigFile)) {
-            $menuConfig   = include($moduleMenuConfigFile);
-            $oneMenus     = array_slice($menuConfig, 0, 1);
+            $menuConfig = include($moduleMenuConfigFile);
+            $oneMenus = array_slice($menuConfig, 0, 1);
             $oneMenusKeys = array_keys($oneMenus);
 
             $actionUrl = $oneMenus[$oneMenusKeys[0]]['items'][0]['route'];
@@ -112,10 +117,10 @@ class UserWrapper
             }
 
             $moduleName = !empty($appKey) ? $appKey : $moduleName;
-            $url        = url("/" . $moduleName . "/" . $oneMenusKeys[0] . $actionUrl);
+            $url = url("/" . $moduleName . "/" . $oneMenusKeys[0] . $actionUrl);
         } else {
             $moduleName = !empty($appKey) ? $appKey : $moduleName;
-            $url        = url('/' . $moduleName);
+            $url = url('/' . $moduleName);
         }
         return $url;
     }
@@ -123,12 +128,14 @@ class UserWrapper
     // 通过用户id获取默认插件
     public static function getModuleNameByUserId($userId)
     {
-        $moduleName       = null;
+        $moduleName = null;
         $usersAccountInfo = Db::name('sys_account_users')->field("id,uniacid,module")->where(['user_id' => $userId])->find();
         if (!empty($usersAccountInfo)) {
             $moduleName = $usersAccountInfo['module'];
-            if (empty($moduleName)) {
+            $isInstall = Db::name('sys_account_modules')->where(['uniacid' => $usersAccountInfo['uniacid'], 'module' => $moduleName])->count();
+            if (empty($moduleName) || empty($isInstall)) {
                 $defaultModuleInfo = Db::name("sys_account_modules")->field("id,uniacid,module")->where(['uniacid' => $usersAccountInfo['uniacid']])->order("is_default desc")->find();
+
                 if (!empty($defaultModuleInfo)) {
                     $moduleName = $defaultModuleInfo['module'];
                     Db::name('sys_account_users')->where(['id' => $usersAccountInfo['id']])->update(['module' => $moduleName]);
@@ -166,7 +173,7 @@ class UserWrapper
             $moduleName = self::getModuleNameByUserId($userId);
 
             if (empty($moduleName)) {
-                return ErrorUtil::error(-1, "该项目没有分配应用");
+                return ErrorUtil::error(-1, "暂未开通应用管理");
             }
 
             $url = self::getModuleOneUrl($moduleName);

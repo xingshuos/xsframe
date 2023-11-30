@@ -24,14 +24,11 @@ use think\facade\View;
 abstract class AdminBaseController extends BaseController
 {
     protected $isSystem = false;
-    protected $isModule = false;
     protected $adminSession = [];
-    protected $menus = [];
 
     public function __construct(Request $request, App $app)
     {
         parent::__construct($request, $app);
-
         if (method_exists($this, '_admin_initialize')) {
             $this->_admin_initialize();
         }
@@ -46,7 +43,6 @@ abstract class AdminBaseController extends BaseController
     public function _admin_initialize()
     {
         $this->checkAuth();
-
         if ($this->module == 'admin') {
             $this->isSystem = true;
         }
@@ -65,6 +61,11 @@ abstract class AdminBaseController extends BaseController
 
             $this->adminSession = $loginResult['adminSession'];
             $this->userId = $this->adminSession['uid'];
+            $uniacid = $this->adminSession['uniacid'];
+            if (!empty($uniacid)) {
+                $this->uniacid = $uniacid;
+                $_COOKIE['uniacid'] = $uniacid;
+            }
         } else {
             $loginResult = UserWrapper::checkUser();
             if ($loginResult['isLogin'] && (!in_array($this->action, ['logout', 'verify']))) {
@@ -73,8 +74,6 @@ abstract class AdminBaseController extends BaseController
                 exit();
             }
         }
-
-        $this->checkUniacid();
     }
 
     // 引入后端模板
@@ -109,7 +108,7 @@ abstract class AdminBaseController extends BaseController
         return show_json($code, $data);
     }
 
-    private function getDefaultVars($params = null)
+    private function getDefaultVars($params = null): array
     {
         if (!empty($this->moduleSetting['basic'])) {
             $this->moduleInfo = array_merge(!empty($this->moduleInfo) ? $this->moduleInfo : [], $this->moduleSetting['basic']);
@@ -141,48 +140,10 @@ abstract class AdminBaseController extends BaseController
         $var['moduleInfo'] = $this->moduleInfo;
         $var['attachUrl'] = getAttachmentUrl() . "/";
 
-        // dump($this->moduleInfo);die;
-        // dump($var['menusList']);die;
-        // dump($this->adminSession);die;
-
         if (!empty($params)) {
             $var = array_merge($var, $params);
         }
 
         return $var;
-    }
-
-    // 获取项目uniacid
-    protected function checkUniacid()
-    {
-        $uniacid = $_GET['i'] ?? ($_COOKIE['uniacid'] ?? 0);
-
-        if (empty($uniacid)) {
-            $uniacid = UserWrapper::getUserUniacid($this->userId);
-            if (!empty($uniacid)) {
-                isetcookie('uniacid', $uniacid);
-                $this->uniacid = $uniacid;
-            }
-        } else {
-            $this->uniacid = $uniacid;
-        }
-
-        return $uniacid;
-    }
-
-    // 获取当前用户项目ID
-    protected function getUserUniacid()
-    {
-        $uniacid = $this->uniacid;
-
-        if (empty($uniacid)) {
-            $uniacid = UserWrapper::getUserUniacid($this->userId);
-        }
-
-        if (empty($uniacid)) {
-            die('error fail');
-        }
-
-        $this->uniacid = $uniacid;
     }
 }

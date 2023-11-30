@@ -65,7 +65,6 @@ abstract class BaseController extends Controller
         if (!$this->settingsController instanceof SettingsWrapper) {
             $this->settingsController = new SettingsWrapper();
         }
-
         if (method_exists($this, '_initialize')) {
             $this->_initialize();
         }
@@ -179,7 +178,7 @@ abstract class BaseController extends Controller
     // 获取项目uniacid
     protected function getUniacid()
     {
-        $uniacid = isset($this->params['uniacid']) ? $this->params['uniacid'] : ($_GET['i'] ?? ($_COOKIE['uniacid'] ?? 0));
+        $uniacid = $this->params['uniacid'] ?? ($_GET['i'] ?? ($_COOKIE['uniacid'] ?? 0));
 
         # 校验域名路由 start
         if (empty($uniacid)) {
@@ -195,15 +194,13 @@ abstract class BaseController extends Controller
             $uniacid = $this->websiteSets['uniacid'] ?? 0;
         } else {
             # 缓存当前所选商户uniacid
-            if (!empty($uniacid)) {
-                isetcookie('uniacid', $uniacid);
-            }
+            isetcookie('uniacid', $uniacid);
         }
 
-        // 如果是平台端 商户uniacid设置为空 TODO
-        if ($this->module == 'admin') {
+        // 如果是平台端 商户uniacid设置为空
+        /*if ($this->module == 'admin') {
             $uniacid = 0;
-        }
+        }*/
 
         $this->uniacid = $uniacid;
         return $uniacid;

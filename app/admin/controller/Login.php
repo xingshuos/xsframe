@@ -24,7 +24,7 @@ class Login extends Base
     public function index()
     {
         $rememberUsername = $_COOKIE['remember-username'] ?? '';
-        $websiteSets      = $this->settingsController->getSysSettings(SysSettingsKeyEnum::WEBSITE_KEY);
+        $websiteSets = $this->settingsController->getSysSettings(SysSettingsKeyEnum::WEBSITE_KEY);
 
         $style = 'login';
 
@@ -32,13 +32,13 @@ class Login extends Base
         $url = $this->request->header()['host'];
 
         $accountHostWrapper = new AccountHostWrapper();
-        $domainMappingArr   = $accountHostWrapper->getAccountHost();
+        $domainMappingArr = $accountHostWrapper->getAccountHost();
 
         if (!empty($domainMappingArr) && !empty($domainMappingArr[$url])) {
-            $uniacid       = $domainMappingArr[$url]['uniacid'];
-            $module        = $domainMappingArr[$url]['default_module'];
+            $uniacid = $domainMappingArr[$url]['uniacid'];
+            $module = $domainMappingArr[$url]['default_module'];
             $moduleSetting = $this->settingsController->getModuleSettings(null, $module, $uniacid);
-            $websiteSets   = array_merge($websiteSets, $moduleSetting['website'], $moduleSetting['basic']);
+            $websiteSets = array_merge($websiteSets, $moduleSetting['website'], $moduleSetting['basic']);
         }
         # 检测是否配置独立域名 end
 
@@ -50,7 +50,7 @@ class Login extends Base
     {
         $username = trim($this->params['username'] ?? '');
         $password = trim($this->params['password'] ?? '');
-        $verify   = trim($this->params['verify'] ?? '');
+        $verify = trim($this->params['verify'] ?? '');
 
         if (empty($username)) {
             show_json(0, '请输入用户名!');
@@ -69,7 +69,7 @@ class Login extends Base
         }
 
         $userInfo = $resultInfo['userInfo'];
-        $url      = $resultInfo['url'];
+        $url = $resultInfo['url'];
 
         Db::name("sys_users")->where(['id' => $userInfo['id']])->update(['logintime' => time(), 'lastip' => $this->request->ip()]);
         show_json(1, array('url' => $url));

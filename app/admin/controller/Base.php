@@ -4,6 +4,7 @@
 namespace app\admin\controller;
 
 
+use think\facade\Config;
 use xsframe\base\AdminBaseController;
 use xsframe\wrapper\UserWrapper;
 
@@ -20,19 +21,22 @@ class Base extends AdminBaseController
     {
         if ($this->module == 'admin') {
             $adminSession = $this->adminSession;
+
             if (!empty($adminSession)) {
 
                 # 非管理员用户一律不得进入平台端
                 if ($adminSession['role'] != 'owner') {
                     $moduleName = UserWrapper::getModuleNameByUserId($this->adminSession['uid']);
+
                     if (!empty($moduleName)) {
-                        header('location: ' . url("/{$moduleName}"));
+                        $url = UserWrapper::getModuleOneUrl($moduleName);
+                        header('location: ' . $url);
                     } else {
                         header('location: ' . url('/admin/error/index', ['type' => 403]));
                     }
                     exit();
                 }
-                
+
             }
         }
     }
