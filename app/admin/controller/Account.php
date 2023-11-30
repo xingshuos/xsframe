@@ -14,6 +14,7 @@ namespace app\admin\controller;
 
 use xsframe\wrapper\AccountHostWrapper;
 use think\facade\Db;
+use xsframe\wrapper\UserWrapper;
 
 class Account extends Base
 {
@@ -26,16 +27,16 @@ class Account extends Base
     {
         $condition = ['deleted' => 0];
 
-        $list  = Db::name('sys_account')->where($condition)->order('displayorder desc,uniacid desc')->page($this->pIndex, $this->pSize)->select();
+        $list = Db::name('sys_account')->where($condition)->order('displayorder desc,uniacid desc')->page($this->pIndex, $this->pSize)->select();
         $total = Db::name("sys_account")->where($condition)->count();
         $pager = pagination2($total, $this->pIndex, $this->pSize);
 
         $list = $list->toArray();
         foreach ($list as $key => &$item) {
             $accountModulesTotal = Db::name("sys_account_modules")->where(['uniacid' => $item['uniacid'], 'deleted' => 0])->count();
-            $item['total']       = $accountModulesTotal;
+            $item['total'] = $accountModulesTotal;
 
-            $hostTotal         = Db::name("sys_account_host")->where(['uniacid' => $item['uniacid']])->count();
+            $hostTotal = Db::name("sys_account_host")->where(['uniacid' => $item['uniacid']])->count();
             $item['hostTotal'] = $hostTotal;
         }
 
@@ -69,7 +70,7 @@ class Account extends Base
             $settingsData = $this->params['data'] ?? [];
             $settingsData = array_merge($accountSettings, $settingsData);
 
-            $data             = array(
+            $data = array(
                 "name"         => trim($this->params["name"]),
                 "logo"         => trim($this->params["logo"]),
                 "keywords"     => trim($this->params["keywords"]),
@@ -84,7 +85,7 @@ class Account extends Base
                 Db::name('sys_account')->where(['uniacid' => $uniacid])->update($data);
             } else {
                 $data['createtime'] = time();
-                $uniacid            = Db::name('sys_account')->insertGetId($data);
+                $uniacid = Db::name('sys_account')->insertGetId($data);
             }
 
             $this->setAccountModules($uniacid);
@@ -100,10 +101,10 @@ class Account extends Base
             $this->success(array("url" => webUrl("account/edit", ['id' => $uniacid, 'tab' => str_replace("#tab_", "", $this->params['tab'])])));
         }
 
-        $item       = Db::name('sys_account')->where(['uniacid' => $uniacid])->find();
+        $item = Db::name('sys_account')->where(['uniacid' => $uniacid])->find();
         $identifies = Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'deleted' => 0])->order('displayorder asc,id asc')->column('module');
-        $hostList   = Db::name('sys_account_host')->where(['uniacid' => $uniacid])->order('id asc')->select();
-        $modules    = Db::name('sys_modules')->where(['identifie' => $identifies])->orderRaw("FIELD(identifie," . "'" . implode("','", $identifies) . "'" . ")")->select()->toArray();
+        $hostList = Db::name('sys_account_host')->where(['uniacid' => $uniacid])->order('id asc')->select();
+        $modules = Db::name('sys_modules')->where(['identifie' => $identifies])->orderRaw("FIELD(identifie," . "'" . implode("','", $identifies) . "'" . ")")->select()->toArray();
 
         foreach ($modules as &$module) {
             $module['logo'] = !empty($module['logo']) ? tomedia($module['logo']) : $this->siteRoot . "/app/{$module['identifie']}/icon.png";
@@ -130,7 +131,7 @@ class Account extends Base
             $this->error(["message" => "参数错误"]);
         }
 
-        $type  = trim($this->params["type"]);
+        $type = trim($this->params["type"]);
         $value = trim($this->params["value"]);
 
         $items = Db::name('sys_account')->where(['uniacid' => $id])->select();
@@ -145,7 +146,7 @@ class Account extends Base
     public function hostDelete()
     {
         $uniacid = intval($this->params["uniacid"]);
-        $id      = intval($this->params["id"]);
+        $id = intval($this->params["id"]);
 
         Db::name('sys_account_host')->where(['id' => $id, 'uniacid' => $uniacid])->delete();
         $this->success();
@@ -162,7 +163,9 @@ class Account extends Base
             $this->error(["message" => "该项目没有分配应用"]);
         }
 
-        $url = webUrl('/' . realModuleName($defaultModuleInfo['module']) . "/web.index", ['i' => $uniacid]);
+        # 获取后台地址
+        $realUrl = UserWrapper::getModuleOneUrl($defaultModuleInfo['module']);
+        $url = webUrl(rtrim($realUrl,'.html'), ['i' => $uniacid]);
         $this->success(['url' => $url]);
     }
 
@@ -227,7 +230,7 @@ class Account extends Base
         if (!empty($hostIds)) {
             foreach ($hostIds as $k => $v) {
                 $hostUrl = trim($this->params["hostUrls"][$k]);
-                $data    = array(
+                $data = array(
                     "uniacid"        => $uniacid,
                     "host_url"       => $hostUrl,
                     "default_module" => trim($this->params["hostModules"][$k]),
