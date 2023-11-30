@@ -82,8 +82,8 @@ abstract class ApiBaseController extends BaseController
     protected function getUserId()
     {
         $token = $this->header['authorization'] ?? '';
-        if (env('APP_DEBUG') || empty($token)) {
-            $token = $this->params['token'];
+        if (env('APP_DEBUG') && empty($token)) {
+            $token = $this->params['token'] ?? '';
         }
         $this->userId = authcode(base64_decode($token), "DECODE", $this->module);
         return $this->userId;
