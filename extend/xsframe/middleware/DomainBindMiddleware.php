@@ -15,6 +15,7 @@ declare (strict_types=1);
 namespace xsframe\middleware;
 
 use xsframe\wrapper\AccountHostWrapper;
+use xsframe\wrapper\UserWrapper;
 
 /**
  * 域名访问默认应用
@@ -46,9 +47,12 @@ class DomainBindMiddleware
             $domainMappingArr = $this->accountHostWrapper->getAccountHost(true);
             if (!empty($domainMappingArr) && !empty($domainMappingArr[$url])) {
                 $module = $domainMappingArr[$url]['default_module'];
-                $appMap = array_flip(config('app.app_map'));
 
-                exit(header("location:" . url("/" . ($appMap[$module] ? $appMap[$module] : $module))));
+                $appMap = array_flip(config('app.app_map'));
+                $realModuleName = array_search($module, $appMap);
+
+                $url = UserWrapper::getModuleOneUrl($realModuleName ?: $module);
+                exit(header("location:" . $url));
             }
         }
 

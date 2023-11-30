@@ -12,6 +12,7 @@
 
 namespace xsframe\wrapper;
 
+use think\facade\App;
 use xsframe\enum\SysSettingsKeyEnum;
 use xsframe\enum\UserRoleKeyEnum;
 use xsframe\util\ErrorUtil;
@@ -99,7 +100,8 @@ class UserWrapper
     // 获取当前应用第一个子菜单当做首页
     public static function getModuleOneUrl($moduleName)
     {
-        $moduleMenuConfigFile = IA_ROOT . "/app/" . $moduleName . "/config/menu.php";
+        $rootPath = App::getRootPath();
+        $moduleMenuConfigFile = $rootPath . "app/" . $moduleName . "/config/menu.php";
 
         $appMaps = Config::get('app.app_map') ?? [];
         $appKey = array_search($moduleName, $appMaps);
