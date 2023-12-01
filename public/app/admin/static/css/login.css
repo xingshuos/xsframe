@@ -137,7 +137,7 @@
 .system-login-new--half.auto {
     width: 1240px;
     height: 600px;
-    margin: 120px auto 20px;
+    margin: 0 auto;
 }
 
 .system-login-new--half.auto .login-bg-box {

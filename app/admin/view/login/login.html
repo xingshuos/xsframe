@@ -10,6 +10,10 @@
         /*padding-top: 120px;*/
         background: linear-gradient(180deg, #F4F8FE 0%, #FFFFFF 100%);
     }
+    .wb-content{
+        height: calc(100% - 60px);
+        width: 100%;
+    }
     .header-block{
         width: 100%;
         height: 60px;
@@ -64,6 +68,14 @@
         justify-content: center;
         align-items: center;
     }
+    .login-body{
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-content: center;
+    }
 </style>
 {/block}
 {block name='content'}
@@ -89,69 +101,71 @@
     </div>
 </div>
 <!--头部信息 end-->
-<div class="system-login-new system-login-new--half auto" style='height: 491px;'>
 
-    <div class="login-bg-box">
-        <img src="__ADMIN_IMG__/inner.png" alt="" style="width: 80%;position: absolute;top: -10%;">
-    </div>
+<div class="login-body">
+    <div class="system-login-new system-login-new--half auto" style='height: 491px;'>
 
-    <div class="login-panel">
-        <div class="title">
-            登录
+        <div class="login-bg-box">
+            <img src="__ADMIN_IMG__/inner.png" alt="" style="width: 80%;position: absolute;top: -10%;">
         </div>
-        <form id="login-form" action="" method="post" class="we7-form">
-            <div class="input-group-vertical">
-                <div class="form-group">
-                    <input name="username" type="text" class="form-control" value="{$rememberUsername}"
-                           placeholder="请输入用户名/手机登录">
-                    <div class="help-block">请输入用户名/手机</div>
-                </div>
-                <div class="form-group" onkeypress="detectCapsLock(event)">
-                    <div class="input-group">
-                        <input name="password" id="password" type="password" class="form-control password"
-                               placeholder="请输入登录密码">
-                        <span class="input-group-addon">
-							<i class="fa fa-eye-slash js-showPass"></i>
-						</span>
-                    </div>
-                    <div class="help-block">请输入登录密码</div>
-                </div>
-                <span style="display:none;color:#ff0000;" id="capitalizationTip">大写锁定已打开</span>
 
-                <div class="form-group verify-form-group">
-                    <div class="input-group">
-                        <input name="verify" type="text" class="form-control" placeholder="请输入验证码">
-                        <a href="javascript:;" id="toggle" class="input-group-btn imgverify">
-                            <img id="imgverify"
-                                 src="{:url('admin/login/verify')}"
-                                 title="点击图片更换验证码"
-                                 onerror="this.src='__ADMIN_IMG__/noface.png'">
-                        </a>
+        <div class="login-panel">
+            <div class="title">
+                登录
+            </div>
+            <form id="login-form" action="" method="post" class="we7-form">
+                <div class="input-group-vertical">
+                    <div class="form-group">
+                        <input name="username" type="text" class="form-control" value="{$rememberUsername}"
+                               placeholder="请输入用户名/手机登录">
+                        <div class="help-block">请输入用户名/手机</div>
                     </div>
-                    <div class="help-block">请输入验证码</div>
-                </div>
-            </div>
-            <div class="form-inline" style="margin-bottom: 15px;">
-                <div class="checkbox" style="height: 30px;display: flex;align-items: center;">
-                    <input type="checkbox" value="true" id="rember" name="rember" {if !empty($rememberUsername)}checked{/if}>
-                    <label for="rember" style="margin-top: 4px;margin-left: 8px;font-size: 14px;">记住用户名</label>
-                </div>
-            </div>
-            <div class="login-submit text-center">
-                <input type="submit" class="btn btn-primary btn-block" id="btn-login" value="登录" style="padding: 14px 32px;font-size: 14px;">
-                <div class="text-left we7-margin-bottom" style="display: none;">
-                    还没有有账号？
-                    <!--                    <a href="{:url('admin/login/register')}" class="color-default">立即注册</a>-->
-                    <a href="javascript:;" class="color-default" id="goRegister">立即注册</a>
-                    <div class="pull-right">
-                        <!--                        <a href="{:url('admin/login/forget')}" target="_blank" class="color-default">忘记密码？</a>-->
-                        <a href="javascript:;" class="color-default" id="goForget">忘记密码？</a>
+                    <div class="form-group" onkeypress="detectCapsLock(event)">
+                        <div class="input-group">
+                            <input name="password" id="password" type="password" class="form-control password"
+                                   placeholder="请输入登录密码">
+                            <span class="input-group-addon">
+                                <i class="fa fa-eye-slash js-showPass"></i>
+                            </span>
+                        </div>
+                        <div class="help-block">请输入登录密码</div>
                     </div>
-                </div>
-            </div>
-        </form>
-    </div>
+                    <span style="display:none;color:#ff0000;" id="capitalizationTip">大写锁定已打开</span>
 
+                    <div class="form-group verify-form-group">
+                        <div class="input-group">
+                            <input name="verify" type="text" class="form-control" placeholder="请输入验证码">
+                            <a href="javascript:;" id="toggle" class="input-group-btn imgverify">
+                                <img id="imgverify"
+                                     src="{:url('admin/login/verify')}"
+                                     title="点击图片更换验证码"
+                                     onerror="this.src='__ADMIN_IMG__/noface.png'">
+                            </a>
+                        </div>
+                        <div class="help-block">请输入验证码</div>
+                    </div>
+                </div>
+                <div class="form-inline" style="margin-bottom: 15px;">
+                    <div class="checkbox" style="height: 30px;display: flex;align-items: center;">
+                        <input type="checkbox" value="true" id="rember" name="rember" {if !empty($rememberUsername)}checked{/if}>
+                        <label for="rember" style="margin-top: 4px;margin-left: 8px;font-size: 14px;">记住用户名</label>
+                    </div>
+                </div>
+                <div class="login-submit text-center">
+                    <input type="submit" class="btn btn-primary btn-block" id="btn-login" value="登录" style="padding: 14px 32px;font-size: 14px;">
+                    <div class="text-left we7-margin-bottom" style="display: none;">
+                        还没有有账号？
+                        <!--                    <a href="{:url('admin/login/register')}" class="color-default">立即注册</a>-->
+                        <a href="javascript:;" class="color-default" id="goRegister">立即注册</a>
+                        <div class="pull-right">
+                            <!--                        <a href="{:url('admin/login/forget')}" target="_blank" class="color-default">忘记密码？</a>-->
+                            <a href="javascript:;" class="color-default" id="goForget">忘记密码？</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+</div>
 
 </div>
 
