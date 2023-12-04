@@ -14,6 +14,7 @@ namespace xsframe\base;
 
 use think\App;
 use think\Request;
+use think\response\Json;
 
 abstract class WebBaseController extends BaseController
 {
@@ -84,7 +85,7 @@ abstract class WebBaseController extends BaseController
         $website = $this->moduleSetting['website'] ?? [];
         if (!empty($website)) {
             $website = set_medias($website, ['logo', 'favicon']);
-            $baseVar = array_merge($baseVar, $website);
+            $baseVar['website'] = array_merge($baseVar, $website);
         }
 
         $var = array_merge($baseVar, $var);

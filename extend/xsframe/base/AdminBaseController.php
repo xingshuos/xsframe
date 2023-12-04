@@ -25,6 +25,7 @@ abstract class AdminBaseController extends BaseController
 {
     protected $isSystem = false;
     protected $adminSession = [];
+    protected $_GPC = [];
 
     public function __construct(Request $request, App $app)
     {
@@ -119,6 +120,7 @@ abstract class AdminBaseController extends BaseController
         $var['controller'] = $this->controller;
         $var['action'] = $this->action;
         $var['uniacid'] = $this->uniacid;
+        $var['_GPC'] = $this->params;
         $var['uid'] = $this->userId;
         $var['url'] = $this->url;
         $var['siteRoot'] = $this->siteRoot;
