@@ -18,7 +18,7 @@ use think\Exception;
 class FileUtil
 {
     // 创建目录
-    public static function mkDirs($path)
+    public static function mkDirs($path): bool
     {
         if (!is_dir($path)) {
             self::mkdirs(dirname($path));
@@ -28,7 +28,7 @@ class FileUtil
     }
 
     // 删除目录
-    public static function rmDirs($path, $clean = false)
+    public static function rmDirs($path, $clean = false): bool
     {
         if (!is_dir($path)) {
             return false;
@@ -43,14 +43,34 @@ class FileUtil
         return $clean ? true : @rmdir($path);
     }
 
-    // 获取文件夹下一级文件夹列表
-    public static function dirsOnes($path)
+    // 加载所有应用的命令行对应路径
+    public static function getAppCommands(): array
     {
-        $files    = glob($path . '/*');
+        $rootPath = str_replace("\\", "/", app()->getRootPath());
+        $appPath = $rootPath . "app";
+        $dirList = FileUtil::dirsOnes($appPath);
+
+        $commands = [];
+        foreach ($dirList as $key => $dirItem) {
+            $appCommands = FileUtil::getDir($appPath . "/$dirItem/command");
+            if (!empty($appCommands)) {
+                foreach ($appCommands as $commandItem) {
+                    $commandPath = str_replace($rootPath, "", substr($commandItem['path'], 0, strpos($commandItem['path'], ".")));
+                    $commands[] = str_replace("/", "\\", $commandPath);
+                }
+            }
+        }
+        return $commands;
+    }
+
+    // 获取文件夹下一级文件夹列表
+    public static function dirsOnes($path): array
+    {
+        $files = glob($path . '/*');
         $newFiles = [];
         if (!empty($files)) {
             foreach ($files as $item) {
-                $item       = str_replace("\\", "/", $item);
+                $item = str_replace("\\", "/", $item);
                 $newFiles[] = substr($item, strripos($item, '/') + 1);
             }
         }
@@ -58,7 +78,7 @@ class FileUtil
     }
 
     // 指定文件夹移动到新文件夹
-    public static function oldDirToNewDir($path, $newPath, $oldPath = '')
+    public static function oldDirToNewDir($path, $newPath, $oldPath = ''): bool
     {
         if (empty($oldPath)) {
             $oldPath = $path;
@@ -68,17 +88,17 @@ class FileUtil
             $dp = dir($path);
             while ($file = $dp->read()) {
                 $tmpFile = $path . "/" . $file;
-                $fileName    = basename($tmpFile);
+                $fileName = basename($tmpFile);
 
                 $isSvnPath = strpos($tmpFile, ".svn") !== false;
                 $isGitPath = strpos($tmpFile, ".git") !== false;
 
-                if ($isSvnPath || $isGitPath || in_array($fileName,['install.php','uninstall.php','upgrade.php','manifest.xml']) ) {
+                if ($isSvnPath || $isGitPath || in_array($fileName, ['install.php', 'uninstall.php', 'upgrade.php', 'manifest.xml'])) {
                     continue;
                 }
 
                 if ($file != '.' && $file != '..') {
-                    $tmpPath  = $path . '/' . $file;
+                    $tmpPath = $path . '/' . $file;
                     $pathName = str_replace($oldPath, '', $tmpPath);
 
                     if (is_dir($tmpPath)) {
@@ -87,7 +107,7 @@ class FileUtil
                         }
                         self::oldDirToNewDir($tmpPath, $newPath, $oldPath);
                     } elseif (is_file($tmpPath)) {
-                        $pathName    = substr($pathName, 0, strrpos($pathName, "/"));
+                        $pathName = substr($pathName, 0, strrpos($pathName, "/"));
                         $newFilePath = str_replace("//", '/', $newPath . $pathName . "/" . $fileName);
 
                         if (!is_file($newFilePath) || md5_file($tmpFile) != md5_file($newFilePath)) {
@@ -118,7 +138,7 @@ class FileUtil
         $isGitPath = strpos($path, ".git") !== false;
 
         if (is_file($path) && !$isSvnPath && !$isGitPath) {
-            $path   = ltrim($path, ".");
+            $path = ltrim($path, ".");
             $data[] = array(
                 'path'     => $path,
                 'checksum' => md5_file($path)
@@ -127,7 +147,7 @@ class FileUtil
     }
 
     // 获取目录下所有文件
-    public static function getDir($dir)
+    public static function getDir($dir): array
     {
         $data = array();
         self::searchDir($dir, $data);
@@ -135,10 +155,10 @@ class FileUtil
     }
 
     // 补全文件绝对路径
-    public static function getMd5files($files = null)
+    public static function getMd5files($files = null): array
     {
         $rootPath = str_replace("\\", "/", dirname(dirname(dirname(dirname(__file__)))));
-        $data     = [];
+        $data = [];
         foreach ($files as $item) {
             $data = self::getDir($rootPath . $item);
         }
@@ -156,12 +176,12 @@ class FileUtil
         }
         //获取远程文件数据
         if ($type === 0) {
-            $ch      = curl_init();
+            $ch = curl_init();
             $timeout = 5;
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);//最长执行时间
-            curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);//最长等待时间
+            curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);       //最长等待时间
 
             $img = curl_exec($ch);
             curl_close($ch);
@@ -183,7 +203,7 @@ class FileUtil
     }
 
     // 循环查询目录结构
-    public static function fileTree($path, $include = array())
+    public static function fileTree($path, $include = array()): array
     {
         $files = array();
         if (!empty($include)) {
@@ -209,7 +229,7 @@ class FileUtil
     }
 
     // 生成随机文件名称
-    public static function fileRandomName($dir, $ext = null, $length = 16)
+    public static function fileRandomName($dir, $ext = null, $length = 16): string
     {
         do {
             if (!is_dir($dir)) {
@@ -226,9 +246,10 @@ class FileUtil
     }
 
     // 是否存在某个文件夹
-    public static function fileDirExistImage($path)
+    public static function fileDirExistImage($path): bool
     {
-        $attachmentPath = IA_ROOT . "/public/attachment/";
+        $rootPath = str_replace("\\", "/", app()->getRootPath());
+        $attachmentPath = $rootPath . "public/attachment/";
         if (is_dir($path)) {
             if ($dir = opendir($path)) {
                 while (($file = readdir($dir)) !== false) {
@@ -258,18 +279,18 @@ class FileUtil
     }
 
     // 文件是否是图片
-    public static function fileIsImage($url)
+    public static function fileIsImage($url): bool
     {
         if (!parsePath($url)) {
             return false;
         }
-        $pathInfo  = pathinfo($url);
+        $pathInfo = pathinfo($url);
         $extension = strtolower($pathInfo['extension']);
         return !empty($extension) && in_array($extension, array('jpg', 'jpeg', 'gif', 'png'));
     }
 
     // 文件限制
-    public static function fileTreeLimit($path, $limit = 0, $acquired_files_count = 0)
+    public static function fileTreeLimit($path, $limit = 0, $acquired_files_count = 0): array
     {
         $files = array();
         if (is_dir($path)) {
@@ -305,9 +326,11 @@ class FileUtil
     }
 
     // 删除本地文件
-    public static function fileDelete($file)
+    public static function fileDelete($file): bool
     {
-        $attachmentPath = IA_ROOT . "/public/attachment/";
+        $rootPath = str_replace("\\", "/", app()->getRootPath());
+        $attachmentPath = $rootPath . "public/attachment/";
+
         if (empty($file)) {
             return false;
         }
