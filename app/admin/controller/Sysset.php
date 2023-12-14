@@ -109,7 +109,7 @@ class Sysset extends Base
             $condition[''] = Db::raw(" `host_url` like '%" . trim($keyword) . "%' ");
         }
 
-        $list  = Db::name("sys_account_host")->where($condition)->order('id asc')->page($this->pIndex, $this->pSize)->select()->toArray();
+        $list  = Db::name("sys_account_host")->where($condition)->order('displayorder desc,id asc')->page($this->pIndex, $this->pSize)->select()->toArray();
         $total = Db::name("sys_account_host")->where($condition)->count();
         $pager = pagination2($total, $this->pIndex, $this->pSize);
 

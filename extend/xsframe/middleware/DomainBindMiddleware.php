@@ -43,14 +43,12 @@ class DomainBindMiddleware
         if (empty($module) || (empty($request->root()) && !empty($module))) {
             $url = $request->header()['host'];
 
-            // TODO 每次加载最新数据
+            // TODO 每次加载最新数据 可以优化为读取缓存的方式
             $domainMappingArr = $this->accountHostWrapper->getAccountHost(true);
             if (!empty($domainMappingArr) && !empty($domainMappingArr[$url])) {
                 $module = $domainMappingArr[$url]['default_module'];
-
                 $appMap = array_flip(config('app.app_map'));
-                $realModuleName = array_search($module, $appMap);
-
+                $realModuleName = array_key_exists($module, $appMap) ? $appMap[$module] : '';
                 $url = UserWrapper::getModuleOneUrl($realModuleName ?: $module);
                 exit(header("location:" . $url));
             }

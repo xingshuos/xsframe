@@ -160,10 +160,10 @@ class System extends AdminBaseController
                 show_json(1);
                 break;
             case 'qiniu':
-                $attachmentController->qiNiu();
+                // $attachmentController->qiNiu();
                 break;
             case 'cos':
-                $attachmentController->cos();
+                // $attachmentController->cos();
                 break;
             case 'buckets':
                 $ret = $attachmentController->buckets($this->params['key'], $this->params['secret']);
