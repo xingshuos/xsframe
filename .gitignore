@@ -42,6 +42,8 @@ composer.lock
 
 # sxframe
 /public/attachment/*
+/public/robots.txt
+/public/sitemap.xml
 app/*
 !app/admin
 public/app/*
