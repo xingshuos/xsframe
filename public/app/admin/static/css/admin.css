@@ -577,14 +577,12 @@ textarea:focus {
     color: #000 !important;
 }
 
-
 .label {
     background-color: #d1dade;
     color: #fff;
-    font-family: 'Open Sans';
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 600;
-    padding: 3px 8px;
+    padding: 4px 8px;
     text-shadow: none;
     border-radius: 2px;
     display: inline-block;
@@ -2079,7 +2077,7 @@ modal
     border-bottom: 1px solid #e6ecf1;
 }
 
-.fui-list-group .icow,.fui-list-group .icon {
+.fui-list-group .icow, .fui-list-group .icon {
     font-size: 28px;
     vertical-align: middle;
 }
@@ -2756,6 +2754,6 @@ select.we7-select {
 }
 
 /*按钮有时候遮挡其他悬浮框*/
-.input-group-btn{
+.input-group-btn {
     z-index: 0;
 }
