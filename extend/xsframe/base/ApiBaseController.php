@@ -84,8 +84,10 @@ abstract class ApiBaseController extends BaseController
         $token = $this->header['authorization'] ?? '';
         if (env('APP_DEBUG') && empty($token)) {
             $token = $this->params['token'] ?? '';
+            $this->userId = $token ? authcode(base64_decode($token), "DECODE", $this->module) : 1;
+        } else {
+            $this->userId = authcode(base64_decode($token), "DECODE", $this->module);
         }
-        $this->userId = authcode(base64_decode($token), "DECODE", $this->module);
         return $this->userId;
     }
 }

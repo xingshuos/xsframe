@@ -3,7 +3,9 @@
 namespace xsframe\traits;
 
 use think\db\exception\DbException;
+use think\Exception;
 use think\facade\Db;
+use think\Model;
 
 trait ServiceTraits
 {
@@ -13,9 +15,9 @@ trait ServiceTraits
      * 获取数据基本信息
      * @param $where
      * @param string $field
-     * @return array|mixed|Db|\think\Model|null
+     * @return array|mixed|Db|Model|null
      */
-    public function getInfo($where, $field = "*")
+    public function getInfo($where, string $field = "*")
     {
         try {
             $info = Db::name($this->tableName)->field($field)->where($where)->find();
@@ -34,7 +36,7 @@ trait ServiceTraits
      * @param int $pSize
      * @return array
      */
-    public function getList($condition = array(), $field = "*", $order = "", $pIndex = 1, $pSize = 10)
+    public function getList(array $condition = array(), string $field = "*", string $order = "", int $pIndex = 1, int $pSize = 10): array
     {
         try {
             $list = Db::name($this->tableName)->field($field)->where($condition)->order($order)->page($pIndex, $pSize)->select()->toArray();
@@ -52,7 +54,7 @@ trait ServiceTraits
      * @param string $keyField
      * @return array
      */
-    public function getAll($condition = array(), $field = "*", $order = "", $keyField = '')
+    public function getAll(array $condition = array(), string $field = "*", string $order = "", string $keyField = ''): array
     {
         try {
             if (empty($keyField)) {
@@ -97,7 +99,7 @@ trait ServiceTraits
      * @param string $orderBy
      * @return int|mixed
      */
-    public function getValue($condition, $field, $orderBy = 'id desc')
+    public function getValue($condition, $field, string $orderBy = 'id desc')
     {
         $total = Db::name($this->tableName)->where($condition)->order($orderBy)->value($field);
         return $total ? $total : 0;
@@ -108,24 +110,24 @@ trait ServiceTraits
      * @param array $updateData
      * @param array $condition
      * @return bool
-     * @throws \think\db\exception\DbException
+     * @throws DbException
      */
-    public function updateInfo($updateData, $condition = [])
+    public function updateInfo(array $updateData, array $condition = []): bool
     {
         $isUpdate = Db::name($this->tableName)->where($condition)->update($updateData);
-        return $isUpdate ? true : false;
+        return (bool)$isUpdate;
     }
 
     /**
      * 删除数据
      * @param $condition
      * @return bool
-     * @throws \think\db\exception\DbException
+     * @throws DbException
      */
-    public function deleteInfo($condition)
+    public function deleteInfo($condition): bool
     {
         $isDelete = Db::name($this->tableName)->where($condition)->delete();
-        return $isDelete ? true : false;
+        return (bool)$isDelete;
     }
 
     /**
@@ -135,8 +137,7 @@ trait ServiceTraits
      */
     public function insertInfo($data)
     {
-        $isInsert = Db::name($this->tableName)->insertGetId($data);
-        return $isInsert;
+        return Db::name($this->tableName)->insertGetId($data);
     }
 
     /**
@@ -144,9 +145,8 @@ trait ServiceTraits
      * @param $data
      * @return int
      */
-    public function insertAll($data)
+    public function insertAll($data): int
     {
-        $isInsert = Db::name($this->tableName)->insertAll($data);
-        return $isInsert;
+        return Db::name($this->tableName)->insertAll($data);
     }
 }

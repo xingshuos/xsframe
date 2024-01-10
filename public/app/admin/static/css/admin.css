@@ -63,6 +63,99 @@ textarea:focus {
     border-bottom-color: rgba(0, 0, 0, 0.8);
 }
 
+/*flex*/
+.flex,
+.flex-between,
+.flex-around,
+.flex-center,
+.flex-wrap,
+.flex-row,
+.flex-row-center,
+.flex-start-center,
+.flex-end-center,
+.flex-row-end {
+    display: flex;
+    flex-direction: row;
+}
+
+.flex-start-center {
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.flex-end-center {
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.flex-row-end {
+    justify-content: flex-end;
+}
+
+.flex-row-center {
+    align-items: center;
+}
+
+.flex-center {
+    justify-content: center;
+    align-items: center;
+}
+
+.flex-align {
+    align-items: center;
+}
+
+.flex-between {
+    justify-content: space-between;
+}
+
+.flex-around {
+    justify-content: space-around;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.fixed-bottom {
+    position: absolute;
+    bottom: 0;
+}
+
+.flex-column-center,
+.flex-column-between,
+.flex-column-evenly,
+.flex-column-around,
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-column-center {
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-column-between {
+    justify-content: space-between;
+}
+
+.flex-column-around {
+    justify-content: space-around;
+}
+
+.flex-column-evenly {
+    justify-content: space-evenly;
+}
+
+.items-end {
+    align-items: flex-end;
+}
+
+.self-center {
+    align-self: center;
+}
+
 /**page*/
 .page-header {
     display: block;
