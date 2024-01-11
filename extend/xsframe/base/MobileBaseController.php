@@ -55,23 +55,23 @@ abstract class MobileBaseController extends BaseController
             }
         }
 
-        $var                = [];
-        $var['module']      = $this->module;
-        $var['controller']  = $this->controller;
-        $var['action']      = $this->action;
-        $var['uniacid']     = $this->uniacid;
-        $var['uid']         = $this->userId;
-        $var['url']         = $this->url;
-        $var['siteRoot']    = $this->siteRoot;
-        $var['iaRoot']      = $this->iaRoot;
+        $var = [];
+        $var['module'] = $this->module;
+        $var['controller'] = $this->controller;
+        $var['action'] = $this->action;
+        $var['uniacid'] = $this->uniacid;
+        $var['uid'] = $this->userId;
+        $var['url'] = $this->url;
+        $var['siteRoot'] = $this->siteRoot;
+        $var['iaRoot'] = $this->iaRoot;
         $var['websiteSets'] = $this->settingsController->getSysSettings(SysSettingsKeyEnum::WEBSITE_KEY);
 
-        $var['moduleSiteRoot']  = $this->moduleSiteRoot;
+        $var['moduleSiteRoot'] = $this->moduleSiteRoot;
         $var['moduleAttachUrl'] = $this->moduleAttachUrl;
 
-        $var['account']    = $this->account;
+        $var['account'] = $this->account;
         $var['moduleInfo'] = $this->moduleInfo;
-        $var['attachUrl']  = getAttachmentUrl() . "/";
+        $var['attachUrl'] = getAttachmentUrl() . "/";
 
         if (!empty($params)) {
             $var = array_merge($var, $params);
@@ -93,7 +93,7 @@ abstract class MobileBaseController extends BaseController
             $versionPath = IA_ROOT . "/public/app/" . $addonsName . "/mobile/version";
 
             if (empty($version)) {
-                $trees   = FileUtil::dirsOnes($versionPath);
+                $trees = FileUtil::dirsOnes($versionPath);
                 $version = end($trees);
                 if (!empty($version)) {
                     $template = "{$addonsName}/mobile/version/{$version}/{$filename}.html";
@@ -106,6 +106,10 @@ abstract class MobileBaseController extends BaseController
         if (!is_file($source)) {
             exit("template source '{$template}' is not exist!");
         } else {
+            echo "<script>let uniacid = `{$this->uniacid}`;</script>";
+            echo "<script>let version = '1.0';</script>";
+            echo "<script>let module = `{$this->module}`;</script>";
+            echo "<script>let apiroot = `{$this->siteRoot}`;</script>";
             require_once $source;
         }
     }
