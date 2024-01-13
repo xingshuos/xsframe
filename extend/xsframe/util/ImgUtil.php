@@ -19,23 +19,24 @@ class ImgUtil
         set_time_limit(50);
         @ini_set('memory_limit', '256M');
 
-        $bg       = self::createImage($bgUrl);
+        $bg = self::createImage($bgUrl);
         $img_info = getimagesize($bgUrl);
 
-        $width  = $img_info[0];
+        $width = $img_info[0];
         $height = $img_info[1];
+
         $target = imagecreatetruecolor($width, $height);
         imagecopy($target, $bg, 0, 0, 0, 0, $width, $height);
         imagedestroy($bg);
 
-        foreach ($data as $d) {
-            $d = self::getRealData($d);
-            if ($d['type'] == 'qrcode') {
-                $target = self::mergeImage($target, $d['src'], $d['left'], $d['top'], $d['width'], $d['height']);
-            } else if ($d['type'] == 'createtime') {
-                $target = self::mergeText($target, $d, date('Y-m-d H:i', time()));
-            } else if ($d['type'] == 'logo') {
-                $target = self::mergeImage($target, $d['src'], $d['left'], $d['top'], $d['width'], $d['height']);
+        if (!empty($data)) {
+            foreach ($data as $d) {
+                $d = self::getRealData($d);
+                if ($d['type'] == 'img') {
+                    $target = self::mergeImage($target, $d['src'], $d['left'], $d['top'], $d['width'], $d['height'], $d['rotate'] ?? 0);
+                } else if ($d['type'] == 'createtime') {
+                    $target = self::mergeText($target, $d, date('Y-m-d H:i', time()));
+                }
             }
         }
 
@@ -48,32 +49,41 @@ class ImgUtil
      */
     public static function getRealData($data)
     {
-        $data['left']   = intval(str_replace('px', '', $data['left']));
-        $data['top']    = intval(str_replace('px', '', $data['top']));
-        $data['width']  = intval(str_replace('px', '', $data['width']));
+        $data['left'] = intval(str_replace('px', '', $data['left']));
+        $data['top'] = intval(str_replace('px', '', $data['top']));
+        $data['width'] = intval(str_replace('px', '', $data['width']));
         $data['height'] = intval(str_replace('px', '', $data['height']));
-        $data['size']   = intval(str_replace('px', '', $data['size']));
+        $data['size'] = intval(str_replace('px', '', $data['size']));
         return $data;
     }
 
     /**
      * 创建图片
      */
-    public static function createImage($imgurl)
+    public static function createImage($imgUrl)
     {
-        $resp = RequestUtil::request($imgurl);
+        $resp = RequestUtil::httpGet($imgUrl);
         return imagecreatefromstring($resp);
     }
 
     /**
      * 绘制图片
      */
-    public static function mergeImage($target, $imgurl, $left, $top, $width, $height)
+    public static function mergeImage($target, $imgUrl, $left, $top, $width, $height, $rotated = 0)
     {
-        $img = self::createImage($imgurl);
-        $w   = imagesx($img);
-        $h   = imagesy($img);
+        if (!empty($rotated)) {
+            $source = imagecreatefromjpeg($imgUrl);
+            $img = imagerotate($source, $rotated, 0); // 旋转90度
+            $w = imagesx($img);
+            $h = imagesy($img);
+        }else{
+            $img = self::createImage($imgUrl);
+            $w = imagesx($img);
+            $h = imagesy($img);
+        }
+
         imagecopyresized($target, $img, $left, $top, 0, 0, $width, $height, $w, $h);
+
         imagedestroy($img);
         return $target;
     }
@@ -84,10 +94,10 @@ class ImgUtil
     public static function mergeText($target, $data, $text)
     {
         $rootPath = str_replace("\\", "/", dirname(dirname(dirname(dirname(__file__)))));
-        $font     = $rootPath . "/public/fonts/msyh.ttf";
+        $font = $rootPath . "/public/fonts/msyh.ttf";
 
         $colors = self::hex2rgb($data['color']);
-        $color  = imagecolorallocate($target, $colors['red'], $colors['green'], $colors['blue']);
+        $color = imagecolorallocate($target, $colors['red'], $colors['green'], $colors['blue']);
 
         $text = self::emoji($text);
         $text = mb_convert_encoding(strval($text), "html-entities", "utf-8");
@@ -105,26 +115,26 @@ class ImgUtil
 
         // Match Emoticons
         $regexEmoticons = '/[\x{1F600}-\x{1F64F}]/u';
-        $clean_text     = preg_replace($regexEmoticons, '', $text);
+        $clean_text = preg_replace($regexEmoticons, '', $text);
 
         // Match Miscellaneous Symbols and Pictographs
         $regexSymbols = '/[\x{1F300}-\x{1F5FF}]/u';
-        $clean_text   = preg_replace($regexSymbols, '', $clean_text);
+        $clean_text = preg_replace($regexSymbols, '', $clean_text);
 
         // Match Transport And Map Symbols
         $regexTransport = '/[\x{1F680}-\x{1F6FF}]/u';
-        $clean_text     = preg_replace($regexTransport, '', $clean_text);
+        $clean_text = preg_replace($regexTransport, '', $clean_text);
 
         // Match Miscellaneous Symbols
-        $regexMisc  = '/[\x{2600}-\x{26FF}]/u';
+        $regexMisc = '/[\x{2600}-\x{26FF}]/u';
         $clean_text = preg_replace($regexMisc, '', $clean_text);
 
         // Match Dingbats
         $regexDingbats = '/[\x{2700}-\x{27BF}]/u';
-        $clean_text    = preg_replace($regexDingbats, '', $clean_text);
+        $clean_text = preg_replace($regexDingbats, '', $clean_text);
 
         $regexDingbats = '/[\x{231a}-\x{23ab}\x{23e9}-\x{23ec}\x{23f0}-\x{23f3}]/u';
-        $clean_text    = preg_replace($regexDingbats, '', $clean_text);
+        $clean_text = preg_replace($regexDingbats, '', $clean_text);
 
         return $clean_text;
     }
@@ -179,7 +189,7 @@ class ImgUtil
                     if (strpos($img, '?') !== false) {
 
                     } else {
-                        $im       = array(
+                        $im = array(
                             'old' => $img,
                             'new' => tomedia($img, $suffix)
                         );
@@ -203,9 +213,9 @@ class ImgUtil
                 foreach ($imgs[0] as $img) {
 
                     $pattern = "/src=(.*?)/";
-                    $newImg  = preg_replace($pattern, "class=\"lazy-load\" src='/app/gm_arts/static/images/nopic.png' data-original=", $img);
+                    $newImg = preg_replace($pattern, "class=\"lazy-load\" src='/app/gm_arts/static/images/nopic.png' data-original=", $img);
 
-                    $im       = array(
+                    $im = array(
                         'old' => $img,
                         'new' => $newImg
                     );
@@ -227,13 +237,13 @@ class ImgUtil
                 $videos[0] = array_unique($videos[0]);
                 foreach ($videos[0] as $videoStr) {
 
-                    $pattern     = "/height=[\\\\'| \\\"](.*?)[\\\\'| \\\"]/";
+                    $pattern = "/height=[\\\\'| \\\"](.*?)[\\\\'| \\\"]/";
                     $newVideoStr = preg_replace($pattern, "", $videoStr);
 
-                    $pattern1    = "/style=[\\\\'|\\\"](.*?)[\\\\'|\\\"]/";
+                    $pattern1 = "/style=[\\\\'|\\\"](.*?)[\\\\'|\\\"]/";
                     $newVideoStr = preg_replace($pattern1, " ", $newVideoStr);
 
-                    $im          = array(
+                    $im = array(
                         'old' => $videoStr,
                         'new' => $newVideoStr
                     );
