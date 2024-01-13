@@ -75,4 +75,34 @@ class OpensslUtil
         }
         return $decrypted;
     }
+
+    // 加密
+    public static function encrypt($string, $key, $iv = null, $type = 'aes-128-cbc')
+    {
+        if (!$iv) {
+            $ivLength = openssl_cipher_iv_length($type);
+            $iv = openssl_random_pseudo_bytes($ivLength);
+            $data = openssl_encrypt(strval($string), $type, $key, OPENSSL_RAW_DATA, $iv);
+            $retStr = bin2hex($iv . $data);
+        } else {
+            $data = openssl_encrypt(strval($string), $type, $key, OPENSSL_RAW_DATA, $iv);
+            $retStr = bin2hex($data);
+        }
+        return $retStr;
+    }
+
+    // 解密
+    public static function decrypt($string, $key, $iv = null, $type = 'aes-128-cbc')
+    {
+        if (!$iv) {
+            $ivLength = openssl_cipher_iv_length($type);
+            $iv = substr(hex2bin($string), 0, $ivLength);
+            $string = substr(hex2bin($string), $ivLength);
+            $retStr = openssl_decrypt($string, $type, $key, OPENSSL_RAW_DATA, $iv);
+        } else {
+            $retStr = openssl_decrypt(hex2bin($string), $type, $key, OPENSSL_RAW_DATA, $iv);
+        }
+        return $retStr;
+    }
+
 }
