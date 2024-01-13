@@ -253,7 +253,9 @@ define(['jquery'], function ($) {
                 confirm = obj.data('msg') || obj.data('confirm');
 
             let submit = function () {
-                $.post(url).done(function (data) {
+                $.post(url,{
+                    ids: selecteds
+                }).done(function (data) {
                     data = eval("(" + data + ")");
                     if (data.status === 1) {
                         window.open(data.result.url)

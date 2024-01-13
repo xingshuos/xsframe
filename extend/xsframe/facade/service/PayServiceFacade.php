@@ -21,6 +21,7 @@ use think\Facade;
  * @method static aliPagePay($ordersn, $price, $serviceType, $title = '', string $returnUrl = '', bool $returnQrcode = false, int $qrcodeWidth = 300)
  * @method static aliRsaCheck(array $get, $signType = 'RSA2')
  * @method static wxPay(string $ordersn, float $price, string $title, int $service_type, string $openid = '')
+ * @method static wapPay(mixed $ordersn, mixed $price, mixed $service_type, string $string)
  */
 class PayServiceFacade extends Facade
 {

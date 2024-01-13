@@ -153,6 +153,49 @@ class PayService extends BaseService
     }
 
     /**
+     * web - 支付宝支付
+     * @param $ordersn
+     * @param $price
+     * @param int $serviceType
+     * @param string $title
+     * @param null $returnUrl
+     * @param bool $returnQrcode
+     * @param int $qrcodeWidth
+     * @return string|array
+     * @throws ApiException
+     */
+    public function wapPay($ordersn, $price, int $serviceType = 0, string $title = '', $returnUrl = null)
+    {
+        try {
+            $params = [
+                'out_trade_no' => $ordersn,
+                'total_amount' => $price,
+                'subject'      => $title,
+                'body'         => $this->module . ":" . $this->uniacid . ":" . $serviceType,
+                'product_code' => 'FAST_INSTANT_TRADE_PAY',
+            ];
+
+            $params['return_url'] = $returnUrl;
+
+            if (!$this->aliPayService instanceof AliPayService) {
+                $paymentSet = $this->account['settings']['alipay'];
+                $gatewayUrl = "https://openapi.alipay.com/gateway.do";
+                $notifyUrl = $this->siteRoot . "/" . $this->module . "/alipay/notify";
+
+                if (empty($paymentSet['appid']) || empty($paymentSet['encrypt_key'])) {
+                    return ErrorUtil::error(-1, "后台支付宝支付配置信息未配置");
+                }
+
+                $this->aliPayService = new AliPayService($gatewayUrl, $paymentSet['appid'], $paymentSet['encrypt_key'], $paymentSet['private_key'], $paymentSet['public_key'], $notifyUrl, $returnUrl);
+            }
+
+            return $this->aliPayService->wapPay($params);
+        } catch (ApiException|\Exception $e) {
+            throw new ApiException($e->getMessage());
+        }
+    }
+
+    /**
      * 验证支付宝支付回调参数
      *
      * @param $postData
