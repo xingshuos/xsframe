@@ -72,7 +72,23 @@ class ImgUtil
     public static function mergeImage($target, $imgUrl, $left, $top, $width, $height, $rotated = 0)
     {
         if (!empty($rotated)) {
-            $source = imagecreatefromjpeg($imgUrl);
+            $image_info = getimagesize($imgUrl);
+            $source = "";
+            switch ($image_info['mime']) {
+                case 'image/png':
+                    // 处理 PNG 文件
+                    $source = imagecreatefrompng($imgUrl);
+                    break;
+                case 'image/jpeg':
+                    // 处理 JPEG 文件
+                    $source = imagecreatefromjpeg($imgUrl);
+                    break;
+                case 'image/gif':
+                    // 处理 GIF 文件
+                    $source = imagecreatefromgif($imgUrl);
+                    break;
+            }
+
             $img = imagerotate($source, $rotated, 0); // 旋转90度
             $w = imagesx($img);
             $h = imagesy($img);
