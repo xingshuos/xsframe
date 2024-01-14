@@ -32,10 +32,10 @@ class ImgUtil
         if (!empty($data)) {
             foreach ($data as $d) {
                 $d = self::getRealData($d);
-                if ($d['type'] == 'img') {
+                if ($d['type'] == 'img' && !empty($d['src'])) {
                     $target = self::mergeImage($target, $d['src'], $d['left'], $d['top'], $d['width'], $d['height'], $d['rotate'] ?? 0);
-                } else if ($d['type'] == 'createtime') {
-                    $target = self::mergeText($target, $d, date('Y-m-d H:i', time()));
+                } else if ($d['type'] == 'text') {
+                    $target = self::mergeText($target, $d['text'], $d['size'], $d['color'], $d['left'], $d['top']);
                 }
             }
         }
@@ -62,7 +62,11 @@ class ImgUtil
      */
     public static function createImage($imgUrl)
     {
-        $resp = RequestUtil::httpGet($imgUrl);
+        if (strexists($imgUrl, 'http')) {
+            $resp = RequestUtil::httpGet($imgUrl);
+        } else {
+            $resp = file_get_contents($imgUrl);
+        }
         return imagecreatefromstring($resp);
     }
 
@@ -92,7 +96,7 @@ class ImgUtil
             $img = imagerotate($source, $rotated, 0); // 旋转90度
             $w = imagesx($img);
             $h = imagesy($img);
-        }else{
+        } else {
             $img = self::createImage($imgUrl);
             $w = imagesx($img);
             $h = imagesy($img);
@@ -107,18 +111,18 @@ class ImgUtil
     /**
      * 绘制文本
      */
-    public static function mergeText($target, $data, $text)
+    public static function mergeText($target, $text, $size, $color, $left, $top)
     {
         $rootPath = str_replace("\\", "/", dirname(dirname(dirname(dirname(__file__)))));
-        $font = $rootPath . "/public/fonts/msyh.ttf";
+        $font = $rootPath . "/public/attachment/fonts/msyh.ttf";
 
-        $colors = self::hex2rgb($data['color']);
+        $colors = self::hex2rgb($color);
         $color = imagecolorallocate($target, $colors['red'], $colors['green'], $colors['blue']);
 
         $text = self::emoji($text);
         $text = mb_convert_encoding(strval($text), "html-entities", "utf-8");
 
-        imagettftext($target, $data['size'], 0, $data['left'], $data['top'] + $data['size'], $color, $font, $text);
+        imagettftext($target, $size, 0, $left, $top + $size, $color, $font, $text);
         return $target;
     }
 

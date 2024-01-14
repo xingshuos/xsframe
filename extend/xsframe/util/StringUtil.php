@@ -426,4 +426,18 @@ class StringUtil
             return array_key_exists($number, $numbers) ? $numbers[$number] : "未知";
         }
     }
+
+    // 将字符串拆分成数组
+    public static function groupString($str, $groupSize = 11): array
+    {
+        $result = array();
+        $length = mb_strlen($str, 'UTF-8'); // 使用 mb_strlen 函数并指定字符编码为 UTF-8
+
+        for ($i = 0; $i < $length; $i += $groupSize) {
+            $group = mb_substr($str, $i, $groupSize, 'UTF-8'); // 使用 mb_substr 函数并指定字符编码为 UTF-8
+            $result[] = $group;
+        }
+        return $result;
+    }
+
 }
