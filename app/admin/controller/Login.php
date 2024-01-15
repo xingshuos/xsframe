@@ -38,7 +38,13 @@ class Login extends Base
             $uniacid = $domainMappingArr[$url]['uniacid'];
             $module = $domainMappingArr[$url]['default_module'];
             $moduleSetting = $this->settingsController->getModuleSettings(null, $module, $uniacid);
-            $websiteSets = array_merge($websiteSets, $moduleSetting['website'], $moduleSetting['basic']);
+
+            if( empty($moduleSetting) ){
+                // TODO 项目名称也应该可以配置官网信息
+                $accountSetting = $this->accountSetting;
+            }else{
+                $websiteSets = array_merge($websiteSets, (array)$moduleSetting['website'], (array)$moduleSetting['basic']);
+            }
         }
         # 检测是否配置独立域名 end
 
