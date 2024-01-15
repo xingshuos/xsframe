@@ -141,10 +141,14 @@ class Sysset extends Base
             $data = array(
                 "uniacid"        => trim($this->params["uniacid"]),
                 "host_url"       => trim($this->params["host_url"]),
-                "default_module" => trim($this->params["default_module"]),
+                "default_module" => trim($this->params["default_module"]??''),
                 "default_url"    => trim($this->params["default_url"]),
                 "displayorder"   => trim($this->params["displayorder"]),
             );
+
+            if( empty($data['default_module']) ){
+                $this->error("请选择默认应用");
+            }
 
             if (!empty($id)) {
                 Db::name("sys_account_host")->where(["id" => $id])->update($data);

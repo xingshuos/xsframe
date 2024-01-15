@@ -12,6 +12,8 @@
 
 namespace xsframe\util;
 
+use think\Exception;
+
 class ImgUtil
 {
     public static function createPosterImg($imgPath, $bgUrl, $data = null)
@@ -67,7 +69,14 @@ class ImgUtil
         } else {
             $resp = file_get_contents($imgUrl);
         }
-        return imagecreatefromstring($resp);
+
+        try {
+            $imageData = imagecreatefromstring($resp);
+        } catch (Exception $exception) {
+            LoggerUtil::error("imgUrl:" . $imgUrl);
+            LoggerUtil::error("errorMsg:" . $exception->getMessage());
+        }
+        return $imageData;
     }
 
     /**

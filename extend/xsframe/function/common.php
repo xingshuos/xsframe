@@ -269,6 +269,7 @@ if (!function_exists('getAttachmentUrl')) {
                     break;
             }
         }
+
         return $hostUrl;
     }
 }
