@@ -114,7 +114,7 @@ class ImgUtil
     public static function mergeText($target, $text, $size, $color, $left, $top)
     {
         $rootPath = str_replace("\\", "/", dirname(dirname(dirname(dirname(__file__)))));
-        $font = $rootPath . "/public/attachment/fonts/msyh.ttf";
+        $font = $rootPath . "/public/app/admin/static/fonts/msyh.ttf";
 
         $colors = self::hex2rgb($color);
         $color = imagecolorallocate($target, $colors['red'], $colors['green'], $colors['blue']);
