@@ -73,7 +73,7 @@ class ImgUtil
         try {
             $imageData = imagecreatefromstring($resp);
         } catch (Exception $exception) {
-            LoggerUtil::error("imgUrl:" . $imgUrl);
+            LoggerUtil::error("createImage imgUrl:" . $imgUrl);
             LoggerUtil::error("errorMsg:" . $exception->getMessage());
         }
         return $imageData;
@@ -103,17 +103,20 @@ class ImgUtil
             }
 
             $img = imagerotate($source, $rotated, 0); // 旋转90度
-            $w = imagesx($img);
-            $h = imagesy($img);
         } else {
             $img = self::createImage($imgUrl);
-            $w = imagesx($img);
-            $h = imagesy($img);
         }
 
-        imagecopyresized($target, $img, $left, $top, 0, 0, $width, $height, $w, $h);
+        try {
+            $w = imagesx($img);
+            $h = imagesy($img);
 
-        imagedestroy($img);
+            imagecopyresized($target, $img, $left, $top, 0, 0, $width, $height, $w, $h);
+            imagedestroy($img);
+        }catch (Exception $exception){
+            LoggerUtil::error("mergeImage imgUrl:" . $imgUrl);
+            LoggerUtil::error("errorMsg:" . $exception->getMessage());
+        }
         return $target;
     }
 
