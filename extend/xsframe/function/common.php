@@ -221,8 +221,7 @@ if (!function_exists('tomedia')) {
             $hostUrl = getAttachmentUrl(true, $uniacid);
         }
 
-        $src = $hostUrl . "/" . ltrim($src, '/');
-        return $src . ($suffix ? $suffix : '');
+        return $hostUrl . "/" . ltrim($src, '/') . ($suffix ?: '');
     }
 }
 
