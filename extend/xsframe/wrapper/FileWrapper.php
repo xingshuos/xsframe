@@ -109,7 +109,9 @@ class FileWrapper
 
         $settingsController = new SettingsWrapper();
         if ($uniacid > 0) {
-            $setting = $settingsController->getAccountSettings($uniacid, 'settings');
+//            $setting = $settingsController->getAccountSettings($uniacid, 'settings');
+            // TODO 读取公共配置，待优化  20240118
+            $setting = $settingsController->getSysSettings(SysSettingsKeyEnum::ATTACHMENT_KEY);
         } else {
             $setting = $settingsController->getSysSettings(SysSettingsKeyEnum::ATTACHMENT_KEY);
         }

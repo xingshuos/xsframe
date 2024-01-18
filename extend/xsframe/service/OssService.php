@@ -29,10 +29,15 @@ class OssService
 
     public function __construct()
     {
-        $accessKeyId      = config('aliyun.rootAccessKeyId');
-        $accessKeySecret  = config('aliyun.rootAccessKeySecret');
-        $endpoint         = config('aliyun.endpoint');
-        $endpointInternal = config('aliyun.endpoint_internal');
+//        $accessKeyId      = config('aliyun.rootAccessKeyId');
+//        $accessKeySecret  = config('aliyun.rootAccessKeySecret');
+//        $endpoint         = config('aliyun.endpoint');
+//        $endpointInternal = config('aliyun.endpoint_internal');
+
+        $accessKeyId      = "LJYkoWqNLc6BQleq";
+        $accessKeySecret  = "R7H8RN5bHvYNeymhguxncXHVuFCXYo";
+        $endpoint         = "oss-cn-beijing.aliyuncs.com";
+        $endpointInternal = "oss-cn-beijing-internal.aliyuncs.com";
 
         $this->accessKeyId      = $accessKeyId;
         $this->accessKeySecret  = $accessKeySecret;
@@ -44,7 +49,8 @@ class OssService
         } catch (OssException $e) {
 
         }
-        $this->bucket = config('aliyun.bucket');
+//        $this->bucket = config('aliyun.bucket');
+        $this->bucket = "mingxinpian-attachment";
     }
 
     public function getVideoUrl($videoPath, $bucket = null, $timeout = 3600)
@@ -73,11 +79,16 @@ class OssService
             if (empty($bucket)) {
                 $bucket = $this->bucket;
             }
-            $this->client = new OssClient($this->accessKeyId, $this->accessKeySecret, $this->endpointInternal);
+//            dump([$this->accessKeyId, $this->accessKeySecret, $this->endpointInternal]);die;
+            $host_name = $this->endpointInternal ? '-internal.aliyuncs.com' : '.aliyuncs.com';
+            $endpoint  = 'http://' . "oss-cn-beijing.aliyuncs.com";
+
+            $this->client = new OssClient($this->accessKeyId, $this->accessKeySecret, $endpoint);
             return $this->client->uploadFile($bucket, $filename, $path);
         } catch (OssException $e) {
-            return $e->getMessage();
+//            return $e->getMessage();
         }
+
     }
 
     //删除文件

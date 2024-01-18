@@ -242,14 +242,20 @@ if (!function_exists('getAttachmentUrl')) {
         }
 
         $settings = [];
-        if ($uniacid > 0) {
+//        if ($uniacid > 0) {
             $settingsController = new SettingsWrapper();
-            $settings = $settingsController->getAccountSettings($uniacid, 'settings');
 
-            if (empty($settings) || empty($settings['remote'])) {
+            // TODO 暂时注释 zhaoxin 20240118
+//            $settings = $settingsController->getAccountSettings($uniacid, 'settings');
+//
+//            if (empty($settings) || empty($settings['remote'])) {
                 $settings = $settingsController->getSysSettings(SysSettingsKeyEnum::ATTACHMENT_KEY);
-            }
-        }
+//            }
+//        }
+
+//        dump($uniacid);
+//        dump($settings);
+//        die;
 
         if (!empty($settings) && $settings['remote']['type'] > 0) {
             $remote = $settings['remote'];
