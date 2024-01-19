@@ -102,7 +102,6 @@ class OssService extends BaseService
             if (empty($bucket)) {
                 $bucket = $this->bucket;
             }
-
             if (!empty($bucket)) {
                 if (is_file($path)) {
                     $this->client->uploadFile($bucket, $filename, $path);

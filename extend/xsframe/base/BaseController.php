@@ -31,6 +31,7 @@ abstract class BaseController extends Controller
     protected $pSize;
     protected $app;
     protected $siteRoot;
+    protected $ip;
     protected $view;
 
     protected $module;
@@ -84,6 +85,7 @@ abstract class BaseController extends Controller
         $this->siteRoot = request()->domain();
         $this->iaRoot = str_replace("\\", '/', dirname(dirname(dirname(dirname(__FILE__)))));
         $this->module = app('http')->getName();
+        $this->ip = $this->request->ip();
 
         $this->moduleSiteRoot = $this->siteRoot . "/" . $this->module;
         $this->moduleAttachUrl = $this->siteRoot . "/app/" . $this->module;

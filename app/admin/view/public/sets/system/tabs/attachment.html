@@ -21,8 +21,9 @@
 
 <!-- 阿里云 start -->
 <div class="remote-alioss" {if empty($accountSettings['remote']['type']) || $accountSettings['remote']['type'] != '2'} style="display:none;" {/if}>
-<div class="alert alert-info">
+<div class="alert alert-warning">
     启用阿里oss后，请把/attachment目录（不包括此目录）下的子文件及子目录上传至阿里云oss<br>
+    使用内网上传请一定注意OSS地域必须与ECS服务器的地域相同（例如:杭州）<br>
     <ul class="link-list">
         <p style="line-height: 2rem;"><a>相关工具：</a></p>
         <p style="line-height: 2rem;"><a target="_blank" href="http://market.aliyun.com/products/53690006/cmgj000281.html?spm=5176.383663.9.22.faitxp" class="product-grey-font" data-spm-anchor-id="5176.383663.9.22">官方推荐OSS客户端工具（Windows版）</a></p>
@@ -266,7 +267,7 @@
         });
     });
 
-    let aliBucket = "{$upload['remote']['alioss']['bucket']}";
+    let aliBucket = "{$accountSettings['remote']['alioss']['bucket']}";
 
     let buck = function () {
         let key = $(':text[name="data[remote][alioss][key]"]').val();

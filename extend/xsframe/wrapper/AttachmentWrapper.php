@@ -45,10 +45,10 @@ class AttachmentWrapper
             show_json(-1, $buckets['msg']);
         }
         $bucketDataCenter = $this->attachmentAliossDataCenters();
-        $bucket           = array();
+        $bucket = array();
         foreach ($buckets as $key => $value) {
             $value['loca_name'] = $key . '@@' . $bucketDataCenter[$value['location']];
-            $bucket[]           = $value;
+            $bucket[] = $value;
         }
         return $bucket;
     }
@@ -75,13 +75,19 @@ class AttachmentWrapper
     {
         $attachmentPath = IA_ROOT . "/public/attachment/";
 
-        $buckets  = $this->attachmentAliossBuctkets($key, $secret);
-        $host     = $internal ? '-internal.aliyuncs.com' : '.aliyuncs.com';
-        $url      = 'http://' . $buckets[$bucket]['location'] . $host;
-        $filename = 'HeEngine.ico';
+        $buckets = $this->attachmentAliossBuctkets($key, $secret);
+        $host = $internal ? '-internal.aliyuncs.com' : '.aliyuncs.com';
+        $url = 'http://' . $buckets[$bucket]['location'] . $host;
+
         try {
+            $filename = 'HeEngine.ico';
+            $filePath = $attachmentPath . 'images/global/' . $filename;
+            if (!is_file($filePath)) {
+                @touch($filePath);
+            }
+
             $ossClient = new OssClient($key, $secret, $url);
-            $ossClient->uploadFile($bucket, $filename, $attachmentPath . 'images/global/' . $filename);
+            $ossClient->uploadFile($bucket, $filename, $filePath);
         } catch (OssException $e) {
             show_json(-1, $e->getMessage());
         }
@@ -162,7 +168,7 @@ class AttachmentWrapper
         }
 
         $bucketListInfo = $bucketListInfo->getBucketList();
-        $bucketList     = array();
+        $bucketList = array();
         foreach ($bucketListInfo as &$bucket) {
             $bucketList[$bucket->getName()] = array('name' => $bucket->getName(), 'location' => $bucket->getLocation());
         }
@@ -180,9 +186,9 @@ class AttachmentWrapper
         if ($setting['remote']['type'] == '2') {
             list($bucket, $url) = explode('@@', $setting['remote']['alioss']['bucket']);
 
-            $buckets   = $this->attachmentAliossBuctkets($setting['remote']['alioss']['key'], $setting['remote']['alioss']['secret']);
+            $buckets = $this->attachmentAliossBuctkets($setting['remote']['alioss']['key'], $setting['remote']['alioss']['secret']);
             $host_name = $setting['remote']['alioss']['internal'] ? '-internal.aliyuncs.com' : '.aliyuncs.com';
-            $endpoint  = 'http://' . $buckets[$bucket]['location'] . $host_name;
+            $endpoint = 'http://' . $buckets[$bucket]['location'] . $host_name;
 
             try {
                 $ossClient = new OssClient($setting['remote']['alioss']['key'], $setting['remote']['alioss']['secret'], $endpoint);
@@ -196,10 +202,10 @@ class AttachmentWrapper
             }
         } elseif ($setting['remote']['type'] == '3') {
             load()->library('qiniu');
-            $auth        = new Qiniu\Auth($setting['remote']['qiniu']['accesskey'], $setting['remote']['qiniu']['secretkey']);
-            $config      = new Qiniu\Config();
-            $uploadmgr   = new Qiniu\Storage\UploadManager($config);
-            $putpolicy   = Qiniu\base64_urlSafeEncode(json_encode(array('scope' => $setting['remote']['qiniu']['bucket'] . ':' . $filename)));
+            $auth = new Qiniu\Auth($setting['remote']['qiniu']['accesskey'], $setting['remote']['qiniu']['secretkey']);
+            $config = new Qiniu\Config();
+            $uploadmgr = new Qiniu\Storage\UploadManager($config);
+            $putpolicy = Qiniu\base64_urlSafeEncode(json_encode(array('scope' => $setting['remote']['qiniu']['bucket'] . ':' . $filename)));
             $uploadtoken = $auth->uploadToken($setting['remote']['qiniu']['bucket'], $filename, 3600, $putpolicy);
             list($ret, $err) = $uploadmgr->putFile($uploadtoken, $filename, $attachmentPath . '/' . $filename);
             if ($auto_delete_local) {

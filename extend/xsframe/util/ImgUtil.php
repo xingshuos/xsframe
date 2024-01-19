@@ -42,7 +42,8 @@ class ImgUtil
             }
         }
 
-        imagejpeg($target, $imgPath);
+        imagejpeg($target, $imgPath); // 可接受的有损压缩
+        // imagepng($target, $imgPath); // 原图像无损清晰度
         imagedestroy($target);
     }
 
@@ -113,7 +114,7 @@ class ImgUtil
 
             imagecopyresized($target, $img, $left, $top, 0, 0, $width, $height, $w, $h);
             imagedestroy($img);
-        }catch (Exception $exception){
+        } catch (Exception $exception) {
             LoggerUtil::error("mergeImage imgUrl:" . $imgUrl);
             LoggerUtil::error("errorMsg:" . $exception->getMessage());
         }

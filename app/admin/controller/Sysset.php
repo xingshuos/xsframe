@@ -19,8 +19,8 @@ class Sysset extends Base
     // 附件设置
     public function attachment()
     {
-        $post_max_size       = ini_get('post_max_size');
-        $post_max_size       = $post_max_size > 0 ? byteCount($post_max_size) / 1024 : 0;
+        $post_max_size = ini_get('post_max_size');
+        $post_max_size = $post_max_size > 0 ? byteCount($post_max_size) / 1024 : 0;
         $upload_max_filesize = ini_get('upload_max_filesize');
 
         $attachmentPath = IA_ROOT . "/public/attachment/";
@@ -74,7 +74,7 @@ class Sysset extends Base
     public function site()
     {
         if ($this->request->isPost()) {
-            $data              = $this->params['data'];
+            $data = $this->params['data'];
             $data['copyright'] = htmlspecialchars_decode($this->params['data_copyright']);
 
             $this->settingsController->setSysSettings(SysSettingsKeyEnum::WEBSITE_KEY, $data);
@@ -88,7 +88,8 @@ class Sysset extends Base
 
         $vars = [
             'data' => $websiteSets,
-            'list' => $list
+            'list' => $list,
+            'ip'   => $this->ip,
         ];
         return $this->template('site', $vars);
     }
@@ -109,7 +110,7 @@ class Sysset extends Base
             $condition[''] = Db::raw(" `host_url` like '%" . trim($keyword) . "%' ");
         }
 
-        $list  = Db::name("sys_account_host")->where($condition)->order('displayorder desc,id asc')->page($this->pIndex, $this->pSize)->select()->toArray();
+        $list = Db::name("sys_account_host")->where($condition)->order('displayorder desc,id asc')->page($this->pIndex, $this->pSize)->select()->toArray();
         $total = Db::name("sys_account_host")->where($condition)->count();
         $pager = pagination2($total, $this->pIndex, $this->pSize);
 
@@ -117,7 +118,7 @@ class Sysset extends Base
 
         foreach ($list as &$item) {
             $item['account'] = Db::name('sys_account')->where(['uniacid' => $item['uniacid']])->find();
-            $item['module']  = Db::name('sys_modules')->where(['identifie' => $item['default_module']])->find();
+            $item['module'] = Db::name('sys_modules')->where(['identifie' => $item['default_module']])->find();
         }
         unset($item);
 
@@ -141,12 +142,12 @@ class Sysset extends Base
             $data = array(
                 "uniacid"        => trim($this->params["uniacid"]),
                 "host_url"       => trim($this->params["host_url"]),
-                "default_module" => trim($this->params["default_module"]??''),
+                "default_module" => trim($this->params["default_module"] ?? ''),
                 "default_url"    => trim($this->params["default_url"]),
                 "displayorder"   => trim($this->params["displayorder"]),
             );
 
-            if( empty($data['default_module']) ){
+            if (empty($data['default_module'])) {
                 $this->error("请选择默认应用");
             }
 
@@ -207,7 +208,7 @@ class Sysset extends Base
             $this->error("参数错误");
         }
 
-        $type  = trim($this->params["type"]);
+        $type = trim($this->params["type"]);
         $value = trim($this->params["value"]);
 
         $items = Db::name("sys_account_host")->where(['id' => $id])->select();
@@ -250,15 +251,15 @@ class Sysset extends Base
         $bomTree = Cache::get('bomTree');
 
         if ($this->request->isPost()) {
-            $path    = $this->iaRoot;
-            $trees   = FileUtil::fileTree($path);
+            $path = $this->iaRoot;
+            $trees = FileUtil::fileTree($path);
             $bomTree = array();
             foreach ($trees as $tree) {
                 $tree = str_replace($path, '', $tree);
                 $tree = str_replace('\\', '/', $tree);
                 if (strexists($tree, '.php')) {
                     $fname = $path . $tree;
-                    $fp    = fopen($fname, 'r');
+                    $fp = fopen($fname, 'r');
                     if (!empty($fp)) {
                         $bom = fread($fp, 3);
                         fclose($fp);

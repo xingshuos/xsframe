@@ -109,8 +109,6 @@ if (!function_exists('show_json')) {
 if (!function_exists('is_weixin')) {
     function is_weixin()
     {
-        global $_W;
-
         if (empty($_SERVER['HTTP_USER_AGENT']) || strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') === false && strpos($_SERVER['HTTP_USER_AGENT'], 'Windows Phone') === false) {
             return false;
         }
@@ -229,26 +227,23 @@ if (!function_exists('tomedia')) {
 if (!function_exists('getAttachmentUrl')) {
     function getAttachmentUrl($isAttachment = true, $uniacid = null)
     {
-        global $_W;
         $hostUrl = request()->domain() . ($isAttachment ? "/attachment" : '');
 
         if (empty($uniacid)) {
             $module = app('http')->getName();
-            $uniacid = $_W['uniacid'] ?? ($_COOKIE['uniacid'] ?? 0);
+            $uniacid = request()->param('uniacid') ?? ($_COOKIE['uniacid'] ?? 0);
 
-            if ($module == 'admin') {
+            if ($module == 'admin' && empty(request()->param('module'))) {
                 $uniacid = 0;
             }
         }
 
-        $settings = [];
-        if ($uniacid > 0) {
-            $settingsController = new SettingsWrapper();
-            $settings = $settingsController->getAccountSettings($uniacid, 'settings');
+        $settingsController = new SettingsWrapper();
 
-            if (empty($settings) || empty($settings['remote'])) {
-                $settings = $settingsController->getSysSettings(SysSettingsKeyEnum::ATTACHMENT_KEY);
-            }
+        if ($uniacid > 0) { // 读取项目配置
+            $settings = $settingsController->getAccountSettings($uniacid, 'settings');
+        } else {// 读取系统配置
+            $settings = $settingsController->getSysSettings(SysSettingsKeyEnum::ATTACHMENT_KEY);
         }
 
         if (!empty($settings) && $settings['remote']['type'] > 0) {

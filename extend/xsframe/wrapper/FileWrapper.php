@@ -23,9 +23,9 @@ class FileWrapper
     // 上传文件 TODO 目前是只上传到了本地 需要兼容 第三方 例如 OSS 七牛云等
     public function fileUpload($uniacid, $module, $userId, $type = 'image', $folder = '', $originName = '', $filename = '', $ext = '', $compress = false)
     {
-        $groupId        = 0;
+        $groupId = 0;
         $attachmentPath = IA_ROOT . "/public/attachment/";
-        $harmType       = array('asp', 'php', 'jsp', 'js', 'css', 'php3', 'php4', 'php5', 'ashx', 'aspx', 'exe', 'cgi');
+        $harmType = array('asp', 'php', 'jsp', 'js', 'css', 'php3', 'php4', 'php5', 'ashx', 'aspx', 'exe', 'cgi');
 
         if (empty($folder)) {
             return ErrorUtil::error(0, "没有上传内容");
@@ -65,7 +65,7 @@ class FileWrapper
     public function fileDelete($uniacid, $module, $userId, $fileUrl)
     {
         $attachmentPath = IA_ROOT . "/public/attachment/";
-        $filePath       = $attachmentPath . $fileUrl;
+        $filePath = $attachmentPath . $fileUrl;
 
         if (is_file($filePath)) {
             unlink($filePath);
@@ -97,21 +97,19 @@ class FileWrapper
         return Db::name('sys_attachment')->insert($insertData);
     }
 
-    // 上传附件 TODO
+    // 上传附件
     private function fileRemoteUpload($uniacid, $filePath = null, $fileName = null, $ext = '')
     {
         if (empty($filePath)) {
             return false;
         }
 
-        $newFileName    = $fileName;
+        $newFileName = $fileName;
         $attachmentPath = IA_ROOT . "/public/attachment/";
 
         $settingsController = new SettingsWrapper();
         if ($uniacid > 0) {
-//            $setting = $settingsController->getAccountSettings($uniacid, 'settings');
-            // TODO 读取公共配置，待优化  20240118
-            $setting = $settingsController->getSysSettings(SysSettingsKeyEnum::ATTACHMENT_KEY);
+            $setting = $settingsController->getAccountSettings($uniacid, 'settings');
         } else {
             $setting = $settingsController->getSysSettings(SysSettingsKeyEnum::ATTACHMENT_KEY);
         }
@@ -123,8 +121,8 @@ class FileWrapper
                 // 启用压缩
                 if ($setting['image']['is_reduce'] == 1 && $setting['image']['width'] > 0) {
                     $newFileName = FileUtil::fileRandomName($filePath, $ext);
-                    $maxWidth    = $setting['image']['width'];
-                    $image       = Image::open($filePath . $fileName);
+                    $maxWidth = $setting['image']['width'];
+                    $image = Image::open($filePath . $fileName);
                     $image->thumb($maxWidth, $maxWidth)->save($filePath . $newFileName);
                     // 删除源图
                     unlink($filePath . $fileName);
@@ -146,7 +144,7 @@ class FileWrapper
     private function fileRemoteDelete($filePath = null)
     {
         $settingsController = new SettingsWrapper();
-        $attachmentSets     = $settingsController->getSysSettings(SysSettingsKeyEnum::ATTACHMENT_KEY);
+        $attachmentSets = $settingsController->getSysSettings(SysSettingsKeyEnum::ATTACHMENT_KEY);
 
         if (empty($attachmentSets) || empty($filePath)) {
             return false;
