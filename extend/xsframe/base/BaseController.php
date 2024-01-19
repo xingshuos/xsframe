@@ -183,6 +183,14 @@ abstract class BaseController extends Controller
     {
         $uniacid = $this->params['uniacid'] ?? ($_GET['i'] ?? ($_COOKIE['uniacid'] ?? 0));
 
+        # 支付回调 start
+        if (!empty($this->params['attach']) || !empty($this->params['body'])) {
+            $attachArr = $this->params['attach'] ?? $this->params['body'];
+            $attachArr = explode(":", $attachArr);
+            $uniacid = $attachArr[1] ?? 0;
+        }
+        # end
+
         # 校验域名路由 start
         if (empty($uniacid)) {
             if ($this->module != 'admin') {
@@ -190,20 +198,15 @@ abstract class BaseController extends Controller
                 $uniacid = $accountHost->getAccountHostUniacid($_SERVER['HTTP_HOST']);
             }
         }
-        # 校验域名路由 end
+        # end
 
-        # 这里是后台首页默认的uniacid 不计入cookie
+        # 这里是后台首页默认的uniacid 不计入cookie start
         if (empty($uniacid)) {
-            $uniacid = $this->websiteSets['uniacid'] ?? 0;
+            $uniacid = $this->websiteSets['uniacid'] ?? 0; // 默认uniacid
         } else {
-            # 缓存当前所选商户uniacid
-            isetcookie('uniacid', $uniacid);
+            isetcookie('uniacid', $uniacid); // 缓存当前所选商户uniacid
         }
-
-        // 如果是平台端 商户uniacid设置为空
-        /*if ($this->module == 'admin') {
-            $uniacid = 0;
-        }*/
+        // end
 
         $this->uniacid = $uniacid;
         return $uniacid;
