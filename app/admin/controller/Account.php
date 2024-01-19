@@ -70,11 +70,6 @@ class Account extends Base
             $settingsData = $this->params['data'] ?? [];
             $settingsData = array_merge($accountSettings, $settingsData);
 
-            // TODO 优化后这部分代码可以去除
-            if( empty($settingsData['remote']['type']) ){
-                unset($settingsData['remote']);
-            }
-
             $data = array(
                 "name"         => trim($this->params["name"]),
                 "logo"         => trim($this->params["logo"]),
