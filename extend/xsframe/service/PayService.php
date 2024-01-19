@@ -154,6 +154,8 @@ class PayService extends BaseService
     }
 
     // 获取token与user_id（唯一）
+    // 文档地址1:https://opendocs.alipay.com/open/284/web?pathHash=9ec22daf
+    // 文档地址2:https://opendocs.alipay.com/open/02np96?pathHash=db2cdfed
     public function aliOauthToken($authCode)
     {
         try {
@@ -175,6 +177,8 @@ class PayService extends BaseService
     }
 
     // 获取支付宝用户信息
+    // 文档地址1:https://opendocs.alipay.com/open/284/web?pathHash=9ec22daf
+    // 文档地址2:https://opendocs.alipay.com/open/02np96?pathHash=db2cdfed
     public function aliUserInfo($accessToken)
     {
         try {
