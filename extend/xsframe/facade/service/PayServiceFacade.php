@@ -22,6 +22,8 @@ use think\Facade;
  * @method static aliRsaCheck(array $get, $signType = 'RSA2')
  * @method static wxPay(string $ordersn, float $price, string $title, int $service_type, string $openid = '')
  * @method static wapPay(mixed $ordersn, mixed $price, mixed $service_type, string $string)
+ * @method static aliOauthToken(string $authCode)
+ * @method static aliUserInfo(mixed $accessToken)
  */
 class PayServiceFacade extends Facade
 {

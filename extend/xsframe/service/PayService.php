@@ -104,6 +104,7 @@ class PayService extends BaseService
         }
     }
 
+
     /**
      * web - 支付宝支付
      * @param $ordersn
@@ -147,6 +148,48 @@ class PayService extends BaseService
             }
 
             return $this->aliPayService->pagePay($params);
+        } catch (ApiException|\Exception $e) {
+            throw new ApiException($e->getMessage());
+        }
+    }
+
+    // 获取token与user_id（唯一）
+    public function aliOauthToken($authCode)
+    {
+        try {
+            if (!$this->aliPayService instanceof AliPayService) {
+                $paymentSet = $this->account['settings']['alipay'];
+                $gatewayUrl = "https://openapi.alipay.com/gateway.do";
+                $notifyUrl = $this->siteRoot . "/" . $this->module . "/alipay/notify";
+
+                if (empty($paymentSet['appid']) || empty($paymentSet['encrypt_key'])) {
+                    return ErrorUtil::error(-1, "后台支付宝支付配置信息未配置");
+                }
+
+                $this->aliPayService = new AliPayService($gatewayUrl, $paymentSet['appid'], $paymentSet['encrypt_key'], $paymentSet['private_key'], $paymentSet['public_key'], $notifyUrl, $returnUrl);
+            }
+            return $this->aliPayService->aliOauthToken($authCode);
+        } catch (ApiException|\Exception $e) {
+            throw new ApiException($e->getMessage());
+        }
+    }
+
+    // 获取支付宝用户信息
+    public function aliUserInfo($accessToken)
+    {
+        try {
+            if (!$this->aliPayService instanceof AliPayService) {
+                $paymentSet = $this->account['settings']['alipay'];
+                $gatewayUrl = "https://openapi.alipay.com/gateway.do";
+                $notifyUrl = $this->siteRoot . "/" . $this->module . "/alipay/notify";
+
+                if (empty($paymentSet['appid']) || empty($paymentSet['encrypt_key'])) {
+                    return ErrorUtil::error(-1, "后台支付宝支付配置信息未配置");
+                }
+
+                $this->aliPayService = new AliPayService($gatewayUrl, $paymentSet['appid'], $paymentSet['encrypt_key'], $paymentSet['private_key'], $paymentSet['public_key'], $notifyUrl, $returnUrl);
+            }
+            return $this->aliPayService->aliUserInfo($accessToken);
         } catch (ApiException|\Exception $e) {
             throw new ApiException($e->getMessage());
         }

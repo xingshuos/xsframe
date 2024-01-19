@@ -12,7 +12,9 @@ namespace xsframe\service;
 // | Author: guiHai <786824455@qq.com>
 // +----------------------------------------------------------------------
 
+use xsframe\pay\Alipay\Request\AlipaySystemOauthTokenRequest;
 use xsframe\pay\Alipay\Request\AlipayTradePagePayRequest;
+use xsframe\pay\Alipay\Request\AlipayUserInfoShareRequest;
 use xsframe\util\ErrorUtil;
 use xsframe\pay\Alipay\AopClient;
 use xsframe\pay\Alipay\Data\AlipayTradeAppPayData;
@@ -36,13 +38,13 @@ class AliPayService
 
     public function __construct($gatewayUrl, $appId, $encryptKey, $rsaPrivateKey, $rsaPublicKey, $notifyUrl, $returnUrl = '')
     {
-        $this->gatewayUrl    = $gatewayUrl;
-        $this->appId         = $appId;
-        $this->encryptKey    = $encryptKey;
+        $this->gatewayUrl = $gatewayUrl;
+        $this->appId = $appId;
+        $this->encryptKey = $encryptKey;
         $this->rsaPrivateKey = $rsaPrivateKey;
-        $this->rsaPublicKey  = $rsaPublicKey;
-        $this->notifyUrl     = $notifyUrl;
-        $this->returnUrl     = $returnUrl;
+        $this->rsaPublicKey = $rsaPublicKey;
+        $this->notifyUrl = $notifyUrl;
+        $this->returnUrl = $returnUrl;
 
         if (!$this->clientAop instanceof AopClient) {
             $this->clientAop = new AopClient($gatewayUrl, $appId, $rsaPrivateKey, $rsaPublicKey, $encryptKey, 'RSA2');
@@ -90,6 +92,33 @@ class AliPayService
         return $response;
     }
 
+    // 支付宝授权登录
+    public function aliOauthToken($authCode)
+    {
+        $request = new AlipaySystemOauthTokenRequest();
+        $request->setGrantType('authorization_code');
+        $request->setCode($authCode);
+        $result = $this->execute($request);
+        $responseNode = str_replace(".", "_", $request->getApiMethodName()) . "_response";
+        return (array)$result->$responseNode;
+    }
+
+    // 支付宝授权登录
+    public function aliUserInfo($accessToken)
+    {
+        $request = new AlipayUserInfoShareRequest();
+        $result = $this->execute($request, $accessToken);
+
+        $responseNode = str_replace(".", "_", $request->getApiMethodName()) . "_response";
+        $resultCode = $result->$responseNode->code;
+
+        if (!empty($resultCode) && $resultCode == 10000) {
+            return (array)$result->$responseNode;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * 支付宝App支付
      *
@@ -101,7 +130,7 @@ class AliPayService
     public function appPay(AlipayTradeAppPayData $params): string
     {
         //实例化具体API对应的request类,类名称和接口名称对应,当前调用接口名称：alipay.trade.app.pay
-        $request     = new AlipayTradeAppPayRequest();
+        $request = new AlipayTradeAppPayRequest();
         $biz_content = $this->getBizContent($params->toArray());
         $request->setNotifyUrl($this->notifyUrl);
         $request->setBizContent($biz_content);
@@ -121,8 +150,8 @@ class AliPayService
      */
     public function getPayStatusByTradeNo($out_trade_no, $trade_no)
     {
-        $request     = new AlipayTradeQueryRequest();
-        $content     = [
+        $request = new AlipayTradeQueryRequest();
+        $content = [
             'out_trade_no' => $out_trade_no,
             'trade_no'     => $trade_no
         ];
@@ -131,7 +160,7 @@ class AliPayService
         $result = $this->clientAop->execute($request);
 
         $responseNode = str_replace(".", "_", $request->getApiMethodName()) . "_response";
-        $resultCode   = $result->$responseNode->code;
+        $resultCode = $result->$responseNode->code;
         if (!empty($resultCode) && $resultCode == 10000) {
             return $result->$responseNode;
         } else {
@@ -157,7 +186,7 @@ class AliPayService
         $result = $this->execute($request);
 
         $responseNode = str_replace(".", "_", $request->getApiMethodName()) . "_response";
-        $resultCode   = $result->$responseNode->code;
+        $resultCode = $result->$responseNode->code;
 
         if (!empty($resultCode) && $resultCode == 10000) {
             return [
@@ -190,9 +219,9 @@ class AliPayService
         $biz_content = $this->getBizContent($params);
         $request->setBizContent($biz_content);
 
-        $result       = $this->execute($request);
+        $result = $this->execute($request);
         $responseNode = str_replace(".", "_", $request->getApiMethodName()) . "_response";
-        $resultCode   = $result->$responseNode->code;
+        $resultCode = $result->$responseNode->code;
         if (!empty($resultCode) && $resultCode == 10000) {
             return ErrorUtil::error(1, "退款成功", $result->$responseNode);
         } else {
@@ -257,7 +286,7 @@ class AliPayService
      */
     private function getBizContent(array $params): string
     {
-        $params      = array_filter($params);
+        $params = array_filter($params);
         $biz_content = [];
 
         foreach ($params as $key => $item) {
