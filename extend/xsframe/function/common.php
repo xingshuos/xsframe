@@ -238,7 +238,6 @@ if (!function_exists('getAttachmentUrl')) {
             }
         }
 
-
         $settingsController = new SettingsWrapper();
 
         if ($uniacid > 0) { // 读取项目配置
@@ -264,7 +263,7 @@ if (!function_exists('getAttachmentUrl')) {
                     $remoteHostUrl = $remote['cos']['url'];
                     break;
             }
-            $hostUrl = !empty($remoteHostUrl) ?: $hostUrl;
+            $hostUrl = $remoteHostUrl ?: $hostUrl;
         }
 
         return $hostUrl;
