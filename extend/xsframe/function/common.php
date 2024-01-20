@@ -238,6 +238,7 @@ if (!function_exists('getAttachmentUrl')) {
             }
         }
 
+
         $settingsController = new SettingsWrapper();
 
         if ($uniacid > 0) { // 读取项目配置
@@ -248,20 +249,22 @@ if (!function_exists('getAttachmentUrl')) {
 
         if (!empty($settings) && $settings['remote']['type'] > 0) {
             $remote = $settings['remote'];
+            $remoteHostUrl = "";
             switch ($remote['type']) {
                 case 1:
-                    $hostUrl = $remote['ftp']['url'];
+                    $remoteHostUrl = $remote['ftp']['url'];
                     break;
                 case 2:
-                    $hostUrl = $remote['alioss']['url'];
+                    $remoteHostUrl = $remote['alioss']['url'];
                     break;
                 case 3:
-                    $hostUrl = $remote['qiniu']['url'];
+                    $remoteHostUrl = $remote['qiniu']['url'];
                     break;
                 case 4:
-                    $hostUrl = $remote['cos']['url'];
+                    $remoteHostUrl = $remote['cos']['url'];
                     break;
             }
+            $hostUrl = !empty($remoteHostUrl) ?: $hostUrl;
         }
 
         return $hostUrl;

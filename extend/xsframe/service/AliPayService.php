@@ -36,7 +36,7 @@ class AliPayService
     private $returnUrl;
     private $clientAop;
 
-    public function __construct($gatewayUrl, $appId, $encryptKey, $rsaPrivateKey, $rsaPublicKey, $notifyUrl, $returnUrl = '')
+    public function __construct($gatewayUrl, $appId, $encryptKey, $rsaPrivateKey, $rsaPublicKey, $notifyUrl = '', $returnUrl = '')
     {
         $this->gatewayUrl = $gatewayUrl;
         $this->appId = $appId;
@@ -68,8 +68,7 @@ class AliPayService
         $request->setNotifyUrl($this->notifyUrl);
         $request->setReturnUrl($this->returnUrl);
         $request->setBizContent($biz_content);
-        $response = $this->pageExecute($request, 'GET');
-        return $response;
+        return $this->pageExecute($request, 'GET');
     }
 
     /**
@@ -84,18 +83,17 @@ class AliPayService
     {
         //实例化具体API对应的request类,类名称和接口名称对应,当前调用接口名称：alipay.trade.wap.pay
         $request = new AlipayTradeWapPayRequest();
-
         $biz_content = $this->getBizContent($params);
         $request->setNotifyUrl($this->notifyUrl);
         $request->setBizContent($biz_content);
-        $response = $this->pageExecute($request, 'GET');
-        return $response;
+        return $this->pageExecute($request, 'GET');
     }
 
     // 支付宝授权登录
     public function aliOauthToken($authCode)
     {
         $request = new AlipaySystemOauthTokenRequest();
+
         $request->setGrantType('authorization_code');
         $request->setCode($authCode);
         $result = $this->execute($request);
@@ -258,8 +256,7 @@ class AliPayService
      */
     private function execute($request, $authToken = null, $appInfoAuthtoken = null)
     {
-        $response = $this->clientAop->execute($request, $authToken, $appInfoAuthtoken);
-        return $response;
+        return $this->clientAop->execute($request, $authToken, $appInfoAuthtoken);
     }
 
     /**
@@ -273,8 +270,7 @@ class AliPayService
      */
     private function pageExecute($request, $httpmethod = "POST")
     {
-        $response = $this->clientAop->pageExecute($request, $httpmethod);
-        return $response;
+        return $this->clientAop->pageExecute($request, $httpmethod);
     }
 
     /**

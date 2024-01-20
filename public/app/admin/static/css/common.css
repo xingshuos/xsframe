@@ -2476,13 +2476,100 @@ a.form-control-static {
     display: none;
     width: 170px;
     height: 170px;
-    padding: 20px;
+    padding: 15px;
     background: #fff;
     position: absolute;
     top: -70px;
-    right: 20px;
+    right: 50px;
     z-index: 999;
-    box-shadow: 0 0 20px #ccc;
+    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+}
+
+
+.qrcode .arrow,.qrcode .arrow:after {
+    position: absolute;
+    display: block;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid
+}
+
+.qrcode .arrow {
+    border-width: 11px
+}
+
+.qrcode .arrow:after {
+    content: "";
+    border-width: 10px
+}
+
+.qrcode.top>.arrow {
+    bottom: -11px;
+    left: 50%;
+    margin-left: -11px;
+    border-top-color: #999;
+    border-top-color: rgba(0,0,0,.25);
+    border-bottom-width: 0
+}
+
+.qrcode.top>.arrow:after {
+    bottom: 1px;
+    margin-left: -10px;
+    content: " ";
+    border-top-color: #fff;
+    border-bottom-width: 0
+}
+
+.qrcode.right>.arrow {
+    top: 50%;
+    left: -11px;
+    margin-top: -11px;
+    border-right-color: #999;
+    border-right-color: rgba(0,0,0,.25);
+    border-left-width: 0
+}
+
+.qrcode.right>.arrow:after {
+    bottom: -10px;
+    left: 1px;
+    content: " ";
+    border-right-color: #fff;
+    border-left-width: 0
+}
+
+.qrcode.bottom>.arrow {
+    top: -11px;
+    left: 50%;
+    margin-left: -11px;
+    border-top-width: 0;
+    border-bottom-color: #999;
+    border-bottom-color: rgba(0,0,0,.25)
+}
+
+.qrcode.bottom>.arrow:after {
+    top: 1px;
+    margin-left: -10px;
+    content: " ";
+    border-top-width: 0;
+    border-bottom-color: #fff
+}
+
+.qrcode.left>.arrow {
+    top: 50%;
+    right: -11px;
+    margin-top: -11px;
+    border-right-width: 0;
+    border-left-color: #999;
+    border-left-color: rgba(0,0,0,.25)
+}
+
+.qrcode.left>.arrow:after {
+    right: 1px;
+    bottom: -10px;
+    content: " ";
+    border-right-width: 0;
+    border-left-color: #fff
 }
 
 /*解决 input-group 中 input标签在模态框背景上层显示问题*/

@@ -169,6 +169,7 @@
 <script language='javascript'>
     // 适当的post表单页面进行引用
     require(['bootstrap'], function ($) {
+
         // 这里开启会与common.min.js冲突 主要就是将提示框放在最外层，避免提示框被遮盖问题
         // $('[data-toggle="tooltip"]').tooltip("destroy").tooltip({
         //     container: $(document.body)
@@ -184,6 +185,7 @@
             e.preventDefault();
             $(this).tab('show');
         });
+
         // 鼠标选中弹出信息框
         $("[rel=pop]").popover({
             trigger: 'manual',
@@ -206,7 +208,25 @@
                 }
             }, 100);
         });
+
     });
+
+    // 二维码
+    $(() => {
+        require(['jquery.qrcode'],function(){
+            $(".qrcode-box").hover(function(){
+                $(this).children('.qrcode').show().html("").qrcode({
+                    render:"canvas",
+                    width:140,
+                    height:140,
+                    text:$(this).children('.qrcode').data('url')
+                });
+                $(this).children('.qrcode').append(`<div class="arrow" style="top: 50%;"></div>`)
+            },function(){
+                $(this).children('.qrcode').hide();
+            })
+        });
+    })
 </script>
 
 <script language="javascript">

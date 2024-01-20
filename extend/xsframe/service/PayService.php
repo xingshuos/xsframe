@@ -162,13 +162,12 @@ class PayService extends BaseService
             if (!$this->aliPayService instanceof AliPayService) {
                 $paymentSet = $this->account['settings']['alipay'];
                 $gatewayUrl = "https://openapi.alipay.com/gateway.do";
-                $notifyUrl = $this->siteRoot . "/" . $this->module . "/alipay/notify";
 
                 if (empty($paymentSet['appid']) || empty($paymentSet['encrypt_key'])) {
                     return ErrorUtil::error(-1, "后台支付宝支付配置信息未配置");
                 }
 
-                $this->aliPayService = new AliPayService($gatewayUrl, $paymentSet['appid'], $paymentSet['encrypt_key'], $paymentSet['private_key'], $paymentSet['public_key'], $notifyUrl, $returnUrl);
+                $this->aliPayService = new AliPayService($gatewayUrl, $paymentSet['appid'], $paymentSet['encrypt_key'], $paymentSet['private_key'], $paymentSet['public_key']);
             }
             return $this->aliPayService->aliOauthToken($authCode);
         } catch (ApiException|\Exception $e) {
@@ -185,13 +184,12 @@ class PayService extends BaseService
             if (!$this->aliPayService instanceof AliPayService) {
                 $paymentSet = $this->account['settings']['alipay'];
                 $gatewayUrl = "https://openapi.alipay.com/gateway.do";
-                $notifyUrl = $this->siteRoot . "/" . $this->module . "/alipay/notify";
 
                 if (empty($paymentSet['appid']) || empty($paymentSet['encrypt_key'])) {
                     return ErrorUtil::error(-1, "后台支付宝支付配置信息未配置");
                 }
 
-                $this->aliPayService = new AliPayService($gatewayUrl, $paymentSet['appid'], $paymentSet['encrypt_key'], $paymentSet['private_key'], $paymentSet['public_key'], $notifyUrl, $returnUrl);
+                $this->aliPayService = new AliPayService($gatewayUrl, $paymentSet['appid'], $paymentSet['encrypt_key'], $paymentSet['private_key'], $paymentSet['public_key']);
             }
             return $this->aliPayService->aliUserInfo($accessToken);
         } catch (ApiException|\Exception $e) {
