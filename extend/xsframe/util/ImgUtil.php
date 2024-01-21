@@ -62,6 +62,19 @@ class ImgUtil
 
             $tempFileArr = [];
             if (!empty($data)) {
+
+                /*将字体处理逻辑优化 start*/
+                $draw        = new \ImagickDraw();
+                $rootPath    = str_replace("\\", "/", dirname(dirname(dirname(dirname(__file__)))));
+                $defaultFont = $d['font'] ?? $rootPath . "/public/app/admin/static/fonts/msyh.ttf";
+                $defaultFontSize = 16; // 假设默认字体大小
+                $textColor = '#000000';
+                $defaultFillColor = new \ImagickPixel($textColor); // 假设默认为黑色
+                $draw->setFont($defaultFont);
+                $draw->setFontSize($defaultFontSize);
+                $draw->setFillColor($defaultFillColor);
+                /*将字体处理逻辑优化 end*/
+
                 foreach ($data as $d) {
                     $d = self::getRealData($d);
                     if ($d['type'] == 'img' && !empty($d['src'])) {
@@ -73,21 +86,31 @@ class ImgUtil
                         }
                         if (is_file($imagePath)) {
                             $mergeImage = new \Imagick($imagePath);
+                            if( $d['rotate'] ){
+                                $mergeImage->rotateImage('none', -($d['rotate']));
+                            }
                             $mergeImage->resizeImage($d['width'], $d['height'], \Imagick::FILTER_LANCZOS, 1);
                             $background->compositeImage($mergeImage, \Imagick::COMPOSITE_OVER, $d['left'], $d['top']);
                             $mergeImage->clear();
                             $mergeImage->destroy();
                         }
                     } else if ($d['type'] == 'text') {
-                        $draw     = new \ImagickDraw();
-                        $rootPath = str_replace("\\", "/", dirname(dirname(dirname(dirname(__file__)))));
-                        $font     = $d['font'] ?? $rootPath . "/public/app/admin/static/fonts/msyh.ttf";
-                        $draw->setFont($font);
-                        $draw->setFontSize($d['size'] * 1.35);
-                        $draw->setFillColor(new \ImagickPixel($d['color']));
-
                         $text = self::emoji($d['text']);
-                        $background->annotateImage($draw, $d['left'], $d['top'] + $d['size'], 0, $text); // 高度需要增加 40 不知道为什么
+
+                        if( $d['font'] && is_file($d['font']) ){
+                            $draw->setFont($d['font']);
+                        }
+
+                        if( $d['size'] ){
+                            $fontSize = $d['size'] * 1.35; // 如果需要根据每个文本项调整大小，在这里临时修改
+                            $draw->setFontSize($fontSize); // 可选：只有当每个文本的大小可能不同时才在这里修改
+                        }
+
+                        if( $d['color'] && $d['color'] != $textColor ){
+                            $draw->setFillColor(new \ImagickPixel($d['color']));
+                        }
+
+                        $background->annotateImage($draw, $d['left'], $d['top'] + $d['size'], $d['rotate'] ?? 0, $text); // 高度注意这里加上了字体大小
                     }
                 }
             }
