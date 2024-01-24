@@ -13,6 +13,7 @@
 
 namespace xsframe\base;
 
+use xsframe\util\StringUtil;
 use xsframe\wrapper\AccountHostWrapper;
 use xsframe\wrapper\SettingsWrapper;
 use xsframe\enum\SysSettingsKeyEnum;
@@ -83,6 +84,10 @@ abstract class BaseController extends Controller
         $this->pSize = $this->request->param('size') ?? 10;
 
         $this->siteRoot = request()->domain();
+        if (StringUtil::strexists($this->request->server('HTTP_REFERER'), 'https')) {
+            $this->siteRoot = str_replace("http:", "https:", $this->siteRoot);
+        }
+
         $this->iaRoot = str_replace("\\", '/', dirname(dirname(dirname(dirname(__FILE__)))));
         $this->module = app('http')->getName();
         $this->ip = $this->request->ip();

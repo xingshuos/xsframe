@@ -224,6 +224,7 @@ textarea:focus {
     background: #fff;
     padding: 30px;
     box-sizing: border-box;
+    overflow-x: auto;
 }
 
 .page-toolbar {

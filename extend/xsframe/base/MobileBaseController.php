@@ -109,7 +109,7 @@ abstract class MobileBaseController extends BaseController
             echo "<script>let uniacid = `{$this->uniacid}`;</script>";
             echo "<script>let version = '1.0';</script>";
             echo "<script>let module = `{$this->module}`;</script>";
-            echo "<script>let apiroot = `{$this->siteRoot}`;</script>";
+            /*echo "<script>let apiroot = `{$this->siteRoot}`;</script>";*/
             require_once $source;
         }
     }

@@ -284,7 +284,11 @@ if (!function_exists('mobileUrl')) {
         if ((substr($t, 0, 7) == 'http://') || (substr($t, 0, 8) == 'https://') || (substr($t, 0, 2) == '//')) {
             $url = $src;
         } else {
-            $url = env('site.mRootUrl') . "/" . trim($src, '/');
+            if( env('site.mRootUrl') ){
+                $url = env('site.mRootUrl') . "/" . trim($src, '/');
+            }else{
+                $url = request()->domain() . "/" . trim($src, '/');
+            }
         }
 
         if (strpos($src, '?') !== false) {
