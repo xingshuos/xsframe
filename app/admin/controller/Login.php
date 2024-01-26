@@ -65,9 +65,10 @@ class Login extends Base
             show_json(0, '请输入密码!');
         }
 
-        if (!Captcha::check($verify)) {
+        // 暂时注释验证码功能 验证码需要结合缓存使用 或者写入redis 负载均衡服务器下会导致验证无效 TODO
+        /*if (!Captcha::check($verify)) {
             show_json(0, '验证码输入错误!');
-        }
+        }*/
 
         $resultInfo = UserWrapper::login($username, $password);
         if (ErrorUtil::isError($resultInfo)) {

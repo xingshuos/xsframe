@@ -212,6 +212,7 @@ define(['jquery'], function ($) {
         $(document).on("click", '.table-responsive tbody [data-toggle="ajaxRemove"]', function (e) {
             e.preventDefault();
             var obj = $(this),
+                oldText = $(this).text(),
                 url = obj.attr('href') || obj.data('href') || obj.data('url'),
                 confirm = obj.data('msg') || obj.data('confirm');
             var submit = function () {
@@ -229,10 +230,19 @@ define(['jquery'], function ($) {
                             tr.remove(), 0 == $(obj.closest('tbody')).find('tr').length && window.location.reload()
                         })
                     } else {
-                        obj.button('reset'), tip.msgbox.err(data.result.message || tip.lang.error, data.result.url)
+                        try {
+                            obj.button('reset')
+                        } catch (e) {
+                            obj.html('<i class="fa fa-spinner fa-spin"></i> ' + oldText);
+                        }
+                        tip.msgbox.err(data.result.message || tip.lang.error, data.result.url)
                     }
                 }).fail(function () {
-                    obj.button('reset');
+                    try {
+                        obj.button('reset')
+                    } catch (e) {
+                        obj.html('<i class="fa fa-spinner fa-spin"></i> ' + oldText);
+                    }
                     tip.msgbox.err(tip.lang.exception)
                 })
             };
@@ -250,10 +260,10 @@ define(['jquery'], function ($) {
 
             let obj = $(this),
                 url = obj.attr('href') || obj.data('href') || obj.data('url');
-                confirm = obj.data('msg') || obj.data('confirm');
+            confirm = obj.data('msg') || obj.data('confirm');
 
             let submit = function () {
-                $.post(url,{
+                $.post(url, {
                     ids: selecteds
                 }).done(function (data) {
                     data = eval("(" + data + ")");

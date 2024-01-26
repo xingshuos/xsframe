@@ -2472,7 +2472,7 @@ a.form-control-static {
     position: relative;
 }
 
-.qrcode {
+.qrcode-box .qrcode {
     display: none;
     width: 170px;
     height: 170px;
@@ -2485,6 +2485,15 @@ a.form-control-static {
     box-shadow: 0 5px 10px rgba(0,0,0,.2);
 }
 
+.qrcode-info .qrcode {
+    display: block;
+    width: 170px;
+    height: 170px;
+    padding: 15px;
+    background: #fff;
+    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    margin: 0 auto;
+}
 
 .qrcode .arrow,.qrcode .arrow:after {
     position: absolute;

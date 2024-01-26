@@ -4,6 +4,7 @@ namespace xsframe\service;
 
 use xsframe\base\BaseService;
 use xsframe\exception\ApiException;
+use xsframe\pay\Alipay\Data\AlipayTradeRefundData;
 use xsframe\util\ErrorUtil;
 use xsframe\util\PriceUtil;
 use xsframe\util\RandomUtil;
@@ -123,8 +124,8 @@ class PayService extends BaseService
             $params = [
                 'out_trade_no' => $ordersn,
                 'total_amount' => $price,
-                'subject'      => $title,
-                'body'         => $this->module . ":" . $this->uniacid . ":" . $serviceType,
+                'subject' => $title,
+                'body' => $this->module . ":" . $this->uniacid . ":" . $serviceType,
                 'product_code' => 'FAST_INSTANT_TRADE_PAY',
             ];
 
@@ -215,8 +216,8 @@ class PayService extends BaseService
             $params = [
                 'out_trade_no' => $ordersn,
                 'total_amount' => $price,
-                'subject'      => $title,
-                'body'         => $this->module . ":" . $this->uniacid . ":" . $serviceType,
+                'subject' => $title,
+                'body' => $this->module . ":" . $this->uniacid . ":" . $serviceType,
                 'product_code' => 'FAST_INSTANT_TRADE_PAY',
             ];
 
@@ -235,6 +236,32 @@ class PayService extends BaseService
             }
 
             return $this->aliPayService->wapPay($params);
+        } catch (ApiException|\Exception $e) {
+            throw new ApiException($e->getMessage());
+        }
+    }
+
+    /**
+     * 支付宝退款
+     * @return array
+     * @throws ApiException
+     */
+    public function aliRefund($out_trade_no, $refund_amount, $refund_reason)
+    {
+        try {
+            if (!$this->aliPayService instanceof AliPayService) {
+                $paymentSet = $this->account['settings']['alipay'];
+                $gatewayUrl = "https://openapi.alipay.com/gateway.do";
+                $notifyUrl = $this->siteRoot . "/alipay/notify";
+                $this->aliPayService = new AliPayService($gatewayUrl, $paymentSet['appid'], $paymentSet['encrypt_key'], $paymentSet['private_key'], $paymentSet['public_key'], $notifyUrl);
+            }
+
+            $AlipayTradeRefundData = new AlipayTradeRefundData();
+            $AlipayTradeRefundData->setOutTradeNo($out_trade_no);
+            $AlipayTradeRefundData->setRefundAmount(floatval($refund_amount) * 100);
+            $AlipayTradeRefundData->setRefundReason($refund_reason);
+
+            return $this->aliPayService->refund($AlipayTradeRefundData);
         } catch (ApiException|\Exception $e) {
             throw new ApiException($e->getMessage());
         }

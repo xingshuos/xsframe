@@ -3,7 +3,6 @@ let myConfig = {
     baseUrl: '/app/admin/static/',
     path: '/app/admin/static/',
     paths: {
-        // ewei_shop2
         'jquery': 'components/jquery/jquery-1.11.1.min',
         'jquery.form': 'components/jquery/jquery.form',
         'jquery.gcjs': 'components/jquery/jquery.gcjs',

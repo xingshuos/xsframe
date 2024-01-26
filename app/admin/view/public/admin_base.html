@@ -179,7 +179,10 @@
         $('.magnifier img').each(function () {
             let img = $(this);
             let src = img.attr('src');
-            img.wrap(`<a data-magnify="gallery" style="cursor:pointer;" onclick="showMagnifier('${src}',10)"></a>`);
+            let isNo = img.hasClass('magnifier-no');
+            if( !isNo ){
+                img.wrap(`<a data-magnify="gallery" style="cursor:pointer;" onclick="showMagnifier('${src}',10)"></a>`);
+            }
         });
         $(".overlay").click( () => {
             $("#bg-bk").fadeOut()
@@ -272,7 +275,7 @@
     }
 </script>
 
-<script language='javascript'>
+<script>
     // 适当的post表单页面进行引用
     require(['bootstrap','jquery.ui'], function ($) {
 
@@ -340,6 +343,15 @@
                 $(this).children('.qrcode').append(`<div class="arrow" style="top: 50%;"></div>`)
             },function(){
                 $(this).children('.qrcode').hide();
+            })
+
+            $(".qrcode-info").each(function() {
+                $(this).children('.qrcode').show().html("").qrcode({
+                    render:"canvas",
+                    width:140,
+                    height:140,
+                    text:$(this).children('.qrcode').data('url')
+                });
             })
         });
     })
