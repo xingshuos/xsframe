@@ -594,4 +594,30 @@ class ArrayUtil
         }
         return false;
     }
+
+    /**
+     * 获取数组中指定的列
+     * @param $array
+     * @param $fields
+     * @return array
+     */
+    public static function getFieldsFromArray($array, string $fields = "*"): array
+    {
+        $result = [];
+        if (!empty($array)) {
+            if ($fields != '*') {
+                if (is_string($fields)) {
+                    $fields = explode(",", $fields);
+                }
+                foreach ($fields as $field) {
+                    if (isset($array[$field])) {
+                        $result[$field] = $array[$field];
+                    }
+                }
+            } else {
+                $result = $array;
+            }
+        }
+        return $result;
+    }
 }

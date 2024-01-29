@@ -89,7 +89,15 @@ abstract class BaseController extends Controller
         }
 
         $this->iaRoot = str_replace("\\", '/', dirname(dirname(dirname(dirname(__FILE__)))));
+
         $this->module = app('http')->getName();
+
+        // 后台运行时需要获取到module的值时可以设置下cookie start
+        if (empty($this->module) && !empty($_COOKIE['module'])) {
+            $this->module = $_COOKIE['module'];
+        }
+        // end
+
         $this->ip = $this->request->ip();
 
         $this->moduleSiteRoot = $this->siteRoot . "/" . $this->module;
