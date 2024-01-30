@@ -793,7 +793,7 @@ define(['jquery', 'bootstrap'], function ($, bs) {
         })
     }
     $("img").error(function () {
-        // $(this).attr('src', '../../app/admin/static/images/nopic.png')
+        // $(this).attr('src', '/app/admin/static/images/nopic.png')
     });
     $('#myTab a').click(function (e) {
         $('#tab').val($(this).attr('href'));
