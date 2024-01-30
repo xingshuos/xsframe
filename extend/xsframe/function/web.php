@@ -127,7 +127,7 @@ if (!function_exists('webUrl')) {
         }
         // end
 
-        return $url;
+        return is_object($url) ? strval($url) : $url;
     }
 }
 
