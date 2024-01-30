@@ -134,14 +134,14 @@ class RedisService extends CacheBaseController
      * @param array $commands 多条命令组成的数组
      * @return array 返回执行结果
      */
-//    public function pipeline(array $commands): array
-//    {
-//        return $this->redis->pipeline(function ($pipe) use ($commands) {
-//            foreach ($commands as $command) {
-//                call_user_func_array([$pipe, $command[0]], $command[1]);
-//            }
-//        });
-//    }
+    public function pipeline(array $commands): array
+    {
+        return $this->redis->pipeline(function ($pipe) use ($commands) {
+            foreach ($commands as $command) {
+                call_user_func_array([$pipe, $command[0]], $command[1]);
+            }
+        });
+    }
 
     /**
      * 发布消息到频道
@@ -150,10 +150,10 @@ class RedisService extends CacheBaseController
      * @param mixed $message 消息内容
      * @return int 返回接收到信息的订阅者数量
      */
-//    public function publish(string $channel, $message): int
-//    {
-//        return $this->redis->publish($channel, serialize($message));
-//    }
+    public function publish(string $channel, $message): int
+    {
+        return $this->redis->publish($channel, serialize($message));
+    }
 
     /**
      * 订阅频道并处理消息
@@ -162,10 +162,10 @@ class RedisService extends CacheBaseController
      * @param callable $callback 接收到消息时调用的回调函数，接收两个参数：频道名和消息内容
      * @return bool 是否成功订阅
      */
-    /*public function subscribe($channels, callable $callback): bool
+    public function subscribe($channels, callable $callback): bool
     {
         return $this->redis->subscribe((array)$channels, function ($redis, $channel, $message) use ($callback) {
             call_user_func($callback, $channel, unserialize($message));
         });
-    }*/
+    }
 }
