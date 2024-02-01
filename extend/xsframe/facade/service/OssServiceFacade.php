@@ -17,7 +17,7 @@ use think\Facade;
 
 /**
  * @method static getVideoUrl($video_url, $config)
- * @method static deleteFile($filePath)
+ * @method static deleteFile($filePath, $bucket = null)
  * @method static uploadFile(string $ltrim, $path, $bucket = null)
  */
 class OssServiceFacade extends Facade

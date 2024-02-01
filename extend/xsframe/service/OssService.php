@@ -116,10 +116,13 @@ class OssService extends BaseService
     }
 
     //删除文件
-    public function deleteFile($filename)
+    public function deleteFile($filename, $bucket = null)
     {
         try {
-            return $this->client->deleteObject($this->bucket, $filename);
+            if (empty($bucket)) {
+                $bucket = $this->bucket;
+            }
+            return $this->client->deleteObject($bucket, $filename);
         } catch (OssException $e) {
             return $e->getMessage();
         }
