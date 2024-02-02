@@ -50,8 +50,8 @@ return [
             'slave_no'        => '',
             // 是否严格检查字段是否存在
             'fields_strict'   => true,
-            // 是否需要断线重连
-            'break_reconnect' => false,
+            // 是否需要断线重连（在执行后台命令行时这个是必须开启的 ** ）
+            'break_reconnect' => true,
             // 监听SQL
             'trigger_sql'     => env('app_debug', true),
             // 开启字段缓存
