@@ -86,6 +86,16 @@ class RedisService extends CacheBaseController
         return $this->redis->del($this->getKey($key));
     }
 
+    // 累加
+    public function increment($key, $step = 1) {
+        return $this->redis->incrBy($this->getKey($key), $step);
+    }
+
+    // 递减
+    public function decrement($key, $step = 1) {
+        return $this->redis->decrBy($this->getKey($key), $step);
+    }
+
     /**
      * 将任务放入列表形式的消息队列
      *

@@ -21,6 +21,7 @@ use think\Facade;
  * @method static del(string $key)
  * @method static enqueue(string $queueName, array $job)
  * @method static dequeue(string $queueName)
+ * @method static increment(string $key, int $step = 1)
  */
 class RedisServiceFacade extends Facade
 {
