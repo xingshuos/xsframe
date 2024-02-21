@@ -85,6 +85,12 @@
 
     </form>
 </div>
+{/block}
 
-
+{block name="script"}
+<script>
+    $(".text-edit").off("click").on("click", function () {
+        $(this).hide().parent().find('textarea').show();
+    });
+</script>
 {/block}

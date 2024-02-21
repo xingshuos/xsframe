@@ -39,10 +39,10 @@ class Login extends Base
             $module = $domainMappingArr[$url]['default_module'];
             $moduleSetting = $this->settingsController->getModuleSettings(null, $module, $uniacid);
 
-            if( empty($moduleSetting) ){
+            if (empty($moduleSetting)) {
                 // TODO 项目名称也应该可以配置官网信息
                 $accountSetting = $this->accountSetting;
-            }else{
+            } else {
                 $websiteSets = array_merge($websiteSets, (array)$moduleSetting['website'], (array)$moduleSetting['basic']);
             }
         }
@@ -65,10 +65,10 @@ class Login extends Base
             show_json(0, '请输入密码!');
         }
 
-        // 暂时注释验证码功能 验证码需要结合缓存使用 或者写入redis 负载均衡服务器下会导致验证无效 TODO
-        /*if (!Captcha::check($verify)) {
+        // 负载均衡服务器下会导致验证无效，需要将session放入redis存储 TODO
+        if (!Captcha::check($verify)) {
             show_json(0, '验证码输入错误!');
-        }*/
+        }
 
         $resultInfo = UserWrapper::login($username, $password);
         if (ErrorUtil::isError($resultInfo)) {
@@ -103,6 +103,6 @@ class Login extends Base
     // 获取验证码
     public function verify()
     {
-        return Captcha::create();
+        return captcha();
     }
 }
