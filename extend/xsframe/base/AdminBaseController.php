@@ -111,7 +111,7 @@ abstract class AdminBaseController extends BaseController
 
     private function getDefaultVars($params = null): array
     {
-        if (!empty($this->moduleSetting['basic'])) {
+        if (!empty($this->moduleSetting['basic']) && !empty($this->moduleSetting['basic']['name'])) {
             $this->moduleInfo = array_merge(!empty($this->moduleInfo) ? $this->moduleInfo : [], $this->moduleSetting['basic']);
         }
 
