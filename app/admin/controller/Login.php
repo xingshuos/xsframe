@@ -28,7 +28,7 @@ class Login extends Base
 
         $style = 'login';
 
-        # 检测是否配置独立域名 start
+        # 检测是否配置独立域名 如果配置就读取对应项目网站信息 start
         $url = $this->request->header()['host'];
 
         $accountHostWrapper = new AccountHostWrapper();
@@ -36,15 +36,8 @@ class Login extends Base
 
         if (!empty($domainMappingArr) && !empty($domainMappingArr[$url])) {
             $uniacid = $domainMappingArr[$url]['uniacid'];
-            $module = $domainMappingArr[$url]['default_module'];
-            $moduleSetting = $this->settingsController->getModuleSettings(null, $module, $uniacid);
-
-            if (empty($moduleSetting)) {
-                // TODO 项目名称也应该可以配置官网信息
-                $accountSetting = $this->accountSetting;
-            } else {
-                $websiteSets = array_merge($websiteSets, (array)$moduleSetting['website'], (array)$moduleSetting['basic']);
-            }
+            $accountSets = $this->settingsController->getAccountSettings($uniacid);
+            $websiteSets = !empty($accountSets) ? array_merge($websiteSets, $accountSets) : $websiteSets;
         }
         # 检测是否配置独立域名 end
 
@@ -70,7 +63,8 @@ class Login extends Base
             show_json(0, '验证码输入错误!');
         }
 
-        $resultInfo = UserWrapper::login($username, $password);
+        $hostUrl = $this->request->header()['host'];
+        $resultInfo = UserWrapper::login($username, $password, $hostUrl);
         if (ErrorUtil::isError($resultInfo)) {
             show_json(-1, $resultInfo['msg']);
         }

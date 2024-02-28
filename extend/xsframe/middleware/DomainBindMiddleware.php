@@ -47,8 +47,16 @@ class DomainBindMiddleware
             $domainMappingArr = $this->accountHostWrapper->getAccountHost(true);
             if (!empty($domainMappingArr) && !empty($domainMappingArr[$url])) {
                 $module = $domainMappingArr[$url]['default_module'];
+
+                // 未设置默认访问应用时取第一个授权应用
+                if (empty($module)) {
+                    $module = $this->accountHostWrapper->getAccountModuleDefault($domainMappingArr[$url]['uniacid']);
+                    $this->accountHostWrapper->setAccountModuleDefault($domainMappingArr[$url]['uniacid'], $url, $module);
+                }
+
                 $appMap = array_flip(config('app.app_map'));
                 $realModuleName = array_key_exists($module, $appMap) ? $appMap[$module] : '';
+
                 $url = UserWrapper::getModuleOneUrl($realModuleName ?: $module);
                 exit(header("location:" . $url));
             }

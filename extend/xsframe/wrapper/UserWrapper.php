@@ -53,13 +53,13 @@ class UserWrapper
         }
 
         return [
-            'isLogin'      => $isLogin,
+            'isLogin' => $isLogin,
             'adminSession' => $adminSession,
         ];
     }
 
     // 用户登录
-    public static function login($username, $password)
+    public static function login($username, $password, $hostUrl = '')
     {
         $userInfo = Db::name('sys_users')->field("id,password,salt,role,status")->where(['username' => $username])->find();
         if (empty($userInfo)) {
@@ -75,7 +75,7 @@ class UserWrapper
             return ErrorUtil::error(-1, "该用户登录密码错误");
         }
 
-        $url = self::getLoginReturnUrl($userInfo['role'], $userInfo['id']);
+        $url = self::getLoginReturnUrl($userInfo['role'], $userInfo['id'], $hostUrl);
 
         if (ErrorUtil::isError($url)) {
             show_json(-1, $url['msg']);
@@ -93,7 +93,7 @@ class UserWrapper
 
         return [
             'userInfo' => $userInfo,
-            'url'      => $url,
+            'url' => $url,
         ];
     }
 
@@ -167,7 +167,7 @@ class UserWrapper
     }
 
     // 获取登录后跳转地址
-    public static function getLoginReturnUrl($role, $userId)
+    public static function getLoginReturnUrl($role, $userId, $hostUrl = null)
     {
         if ($role == UserRoleKeyEnum::OWNER_KEY) {
             $url = url('/admin/home/welcome');
@@ -176,6 +176,15 @@ class UserWrapper
 
             if (empty($moduleName)) {
                 return ErrorUtil::error(-1, "暂未开通应用管理");
+            }
+
+            if (!empty($hostUrl)) {
+                $accountHostWrapper = new AccountHostWrapper();
+                $domainMappingArr = $accountHostWrapper->getAccountHost();
+
+                if (!empty($domainMappingArr) && !empty($domainMappingArr[$hostUrl])) {
+                    $moduleName = $domainMappingArr[$hostUrl]['default_module'];
+                }
             }
 
             $url = self::getModuleOneUrl($moduleName);

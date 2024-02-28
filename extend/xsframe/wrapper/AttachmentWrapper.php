@@ -138,12 +138,12 @@ class AttachmentWrapper
     {
         $bucketDataCenter = array(
             'oss-cn-hangzhou' => '杭州数据中心',
-            'oss-cn-qingdao'  => '青岛数据中心',
-            'oss-cn-beijing'  => '北京数据中心',
+            'oss-cn-qingdao' => '青岛数据中心',
+            'oss-cn-beijing' => '北京数据中心',
             'oss-cn-hongkong' => '香港数据中心',
             'oss-cn-shenzhen' => '深圳数据中心',
             'oss-cn-shanghai' => '上海数据中心',
-            'oss-us-west-1'   => '美国硅谷数据中心',
+            'oss-us-west-1' => '美国硅谷数据中心',
         );
         return $bucketDataCenter;
     }
@@ -197,52 +197,6 @@ class AttachmentWrapper
                 show_json(-1, $e->getMessage());
             }
 
-            if ($auto_delete_local) {
-                FileUtil::fileDelete($filename);
-            }
-        } elseif ($setting['remote']['type'] == '3') {
-            load()->library('qiniu');
-            $auth = new Qiniu\Auth($setting['remote']['qiniu']['accesskey'], $setting['remote']['qiniu']['secretkey']);
-            $config = new Qiniu\Config();
-            $uploadmgr = new Qiniu\Storage\UploadManager($config);
-            $putpolicy = Qiniu\base64_urlSafeEncode(json_encode(array('scope' => $setting['remote']['qiniu']['bucket'] . ':' . $filename)));
-            $uploadtoken = $auth->uploadToken($setting['remote']['qiniu']['bucket'], $filename, 3600, $putpolicy);
-            list($ret, $err) = $uploadmgr->putFile($uploadtoken, $filename, $attachmentPath . '/' . $filename);
-            if ($auto_delete_local) {
-                FileUtil::fileDelete($filename);
-            }
-            if ($err !== null) {
-                show_json(-1, '远程附件上传失败，请检查配置并重新上传');
-            } else {
-                return true;
-            }
-        } elseif ($setting['remote']['type'] == '4') {
-            if (!empty($setting['remote']['cos']['local'])) {
-                load()->library('cos');
-                qcloudcos\Cosapi::setRegion($setting['remote']['cos']['local']);
-                $uploadRet = qcloudcos\Cosapi::upload($setting['remote']['cos']['bucket'], $attachmentPath . $filename, '/' . $filename, '', 3 * 1024 * 1024, 0);
-            } else {
-                load()->library('cosv3');
-                $uploadRet = \Qcloud_cos\Cosapi::upload($setting['remote']['cos']['bucket'], $attachmentPath . $filename, '/' . $filename, '', 3 * 1024 * 1024, 0);
-            }
-            if ($uploadRet['code'] != 0) {
-                $message = '配置错误';
-                switch ($uploadRet['code']) {
-                    case -62:
-                        $message = '输入的appid有误';
-                        break;
-                    case -79:
-                        $message = '输入的SecretID有误';
-                        break;
-                    case -97:
-                        $message = '输入的SecretKEY有误';
-                        break;
-                    case -166:
-                        $message = '输入的bucket有误';
-                        break;
-                }
-                show_json(-1, $message);
-            }
             if ($auto_delete_local) {
                 FileUtil::fileDelete($filename);
             }

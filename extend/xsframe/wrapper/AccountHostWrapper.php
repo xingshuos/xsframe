@@ -21,6 +21,19 @@ class AccountHostWrapper
 {
     private $hostKey = SysSettingsKeyEnum::DOMAIN_MAPPING_LIST_KEY;
 
+    // 获取项目默认应用
+    public function getAccountModuleDefault($uniacid = 0)
+    {
+        $module = Db::name('sys_account_modules')->where(['uniacid' => $uniacid])->order("is_default desc,displayorder asc")->value('module');
+        return !empty($module) ? $module : "";
+    }
+
+    // 设置项目默认应用
+    public function setAccountModuleDefault($uniacid = 0, $hostUrl = "", $module = null): int
+    {
+        return Db::name('sys_account_host')->where(['uniacid' => $uniacid, 'host_url' => $hostUrl])->update(['default_module' => $module]);
+    }
+
     // 获取域名映射关系列表
     public function getAccountHost($reload = false)
     {

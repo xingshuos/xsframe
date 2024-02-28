@@ -15,7 +15,7 @@
     <meta name="description" content="星数为来数字化引擎框架">
     
 
-    <link rel="shortcut icon" href="http://www.xsframe.com/attachment/images/global/2023/11/WVZETlzf9x9jXxz7.png">
+    <link rel="shortcut icon" href="https://files.le-3d.com/images/global/2023/11/WVZETlzf9x9jXxz7.png">
 
     <link rel="stylesheet" href="/app/admin/static/components/bootstrap/bootstrap.min.css">
 
@@ -43,11 +43,11 @@
         }
 
         window.sysinfo = {
-            'uniacid': '4',
+            'uniacid': '1',
             'uid': '1',
             'siteroot': 'http://www.xsframe.com',
             'siteurl': '',
-            'attachurl': 'http://www.xsframe.com/attachment/',
+            'attachurl': 'https://files.le-3d.com/',
             'module': 'admin',
         };
     </script>
@@ -89,7 +89,7 @@
         min-width: 230px;
     }
 </style>
-<style type="text/css">
+<style>
     .table > thead > tr > td.full, .table > tbody > tr > td.full, .table > tfoot > tr > td.full {
         overflow: hidden;
     }
@@ -118,6 +118,17 @@
         visibility: hidden !important;
     }
 </style>
+<style>
+    #bg-bk{position:absolute;right:30px;bottom:30px;display:none;overflow:hidden;width:700px;height:400px;background-color:rgba(0,0,0,.6);z-index: 1000;}
+    #bg-content-bg{position:relative;display:flex;margin:0 auto;height:100%;max-width:960px;min-width:300px;text-align:center;flex-direction:column;justify-content:center}
+    .overlay{width: 100%;height: 100%;position: fixed;z-index: -1;top: 0;left: 0;}
+    .enlarge-image{display:flex;width:100%;height:100%;flex-direction:column;justify-content:center}
+    .img{position:absolute;left:10%;width:80%;max-height: 90%;cursor:move;object-fit: contain;}
+    .rotate-btn{position:absolute;top:20px;right:80px;z-index:999999999999999999999999;width:36px;height:36px;color:#fff;font-size:40px;cursor:pointer;border: 1px solid #fff;border-radius: 100%;text-align: center;line-height: 46px;}
+    .close-bk{position:absolute;top:20px;right:20px;z-index:999999999999999999999999;width:36px;height:36px;color:#fff;font-size:26px;cursor:pointer;border: 1px solid #fff;border-radius: 100%;text-align: center;line-height: 30px;}
+    .close-bk:hover{  }
+    .no-scroll {overflow: hidden;}
+</style>
 
 <style type="text/css">
 
@@ -129,7 +140,7 @@
 
 <div class="wb-header" style="position: fixed;">
     <div class="logo ">
-                    <img class="logo-img" src="http://www.xsframe.com/attachment/images/global/2023/11/WVZETlzf9x9jXxz7.png" onerror="this.src='/app/admin/static/images/nopic.png'" data-url="http://www.xsframe.com/attachment/images/global/2023/11/WVZETlzf9x9jXxz7.png">
+                    <img class="logo-img" src="https://files.le-3d.com/images/global/2023/11/WVZETlzf9x9jXxz7.png" onerror="this.src='/app/admin/static/images/nopic.png'" data-url="https://files.le-3d.com/images/global/2023/11/WVZETlzf9x9jXxz7.png">
             <div class="title">星数为来</div>
             </div>
 
@@ -274,6 +285,116 @@
 
 </div>
 
+<!--图片放大 start-->
+<div id="bg-bk" style="display: none;">
+    <div class="overlay"></div>
+    <div class="rotate-btn">*</div>
+    <div class="close-bk">×</div>
+    <div id="bg-content-bg">
+        <div class="enlarge-image" id="enlarge-image"></div>
+    </div>
+</div>
+<!--图片放大 end-->
+<script type="text/javascript">
+    $(() => {
+        $('.magnifier img').each(function () {
+            let img = $(this);
+            let src = img.attr('src');
+            let isNo = img.hasClass('magnifier-no');
+            if( !isNo ){
+                img.wrap(`<a data-magnify="gallery" style="cursor:pointer;" onclick="showMagnifier('${src}',10)"></a>`);
+            }
+        });
+        $(".overlay").click( () => {
+            $("#bg-bk").fadeOut()
+            let body = document.querySelector('body');
+            body.classList.remove('no-scroll');
+        })
+    })
+
+    // 图片放大
+    $(window).keydown(function(e){27===e.which&&($("#bg-bk").fadeOut(),document.querySelector('body').classList.remove('no-scroll'))})
+    function showMagnifier(url,multiple = 2.0) {
+        let isDown = false;
+        let closebk = $(".close-bk")
+        let rotateBtn = $(".rotate-btn")
+        let bg = $("#bg-bk")
+        let step = 1;
+        let x, y;
+        let l;
+        let t;
+        let body = document.querySelector('body');
+        let rotate = 0;
+
+        $("#enlarge-image").empty()
+        $("#enlarge-image").append("<img class='img' src='"+url+"'>")
+        let img = document.querySelectorAll(".img")[0];
+
+        body.classList.add('no-scroll');
+
+        bg.fadeIn()
+
+        /* zoom */
+        document.onmousewheel = function(e) {
+            let isbig = e.wheelDelta;
+            if (isbig >= 0) {
+                if (step >= multiple) {} else {
+                    step += 0.1;
+                    img.style.transform = "scale(" + step + ") " + ( rotate > 0 ? `rotate(${rotate}deg)` : '' );
+                }
+            } else {
+                if (step <= 0.7) {} else {
+                    step -= 0.1;
+                    img.style.transform = "scale(" + step + ") " + ( rotate > 0 ? `rotate(${rotate}deg)` : '' );
+                }
+            }
+        }
+        /* zoom */
+
+        img.onmousedown = function(e) {
+            e.preventDefault()
+            img.style.cursor = "move"
+            // console.log(e.offsetX);
+            // console.log(img.offsetLeft);
+            x = e.clientX;
+            y = e.clientY;
+            l = img.offsetLeft;
+            t = img.offsetTop;
+            isDown = true;
+        }
+
+        document.onmousemove = function(e) {
+            if (isDown == false) {
+                return;
+            } else {
+                let nx = e.clientX;
+                let ny = e.clientY;
+                //计算移动后的左偏移量和顶部的偏移量
+                let nl = nx - (x - l);
+                let nt = ny - (y - t);
+                img.style.left = nl + 'px';
+                img.style.top = nt + 'px';
+            }
+        }
+
+        img.onmouseup = function() {
+            // img.style.cursor = "default"
+            isDown = false
+        }
+
+        closebk.click(function() {
+            bg.fadeOut()
+        })
+        rotateBtn.click(function() {
+            if( rotate >= 360 ){
+                rotate = 0;
+            }
+            rotate = rotate + 45;
+            img.style.transform = "scale(" + step + ") " + ( rotate > 0 ? `rotate(${rotate}deg)` : '' );
+        })
+    }
+</script>
+
 <div class="modal fade" id="public_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
 
 <script>
@@ -285,9 +406,10 @@
     }
 </script>
 
-<script language='javascript'>
+<script>
     // 适当的post表单页面进行引用
-    require(['bootstrap'], function ($) {
+    require(['bootstrap','jquery.ui'], function ($) {
+
         // 这里开启会与common.min.js冲突 主要就是将提示框放在最外层，避免提示框被遮盖问题
         // $('[data-toggle="tooltip"]').tooltip("destroy").tooltip({
         //     container: $(document.body)
@@ -303,6 +425,7 @@
             e.preventDefault();
             $(this).tab('show');
         });
+
         // 鼠标选中弹出信息框
         $("[rel=pop]").popover({
             trigger: 'manual',
@@ -325,7 +448,44 @@
                 }
             }, 100);
         });
+
+        /*添加拖拽功能 start*/
+        $(document).on("show.bs.modal", ".modal", function(){
+            $(this).draggable({
+                handle: ".modal-header",   // 只能点击头部拖动
+                cursor: 'move',
+            });
+            $(this).css("overflow", "hidden"); // 防止出现滚动条，出现的话，你会把滚动条一起拖着走的
+        });
+        /*添加拖拽功能 end*/
+
     });
+
+    // 二维码
+    $(() => {
+        require(['jquery.qrcode'],function(){
+            $(".qrcode-box").hover(function(){
+                $(this).children('.qrcode').show().html("").qrcode({
+                    render:"canvas",
+                    width:140,
+                    height:140,
+                    text:$(this).children('.qrcode').data('url')
+                });
+                $(this).children('.qrcode').append(`<div class="arrow" style="top: 50%;"></div>`)
+            },function(){
+                $(this).children('.qrcode').hide();
+            })
+
+            $(".qrcode-info").each(function() {
+                $(this).children('.qrcode').show().html("").qrcode({
+                    render:"canvas",
+                    width:140,
+                    height:140,
+                    text:$(this).children('.qrcode').data('url')
+                });
+            })
+        });
+    })
 </script>
 
 <script language="javascript">
