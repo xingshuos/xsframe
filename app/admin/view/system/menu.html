@@ -26,12 +26,14 @@
             <li {if $action == 'index'}class="active"{/if}>
                 <a href="{:url('admin/system/index')}">应用管理</a>
             </li>
-            <li {if $controller == 'perm'}class="active"{/if}>
-                <a href="{:url('admin/perm/user')}">权限管理</a>
-            </li>
-            <li {if $action == 'account'}class="active"{/if}>
-                <a href="{:url('admin/system/account')}">系统设置</a>
-            </li>
+            {if in_array($userInfo['role'],['owner','manager'])}
+                <li {if $controller == 'perm'}class="active"{/if}>
+                    <a href="{:url('admin/perm/user')}">权限管理</a>
+                </li>
+                <li {if $action == 'account'}class="active"{/if}>
+                    <a href="{:url('admin/system/account')}">系统设置</a>
+                </li>
+            {/if}
         </ul>
 
         <div class="wb-subnav-fold icow"></div>

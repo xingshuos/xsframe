@@ -15,7 +15,8 @@
     <meta name="description" content="{$websiteSets['description']}">
     {/block}
 
-    <link rel="shortcut icon" href="{if !empty($websiteSets['logo'])}{:tomedia($websiteSets['logo'])}{else}favicon.ico{/if}">
+    <link rel="shortcut icon"
+          href="{if !empty($websiteSets['logo'])}{:tomedia($websiteSets['logo'])}{else}favicon.ico{/if}">
 
     <link rel="stylesheet" href="__ADMIN_COMPONENT__/bootstrap/bootstrap.min.css">
 
@@ -61,16 +62,16 @@
     <script src="__ADMIN_JS__/config.js"></script>
 
     <script>
-        // require(['jquery', 'jquery.gcjs', 'init']);
-        require(['jquery.gcjs', 'init']);
+        require(['jquery', 'jquery.gcjs', 'init', 'tip']);
+        // require(['jquery.gcjs', 'init', 'tip']);
 
         // 加载tip提示组件
-        require(['tip'], function () {
-            // tip.msgbox.suc("登录成功");
-            // tip.confirm("登录成功");
-            // util.message("验证错误", '', 'error')
-            // util.message("验证正确", '', 'success')
-        });
+        // require(['tip'], function () {
+        // tip.msgbox.suc("登录成功");
+        // tip.confirm("登录成功");
+        // util.message("验证错误", '', 'error')
+        // util.message("验证正确", '', 'success')
+        // });
     </script>
 </head>
 <style>
@@ -120,15 +121,94 @@
     }
 </style>
 <style>
-    #bg-bk{position:absolute;right:30px;bottom:30px;display:none;overflow:hidden;width:700px;height:400px;background-color:rgba(0,0,0,.6);z-index: 1000;}
-    #bg-content-bg{position:relative;display:flex;margin:0 auto;height:100%;max-width:960px;min-width:300px;text-align:center;flex-direction:column;justify-content:center}
-    .overlay{width: 100%;height: 100%;position: fixed;z-index: -1;top: 0;left: 0;}
-    .enlarge-image{display:flex;width:100%;height:100%;flex-direction:column;justify-content:center}
-    .img{position:absolute;left:10%;width:80%;max-height: 90%;cursor:move;object-fit: contain;}
-    .rotate-btn{position:absolute;top:20px;right:80px;z-index:999999999999999999999999;width:36px;height:36px;color:#fff;font-size:40px;cursor:pointer;border: 1px solid #fff;border-radius: 100%;text-align: center;line-height: 46px;}
-    .close-bk{position:absolute;top:20px;right:20px;z-index:999999999999999999999999;width:36px;height:36px;color:#fff;font-size:26px;cursor:pointer;border: 1px solid #fff;border-radius: 100%;text-align: center;line-height: 30px;}
-    .close-bk:hover{  }
-    .no-scroll {overflow: hidden;}
+    #bg-bk {
+        position: absolute;
+        right: 30px;
+        bottom: 30px;
+        display: none;
+        overflow: hidden;
+        width: 700px;
+        height: 400px;
+        background-color: rgba(0, 0, 0, .6);
+        z-index: 1000;
+    }
+
+    #bg-content-bg {
+        position: relative;
+        display: flex;
+        margin: 0 auto;
+        height: 100%;
+        max-width: 960px;
+        min-width: 300px;
+        text-align: center;
+        flex-direction: column;
+        justify-content: center
+    }
+
+    .overlay {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        z-index: -1;
+        top: 0;
+        left: 0;
+    }
+
+    .enlarge-image {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        flex-direction: column;
+        justify-content: center
+    }
+
+    .img {
+        position: absolute;
+        left: 10%;
+        width: 80%;
+        max-height: 90%;
+        cursor: move;
+        object-fit: contain;
+    }
+
+    .rotate-btn {
+        position: absolute;
+        top: 20px;
+        right: 80px;
+        z-index: 999999999999999999999999;
+        width: 36px;
+        height: 36px;
+        color: #fff;
+        font-size: 40px;
+        cursor: pointer;
+        border: 1px solid #fff;
+        border-radius: 100%;
+        text-align: center;
+        line-height: 46px;
+    }
+
+    .close-bk {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        z-index: 999999999999999999999999;
+        width: 36px;
+        height: 36px;
+        color: #fff;
+        font-size: 26px;
+        cursor: pointer;
+        border: 1px solid #fff;
+        border-radius: 100%;
+        text-align: center;
+        line-height: 30px;
+    }
+
+    .close-bk:hover {
+    }
+
+    .no-scroll {
+        overflow: hidden;
+    }
 </style>
 {block name='style'}{/block}
 <!-- 结 构 代 码 -->
@@ -138,16 +218,22 @@
 {block name='menus'}{/block}
 
 <div class="wb-container">
-    {if in_array($userInfo['role'],['owner','manager'])}
-        {if !$isSystem && !empty($selSystemNav)}
-            <div class="page-content" id="iframePage" style="height: 700px;">
-                <iframe src="{:url('admin/system/index')}" style="position: absolute; display: block; border: 0; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
-            </div>
+    {if in_array($userInfo['role'],['owner','manager','operator'])}
+    {if !$isSystem && !empty($selSystemNav)}
+    <div class="page-content" id="iframePage" style="height: 700px;">
+        {if $userInfo['role'] == 'operator'}
+        <iframe src="{:url('admin/system/index')}"
+                style="position: absolute; display: block; border: 0; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
         {else}
-            <div style="padding: 0 20px 30px 20px;box-sizing: border-box;" class="wb-content">
-                {block name='content'}{/block}
-            </div>
+        <iframe src="{:url('admin/system/index')}"
+                style="position: absolute; display: block; border: 0; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
         {/if}
+    </div>
+    {else}
+    <div style="padding: 0 20px 30px 20px;box-sizing: border-box;" class="wb-content">
+        {block name='content'}{/block}
+    </div>
+    {/if}
     {else}
     <div style="padding: 0 20px 30px 20px;box-sizing: border-box;" class="wb-content">
         {block name='content'}{/block}
@@ -183,11 +269,11 @@
             let img = $(this);
             let src = img.attr('src');
             let isNo = img.hasClass('magnifier-no');
-            if( !isNo ){
+            if (!isNo) {
                 img.wrap(`<a data-magnify="gallery" style="cursor:pointer;" onclick="showMagnifier('${src}',10)"></a>`);
             }
         });
-        $(".overlay").click( () => {
+        $(".overlay").click(() => {
             $("#bg-bk").fadeOut()
             let body = document.querySelector('body');
             body.classList.remove('no-scroll');
@@ -195,8 +281,11 @@
     })
 
     // 图片放大
-    $(window).keydown(function(e){27===e.which&&($("#bg-bk").fadeOut(),document.querySelector('body').classList.remove('no-scroll'))})
-    function showMagnifier(url,multiple = 2.0) {
+    $(window).keydown(function (e) {
+        27 === e.which && ($("#bg-bk").fadeOut(), document.querySelector('body').classList.remove('no-scroll'))
+    })
+
+    function showMagnifier(url, multiple = 2.0) {
         let isDown = false;
         let closebk = $(".close-bk")
         let rotateBtn = $(".rotate-btn")
@@ -209,7 +298,7 @@
         let rotate = 0;
 
         $("#enlarge-image").empty()
-        $("#enlarge-image").append("<img class='img' src='"+url+"'>")
+        $("#enlarge-image").append("<img class='img' src='" + url + "'>")
         let img = document.querySelectorAll(".img")[0];
 
         body.classList.add('no-scroll');
@@ -217,23 +306,25 @@
         bg.fadeIn()
 
         /* zoom */
-        document.onmousewheel = function(e) {
+        document.onmousewheel = function (e) {
             let isbig = e.wheelDelta;
             if (isbig >= 0) {
-                if (step >= multiple) {} else {
+                if (step >= multiple) {
+                } else {
                     step += 0.1;
-                    img.style.transform = "scale(" + step + ") " + ( rotate > 0 ? `rotate(${rotate}deg)` : '' );
+                    img.style.transform = "scale(" + step + ") " + (rotate > 0 ? `rotate(${rotate}deg)` : '');
                 }
             } else {
-                if (step <= 0.7) {} else {
+                if (step <= 0.7) {
+                } else {
                     step -= 0.1;
-                    img.style.transform = "scale(" + step + ") " + ( rotate > 0 ? `rotate(${rotate}deg)` : '' );
+                    img.style.transform = "scale(" + step + ") " + (rotate > 0 ? `rotate(${rotate}deg)` : '');
                 }
             }
         }
         /* zoom */
 
-        img.onmousedown = function(e) {
+        img.onmousedown = function (e) {
             e.preventDefault()
             img.style.cursor = "move"
             // console.log(e.offsetX);
@@ -245,7 +336,7 @@
             isDown = true;
         }
 
-        document.onmousemove = function(e) {
+        document.onmousemove = function (e) {
             if (isDown == false) {
                 return;
             } else {
@@ -259,25 +350,26 @@
             }
         }
 
-        img.onmouseup = function() {
+        img.onmouseup = function () {
             // img.style.cursor = "default"
             isDown = false
         }
 
-        closebk.click(function() {
+        closebk.click(function () {
             bg.fadeOut()
         })
-        rotateBtn.click(function() {
-            if( rotate >= 360 ){
+        rotateBtn.click(function () {
+            if (rotate >= 360) {
                 rotate = 0;
             }
             rotate = rotate + 45;
-            img.style.transform = "scale(" + step + ") " + ( rotate > 0 ? `rotate(${rotate}deg)` : '' );
+            img.style.transform = "scale(" + step + ") " + (rotate > 0 ? `rotate(${rotate}deg)` : '');
         })
     }
 </script>
 
-<div class="modal fade" id="public_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
+<div class="modal fade" id="public_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"></div>
 
 <script>
     // 计算页面高度
@@ -290,7 +382,7 @@
 
 <script>
     // 适当的post表单页面进行引用
-    require(['bootstrap','jquery.ui'], function ($) {
+    require(['bootstrap', 'jquery.ui'], function ($) {
 
         // 这里开启会与common.min.js冲突 主要就是将提示框放在最外层，避免提示框被遮盖问题
         // $('[data-toggle="tooltip"]').tooltip("destroy").tooltip({
@@ -332,7 +424,7 @@
         });
 
         /*添加拖拽功能 start*/
-        $(document).on("show.bs.modal", ".modal", function(){
+        $(document).on("show.bs.modal", ".modal", function () {
             $(this).draggable({
                 handle: ".modal-header",   // 只能点击头部拖动
                 cursor: 'move',
@@ -345,25 +437,25 @@
 
     // 二维码
     $(() => {
-        require(['jquery.qrcode'],function(){
-            $(".qrcode-box").hover(function(){
+        require(['jquery.qrcode'], function () {
+            $(".qrcode-box").hover(function () {
                 $(this).children('.qrcode').show().html("").qrcode({
-                    render:"canvas",
-                    width:140,
-                    height:140,
-                    text:$(this).children('.qrcode').data('url')
+                    render: "canvas",
+                    width: 140,
+                    height: 140,
+                    text: $(this).children('.qrcode').data('url')
                 });
                 $(this).children('.qrcode').append(`<div class="arrow" style="top: 50%;"></div>`)
-            },function(){
+            }, function () {
                 $(this).children('.qrcode').hide();
             })
 
-            $(".qrcode-info").each(function() {
+            $(".qrcode-info").each(function () {
                 $(this).children('.qrcode').show().html("").qrcode({
-                    render:"canvas",
-                    width:140,
-                    height:140,
-                    text:$(this).children('.qrcode').data('url')
+                    render: "canvas",
+                    width: 140,
+                    height: 140,
+                    text: $(this).children('.qrcode').data('url')
                 });
             })
         });

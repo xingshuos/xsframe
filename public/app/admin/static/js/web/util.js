@@ -36,7 +36,6 @@
         if (elm.clip) {
             return;
         }
-
         require(['clipboard'], function (Clipboard) {
             let clipboard = new Clipboard('.js-clip', {
                 text: function (e) {
@@ -731,12 +730,10 @@
         opts = $.extend({}, opts, base64options);
         opts.type = 'image';
 
-        console.log('util.image', opts);
+        // console.log('util.image', opts);
 
         require(['jquery', 'fileUploader'], function ($, fileUploader) {
             fileUploader.show(function (images) {
-                console.log('fileUploader', images);
-
                 if (images) {
                     if ($.isFunction(callback)) {
                         callback(images);

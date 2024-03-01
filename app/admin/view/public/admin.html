@@ -99,7 +99,7 @@
             </li>
         {/foreach}
 
-        {if in_array($userInfo['role'],['owner','manager'])}
+        {if in_array($userInfo['role'],['owner','manager']) && !$isSystem}
         <li class="sysset wb-nav-system" data-module="{$module}" {if $selSystemNav}style="background-color:#161f29;"{/if}>
             <a href="">
                 <i class="icow icow-qiehuan"></i>
@@ -108,6 +108,14 @@
         </li>
         {/if}
 
+        {if in_array($userInfo['role'],['operator']) && !$isSystem}
+            <li class="sysset wb-nav-system" data-module="{$module}" {if $selSystemNav}style="background-color:#161f29;"{/if}>
+                <a href="">
+                    <i class="icon icon-exchange"></i>
+                    <span class="wb-nav-title" data-href="">应用</span>
+                </a>
+            </li>
+        {/if}
     </ul>
 </div>
 

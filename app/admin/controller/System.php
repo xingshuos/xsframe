@@ -58,10 +58,18 @@ class System extends AdminBaseController
         }
         $list = set_medias($list, ['logo']);
 
+        $uid = $this->userId;
+        $field = " u.uid,u.status as userstatus,r.status as rolestatus,u.perms as userperms,r.perms as roleperms,u.roleid ";
+        $user = Db::name("sys_account_perm_user")->alias('u')->field($field)->leftJoin("sys_account_perm_role r", "r.id = u.roleid")->where(['u.uid' => $uid])->find();
+        $role_perms = explode(',', $user['roleperms']);
+        $user_perms = explode(',', $user['userperms']);
+        $perms = array_merge($role_perms, $user_perms);
+
         $result = [
             'list'  => $list,
             'pager' => $pager,
             'total' => $total,
+            'perms' => $perms,
         ];
         return $this->template('index', $result);
     }

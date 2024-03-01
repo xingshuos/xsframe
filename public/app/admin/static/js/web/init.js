@@ -110,6 +110,7 @@ define(['jquery', 'bootstrap'], function ($, bs) {
             $('.js-switch').switchery()
         })
     }
+
     if ($('.js-clip').length > 0) {
         require(['clipboard'], function (Clipboard) {
             let clipboard = new Clipboard('.js-clip', {
@@ -122,6 +123,7 @@ define(['jquery', 'bootstrap'], function ($, bs) {
             })
         })
     }
+
     $.fn.append2 = function (html, callback) {
         let len = $("body").html().length;
         this.append(html);
