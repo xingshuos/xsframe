@@ -44,7 +44,7 @@
         }
 
         window.sysinfo = {
-            'uniacid': '{$uniacid}',
+            'uniacid': '{$isSystem ? 0 :$uniacid}',
             'uid': '{$uid}',
             'siteroot': '{$siteRoot}',
             'siteurl': '{$iaRoot}',
