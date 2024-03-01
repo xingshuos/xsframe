@@ -17,14 +17,12 @@
 
                 {foreach $perms['parent'] as $key => $value}
 
-                    <div class='panel-heading' style="background:#f8f8f8;display:{if !in_array($key,$operator_perms) && $userInfo['role'] == 'operator'}none{/if};" >
-                        <a class="btn btn-link btn-sm pull-right" data-toggle="collapse" data-parent="#accordion" href="#collapse_{$key}"><i class='fa fa-angle-down'></i> 展开</a>
+                    <div class='panel-heading' style="background:#f8f8f8;border-bottom: 1px solid #efefef;display:{if !in_array($key,$operator_perms) && $userInfo['role'] == 'operator'}none{/if};" >
+                        <a class="btn btn-link btn-sm pull-right" data-toggle="collapse" data-parent="#accordion" href="#collapse_{$key}"><i class='icon icon-chevron-down'></i> 展开</a>
                         <label class='checkbox-inline'>
                             <input type='checkbox' id="perm_{$key}" value='{$key}' class='perm-all perms' data-group='{$key}'
-
                                     {if in_array($key,$role_perms) || in_array($key,$user_perms) } checked {/if}
                                     {if in_array($key,$role_perms) && $action=='userpost'} disabled {/if}
-
                             /> {$value['text']}
                         </label>
                     </div>
@@ -51,7 +49,7 @@
                             {/if}
 
                             {foreach $perms['son'][$key] as $ke => $val}
-                                {if count($val) >1}
+                                {if !empty($val)}
                                     <span>
                                     {foreach $val as $k => $v}
                                         {if $k != 'text'}
@@ -74,17 +72,45 @@
                                             </label>
                                         {/if}
                                     {/foreach}
-                                    </span>
-                                    <br>
+                                    </span><br>
                                 {/if}
+
+                                {php}$parentKe = $ke;{/php}
+                                    <div style="margin-left: 25px;">
+                                    {foreach $perms['grandson'][$key] as $ke => $val}
+                                        {foreach $val as $k => $v}
+                                            {if !empty($v) && $ke == $parentKe}
+                                                <span>
+                                                    {foreach $v as $kk => $vv}
+                                                        {if $kk != 'text'}
+                                                             <label class='checkbox-inline'>
+                                                                 <input type='checkbox'  value='{$key}.{$ke}.{$k}.{$kk}' class='perm-item perms'
+                                                                        data-group='{$key}' data-parent='{$ke}' data-son="{$k}" data-grandson="{$kk}"
+                                                                        {if in_array($key.".".$ke.".".$k.".".$kk,$role_perms) || in_array($key.".".$ke.".".$k.".".$kk,$user_perms)} checked{/if}
+                                                                 {if in_array($key.".".$ke.".".$k.".".$kk,$role_perms) && $_W['action']=='perm.user'} disabled{/if}
+                                                                 />  {:str_replace("-log", "", $vv)}
+                                                             </label>
+                                                        {else}
+                                                             <label class='checkbox-inline'>
+                                                                 <input type='checkbox' value='{$key}.{$ke}.{$k}' class='perm-all-item perms'
+                                                                        data-group='{$key}' data-parent='{$ke}' data-son="{$k}" data-grandson="{$kk}"
+                                                                        {if in_array($key.".".$ke.".".$k,$role_perms) || in_array($key.".".$ke.".".$k,$user_perms)} checked{/if}
+                                                                 {if in_array($key.".".$ke.".".$k,$role_perms) && $_W['action']=='perm.user'} disabled{/if}
+                                                                 />  <b>{:str_replace("-log", "", $vv)}</b>
+                                                             </label>
+                                                        {/if}
+                                                    {/foreach}
+                                                 </span><br>
+                                            {/if}
+                                        {/foreach}
+                                    {/foreach}
+                                    </div>
                             {/foreach}
 
-
-
                         </div>
-
                     </div>
 
+                    {php}$i++;{/php}
                 {/foreach}
 
             </div>

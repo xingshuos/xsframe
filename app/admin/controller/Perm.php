@@ -26,7 +26,7 @@ class Perm extends AdminBaseController
     public function user()
     {
         $keyword = $this->params['keyword'];
-        $status  = $this->params['status'];
+        $status = $this->params['status'];
 
         $condition = [
             'pu.uniacid' => $this->uniacid,
@@ -42,12 +42,12 @@ class Perm extends AdminBaseController
         }
 
         $field = " pu.*,u.username,u.password,u.status ";
-        $list  = Db::name("sys_account_perm_user")->alias('pu')->field($field)->leftJoin("sys_users u", "u.id = pu.uid")->where($condition)->order('pu.id desc')->page($this->pIndex, $this->pSize)->select()->toArray();
+        $list = Db::name("sys_account_perm_user")->alias('pu')->field($field)->leftJoin("sys_users u", "u.id = pu.uid")->where($condition)->order('pu.id desc')->page($this->pIndex, $this->pSize)->select()->toArray();
         $total = Db::name("sys_account_perm_user")->alias('pu')->field($field)->leftJoin("sys_users u", "u.id = pu.uid")->where($condition)->count();
         $pager = pagination2($total, $this->pIndex, $this->pSize);
 
         foreach ($list as $key => $item) {
-            $roleName               = Db::name('sys_account_perm_role')->where(['id' => $item['roleid']])->value('rolename');
+            $roleName = Db::name('sys_account_perm_role')->where(['id' => $item['roleid']])->value('rolename');
             $list[$key]['rolename'] = $roleName;
         }
         unset($item);
@@ -70,16 +70,16 @@ class Perm extends AdminBaseController
         $id = intval($this->params['id']);
 
         $field = " pu.*,u.username,u.password,u.status ";
-        $item  = Db::name("sys_account_perm_user")->alias('pu')->field($field)->leftJoin("sys_users u", "u.id = pu.uid")->where(['pu.id' => $id])->find();
-        $role  = Db::name("sys_account_perm_role")->where(['id' => $item['roleid']])->find();
+        $item = Db::name("sys_account_perm_user")->alias('pu')->field($field)->leftJoin("sys_users u", "u.id = pu.uid")->where(['pu.id' => $id])->find();
+        $role = Db::name("sys_account_perm_role")->where(['id' => $item['roleid']])->find();
 
         if ($this->request->isPost()) {
             $username = trim($this->params['username']);
             $password = trim($this->params['password']);
             $realname = trim($this->params['realname']);
-            $mobile   = trim($this->params['mobile']);
-            $status   = trim($this->params['status']);
-            $roleId   = trim($this->params['roleid']);
+            $mobile = trim($this->params['mobile']);
+            $status = trim($this->params['status']);
+            $roleId = trim($this->params['roleid']);
 
             if (empty($username)) {
                 $this->error('登录账号不能为空');
@@ -134,8 +134,9 @@ class Perm extends AdminBaseController
 
                 if (!empty($password)) {
                     $password = md5($password . $salt);
-                    Db::name('sys_users')->update(['password' => $password, 'salt' => $salt]);
+                    Db::name('sys_users')->where(['id' => $item['uid']])->update(['password' => $password, 'salt' => $salt]);
                 }
+
             } else {
                 $data['createtime'] = time();
 
@@ -143,8 +144,8 @@ class Perm extends AdminBaseController
                 if (!empty($sysUserInfo)) {
                     $this->error('此用户为系统存在用户，无法添加');
                 } else {
-                    $password    = md5($password . $salt);
-                    $userData    = [
+                    $password = md5($password . $salt);
+                    $userData = [
                         'username'   => $username,
                         'password'   => $password,
                         'salt'       => $salt,
@@ -152,7 +153,7 @@ class Perm extends AdminBaseController
                         'status'     => $status,
                         'createtime' => time(),
                     ];
-                    $userId      = Db::name('sys_users')->insertGetId($userData);
+                    $userId = Db::name('sys_users')->insertGetId($userData);
                     $data['uid'] = $userId;
 
                     $userAccountData = [
@@ -169,14 +170,14 @@ class Perm extends AdminBaseController
         }
 
         $perms = PermFacade::formatPerms($this->uniacid);
-        // dump($perms);
-        // die;
+//        dump($perms);
+//        die;
 
         $operatorPerms = []; // 当前用户权限
         $accountsPerms = []; // 排除系统应用
 
         if ($this->adminSession['role'] == 'operator') {
-            $operator      = Db::name('sys_account_perm_user')->field('perms')->where(['uid' => $this->userId, 'uniacid' => $this->uniacid])->find();
+            $operator = Db::name('sys_account_perm_user')->field('perms')->where(['uid' => $this->userId, 'uniacid' => $this->uniacid])->find();
             $operatorPerms = explode(',', $operator['perms2']);
         }
 
@@ -185,7 +186,7 @@ class Perm extends AdminBaseController
 
         if (!empty($item)) {
             if (!empty($item['roleid'])) {
-                $roleInfo  = Db::name('sys_account_perm_role')->field('perms')->where(['id' => $item['roleid']])->find();
+                $roleInfo = Db::name('sys_account_perm_role')->field('perms')->where(['id' => $item['roleid']])->find();
                 $rolePerms = explode(',', $roleInfo['perms']);
             }
             $userPerms = explode(',', $item['perms']);
@@ -238,7 +239,7 @@ class Perm extends AdminBaseController
             show_json(0, array("message" => "参数错误"));
         }
 
-        $type  = trim($this->params["type"]);
+        $type = trim($this->params["type"]);
         $value = trim($this->params["value"]);
 
         $items = Db::name("sys_account_perm_user")->where(['id' => $id])->select();
@@ -256,7 +257,7 @@ class Perm extends AdminBaseController
     public function role()
     {
         $keyword = $this->params['keyword'];
-        $status  = $this->params['status'];
+        $status = $this->params['status'];
 
         $condition = [
             'uniacid' => $this->uniacid,
@@ -271,7 +272,7 @@ class Perm extends AdminBaseController
             $condition[''] = Db::raw(" rolename like '%" . trim($keyword) . "%'");
         }
 
-        $list  = Db::name("sys_account_perm_role")->field('*')->where($condition)->order('id desc')->page($this->pIndex, $this->pSize)->select()->toArray();
+        $list = Db::name("sys_account_perm_role")->field('*')->where($condition)->order('id desc')->page($this->pIndex, $this->pSize)->select()->toArray();
         $total = Db::name("sys_account_perm_role")->where($condition)->count();
         $pager = pagination2($total, $this->pIndex, $this->pSize);
 
@@ -319,7 +320,7 @@ class Perm extends AdminBaseController
         $accountsPerms = []; // 排除系统应用
 
         if ($this->adminSession['role'] == 'operator') {
-            $operator      = Db::name('sys_account_perm_user')->field('perms')->where(['uid' => $this->userId, 'uniacid' => $this->uniacid])->find();
+            $operator = Db::name('sys_account_perm_user')->field('perms')->where(['uid' => $this->userId, 'uniacid' => $this->uniacid])->find();
             $operatorPerms = explode(',', $operator['perms2']);
         }
 
@@ -376,7 +377,7 @@ class Perm extends AdminBaseController
             show_json(0, array("message" => "参数错误"));
         }
 
-        $type  = trim($this->params["type"]);
+        $type = trim($this->params["type"]);
         $value = trim($this->params["value"]);
 
         $items = Db::name("sys_account_perm_role")->where(['id' => $id])->select();
@@ -391,7 +392,7 @@ class Perm extends AdminBaseController
     {
         $keyword = trim($this->params['keyword']);
 
-        $condition            = array();
+        $condition = array();
         $condition['uniacid'] = $this->uniacid;
 
         if (!empty($kwd)) {

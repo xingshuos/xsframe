@@ -19,7 +19,7 @@ class MenuWrapper
     // 获取菜单
     public static function getMenusList($role, $module, $controller, $action, $full = true)
     {
-        $allMenus  = Config::get('menu');
+        $allMenus = Config::get('menu');
         $menusList = self::buildMenu($role, $allMenus, $module, $controller, $action, $full);
         return $menusList;
     }
@@ -27,14 +27,13 @@ class MenuWrapper
     // 定义菜单结构
     private static function buildMenu($role, $allMenus, $module, $controller, $action, $full)
     {
-        $return_menu    = array();
+        $return_menu = array();
         $return_submenu = array();
-        $submenu        = array();
+        $submenu = array();
 
         $module = realModuleName($module);
 
         if ($controller != 'login') {
-
             foreach ($allMenus as $key => $val) {
                 $menu_item = array(
                     'route'    => empty($val['route']) ? $key : $val['route'],
@@ -47,8 +46,8 @@ class MenuWrapper
                 }
 
                 if (strexists($controller, $menu_item['route'])) {
-                    $menu_item['active']        = 1;
-                    $submenu                    = $val;
+                    $menu_item['active'] = 1;
+                    $submenu = $val;
                     $return_submenu['subtitle'] = $submenu['subtitle'];
                 }
 
@@ -61,7 +60,7 @@ class MenuWrapper
                         if ($val['items'][0]['perm']) {
                             foreach ($val['items'] as $itemsKey => $itemInfo) {
                                 if ($itemInfo['perm']) {
-                                    $permUrl    = $module . "/" . $menu_item['route'] . "." . $itemInfo['route'];
+                                    $permUrl = $module . "/" . $menu_item['route'] . "." . $itemInfo['route'];
                                     $isAuthPerm = cs($permUrl);
 
                                     if ($isAuthPerm) {
@@ -93,21 +92,15 @@ class MenuWrapper
                     $return_menu[] = $menu_item;
                 }
             }
-
-            // dump($allMenus);
-            // dump($submenu);
-            // dump($controller);
-            // dump($action);
-            // die;
+            unset($val);
 
             if (!empty($submenu)) {
-
                 $menuRoute = $controller;
 
                 # 是否存在多级目录
                 $isMoreDir = false;
                 if (count(explode(".", $controller)) == 3) {
-                    $index     = strripos($menuRoute, ".", 0);
+                    $index = strripos($menuRoute, ".", 0);
                     $menuRoute = substr($menuRoute, 0, $index);
                     $isMoreDir = true;
                 }
@@ -124,9 +117,9 @@ class MenuWrapper
                         if (!in_array($role, ['founder', 'manager', 'owner'])) {
                             if ($child['perm']) {
                                 $controllerArr = explode(".", $controller);
-                                $permUrl       = $module . "/" . $controllerArr[0] . "." . $controllerArr[1] . "." . $child['route'];
-                                $currentUrl    = $module . "/" . $controller . "/" . $action;
-                                $isAuthPerm    = cs($permUrl);
+                                $permUrl = $module . "/" . $controllerArr[0] . "." . $controllerArr[1] . "." . $child['route'];
+                                $currentUrl = $module . "/" . $controller . "/" . $action;
+                                $isAuthPerm = cs($permUrl);
 
                                 // 权限不足提示 start
                                 if ($permUrl == $currentUrl && !$isAuthPerm) {
@@ -147,7 +140,7 @@ class MenuWrapper
                         # 如果是二级目录补全路径 start
                         if ($isMoreDir) {
                             $controllerName = explode('.', $controller)[2];
-                            $actionTmp      = $controllerName . "/" . $actionTmp;
+                            $actionTmp = $controllerName . "/" . $actionTmp;
                         }
                         # 如果是二级目录补全路径 end
 
@@ -163,23 +156,12 @@ class MenuWrapper
 
                             $actionTmpArr = explode("/", $actionTmp);
 
-                            // dump($return_menu_child);
-                            // dump($return_menu_child['route']);
-                            // dump($actionTmp);
-                            // dump($actionTmpArr[0]);
-                            // dump($actionTmpArr[1]);
-                            // dump($controller);
-                            // dump($action);
-                            // dump(explode("/",$actionTmp)[0]);
-                            // die;
-
                             if (strexists($return_menu_child['route'], $actionTmpArr[0]) || (strexists($return_menu_child['route'], 'main') && in_array($actionTmp, ['add', 'edit', 'post']))) {
                                 if ($return_menu_child['route'] != $actionTmp && !in_array($actionTmp, ['add', 'edit', 'post'])) {
                                     $return_menu_child['active'] = 0;
                                 } else {
                                     $return_menu_child['active'] = 1;
                                 }
-
                             }
 
                             if ($isMoreDir) {
@@ -191,8 +173,11 @@ class MenuWrapper
                             if ($full) {
                                 $return_menu_child['url'] = getSiteRoot() . $return_menu_child['route'];
                             }
-                            $return_submenu['items'][] = $return_menu_child;
 
+                            // 子菜单权限验证
+                            if (cs($return_menu_child['route'])) {
+                                $return_submenu['items'][] = $return_menu_child;
+                            }
                         } else {
                             # 三级目录 向下展开
                             $return_menu_child = array(
@@ -214,7 +199,7 @@ class MenuWrapper
                                 }
 
                                 if (strexists($return_submenu_three['route'], $action)) {
-                                    $return_menu_child['active']    = 1;
+                                    $return_menu_child['active'] = 1;
                                     $return_submenu_three['active'] = 1;
                                 }
 
@@ -234,8 +219,9 @@ class MenuWrapper
                             $return_submenu['items'][] = $return_menu_child;
                             unset($ii, $three);
                         }
+
                     }
-                    // die;
+
                 }
             }
         }

@@ -53,15 +53,16 @@
     </script>
 
     <script type="text/javascript" src="__ADMIN_COMPONENT__/jquery/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" src="__ADMIN_COMPONENT__/bootstrap/bootstrap.min.js"></script>
 
     <script type="text/javascript" src="__ADMIN_JS__/web/util.js"></script>
+    <script type="text/javascript" src="__ADMIN_COMPONENT__/bootstrap/bootstrap.min.js"></script>
     <script type="text/javascript" src="__ADMIN_JS__/web/common.min.js"></script>
     <script type="text/javascript" src="__ADMIN_JS__/require.js"></script>
     <script src="__ADMIN_JS__/config.js"></script>
 
     <script>
-        require(['jquery', 'jquery.gcjs', 'init']);
+        // require(['jquery', 'jquery.gcjs', 'init']);
+        require(['jquery.gcjs', 'init']);
 
         // 加载tip提示组件
         require(['tip'], function () {

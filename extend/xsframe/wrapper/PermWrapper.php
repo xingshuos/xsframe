@@ -13,14 +13,11 @@
 namespace xsframe\wrapper;
 
 use xsframe\util\StringUtil;
-use think\facade\Config;
 use think\facade\Db;
 
 class PermWrapper
 {
-
     public static $allPerms = array();
-    public static $getLogTypes = array();
     public static $formatPerms = array();
 
     // 验证权限 $permType 1主菜单 2子菜单 3操作
@@ -31,7 +28,6 @@ class PermWrapper
         if (empty($permUrls)) {
             return false;
         }
-
         if (!strexists($permUrls, '&') && !strexists($permUrls, '|')) {
             $check = $this->check($permUrls, $permType);
         } else if (strexists($permUrls, '&')) {
@@ -64,8 +60,8 @@ class PermWrapper
     private function check($permUrl = '', $permType = 3)
     {
         $loginResult = UserWrapper::checkUser();
-        $userInfo    = $loginResult['adminSession'];
-        $role        = $userInfo['role'];
+        $userInfo = $loginResult['adminSession'];
+        $role = $userInfo['role'];
 
         if (in_array($role, ['founder', 'manager', 'owner'])) {
             return true;
@@ -77,16 +73,13 @@ class PermWrapper
             return false;
         }
 
-        // TODO 需要加入緩存 20221126
-        $field = " u.status as userstatus,r.status as rolestatus,u.perms as userperms,r.perms as roleperms,u.roleid ";
+        $field = " u.uid,u.status as userstatus,r.status as rolestatus,u.perms as userperms,r.perms as roleperms,u.roleid ";
 
-        // $user = Db::name("sys_account_perm_user")->alias('u')->field($field)->leftJoin("sys_account_perm_role r", "r.id = u.roleid")->where(['u.uid' => $uid])->find();
-        $user = Db::name("sys_account_perm_user")->alias('u')->field($field)->leftJoin("sys_account_perm_role r", "r.id = u.roleid")->where(['u.uid' => $uid])->cache(true, 60)->find();
+        $user = Db::name("sys_account_perm_user")->alias('u')->field($field)->leftJoin("sys_account_perm_role r", "r.id = u.roleid")->where(['u.uid' => $uid])->find();
 
         if (empty($user) || empty($user['userstatus'])) {
             return false;
         }
-
         if (!empty($user['roleid']) && empty($user['rolestatus'])) {
             return false;
         }
@@ -98,40 +91,23 @@ class PermWrapper
             return false;
         }
 
-        $appName = app('http')->getName();
+        if ($permType == 1) {
+            $permUrlArr = explode("/", $permUrl);
+            $permUrlArr = array_splice($permUrlArr, 0, 2);
 
-        $leftStr = $appName . "/web.";
-        if (StringUtil::strexists($permUrl, $leftStr)) {
-            $permUrl = ltrim($permUrl, $leftStr);
-            if (StringUtil::strexists($permUrl, "/")) {
-                if (in_array($permType, [1, 2])) {
-                    $permUrl = StringUtil::rmStrEnd($permUrl, '/');
-                } else {
-                    $permUrl = str_replace("/", '.', $permUrl);
-                }
-            }
+            $controllerUrl = $permUrlArr[1];
+            $controllerUrlArr = explode(".", $controllerUrl);
+            $controllerUrlArr = array_splice($controllerUrlArr, 0, 2);
+            $controllerUrl = implode("/", $controllerUrlArr);
+
+            $permUrl = $permUrlArr[0] . "/" . $controllerUrl;
         }
 
-        # 主菜单
-        if ($permType == 1) {
-            $permUrlArr  = explode(".", $permUrl);
-            $mainMenuUrl = $appName . "." . $permUrlArr[0];
-            if (StringUtil::strexists($user['roleperms'], $mainMenuUrl)) {
-                return true;
-            } else {
-                if (StringUtil::strexists($user['userperms'], $mainMenuUrl)) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        } else {
-            if (in_array($permType, [2, 3])) {
-                $perms = array_merge($role_perms, $user_perms);
-                if (!in_array($appName . "." . $permUrl, $perms)) {
-                    return false;
-                }
-            }
+        $permUrl = str_replace("/", '.', $permUrl);
+
+        $perms = array_merge($role_perms, $user_perms);
+        if (!in_array($permUrl, $perms)) {
+            return false;
         }
 
         return true;
@@ -143,12 +119,12 @@ class PermWrapper
         if (empty(self::$allPerms)) {
             // 1.获取当前项目所有插件 TODO 需要缓存插件列表
             $modules = $this->getModules($uniacid);
-            // dump($allMenus);die;
+            // dump($modules);die;
 
             // 2.获取所有插件菜单列表
             $perms = [];
             foreach ($modules as &$module) {
-                $perms[$module['module']] = $this->getModuleMenus($module['module'], $module['name']);
+                $perms[$module['module']] = array_merge(['text' => $module['name']], $this->getModuleMenus($module['module']));
             }
             self::$allPerms = $perms;
         }
@@ -156,7 +132,7 @@ class PermWrapper
     }
 
     // 获取插件菜单信息
-    public function getModuleMenus($module, $moduleName)
+    public function getModuleMenus($module)
     {
         $menuPath = APP_PATH . "/{$module}/config/menu.php";
 
@@ -166,59 +142,53 @@ class PermWrapper
 
         $moduleMenus = require $menuPath;
 
-        $oldModuleMenus = [
-            'text' => $moduleName
-        ];
-        $newModuleMenus = [];
-
-        $permDefault = [
-            'main'   => '查看列表',
-            'view'   => '查看内容',
-            'add'    => '添加-log',
-            'edit'   => '修改-log',
-            'delete' => '删除-log',
-            'xxx'    => array(
-                'status' => 'edit'
-            ),
-        ];
-
-        //        dump($module);
-        //        dump($moduleMenus);
-        //        die;
-
+        $parentModuleMenus = [];
         if (!empty($moduleMenus)) {
+
+            $permDefault = [
+                'main'   => '查看列表',
+                'view'   => '查看内容',
+                'add'    => '添加-log',
+                'edit'   => '修改-log',
+                'delete' => '删除-log',
+                'xxx'    => array(
+                    'status' => 'edit'
+                ),
+            ];
+
             foreach ($moduleMenus as $key => $menu) {
 
-                // TODO 主菜单权限
-
                 // 子菜单权限
+                $itemModuleMenus = [];
                 foreach ($menu['items'] as $item) {
-                    $perm = $item['perm'];
 
-                    if (!empty($perm)) {
-                        if (is_bool($perm) && $perm) {
-                            $perm = $permDefault;
-                        }
+                    $perm = [];
+                    if (is_array($item['perm']) && !empty($item['perm'])) {
+                        $perm = $permDefault;
+                    }
 
-                        $routers = explode("/", $item['route']);
+                    $routers = explode("/", $item['route']);
+                    $c = count($routers) > 1 ? "." . $routers[0] : '';
 
-                        $c = count($routers) > 1 ? "." . $routers[0] : '';
+                    $newModuleMenusItemText = ['text' => !empty($item['subtitle']) ? $item['subtitle'] : $item['title']];
+                    $newModuleMenusItem = array_merge($newModuleMenusItemText, $perm);
 
-                        $newModuleMenusItemText = ['text' => !empty($item['subtitle']) ? $item['subtitle'] : $item['title']];
-                        $newModuleMenusItem     = array_merge($newModuleMenusItemText, $perm);
-
-                        $itemKey = ltrim($key . $c, "web.");
-
-                        $newModuleMenus[$itemKey] = $newModuleMenusItem;
+                    if (empty($c)) {
+                        $itemModuleMenus[$item['route']] = $newModuleMenusItem;
+                    } else {
+                        $itemRoute = ltrim($c, "web.");
+                        $itemModuleMenus[$itemRoute] = $newModuleMenusItem;
                     }
                 }
 
+                // 主菜单权限
+                $parentMenus = array_merge(['text' => $menu['subtitle']], $itemModuleMenus);
+
+                $parentModuleMenus[$key] = $parentMenus;
             }
         }
-        if (!empty($newModuleMenus)) {
-            $newModuleMenus = array_merge($oldModuleMenus, $newModuleMenus);
-        }
-        return $newModuleMenus;
+
+        return $parentModuleMenus;
     }
 
     // 获取全部插件标识
@@ -232,7 +202,11 @@ class PermWrapper
     public function formatPerms($uniacid)
     {
         if (empty(self::$formatPerms)) {
+
             $perms = $this->allPerms($uniacid);
+//            dump($perms);
+//            die;
+
             $array = array();
 
             foreach ($perms as $key => $value) {
