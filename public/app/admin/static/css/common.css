@@ -797,9 +797,20 @@ select, input:focus, input {
 }
 
 .wb-nav ul li.active {
-    border-left: 4px solid #161f29;
     background: #2d8cf0;
-    /*background: linear-gradient(195deg, #2d8cf0, #1a73e8);*/
+    position: relative;
+    z-index: 1;
+}
+
+.wb-nav ul li.active ::after{
+    display: block;
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    width: 4px;
+    background: #161f29;
 }
 
 .wb-nav ul li.active a {
