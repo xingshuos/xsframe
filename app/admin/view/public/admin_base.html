@@ -219,25 +219,19 @@
 
 <div class="wb-container">
     {if in_array($userInfo['role'],['owner','manager','operator'])}
-    {if !$isSystem && !empty($selSystemNav)}
-    <div class="page-content" id="iframePage" style="height: 700px;">
-        {if $userInfo['role'] == 'operator'}
-        <iframe src="{:url('admin/system/index')}"
-                style="position: absolute; display: block; border: 0; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
+        {if !$isSystem && !empty($selSystemNav)}
+            <div class="page-content" id="iframePage" style="height: 700px;">
+                <iframe src="{$selSystemNavUrl}" style="position: absolute; display: block; border: 0; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
+            </div>
         {else}
-        <iframe src="{:url('admin/system/index')}"
-                style="position: absolute; display: block; border: 0; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
+            <div style="padding: 0 20px 30px 20px;box-sizing: border-box;" class="wb-content">
+                {block name='content'}{/block}
+            </div>
         {/if}
-    </div>
     {else}
-    <div style="padding: 0 20px 30px 20px;box-sizing: border-box;" class="wb-content">
-        {block name='content'}{/block}
-    </div>
-    {/if}
-    {else}
-    <div style="padding: 0 20px 30px 20px;box-sizing: border-box;" class="wb-content">
-        {block name='content'}{/block}
-    </div>
+        <div style="padding: 0 20px 30px 20px;box-sizing: border-box;" class="wb-content">
+            {block name='content'}{/block}
+        </div>
     {/if}
 
     <div id="page-loading">
@@ -263,6 +257,7 @@
     </div>
 </div>
 <!--图片放大 end-->
+
 <script type="text/javascript">
     $(() => {
         $('.magnifier img').each(function () {
@@ -384,11 +379,6 @@
     // 适当的post表单页面进行引用
     require(['bootstrap', 'jquery.ui'], function ($) {
 
-        // 这里开启会与common.min.js冲突 主要就是将提示框放在最外层，避免提示框被遮盖问题
-        // $('[data-toggle="tooltip"]').tooltip("destroy").tooltip({
-        //     container: $(document.body)
-        // });
-
         $('[data-toggle="popover"]').popover("destroy").popover({
             container: $(document.body)
         });
@@ -477,10 +467,10 @@
 
 <!--低分辨率一级导航显示不全问题 start-->
 <script>
-    var navheight = document.getElementById('navheight');
-    var navwidth = document.getElementById('navwidth');
-    var vh = document.body.clientHeight;
-    var vw = screen.width;
+    let navheight = document.getElementById('navheight');
+    let navwidth = document.getElementById('navwidth');
+    let vh = document.body.clientHeight;
+    let vw = screen.width;
 
     if (navheight) {
         if (vh < 800) {
@@ -500,7 +490,7 @@
 <script>
     // 模态框
     function ajaxModel(obj) {
-        var url = $(obj).data('url');
+        let url = $(obj).data('url');
         // console.log(url);
         $.get(url, {}, function (html) {
             $("#public_modal").html(html).modal('show');

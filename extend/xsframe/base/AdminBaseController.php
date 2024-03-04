@@ -137,6 +137,7 @@ abstract class AdminBaseController extends BaseController
 
         # 选中系统菜单
         $var['selSystemNav'] = intval($_COOKIE[$this->module . "_systemnav"]);
+        $var['selSystemNavUrl'] = strval( empty($_COOKIE[$this->module . "_systemnavurl"]) ? url('admin/system/index') :$_COOKIE[$this->module . "_systemnavurl"] );
 
         $var['account'] = $this->account;
         $var['moduleInfo'] = $this->moduleInfo;

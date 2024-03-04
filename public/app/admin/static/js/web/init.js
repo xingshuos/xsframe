@@ -615,8 +615,12 @@ define(['jquery', 'bootstrap'], function ($, bs) {
         location.href = url;
     });
     $('.wb-nav-system').click(function () {
+        let url = $(this).data('href');
         let module = $(this).data('module');
         util.cookie.set(module + '_systemnav', 1);
+        if( url ){
+            util.cookie.set(module + '_systemnavurl', url);
+        }
     });
 
     $('.wb-subnav-fold').click(function () {

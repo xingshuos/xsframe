@@ -41,25 +41,53 @@
     <ul>
         <li class="dropdown  ellipsis">
             <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                {$userInfo['username']} <span></span>
+                {if $isSystem}
+                    {$userInfo['username']}
+                {else}
+                    {$account['name']}
+                {/if}
+                <span></span>
             </a>
 
-            <ul class="dropdown-menu"><!-- style="width:100%;left:0" -->
-                <li>
+            <ul class="dropdown-menu">
 
-                    {if $isSystem}
+                {if $isSystem}
+                    <li>
                         <a href="{:url('admin/users/profile')}" target="_blank">
-                            <i class="icow icow-quanxian1 " style="font-size: 30px;"></i>
+                            <i class="icon icon-lock " style="font-size: 22px;"></i>
                             <span style="display: block">修改密码</span>
                         </a>
-                    {else}
-                        <a href="{:url('web.sets/profile')}" target="_blank">
-                            <i class="icow icow-quanxian1 " style="font-size: 30px;"></i>
-                            <span style="display: block">修改密码</span>
+                    </li>
+                {else}
+                    <li class="wb-nav-system" data-href="{:url('admin/system/index')}" data-module="{$module}">
+                        <a href="">
+                            <i class="icon icon-exchange" style="font-size: 22px;"></i>
+                            <span style="display: block">切换应用</span>
                         </a>
+                    </li>
+
+                    {if in_array($userInfo['role'],['operator','owner','manager']) && !$isSystem}
+                        <li class="wb-nav-system" data-href="{:url('admin/system/account')}" data-module="{$module}">
+                            <a href="">
+                                <i class="icon icon-cog" style="font-size: 22px;"></i>
+                                <span style="display: block">系统设置</span>
+                            </a>
+                        </li>
+                        <li class="wb-nav-system" data-href="{:url('admin/perm/user')}" data-module="{$module}">
+                            <a href="">
+                                <i class="icon icon-tasks" style="font-size: 22px;"></i>
+                                <span style="display: block">权限管理</span>
+                            </a>
+                        </li>
                     {/if}
 
-                </li>
+                    <li class="wb-nav-system" data-href="{:url('admin/system/profile')}" data-module="{$module}">
+                        <a href="">
+                            <i class="icon icon-lock " style="font-size: 22px;"></i>
+                            <span style="display: block">修改密码</span>
+                        </a>
+                    </li>
+                {/if}
 
                 {if $userInfo['role'] == 'owner' && $module != 'admin'}
                     <li>
@@ -99,7 +127,7 @@
             </li>
         {/foreach}
 
-        {if in_array($userInfo['role'],['owner','manager']) && !$isSystem}
+        {if in_array($userInfo['role'],['operator','owner','manager']) && !$isSystem}
         <li class="sysset wb-nav-system" data-module="{$module}" {if $selSystemNav}style="background-color:#161f29;"{/if}>
             <a href="">
                 <i class="icow icow-qiehuan"></i>
@@ -108,14 +136,6 @@
         </li>
         {/if}
 
-        {if in_array($userInfo['role'],['operator']) && !$isSystem}
-            <li class="sysset wb-nav-system" data-module="{$module}" {if $selSystemNav}style="background-color:#161f29;"{/if}>
-                <a href="">
-                    <i class="icon icon-exchange"></i>
-                    <span class="wb-nav-title" data-href="">应用</span>
-                </a>
-            </li>
-        {/if}
     </ul>
 </div>
 

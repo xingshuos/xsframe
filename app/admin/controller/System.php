@@ -15,6 +15,7 @@ namespace app\admin\controller;
 use xsframe\base\AdminBaseController;
 use xsframe\enum\SysSettingsKeyEnum;
 use xsframe\util\FileUtil;
+use xsframe\util\RandomUtil;
 use xsframe\util\StringUtil;
 use xsframe\wrapper\AttachmentWrapper;
 use think\facade\Db;
@@ -72,6 +73,35 @@ class System extends AdminBaseController
             'perms' => $perms,
         ];
         return $this->template('index', $result);
+    }
+
+    // 我的账号
+    public function profile()
+    {
+        if ($this->request->isPost()) {
+            $username    = $this->params['username'];
+            $password    = $this->params['password'];
+            $newPassword = $this->params['newPassword'];
+
+            $adminSession = $this->adminSession;
+            $userInfo     = Db::name('sys_users')->field("id,username,password,salt")->where(['id' => $adminSession['uid']])->find();
+            $password     = md5($password . $userInfo['salt']);
+            if (md5($password . $userInfo['salt']) != $adminSession['hash']) {
+                show_json(0, "原始密码错误，请重新输入");
+            }
+            if (strlen($newPassword) < 6) {
+                show_json(0, "请输入不小于6位数的密码");
+            }
+            if (empty($username)) {
+                show_json(0, "登录账号不能为空");
+            }
+
+            $salt = RandomUtil::random(6);
+            Db::name('sys_users')->where(['id' => $userInfo['id']])->update(['username' => $username, 'password' => md5($newPassword . $salt), 'salt' => $salt]);
+            show_json(1, ['message' => "密码已修改请重新登录", 'url' => url('/yq_shoot/web.login')]);
+        }
+
+        return $this->template('profile');
     }
 
     // 获取后端访问入口
