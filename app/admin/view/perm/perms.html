@@ -30,7 +30,6 @@
                     <div id="collapse_{$key}" class="panel-collapse {if $i==0}in{else}collapse{/if}">
 
                         <div class='panel-body perm-group'>
-
                             {if count($perms['parent'][$key]) >1}
                                 <span>
                                     {foreach $perms['parent'][$key] as $ke => $val}
@@ -49,62 +48,64 @@
                             {/if}
 
                             {foreach $perms['son'][$key] as $ke => $val}
-                                {if !empty($val)}
-                                    <span>
-                                    {foreach $val as $k => $v}
-                                        {if $k != 'text'}
-                                            <label class='checkbox-inline' style="display: {if !in_array($key.".".$ke.".".$k,$operator_perms) && $userInfo['role'] == 'operator'}none;{/if}">
-                                                <input type='checkbox'  value='{$key}.{$ke}.{$k}' class='perm-item perms' data-group='{$key}' data-parent='{$ke}' data-son="{$k}"
-
-                                                    {if in_array($key.".".$ke.".".$k,$role_perms) || in_array($key.".".$ke.".".$k,$user_perms)} checked{/if}
-                                                    {if in_array($key.".".$ke.".".$k,$role_perms) && $action=='userpost'} disabled{/if}
-
-                                                />  {:str_replace("-log", "", $v)}
-                                            </label>
-                                        {else}
-                                            <label class='checkbox-inline' style="display: {if !in_array($key.".".$ke,$operator_perms) && $userInfo['role'] == 'operator'}none;{/if}">
-                                                <input type='checkbox'  value='{$key}.{$ke}' class='perm-all-item perms' data-group='{$key}' data-parent='{$ke}' data-son="{$k}"
-
-                                                    {if in_array($key.".".$ke,$role_perms) || in_array($key.".".$ke,$user_perms)} checked{/if}
-                                                    {if in_array($key.".".$ke,$role_perms) && $action=='userpost'} disabled{/if}
-
-                                                />  <b>{:str_replace("-log", "", $v)}</b>
-                                            </label>
-                                        {/if}
-                                    {/foreach}
-                                    </span><br>
-                                {/if}
-
-                                {php}$parentKe = $ke;{/php}
-                                    <div style="margin-left: 25px;">
-                                    {foreach $perms['grandson'][$key] as $ke => $val}
+                                <div class="menu-group">
+                                    {if !empty($val)}
+                                        <span>
                                         {foreach $val as $k => $v}
-                                            {if !empty($v) && $ke == $parentKe}
-                                                <span>
-                                                    {foreach $v as $kk => $vv}
-                                                        {if $kk != 'text'}
-                                                             <label class='checkbox-inline'>
-                                                                 <input type='checkbox'  value='{$key}.{$ke}.{$k}.{$kk}' class='perm-item perms'
-                                                                        data-group='{$key}' data-parent='{$ke}' data-son="{$k}" data-grandson="{$kk}"
-                                                                        {if in_array($key.".".$ke.".".$k.".".$kk,$role_perms) || in_array($key.".".$ke.".".$k.".".$kk,$user_perms)} checked{/if}
-                                                                 {if in_array($key.".".$ke.".".$k.".".$kk,$role_perms) && $_W['action']=='perm.user'} disabled{/if}
-                                                                 />  {:str_replace("-log", "", $vv)}
-                                                             </label>
-                                                        {else}
-                                                             <label class='checkbox-inline'>
-                                                                 <input type='checkbox' value='{$key}.{$ke}.{$k}' class='perm-all-item perms'
-                                                                        data-group='{$key}' data-parent='{$ke}' data-son="{$k}" data-grandson="{$kk}"
-                                                                        {if in_array($key.".".$ke.".".$k,$role_perms) || in_array($key.".".$ke.".".$k,$user_perms)} checked{/if}
-                                                                 {if in_array($key.".".$ke.".".$k,$role_perms) && $_W['action']=='perm.user'} disabled{/if}
-                                                                 />  <b>{:str_replace("-log", "", $vv)}</b>
-                                                             </label>
-                                                        {/if}
-                                                    {/foreach}
-                                                 </span><br>
+                                            {if $k != 'text'}
+                                                <label class='checkbox-inline' style="display: {if !in_array($key.".".$ke.".".$k,$operator_perms) && $userInfo['role'] == 'operator'}none;{/if}">
+                                                    <input type='checkbox'  value='{$key}.{$ke}.{$k}' class='perm-item perms' data-group='{$key}' data-parent='{$ke}' data-son="{$k}"
+
+                                                        {if in_array($key.".".$ke.".".$k,$role_perms) || in_array($key.".".$ke.".".$k,$user_perms)} checked{/if}
+                                                        {if in_array($key.".".$ke.".".$k,$role_perms) && $action=='userpost'} disabled{/if}
+
+                                                    />  {:str_replace("-log", "", $v)}
+                                                </label>
+                                            {else}
+                                                <label class='checkbox-inline' style="display: {if !in_array($key.".".$ke,$operator_perms) && $userInfo['role'] == 'operator'}none;{/if}">
+                                                    <input type='checkbox'  value='{$key}.{$ke}' class='perm-all-item perms groups' data-group='{$key}' data-parent='{$ke}' data-son="{$k}"
+
+                                                        {if in_array($key.".".$ke,$role_perms) || in_array($key.".".$ke,$user_perms)} checked{/if}
+                                                        {if in_array($key.".".$ke,$role_perms) && $action=='userpost'} disabled{/if}
+
+                                                    />  <b>{:str_replace("-log", "", $v)}</b>
+                                                </label>
                                             {/if}
                                         {/foreach}
-                                    {/foreach}
+                                        </span><br>
+                                    {/if}
+
+                                    {php}$parentKe = $ke;{/php}
+                                    <div style="margin-left: 25px;">
+                                        {foreach $perms['grandson'][$key] as $ke => $val}
+                                            {foreach $val as $k => $v}
+                                                {if !empty($v) && $ke == $parentKe}
+                                                    <span>
+                                                        {foreach $v as $kk => $vv}
+                                                            {if $kk != 'text'}
+                                                                 <label class='checkbox-inline'>
+                                                                     <input type='checkbox'  value='{$key}.{$ke}.{$k}.{$kk}' class='perm-item perms'
+                                                                            data-group='{$key}' data-parent='{$parentKe}' data-son="{$k}" data-grandson="{$kk}"
+                                                                            {if in_array($key.".".$ke.".".$k.".".$kk,$role_perms) || in_array($key.".".$ke.".".$k.".".$kk,$user_perms)} checked{/if}
+                                                                     {if in_array($key.".".$ke.".".$k.".".$kk,$role_perms)} disabled{/if}
+                                                                     />  {:str_replace("-log", "", $vv)}
+                                                                 </label>
+                                                            {else}
+                                                                 <label class='checkbox-inline'>
+                                                                     <input type='checkbox' value='{$key}.{$ke}.{$k}' class='perm-all-item perms groups-item'
+                                                                            data-group='{$key}' data-parent='{$parentKe}' data-son="{$k}" data-grandson="{$kk}"
+                                                                            {if in_array($key.".".$ke.".".$k,$role_perms) || in_array($key.".".$ke.".".$k,$user_perms)} checked{/if}
+                                                                     {if in_array($key.".".$ke.".".$k,$role_perms) } disabled{/if}
+                                                                     />  <b>{:str_replace("-log", "", $vv)}</b>
+                                                                 </label>
+                                                            {/if}
+                                                        {/foreach}
+                                                     </span><br>
+                                                {/if}
+                                            {/foreach}
+                                        {/foreach}
                                     </div>
+                                </div>
                             {/foreach}
 
                         </div>
@@ -136,9 +137,25 @@
             let parent = $(this).data('parent');
             let son = $(this).data('son');
             let grandson = $(this).data('grandson');
+            let isGroup = $(this).hasClass('groups');
+
             $(this).parents("span").find(".perm-item").each(function () {
                 $(this).get(0).checked = checked;
             });
+
+            if( isGroup ){
+                $(this).parents(".menu-group").find(".groups-item").each(function () {
+                    $(this).get(0).checked = checked;
+                });
+                $(this).parents(".menu-group").find(".perm-item").each(function () {
+                    $(this).get(0).checked = checked;
+                });
+            }else{
+                $(this).parents(".menu-group").find(".groups").each(function () {
+                    $(this).get(0).checked = checked;
+                });
+            }
+
             group_check(this);
         });
 
@@ -148,16 +165,19 @@
             let son = $(this).data('son');
             let grandson = $(this).data('grandson');
             let check = false;
+
             $(this).closest('span').find(".perm-item").each(function () {
                 if ($(this).get(0).checked) {
                     check = true;
                     return false;
                 }
             });
+
             let allitem = $(this).parents("span").find(".perm-all-item");
             if (allitem.length === 1) {
                 allitem.get(0).checked = check;
             }
+
             group_check(this);
         });
 
@@ -179,9 +199,6 @@
                 perms[index]=$(this).val();
             });
 
-            // console.log(perms);
-            // return false;
-
             perms = perms.join(',');
             $("input[name=permsarray]").val(perms);
             $(this).attr('stop',0);
@@ -191,6 +208,18 @@
     });
 
     function group_check(obj) {
+        let isGroup = $(this).hasClass('groups');
+        if( !isGroup ){
+            let check2 = false;
+            $(obj).parents('.menu-group').find(":checkbox").each(function (index, item) {
+                if (item.checked) {
+                    check2 = true;
+                }
+            });
+            let group2 = $(obj).eq(0).data('group');
+            $(obj).parents(".menu-group").find(".groups[data-group=" + group2 + "]").get(0).checked = check2;
+        }
+
         let check = false;
         $(obj).parents('.perm-group').find(":checkbox").each(function (index, item) {
             if (item.checked) {

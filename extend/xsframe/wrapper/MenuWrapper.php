@@ -41,6 +41,10 @@ class MenuWrapper
                     'subtitle' => $val['subtitle'],
                     'active'   => 0,
                 );
+                if( !strexists($menu_item['route'],'web.') ){
+                    $menu_item['route'] = "web." . $menu_item['route'];
+                }
+
                 if (!empty($val['icon'])) {
                     $menu_item['icon'] = $val['icon'];
                 }

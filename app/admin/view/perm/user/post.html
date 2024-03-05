@@ -144,34 +144,6 @@
     function select_role(o) {
         $("#userid").val(o.id);
         $("#user").val( o.rolename );
-
-        // var perms = o.perms2.split(',');
-        //
-        // $(':checkbox').removeAttr('disabled').removeAttr('checked').each(function(){
-        //     var _this = $(this);
-        //     var perm = '';
-        //     if( _this.data('group') ){
-        //         perm+=_this.data('group');
-        //     }
-        //     if( _this.data('parent') ){
-        //         if (_this.data('parent') != 'text') {
-        //             perm += "." + _this.data('parent');
-        //         }
-        //     }
-        //     if( _this.data('son') ){
-        //         if (_this.data('son') != 'text') {
-        //             perm += "." + _this.data('son');
-        //         }
-        //     }
-        //     if( _this.data('grandson') ){
-        //         if (_this.data('grandson') != 'text') {
-        //             perm += "." + _this.data('grandson');
-        //         }
-        //     }
-        //     if( $.arrayIndexOf(perms,perm)!=-1){
-        //         $(this).attr('disabled',true).get(0).checked =true;
-        //     }
-        // });
         $(".close").click();
     }
 </script>

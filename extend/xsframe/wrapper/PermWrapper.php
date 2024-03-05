@@ -161,7 +161,6 @@ class PermWrapper
                 // 子菜单权限
                 $itemModuleMenus = [];
                 foreach ($menu['items'] as $item) {
-
                     $perm = [];
                     if (is_array($item['perm']) && !empty($item['perm'])) {
                         $perm = $permDefault;
@@ -183,6 +182,10 @@ class PermWrapper
 
                 // 主菜单权限
                 $parentMenus = array_merge(['text' => $menu['subtitle']], $itemModuleMenus);
+
+                if( !strexists($key,"web.") ){
+                    $key = "web.{$key}";
+                }
 
                 $parentModuleMenus[$key] = $parentMenus;
             }

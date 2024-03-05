@@ -39,6 +39,8 @@ trait ServiceTraits
     public function getList(array $condition = array(), string $field = "*", string $order = "", int $pIndex = 1, int $pSize = 10): array
     {
         try {
+            if ($pIndex == 1 && !empty($this->params['page']) && $this->params['page'] > 1) $pIndex = $this->params['page'];
+            if ($pSize == 10 && !empty($this->params['size']) && $this->params['size'] != 10) $pSize = $this->params['size'];
             $list = Db::name($this->tableName)->field($field)->where($condition)->order($order)->page($pIndex, $pSize)->select()->toArray();
         } catch (\Exception $exception) {
             $list = [];
