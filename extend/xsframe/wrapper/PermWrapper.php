@@ -183,8 +183,8 @@ class PermWrapper
                 // 主菜单权限
                 $parentMenus = array_merge(['text' => $menu['subtitle']], $itemModuleMenus);
 
-                if( !strexists($key,"web.") ){
-                    $key = "web.{$key}";
+                if (!strexists($key, "web.")) {
+                    $key = "web." . $key;
                 }
 
                 $parentModuleMenus[$key] = $parentMenus;

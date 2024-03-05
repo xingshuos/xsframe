@@ -53,7 +53,7 @@ class UserWrapper
         }
 
         return [
-            'isLogin' => $isLogin,
+            'isLogin'      => $isLogin,
             'adminSession' => $adminSession,
         ];
     }
@@ -93,7 +93,7 @@ class UserWrapper
 
         return [
             'userInfo' => $userInfo,
-            'url' => $url,
+            'url'      => $url,
         ];
     }
 
@@ -112,6 +112,7 @@ class UserWrapper
             $oneMenusKeys = array_keys($oneMenus);
 
             $actionUrl = $oneMenus[$oneMenusKeys[0]]['items'][0]['route'];
+
             if (StringUtil::strexists($actionUrl, "/")) {
                 $actionUrl = "." . $actionUrl;
             } else {
@@ -119,6 +120,11 @@ class UserWrapper
             }
 
             $moduleName = !empty($appKey) ? $appKey : $moduleName;
+
+            if (!strexists($oneMenusKeys[0], "web.")) {
+                $oneMenusKeys[0] = "web." . $oneMenusKeys[0];
+            }
+
             $url = url("/" . $moduleName . "/" . $oneMenusKeys[0] . $actionUrl);
         } else {
             $moduleName = !empty($appKey) ? $appKey : $moduleName;

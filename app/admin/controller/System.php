@@ -79,13 +79,13 @@ class System extends AdminBaseController
     public function profile()
     {
         if ($this->request->isPost()) {
-            $username    = $this->params['username'];
-            $password    = $this->params['password'];
+            $username = $this->params['username'];
+            $password = $this->params['password'];
             $newPassword = $this->params['newPassword'];
 
             $adminSession = $this->adminSession;
-            $userInfo     = Db::name('sys_users')->field("id,username,password,salt")->where(['id' => $adminSession['uid']])->find();
-            $password     = md5($password . $userInfo['salt']);
+            $userInfo = Db::name('sys_users')->field("id,username,password,salt")->where(['id' => $adminSession['uid']])->find();
+            $password = md5($password . $userInfo['salt']);
             if (md5($password . $userInfo['salt']) != $adminSession['hash']) {
                 show_json(0, "原始密码错误，请重新输入");
             }
@@ -121,6 +121,11 @@ class System extends AdminBaseController
             } else {
                 $actionUrl = "/" . $actionUrl;
             }
+
+            if (!strexists($oneMenusKeys[0], "web.")) {
+                $oneMenusKeys[0] = "web." . $oneMenusKeys[0];
+            }
+
             $url = webUrl('/' . $realModuleName . "/{$oneMenusKeys[0]}{$actionUrl}", ['i' => $this->uniacid]);
         } else {
             $url = webUrl('/' . $realModuleName . "/web.index", ['i' => $this->uniacid]);
