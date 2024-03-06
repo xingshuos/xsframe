@@ -119,6 +119,10 @@ if (!function_exists('tpl_selector')) {
 if (!function_exists('webUrl')) {
     function webUrl($url = null, $params = [], $full = true, $suffix = true)
     {
+        if (!StringUtil::strexists($url, 'web.')) {
+            $url = "web." . $url;
+        }
+
         $url = url($url, $params, $suffix, $full);
 
         // 负载均衡下域名协议会被强制转成http协议，所以这里需要转成https的方式 start
