@@ -544,7 +544,7 @@ function tpl_frame()
                     <li role="presentation"><a target = "_blank" href="//www.xsframe.cn">星数官网</a></li>
                     <li role="presentation"><a target = "_blank" href="//www.xsframe.cn/store">应用商城</a></li>
                     <li role="presentation"><a target = "_blank" href="//www.xsframe.cn/doc">开发文档</a></li>
-                    <li role="presentation"><a target = "_blank" href="//bbs.xsframe.cn">开源论坛</a></li>
+                    <li role="presentation"><a target = "_blank" href="//www.xsframe.cn/bbs">开源论坛</a></li>
                     <li role="presentation"><a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=w-rIcxUJfiPmEm6kwWf0iqcUUkxGRw8-&jump_from=webapi"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="星数开发者交流群" title="星数开发者交流群"></a></li>
                 </ul>
             </div>
