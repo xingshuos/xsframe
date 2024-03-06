@@ -541,9 +541,9 @@ function tpl_frame()
                 </div>
                 <ul class="nav nav-pills pull-right" role="tablist">
                     <li role="presentation" class="active"><a href="javascript:;">安装星数</a></li>
-                    <li role="presentation"><a target = "_blank" href="//s.xsframe.cn">星数官网</a></li>
-                    <li role="presentation"><a target = "_blank" href="//s.xsframe.cn">应用商城</a></li>
-                    <li role="presentation"><a target = "_blank" href="//doc.xsframe.cn">开发文档</a></li>
+                    <li role="presentation"><a target = "_blank" href="//www.xsframe.cn">星数官网</a></li>
+                    <li role="presentation"><a target = "_blank" href="//www.xsframe.cn/store">应用商城</a></li>
+                    <li role="presentation"><a target = "_blank" href="//www.xsframe.cn/doc">开发文档</a></li>
                     <li role="presentation"><a target = "_blank" href="//bbs.xsframe.cn">开源论坛</a></li>
                     <li role="presentation"><a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=w-rIcxUJfiPmEm6kwWf0iqcUUkxGRw8-&jump_from=webapi"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="星数开发者交流群" title="星数开发者交流群"></a></li>
                 </ul>
@@ -581,9 +581,9 @@ function tpl_frame()
 		<div class="footer" style="margin:15px auto;">
             <div class="text-center">
                 <a  target = "_blank" href="//www.xsframe.cn">星数官网</a> &nbsp; &nbsp; 
-                <a  target = "_blank" href="//shop.xsframe.cn">星数应用商城</a> &nbsp; &nbsp; 
-                <a  target = "_blank" href="//bbs.xsframe.cn">访问星数开源论坛</a> &nbsp; &nbsp; 
-                <a target = "_blank" href="//doc.xsframe.cn">开发文档</a>
+                <a  target = "_blank" href="//www.xsframe.cn/shop">星数应用商城</a> &nbsp; &nbsp; 
+                <a  target = "_blank" href="//www.xsframe.cn/bbs">访问星数开源论坛</a> &nbsp; &nbsp; 
+                <a target = "_blank" href="//www.xsframe.cn/doc">开发文档</a>
                 <a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=w-rIcxUJfiPmEm6kwWf0iqcUUkxGRw8-&jump_from=webapi" style="margin-left: 12px">
                     <img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="星数开发者交流群" title="星数开发者交流群">
                 </a>
