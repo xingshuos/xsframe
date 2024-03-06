@@ -18,7 +18,7 @@ trait AdminTraits
 
         $field = "*";
         $order = "id desc";
-        $list  = Db::name($this->tableName)->field($field)->where($condition)->order($order)->page($this->pIndex, $this->pSize)->select()->toArray();
+        $list = Db::name($this->tableName)->field($field)->where($condition)->order($order)->page($this->pIndex, $this->pSize)->select()->toArray();
         $total = Db::name($this->tableName)->where($condition)->count();
         $pager = pagination2($total, $this->pIndex, $this->pSize);
 
@@ -29,6 +29,11 @@ trait AdminTraits
         ];
 
         return $this->template('list', $result);
+    }
+
+    public function main()
+    {
+        return $this->template("list", []);
     }
 
     public function edit()
@@ -58,7 +63,7 @@ trait AdminTraits
             $this->error("参数错误");
         }
 
-        $type  = trim($this->params["type"]);
+        $type = trim($this->params["type"]);
         $value = trim($this->params["value"]);
 
         $items = Db::name($this->tableName)->where(['id' => $id])->select();
@@ -144,7 +149,7 @@ trait AdminTraits
 
         $field = "*";
         $order = "id desc";
-        $list  = Db::name($this->tableName)->field($field)->where($condition)->order($order)->page($this->pIndex, $this->pSize)->select()->toArray();
+        $list = Db::name($this->tableName)->field($field)->where($condition)->order($order)->page($this->pIndex, $this->pSize)->select()->toArray();
         $total = Db::name($this->tableName)->where($condition)->count();
         $pager = pagination2($total, $this->pIndex, $this->pSize);
 
