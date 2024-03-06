@@ -119,7 +119,7 @@ if (!function_exists('tpl_selector')) {
 if (!function_exists('webUrl')) {
     function webUrl($url = null, $params = [], $full = true, $suffix = true)
     {
-        if (!StringUtil::strexists($url, 'web.')) {
+        if (!StringUtil::strexists($url, 'web.') && strpos($url, 'admin/') === false) {
             $url = "web." . $url;
         }
 

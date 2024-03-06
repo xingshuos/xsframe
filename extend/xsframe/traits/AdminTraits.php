@@ -11,22 +11,26 @@ trait AdminTraits
     // 回收站
     public function index()
     {
-        $condition = [
-            'uniacid' => $this->uniacid,
-            'deleted' => 0,
-        ];
+        $result = [];
 
-        $field = "*";
-        $order = "id desc";
-        $list = Db::name($this->tableName)->field($field)->where($condition)->order($order)->page($this->pIndex, $this->pSize)->select()->toArray();
-        $total = Db::name($this->tableName)->where($condition)->count();
-        $pager = pagination2($total, $this->pIndex, $this->pSize);
+        if (!empty($this->tableName)) {
+            $condition = [
+                'uniacid' => $this->uniacid,
+                'deleted' => 0,
+            ];
 
-        $result = [
-            'list'  => $list,
-            'pager' => $pager,
-            'total' => $total,
-        ];
+            $field = "*";
+            $order = "id desc";
+            $list = Db::name($this->tableName)->field($field)->where($condition)->order($order)->page($this->pIndex, $this->pSize)->select()->toArray();
+            $total = Db::name($this->tableName)->where($condition)->count();
+            $pager = pagination2($total, $this->pIndex, $this->pSize);
+
+            $result = [
+                'list'  => $list,
+                'pager' => $pager,
+                'total' => $total,
+            ];
+        }
 
         return $this->template('list', $result);
     }
@@ -53,22 +57,24 @@ trait AdminTraits
 
     public function change()
     {
-        $id = intval($this->params["id"]);
+        if (!empty($this->tableName)) {
+            $id = intval($this->params["id"]);
 
-        if (empty($id)) {
-            $id = $this->params["ids"];
-        }
+            if (empty($id)) {
+                $id = $this->params["ids"];
+            }
 
-        if (empty($id)) {
-            $this->error("参数错误");
-        }
+            if (empty($id)) {
+                $this->error("参数错误");
+            }
 
-        $type = trim($this->params["type"]);
-        $value = trim($this->params["value"]);
+            $type = trim($this->params["type"]);
+            $value = trim($this->params["value"]);
 
-        $items = Db::name($this->tableName)->where(['id' => $id])->select();
-        foreach ($items as $item) {
-            Db::name($this->tableName)->where("id", '=', $item['id'])->update([$type => $value]);
+            $items = Db::name($this->tableName)->where(['id' => $id])->select();
+            foreach ($items as $item) {
+                Db::name($this->tableName)->where("id", '=', $item['id'])->update([$type => $value]);
+            }
         }
 
         $this->success();
@@ -76,22 +82,24 @@ trait AdminTraits
 
     public function delete()
     {
-        $id = intval($this->params["id"]);
+        if (!empty($this->tableName)) {
+            $id = intval($this->params["id"]);
 
-        if (empty($id)) {
-            $id = $this->params["ids"];
-        }
-
-        if (empty($id)) {
-            $this->error("参数错误");
-        }
-
-        $items = Db::name($this->tableName)->where(['id' => $id])->select();
-        foreach ($items as $item) {
-            if (!empty($item['is_default'])) {
-                $this->error("默认项不能被删除");
+            if (empty($id)) {
+                $id = $this->params["ids"];
             }
-            Db::name($this->tableName)->where(["id" => $item['id']])->update(['deleted' => 1]);
+
+            if (empty($id)) {
+                $this->error("参数错误");
+            }
+
+            $items = Db::name($this->tableName)->where(['id' => $id])->select();
+            foreach ($items as $item) {
+                if (!empty($item['is_default'])) {
+                    $this->error("默认项不能被删除");
+                }
+                Db::name($this->tableName)->where(["id" => $item['id']])->update(['deleted' => 1]);
+            }
         }
         $this->success(array("url" => referer()));
     }
@@ -99,22 +107,24 @@ trait AdminTraits
     // 真实删除
     public function destroy()
     {
-        $id = intval($this->params["id"]);
+        if (!empty($this->tableName)) {
+            $id = intval($this->params["id"]);
 
-        if (empty($id)) {
-            $id = $this->params["ids"];
-        }
-
-        if (empty($id)) {
-            $this->error("参数错误");
-        }
-
-        $items = Db::name($this->tableName)->where(['id' => $id])->select();
-        foreach ($items as $item) {
-            if (!empty($item['is_default'])) {
-                $this->error("默认项不能被删除");
+            if (empty($id)) {
+                $id = $this->params["ids"];
             }
-            Db::name($this->tableName)->where(["id" => $item['id']])->delete();
+
+            if (empty($id)) {
+                $this->error("参数错误");
+            }
+
+            $items = Db::name($this->tableName)->where(['id' => $id])->select();
+            foreach ($items as $item) {
+                if (!empty($item['is_default'])) {
+                    $this->error("默认项不能被删除");
+                }
+                Db::name($this->tableName)->where(["id" => $item['id']])->delete();
+            }
         }
         $this->success(array("url" => referer()));
     }
@@ -122,19 +132,21 @@ trait AdminTraits
     // 还原数据
     public function restore()
     {
-        $id = intval($this->params["id"]);
+        if (!empty($this->tableName)) {
+            $id = intval($this->params["id"]);
 
-        if (empty($id)) {
-            $id = $this->params["ids"];
-        }
+            if (empty($id)) {
+                $id = $this->params["ids"];
+            }
 
-        if (empty($id)) {
-            $this->error("参数错误");
-        }
+            if (empty($id)) {
+                $this->error("参数错误");
+            }
 
-        $items = Db::name($this->tableName)->where(['id' => $id])->select();
-        foreach ($items as $item) {
-            Db::name($this->tableName)->where(["id" => $item['id']])->update(['deleted' => 0]);
+            $items = Db::name($this->tableName)->where(['id' => $id])->select();
+            foreach ($items as $item) {
+                Db::name($this->tableName)->where(["id" => $item['id']])->update(['deleted' => 0]);
+            }
         }
         $this->success(array("url" => referer()));
     }
@@ -142,22 +154,26 @@ trait AdminTraits
     // 回收站
     public function recycle()
     {
-        $condition = [
-            'uniacid' => $this->uniacid,
-            'deleted' => 1,
-        ];
+        $result = [];
 
-        $field = "*";
-        $order = "id desc";
-        $list = Db::name($this->tableName)->field($field)->where($condition)->order($order)->page($this->pIndex, $this->pSize)->select()->toArray();
-        $total = Db::name($this->tableName)->where($condition)->count();
-        $pager = pagination2($total, $this->pIndex, $this->pSize);
+        if (!empty($this->tableName)) {
+            $condition = [
+                'uniacid' => $this->uniacid,
+                'deleted' => 1,
+            ];
 
-        $result = [
-            'list'  => $list,
-            'pager' => $pager,
-            'total' => $total,
-        ];
+            $field = "*";
+            $order = "id desc";
+            $list = Db::name($this->tableName)->field($field)->where($condition)->order($order)->page($this->pIndex, $this->pSize)->select()->toArray();
+            $total = Db::name($this->tableName)->where($condition)->count();
+            $pager = pagination2($total, $this->pIndex, $this->pSize);
+
+            $result = [
+                'list'  => $list,
+                'pager' => $pager,
+                'total' => $total,
+            ];
+        }
 
         return $this->template('recycle', $result);
     }
