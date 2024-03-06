@@ -440,4 +440,47 @@ class StringUtil
         return $result;
     }
 
+    // 递增版本号
+    public static function incrementVersion($version): string
+    {
+        // 使用explode函数将版本号分割成数组
+        $parts = explode('.', $version);
+
+        // 假设版本号的最后一部分是要递增的
+        $lastPart = intval($parts[count($parts) - 1]);
+
+        // 递增最后一部分
+        $lastPart++;
+
+        // 重新构建版本字符串，除了最后一部分递增外，其他部分保持不变
+        $parts[count($parts) - 1] = strval($lastPart);
+
+        // 使用implode函数将数组重新组合成版本号字符串
+        return implode('.', $parts);
+    }
+
+    // 两个版本号进行比较 1表示第一个版本号更大，-1表示第二个版本号更大 ，函数返回0，表示两个版本号相同
+    public static function compareVersions($version1, $version2): int
+    {
+        // 将两个版本号分割成数组
+        $parts1 = explode('.', $version1);
+        $parts2 = explode('.', $version2);
+
+        // 确定比较的版本部分数量
+        $length = max(count($parts1), count($parts2));
+
+        // 遍历每个部分进行比较
+        for ($i = 0; $i < $length; $i++) {
+            $part1 = isset($parts1[$i]) ? intval($parts1[$i]) : 0;
+            $part2 = isset($parts2[$i]) ? intval($parts2[$i]) : 0;
+
+            // 如果当前部分不相等，返回比较结果
+            if ($part1 != $part2) {
+                return ($part1 > $part2) ? 1 : -1;
+            }
+        }
+
+        // 如果所有部分都相等，返回0表示版本相同
+        return 0;
+    }
 }
