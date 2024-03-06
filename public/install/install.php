@@ -512,7 +512,7 @@ function tpl_frame()
                 align-items: center;
 			}
 			.header .nav-bar .logo-box{
-			    width: 130px;
+			    width: auto;
 			}
 			.header .nav-bar .logo-box .name{
 			    font-size: 16px;
