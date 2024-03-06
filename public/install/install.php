@@ -4,10 +4,11 @@ error_reporting(0);
 ob_start();
 header('content-type: text/html; charset=utf-8');
 define('PATH_ROOT', str_replace("\\", '/', dirname(dirname(__FILE__))));
+define("PERMISSIONS", 755);
 $actions = array('license', 'env', 'db', 'finish');
-$action  = $_COOKIE['action'];
-$action  = in_array($action, $actions) ? $action : 'license';
-$ispost  = strtolower($_SERVER['REQUEST_METHOD']) == 'post';
+$action = $_COOKIE['action'];
+$action = in_array($action, $actions) ? $action : 'license';
+$ispost = strtolower($_SERVER['REQUEST_METHOD']) == 'post';
 
 if (file_exists(PATH_ROOT . '/install/install.lock') && $action != 'finish') {
     @header("Content-type: text/html; charset=UTF-8");
@@ -24,7 +25,7 @@ if ($_GET['step'] == 'get_dblist') {
             $result = array('code' => '100', 'msg' => '您的数据库访问用户名或是密码错误');
         }
     } else {
-        $sql    = "SELECT `SCHEMA_NAME` FROM `information_schema`.`SCHEMATA`";
+        $sql = "SELECT `SCHEMA_NAME` FROM `information_schema`.`SCHEMATA`";
         $result = mysqli_query($link, $sql);
         while ($rs = mysqli_fetch_array($result)) {
             $databases[] = $rs[0];
@@ -56,19 +57,19 @@ if ($action == 'env') {
         exit;
     }
 
-    $ret                          = array();
+    $ret = array();
     $ret['server']['os']['value'] = php_uname();
     // $ret['server']['os']['value'] = mb_convert_encoding($ret['server']['os']['value'], "UTF-8", "CP936");
     $ret['server']['os']['value'] = iconv("CP936", "UTF-8", $ret['server']['os']['value']);
 
     if (PHP_SHLIB_SUFFIX == 'dll') {
         $ret['server']['os']['remark'] = '建议使用 Linux 系统以提升程序性能';
-        $ret['server']['os']['class']  = 'warning';
+        $ret['server']['os']['class'] = 'warning';
     }
     $ret['server']['sapi']['value'] = $_SERVER['SERVER_SOFTWARE'];
     if (PHP_SAPI == 'isapi') {
         $ret['server']['sapi']['remark'] = '建议使用 Apache 或 Nginx 以提升程序性能';
-        $ret['server']['sapi']['class']  = 'warning';
+        $ret['server']['sapi']['class'] = 'warning';
     }
     $ret['server']['php']['value'] = PHP_VERSION;
     $ret['server']['dir']['value'] = dirname(PATH_ROOT);
@@ -82,7 +83,7 @@ if ($action == 'env') {
     $ret['php']['version']['value'] = PHP_VERSION;
     $ret['php']['version']['class'] = 'success';
     if (version_compare(PHP_VERSION, '5.5.0') == -1) {
-        $ret['php']['version']['class']  = 'danger';
+        $ret['php']['version']['class'] = 'danger';
         $ret['php']['version']['failed'] = true;
         $ret['php']['version']['remark'] = 'PHP版本必须为 5.5.0 以上.';
     }
@@ -91,7 +92,7 @@ if ($action == 'env') {
     if ($ret['php']['mysql']['ok']) {
         $ret['php']['mysql']['value'] = '<span class="icon icon-ok text-success"></span>';
     } else {
-        $ret['php']['pdo']['failed']  = true;
+        $ret['php']['pdo']['failed'] = true;
         $ret['php']['mysql']['value'] = '<span class="icon icon-remove text-danger"></span>';
     }
 
@@ -105,12 +106,12 @@ if ($action == 'env') {
     } else {
         $ret['php']['pdo']['failed'] = true;
         if ($ret['php']['mysql']['ok']) {
-            $ret['php']['pdo']['value']  = '<span class="icon icon-remove text-warning"></span>';
-            $ret['php']['pdo']['class']  = 'warning';
+            $ret['php']['pdo']['value'] = '<span class="icon icon-remove text-warning"></span>';
+            $ret['php']['pdo']['class'] = 'warning';
             $ret['php']['pdo']['remark'] = '您的PHP环境不支持PDO, 请开启此扩展. ';
         } else {
-            $ret['php']['pdo']['value']  = '<span class="icon icon-remove text-danger"></span>';
-            $ret['php']['pdo']['class']  = 'danger';
+            $ret['php']['pdo']['value'] = '<span class="icon icon-remove text-danger"></span>';
+            $ret['php']['pdo']['class'] = 'danger';
             $ret['php']['pdo']['remark'] = '您的PHP环境不支持PDO, 也不支持 mysqli_connect, 系统无法正常运行. ';
         }
     }
@@ -131,12 +132,12 @@ if ($action == 'env') {
         }
     } else {
         if ($ret['php']['fopen']['ok']) {
-            $ret['php']['curl']['value']  = '<span class="icon icon-remove text-warning"></span>';
-            $ret['php']['curl']['class']  = 'warning';
+            $ret['php']['curl']['value'] = '<span class="icon icon-remove text-warning"></span>';
+            $ret['php']['curl']['class'] = 'warning';
             $ret['php']['curl']['remark'] = '您的PHP环境不支持cURL, 但支持 allow_url_fopen, 这样系统虽然可以运行, 但还是建议你开启cURL以提升程序性能和系统稳定性. ';
         } else {
-            $ret['php']['curl']['value']  = '<span class="icon icon-remove text-danger"></span>';
-            $ret['php']['curl']['class']  = 'danger';
+            $ret['php']['curl']['value'] = '<span class="icon icon-remove text-danger"></span>';
+            $ret['php']['curl']['class'] = 'danger';
             $ret['php']['curl']['remark'] = '您的PHP环境不支持cURL, 也不支持 allow_url_fopen, 系统无法正常运行. ';
             $ret['php']['curl']['failed'] = true;
         }
@@ -146,8 +147,8 @@ if ($action == 'env') {
         $ret['php']['gd']['value'] = '<span class="icon icon-ok text-success"></span>';
         $ret['php']['gd']['class'] = 'success';
     } else {
-        $ret['php']['gd']['value']  = '<span class="icon icon-remove text-danger"></span>';
-        $ret['php']['gd']['class']  = 'danger';
+        $ret['php']['gd']['value'] = '<span class="icon icon-remove text-danger"></span>';
+        $ret['php']['gd']['class'] = 'danger';
         $ret['php']['gd']['failed'] = true;
         $ret['php']['gd']['remark'] = '没有启用GD, 将无法正常上传和压缩图片, 系统无法正常运行. ';
     }
@@ -157,8 +158,8 @@ if ($action == 'env') {
         $ret['php']['openssl']['value'] = '<span class="icon icon-ok text-success"></span>';
         $ret['php']['openssl']['class'] = 'success';
     } else {
-        $ret['php']['openssl']['value']  = '<span class="icon icon-remove text-danger"></span>';
-        $ret['php']['openssl']['class']  = 'danger';
+        $ret['php']['openssl']['value'] = '<span class="icon icon-remove text-danger"></span>';
+        $ret['php']['openssl']['class'] = 'danger';
         $ret['php']['openssl']['failed'] = true;
         $ret['php']['openssl']['remark'] = '没有启用openssl扩展. ';
     }
@@ -168,8 +169,8 @@ if ($action == 'env') {
         $ret['php']['bcmath']['value'] = '<span class="icon icon-ok text-success"></span>';
         $ret['php']['bcmath']['class'] = 'success';
     } else {
-        $ret['php']['bcmath']['value']  = '<span class="icon icon-remove text-danger"></span>';
-        $ret['php']['bcmath']['class']  = 'danger';
+        $ret['php']['bcmath']['value'] = '<span class="icon icon-remove text-danger"></span>';
+        $ret['php']['bcmath']['class'] = 'danger';
         $ret['php']['bcmath']['failed'] = true;
         $ret['php']['bcmath']['remark'] = '没有启用bcmath扩展. ';
     }
@@ -179,8 +180,8 @@ if ($action == 'env') {
         $ret['php']['dom']['value'] = '<span class="icon icon-ok text-success"></span>';
         $ret['php']['dom']['class'] = 'success';
     } else {
-        $ret['php']['dom']['value']  = '<span class="icon icon-remove text-danger"></span>';
-        $ret['php']['dom']['class']  = 'danger';
+        $ret['php']['dom']['value'] = '<span class="icon icon-remove text-danger"></span>';
+        $ret['php']['dom']['class'] = 'danger';
         $ret['php']['dom']['failed'] = true;
         $ret['php']['dom']['remark'] = '没有启用DOMDocument, 将无法正常安装使用模块, 系统无法正常运行. ';
     }
@@ -190,8 +191,8 @@ if ($action == 'env') {
         $ret['php']['session']['value'] = '<span class="icon icon-ok text-success"></span>';
         $ret['php']['session']['class'] = 'success';
     } else {
-        $ret['php']['session']['value']  = '<span class="icon icon-remove text-danger"></span>';
-        $ret['php']['session']['class']  = 'danger';
+        $ret['php']['session']['value'] = '<span class="icon icon-remove text-danger"></span>';
+        $ret['php']['session']['class'] = 'danger';
         $ret['php']['session']['failed'] = true;
         $ret['php']['session']['remark'] = '系统session.auto_start开启, 将无法正常注册会员, 系统无法正常运行. ';
     }
@@ -201,29 +202,29 @@ if ($action == 'env') {
         $ret['php']['asp_tags']['value'] = '<span class="icon icon-ok text-success"></span>';
         $ret['php']['asp_tags']['class'] = 'success';
     } else {
-        $ret['php']['asp_tags']['value']  = '<span class="icon icon-remove text-danger"></span>';
-        $ret['php']['asp_tags']['class']  = 'danger';
+        $ret['php']['asp_tags']['value'] = '<span class="icon icon-remove text-danger"></span>';
+        $ret['php']['asp_tags']['class'] = 'danger';
         $ret['php']['asp_tags']['failed'] = true;
         $ret['php']['asp_tags']['remark'] = '请禁用可以使用ASP 风格的标志，配置php.ini中asp_tags = Off';
     }
 
-    $ret['write']['root']['ok'] = local_writeable(PATH_ROOT . '/uploads');
+    $ret['write']['root']['ok'] = local_writeable(PATH_ROOT . '/attachment');
     if ($ret['write']['root']['ok']) {
         $ret['write']['root']['value'] = '<span class="icon icon-ok text-success"></span>';
         $ret['write']['root']['class'] = 'success';
     } else {
-        $ret['write']['root']['value']  = '<span class="icon icon-remove text-danger"></span>';
-        $ret['write']['root']['class']  = 'danger';
+        $ret['write']['root']['value'] = '<span class="icon icon-remove text-danger"></span>';
+        $ret['write']['root']['class'] = 'danger';
         $ret['write']['root']['failed'] = true;
-        $ret['write']['root']['remark'] = 'public/uploads无法写入, 将无法使用自动更新功能, 系统无法正常运行.  ';
+        $ret['write']['root']['remark'] = 'public/attachment无法写入, 将无法使用自动更新功能, 系统无法正常运行.  ';
     }
     $ret['write']['data']['ok'] = local_writeable(PATH_ROOT . '/../runtime');
     if ($ret['write']['data']['ok']) {
         $ret['write']['data']['value'] = '<span class="icon icon-ok text-success"></span>';
         $ret['write']['data']['class'] = 'success';
     } else {
-        $ret['write']['data']['value']  = '<span class="icon icon-remove text-danger"></span>';
-        $ret['write']['data']['class']  = 'danger';
+        $ret['write']['data']['value'] = '<span class="icon icon-remove text-danger"></span>';
+        $ret['write']['data']['class'] = 'danger';
         $ret['write']['data']['failed'] = true;
         $ret['write']['data']['remark'] = 'runtime目录无法写入, 将无法写入配置文件, 系统无法正常安装. ';
     }
@@ -232,14 +233,16 @@ if ($action == 'env') {
         $ret['write']['install']['value'] = '<span class="icon icon-ok text-success"></span>';
         $ret['write']['install']['class'] = 'success';
     } else {
-        $ret['write']['install']['value']  = '<span class="icon icon-remove text-danger"></span>';
-        $ret['write']['install']['class']  = 'danger';
+        $ret['write']['install']['value'] = '<span class="icon icon-remove text-danger"></span>';
+        $ret['write']['install']['class'] = 'danger';
         $ret['write']['install']['failed'] = true;
         $ret['write']['install']['remark'] = 'public/install目录无法写入, 将无法写入安装文件, 系统无法正常安装. ';
     }
 
-    if( !is_file(dirname(PATH_ROOT) . '/.env') ){
-        @file_put_contents(dirname(PATH_ROOT) . '/.env');
+    if (!is_file(dirname(PATH_ROOT) . '/.env')) {
+        $envPath = dirname(PATH_ROOT) . '/.env';
+        @touch($envPath);
+        chmod($envPath, PERMISSIONS);
     }
 
     $ret['write']['database']['ok'] = is_writable(dirname(PATH_ROOT) . '/.env');
@@ -247,8 +250,8 @@ if ($action == 'env') {
         $ret['write']['database']['value'] = '<span class="icon icon-ok text-success"></span>';
         $ret['write']['database']['class'] = 'success';
     } else {
-        $ret['write']['database']['value']  = '<span class="icon icon-remove text-danger"></span>';
-        $ret['write']['database']['class']  = 'danger';
+        $ret['write']['database']['value'] = '<span class="icon icon-remove text-danger"></span>';
+        $ret['write']['database']['class'] = 'danger';
         $ret['write']['database']['failed'] = true;
         $ret['write']['database']['remark'] = '.env文件无法写入, 将无法写入数据库配置文件, 系统无法正常安装. ';
     }
@@ -279,8 +282,8 @@ if ($action == 'db') {
             header('location: ?refresh');
             exit();
         }
-        $db    = $_POST['db'];
-        $user  = $_POST['user'];
+        $db = $_POST['db'];
+        $user = $_POST['user'];
         $store = $_POST['store'];
 
         $link = @mysqli_connect($db['server'], $db['username'], $db['password']);
@@ -314,10 +317,10 @@ if ($action == 'db') {
         }
 
         if (empty($error)) {
-            $pieces     = explode(':', $db['server']);
+            $pieces = explode(':', $db['server']);
             $db['port'] = !empty($pieces[1]) ? $pieces[1] : '3306';
-            $config     = db_config();
-            $config     = str_replace(array(
+            $config = db_config();
+            $config = str_replace(array(
                 '{db-server}', '{db-username}', '{db-password}', '{db-port}', '{db-name}', '{db-prefix}'
             ), array(
                 $db['server'], $db['username'], $db['password'], $db['port'], $db['name'], $db['prefix']
@@ -355,9 +358,9 @@ if ($action == 'db') {
             }
 
             //添加用户管理员
-            $curTime      = time();
-            $authkey      = local_salt(6);
-            $password     = md5($user['password'] . $authkey);
+            $curTime = time();
+            $authkey = local_salt(6);
+            $password = md5($user['password'] . $authkey);
             $insert_error = mysqli_query($link, "INSERT  INTO `{$db['prefix']}sys_users`(`username`,`password`,`salt`,`role`,`status`,`createtime`,`logintime`,`lastip`) values ('admin','{$password}','{$authkey}','owner',1,{$curTime},{$curTime},'127.0.0.1')");
             if (!$insert_error) {
                 die('<script type="text/javascript">alert("管理员账户注册失败.");history.back();</script>');
@@ -385,7 +388,9 @@ if ($action == 'finish') {
     setcookie('action', '', time() - 3600);
     $sitepath = strtolower(substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/')));
     $sitepath = str_replace('/install', "", $sitepath);
-    $url      = strtolower('http://' . $_SERVER['HTTP_HOST'] . $sitepath);
+    $url = strtolower('http://' . $_SERVER['HTTP_HOST'] . $sitepath);
+    @unlink(PATH_ROOT . '/install/install.php');
+    @unlink(PATH_ROOT . '/install/install.sql');
     tpl_install_finish($url);
 }
 
@@ -395,19 +400,19 @@ function tpl_install_license()
 		<div class="panel panel-default">
 			<div class="panel-heading">阅读许可协议</div>
 			<div class="panel-body" style="overflow-y:scroll;max-height:400px;line-height:20px;">
-				<h3>版权所有 (c)2020，星数（xsframe）团队保留所有权利。 </h3>
+				<h3>版权所有 (c)2023，星数引擎（xsframe）团队保留所有权利。 </h3>
 				<p>
-					感谢您选择星数（xsframe）（以下简称xsframe，xsframe基于 PHP + MySQL的技术开发，全部源码开放。 <br />
+					感谢您选择星数为来数字化开发引擎框架（以下简称星数引擎，xsframe基于 PHP + MySQL的技术开发，全部源码开放。 <br />
 					为了使你正确并合法的使用本软件，请你在使用前务必阅读清楚下面的协议条款：
 				</p>
 				<p>
-					<strong>一、本授权协议适用且仅适用于星数（xsframe）系统(以下简称xsframe)任何版本，星数（xsframe）官方对本授权协议的最终解释权。</strong>
+					<strong>一、本授权协议适用且仅适用于星数引擎（xsframe）系统(以下简称xsframe)任何版本，星数引擎（xsframe）官方对本授权协议的最终解释权。</strong>
 				</p>
 				<p>
 					<strong>二、协议许可的权利 </strong>
 					<ol>
 						<li>您可以在完全遵守本最终用户授权协议的基础上，将本软件应用于非商业用途，而不必支付软件版权授权费用。</li>
-						<li>您可以在协议规定的约束和限制范围内修改星数（xsframe）源代码或界面风格以适应您的网站要求。</li>
+						<li>您可以在协议规定的约束和限制范围内修改星数引擎（xsframe）源代码或界面风格以适应您的网站要求。</li>
 						<li>您拥有使用本软件构建的网站全部内容所有权，并独立承担与这些内容的相关法律义务。</li>
 						<li>获得商业授权之后，您可以将本软件应用于商业用途，同时依据所购买的授权类型中确定的技术支持内容，自购买时刻起，在技术支持期限内拥有通过指定的方式获得指定范围内的技术支持服务。商业授权用户享有反映和提出意见的权力，相关意见将被作为首要考虑，但没有一定被采纳的承诺或保证。</li>
 					</ol>
@@ -417,7 +422,7 @@ function tpl_install_license()
 					<ol>
 						<li>未获商业授权之前，不得将本软件用于商业用途（包括但不限于企业网站、经营性网站、以营利为目的或实现盈利的网站）。</li>
 						<li>未经官方许可，不得对本软件或与之关联的商业授权进行出租、出售、抵押或发放子许可证。</li>
-						<li>未经官方许可，禁止在星数（xsframe）的整体或任何部分基础上以发展任何派生版本、修改版本或第三方版本用于重新分发。</li>
+						<li>未经官方许可，禁止在星数引擎（xsframe）的整体或任何部分基础上以发展任何派生版本、修改版本或第三方版本用于重新分发。</li>
 						<li>如果您未能遵守本协议的条款，您的授权将被终止，所被许可的权利将被收回，并承担相应法律责任。</li>
 					</ol>
 				</p>
@@ -452,8 +457,8 @@ function tpl_frame()
 {
     global $action, $actions;
     $action = $_COOKIE['action'];
-    $step   = array_search($action, $actions);
-    $steps  = array();
+    $step = array_search($action, $actions);
+    $steps = array();
     for ($i = 0; $i <= $step; $i++) {
         if ($i == $step) {
             $steps[$i] = ' list-group-item-info';
@@ -461,8 +466,9 @@ function tpl_frame()
             $steps[$i] = ' list-group-item-success';
         }
     }
+    $datetime = date('Y');
     $progress = $step * 25 + 25;
-    $content  = ob_get_contents();
+    $content = ob_get_contents();
     ob_clean();
     $tpl = <<<EOF
 <!DOCTYPE html>
@@ -531,14 +537,14 @@ function tpl_frame()
         <div class="header">
             <div class="container nav-bar" style="height: 100%;">
                 <div class="logo-box">
-                    <div class="name">星数（xsframe）</div>
+                    <div class="name">星数引擎（xsframe）</div>
                 </div>
                 <ul class="nav nav-pills pull-right" role="tablist">
                     <li role="presentation" class="active"><a href="javascript:;">安装星数</a></li>
-                    <li role="presentation"><a target = "_blank" href="//s.xsframe.com">星数官网</a></li>
-                    <li role="presentation"><a target = "_blank" href="//s.xsframe.com">应用商城</a></li>
-                    <li role="presentation"><a target = "_blank" href="//doc.xsframe.com">开发文档</a></li>
-                    <li role="presentation"><a target = "_blank" href="//bbs.xsframe.com">开源论坛</a></li>
+                    <li role="presentation"><a target = "_blank" href="//s.xsframe.cn">星数官网</a></li>
+                    <li role="presentation"><a target = "_blank" href="//s.xsframe.cn">应用商城</a></li>
+                    <li role="presentation"><a target = "_blank" href="//doc.xsframe.cn">开发文档</a></li>
+                    <li role="presentation"><a target = "_blank" href="//bbs.xsframe.cn">开源论坛</a></li>
                     <li role="presentation"><a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=w-rIcxUJfiPmEm6kwWf0iqcUUkxGRw8-&jump_from=webapi"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="星数开发者交流群" title="星数开发者交流群"></a></li>
                 </ul>
             </div>
@@ -574,16 +580,16 @@ function tpl_frame()
 		
 		<div class="footer" style="margin:15px auto;">
             <div class="text-center">
-                <a  target = "_blank" href="//www.xsframe.com">星数官网</a> &nbsp; &nbsp; 
-                <a  target = "_blank" href="//s.xsframe.com">星数应用商城</a> &nbsp; &nbsp; 
-                <a  target = "_blank" href="//bbs.xsframe.com">访问星数开源论坛</a> &nbsp; &nbsp; 
-                <a target = "_blank" href="//doc.xsframe.com">开发文档</a>
+                <a  target = "_blank" href="//www.xsframe.cn">星数官网</a> &nbsp; &nbsp; 
+                <a  target = "_blank" href="//shop.xsframe.cn">星数应用商城</a> &nbsp; &nbsp; 
+                <a  target = "_blank" href="//bbs.xsframe.cn">访问星数开源论坛</a> &nbsp; &nbsp; 
+                <a target = "_blank" href="//doc.xsframe.cn">开发文档</a>
                 <a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=w-rIcxUJfiPmEm6kwWf0iqcUUkxGRw8-&jump_from=webapi" style="margin-left: 12px">
                     <img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="星数开发者交流群" title="星数开发者交流群">
                 </a>
             </div>
             <div class="text-center">
-                Powered by <a  target = "_blank" href="https://www.xsframe.com"><b>星数</b></a>  &copy; 2013-2022 <a target = "_blank" href="">www.xsframe.com</a>
+                Powered by <a  target = "_blank" href="https://www.xsframe.cn"><b>星数</b></a>  &copy; 2023- {$datetime} <a target = "_blank" href="">www.xsframe.cn</a>
             </div>
         </div>
 	</body>
@@ -736,7 +742,7 @@ function tpl_install_env($ret = array())
 			</table>
 		</div>
 
-		<div class="alert alert-info">系统要求星数（xsframe）安装目录下的runtime和uploads必须可写, 才能使用星数（xsframe）所有功能。</div>
+		<div class="alert alert-info">系统要求星数引擎（xsframe）安装目录下的runtime和attachment必须可写, 才能使用星数引擎（xsframe）所有功能。</div>
 		<div class="panel panel-default">
 			<div class="panel-heading">目录权限监测</div>
 			<table class="table table-striped">
@@ -748,7 +754,7 @@ function tpl_install_env($ret = array())
 				</tr>
 				<tr class="{$ret['write']['root']['class']}">
 					<td>/</td>
-					<td>public/uploads目录可写</td>
+					<td>public/attachment目录可写</td>
 					<td>{$ret['write']['root']['value']}</td>
 					<td>{$ret['write']['root']['remark']}</td>
 				</tr>
@@ -790,7 +796,7 @@ function tpl_install_db($error = '')
     }
     $insTypes = array();
     if (!empty($_POST['type'])) {
-        $insTypes                 = array();
+        $insTypes = array();
         $insTypes[$_POST['type']] = ' checked="checked"';
     }
     $disabled = empty($insTypes['local']) ? ' disabled="disabled"' : '';
@@ -989,11 +995,11 @@ function tpl_install_finish($url = '')
     echo <<<EOF
 	<div class="page-header"><h3>安装完成</h3></div>
 	<div class="alert alert-success">
-		恭喜您!已成功安装“星数（xsframe）软件开发开源系统”系统，您现在可以: <a target="_self" class="btn btn-success" href="$url/home/index">访问网站首页</a>
-		<a target="_self" class="btn btn-success" href="$url/admin/index">访问管理后台</a>
+		恭喜您!已成功安装“星数为来数字化开发引擎框架”系统，您现在可以: 
+		<a target="_self" class="btn btn-success" href="$url/admin/login">访问管理后台</a>
 	</div>
 	<div class="form-group">
-		<h5><strong>星数（xsframe）软件开发开源系统</strong></h5>		
+		<h5><strong>星数为来数字化开发引擎框架</strong></h5>		
 	</div>
 
 	
