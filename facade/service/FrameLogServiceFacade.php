@@ -3,12 +3,12 @@
 namespace app\xs_cloud\facade\service;
 
 use xsframe\base\BaseFacade;
-use app\xs_cloud\service\MemberService;
+use app\xs_cloud\service\FrameLogService;
 
-class MemberServiceFacade extends BaseFacade
+class FrameLogServiceFacade extends BaseFacade
 {
     protected static function getFacadeClass()
     {
-        return MemberService::class;
+        return FrameLogService::class;
     }
 }

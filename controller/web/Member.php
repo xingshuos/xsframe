@@ -2,13 +2,11 @@
 
 namespace app\xs_cloud\controller\web;
 
-use app\xs_cloud\facade\service\FrameLogServiceFacade;
-use app\xs_cloud\facade\service\FrameVersionServiceFacade;
-use app\xs_cloud\service\FrameVersionService;
+use app\xs_cloud\facade\service\MemberAppServiceFacade;
+use app\xs_cloud\facade\service\MemberServiceFacade;
 use xsframe\base\AdminBaseController;
-use xsframe\util\StringUtil;
 
-class Frames extends AdminBaseController
+class Member extends AdminBaseController
 {
     public function index()
     {
@@ -17,7 +15,7 @@ class Frames extends AdminBaseController
 
     public function main()
     {
-        $keyword = $this->params['keyword'];
+        $keyword = trim($this->params['keyword']);
         $status = $this->params['status'];
         $searchTime = trim($this->params["searchtime"]);
 
@@ -35,24 +33,24 @@ class Frames extends AdminBaseController
             $condition .= " and `status` = " . intval($status);
         }
 
-        if (!empty($searchTime) && is_array($this->params["time"]) && in_array($searchTime, array("create", "update"))) {
+        if (!empty($searchTime) && is_array($this->params["time"]) && in_array($searchTime, array("create"))) {
             $startTime = strtotime($this->params["time"]["start"]);
             $endTime = strtotime($this->params["time"]["end"]);
             $condition .= " and `" . $searchTime . "time" . "` between " . $startTime . " and " . $endTime;
         }
 
         if (!empty($keyword)) {
-            $condition .= " and ( title like :title or version like :version ) ";
-            $params['title'] = "%" . trim($keyword) . "%";
-            $params['version'] = $params['title'];
+            $condition .= " and ( username like :title or code like :code ) ";
+            $params['username'] = "%{$keyword}%";
+            $params['code'] = "%{$keyword}%";
         }
 
-        $list = FrameVersionServiceFacade::getList([$condition, $params], "*", "id desc");
-        $total = FrameVersionServiceFacade::getTotal([$condition, $params]);
+        $list = MemberServiceFacade::getList([$condition, $params], "*", "id desc");
+        $total = MemberServiceFacade::getTotal([$condition, $params]);
         $pager = pagination2($total, $this->pIndex, $this->pSize);
 
-        foreach ($list as &$item) {
-            $item['downloadTotal'] = FrameLogServiceFacade::getTotal(['version' => $item['version']]);
+        foreach ($list as &$item){
+            $item['appTotal'] = MemberAppServiceFacade::getTotal(['mid' => $item['id']]);
         }
 
         $result = [
@@ -88,23 +86,18 @@ class Frames extends AdminBaseController
                 'content'    => htmlspecialchars_decode($this->params['content']),
                 'status'     => intval($this->params['status']),
                 'createtime' => time(),
-                'updatetime' => time(),
             );
 
             if (!empty($id)) {
                 unset($data['createtime']);
-                FrameVersionServiceFacade::updateInfo($data, ['id' => $id]);
+                MemberServiceFacade::updateInfo($data, ['id' => $id]);
             } else {
-                $id = FrameVersionServiceFacade::insertInfo($data);
+                $id = MemberServiceFacade::insertInfo($data);
             }
             show_json(1, array("url" => webUrl("frames/edit", array("id" => $id, "tab" => str_replace("#tab_", "", $this->params["tab"])))));
         }
 
-        $item = FrameVersionServiceFacade::getInfo(['id' => $id]);
-        if (empty($item)) {
-            $lastVersion = FrameVersionServiceFacade::getValue(['deleted' => 0], "version", "id desc");
-            $item['version'] = StringUtil::incrementVersion($lastVersion);
-        }
+        $item = MemberServiceFacade::getInfo(['id' => $id]);
 
         return $this->template('post', ['item' => $item]);
     }
@@ -120,9 +113,9 @@ class Frames extends AdminBaseController
         if (empty($id)) {
             show_json(0, array("message" => "参数错误"));
         }
-        $items = FrameVersionServiceFacade::getAll(['id' => $id]);
+        $items = MemberServiceFacade::getAll(['id' => $id]);
         foreach ($items as $item) {
-            FrameVersionServiceFacade::updateInfo(['deleted' => 1], ['id' => $item['id']]);
+            MemberServiceFacade::updateInfo(['deleted' => 1], ['id' => $item['id']]);
         }
         $this->success(array("url" => referer()));
     }
@@ -142,9 +135,9 @@ class Frames extends AdminBaseController
         $type = trim($this->params["type"]);
         $value = trim($this->params["value"]);
 
-        $items = FrameVersionServiceFacade::getAll(['id' => $id]);
+        $items = MemberServiceFacade::getAll(['id' => $id]);
         foreach ($items as $item) {
-            FrameVersionServiceFacade::updateInfo([$type => $value], ['id' => $item['id']]);
+            MemberServiceFacade::updateInfo([$type => $value], ['id' => $item['id']]);
         }
 
         $this->success();

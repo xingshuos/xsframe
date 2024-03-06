@@ -2,7 +2,7 @@
 
 {block name='content'}
 
-<div class="page-header">当前位置：<span class="text-primary">首页幻灯片管理</span></div>
+<div class="page-header">当前位置：<span class="text-primary">框架管理</span></div>
 
 <div class="page-content">
 
@@ -10,18 +10,28 @@
 
         <div class="page-toolbar">
             <div class="pull-left">
-                <a class='btn btn-primary btn-sm' href="{:webUrl('web.activity.adv/add')}"><i class='fa fa-plus'></i> 添加幻灯片</a>
+                <a class='btn btn-primary btn-sm' href="{:webUrl('frames/add')}"><i class='fa fa-plus'></i> 添加版本</a>
             </div>
             <div class="pull-right col-md-8">
                 <div class="input-group">
+                    <span class="input-group-select">
+                        <select name='searchtime' class='form-control' style="width:100px;padding:0 5px;" id="searchtime">
+                            <option value=''>不按时间</option>
+                            <option value='create' {if $_GET['searchtime']=='create'}selected{/if}>添加时间</option>
+                            <option value='update' {if $_GET['searchtime']=='update'}selected{/if}>更新时间</option>
+                        </select>
+                    </span>
+                    <span class="input-group-btn">
+                        {:tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
+                    </span>
                     <div class="input-group-select">
-                        <select name="enabled" class='form-control'>
-                            <option value="" {if $_GET['enabled'] == ''} selected{/if}>状态</option>
-                            <option value="1" {if $_GET['enabled']== '1'} selected{/if}>显示</option>
-                            <option value="0" {if $_GET['enabled'] == '0'} selected{/if}>隐藏</option>
+                        <select name="status" class='form-control'>
+                            <option value="" {if $_GET['status'] == ''} selected{/if}>状态</option>
+                            <option value="1" {if $_GET['status']== '1'} selected{/if}>上架</option>
+                            <option value="0" {if $_GET['status'] == '0'} selected{/if}>下架</option>
                         </select>
                     </div>
-                    <input type="text" class="form-control" name='keyword' value="{$_GET['keyword']}" placeholder="请输入关键词"/>
+                    <input type="text" class="form-control" name='keyword' value="{$_GET['keyword']}" placeholder="请输入关键词、版本号"/>
                     <span class="input-group-btn">
                         <button class="btn btn-primary" type="submit"> 搜索</button>
                     </span>
@@ -39,12 +49,12 @@
         <table class="table table-responsive table-hover">
             <thead class="navbar-inner">
             <tr>
-                <th style="width:50px;"></th>
-                <th style='width:150px'>顺序</th>
-                <th style='width:80px;'></th>
-                <th style="width: 200px;">标题</th>
-                <th>链接</th>
-                <th style='width:80px'>显示</th>
+                <th style="width:40px;"></th>
+                <th style='width:80px'>版本号</th>
+                <th style='width:200px;'>标题</th>
+                <th style="width: 80px;">创建时间</th>
+                <th style="width: 80px;">下载量</th>
+                <th style='width:80px'>状态</th>
                 <th style="width: 100px;">操作</th>
             </tr>
             </thead>
@@ -55,37 +65,37 @@
                     <input type='checkbox' value="{$row['id']}"/>
                 </td>
                 <td class='full'>
-                    <a href='javascript:;' data-toggle="ajaxEdit" data-href="{:webUrl('web.activity.adv/change',array('type'=>'displayorder','id'=>$row['id']))}">{$row['displayorder']}</a>
+                    <a href='javascript:;' data-toggle="ajaxEdit" data-href="{:webUrl('frames/change',array('type'=>'version','id'=>$row['id']))}">{$row['version']}</a>
                     <i class="icow icow-weibiaoti-- " data-toggle="ajaxEdit2"></i>
-                </td>
-                <td>
-                    <img style="width:50px;padding:1px;border:1px solid #ccc" src="{:tomedia($row['thumb'])}" onerror="this.src='/app/admin/static/images/default-pic.jpg'">
                 </td>
                 <td class='full'>
-                    <a href='javascript:;' data-toggle="ajaxEdit" data-href="{:webUrl('web.activity.adv/change',array('type'=>'advname','id'=>$row['id']))}">{$row['advname']}</a>
+                    <a href='javascript:;' data-toggle="ajaxEdit" data-href="{:webUrl('frames/change',array('type'=>'title','id'=>$row['id']))}">{$row['title']}</a>
                     <i class="icow icow-weibiaoti-- " data-toggle="ajaxEdit2"></i>
                 </td>
                 <td>
-                    <a href='javascript:;' data-toggle="ajaxEdit" data-href="{:webUrl('web.activity.adv/change',array('type'=>'link','id'=>$row['id']))}">{$row['link']}</a>
-                    <i class="icow icow-weibiaoti-- " data-toggle="ajaxEdit2"></i>
+                    {:date('Y-m-d',$row['createtime'])}<br>
+                    {:date('H:i:s',$row['createtime'])}
                 </td>
                 <td>
-                    <span class='label {if $row['enabled']==1}label-primary{else}label-default{/if}'
+                    {$row['downloadTotal']}
+                </td>
+                <td>
+                    <span class='label {if $row['status']==1}label-primary{else}label-default{/if}'
                     data-toggle='ajaxSwitch'
-                    data-switch-value='{$row['enabled']}'
-                    data-switch-value0='0|隐藏|label label-default|{:webUrl('web.activity.adv/change',array('type' => 'enabled','value'=>1,'id'=>$row['id']))}'
-                    data-switch-value1='1|显示|label label-primary|{:webUrl('web.activity.adv/change',array('type' => 'enabled','value'=>0,'id'=>$row['id']))}'
+                    data-switch-value='{$row['status']}'
+                    data-switch-value0='0|下架|label label-default|{:webUrl('frames/change',array('type' => 'status','value'=>1,'id'=>$row['id']))}'
+                    data-switch-value1='1|上架|label label-primary|{:webUrl('frames/change',array('type' => 'status','value'=>0,'id'=>$row['id']))}'
                     >
-                    {if $row['enabled']==1}显示{else}隐藏{/if}
+                    {if $row['status']==1}上架{else}下架{/if}
                     </span>
                 </td>
                 <td style="text-align:left;">
-                    <a href="{:webUrl('web.activity.adv/edit', array('id' => $row['id']))}" class="btn btn-op btn-operation">
+                    <a href="{:webUrl('frames/edit', array('id' => $row['id']))}" class="btn btn-op btn-operation">
                         <span data-toggle="tooltip" data-placement="top" data-original-title="修改">
                             <i class='icow icow-bianji2'></i>
                         </span>
                     </a>
-                    <a data-toggle='ajaxRemove' href="{:webUrl('web.activity.adv/delete', array('id' => $row['id']))}" class="btn btn-op btn-operation" data-confirm='确认要删除此幻灯片吗?'>
+                    <a data-toggle='ajaxRemove' href="{:webUrl('frames/delete', array('id' => $row['id']))}" class="btn btn-op btn-operation" data-confirm='确认要删除此版本吗?'>
                         <span data-toggle="tooltip" data-placement="top" data-original-title="删除">
                             <i class='icow icow-shanchu1'></i>
                         </span>
@@ -99,9 +109,9 @@
                 <td><input type="checkbox"></td>
                 <td colspan="3">
                     <div class="btn-group">
-                        <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('web.activity.adv/change',array('type' => 'enabled','value'=>1))}"><i class='icow icow-xianshi'></i> 显示</button>
-                        <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('web.activity.adv/change',array('type' => 'enabled','value'=>0))}"><i class='icow icow-yincang'></i> 隐藏</button>
-                        <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('web.activity.adv/change',array('type' => 'deleted','value'=>1))}">
+                        <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('frames/change',array('type' => 'status','value'=>1))}"><i class='icow icow-xianshi'></i> 上架</button>
+                        <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('frames/change',array('type' => 'status','value'=>0))}"><i class='icow icow-yincang'></i> 下架</button>
+                        <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('frames/change',array('type' => 'deleted','value'=>1))}">
                             <i class='icow icow-shanchu1'></i> 删除
                         </button>
                     </div>

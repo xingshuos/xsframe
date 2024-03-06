@@ -13,39 +13,20 @@ $menu = [
     'frames' => array(
         'title'    => '框架',
         'subtitle' => '框架管理',
-        'icon'     => 'icon-shopping-cart',
-        'items'    => array(
-            array(
-                'title' => '版本列表',
-                'route' => 'main',
-                'route_in' => true,
-            ),
-        )
+        'icon'     => 'icon-list-alt',
     ),
 
-    'article' => array(
+    'apps' => array(
         'title'    => '应用',
         'subtitle' => '应用管理',
-        'icon'     => 'icon-file-text-alt',
-        'items'    => array(
-            array(
-                'title' => '应用列表',
-                'route' => 'main',
-            ),
-        )
+        'icon'     => 'icon-th',
     ),
 
     'member' => array(
         'title'    => '用户',
         'subtitle' => '用户管理',
-        'icon'     => 'icon-group',
-        'items'    => array(
-            array(
-                'title' => '用户列表',
-                'route' => 'main',
-            ),
-        )
+        'icon'     => 'icon-user',
     ),
-
 ];
+
 return $menu;
