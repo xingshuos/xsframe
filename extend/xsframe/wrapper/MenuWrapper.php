@@ -41,7 +41,8 @@ class MenuWrapper
                     'subtitle' => $val['subtitle'],
                     'active'   => 0,
                 );
-                if( !strexists($menu_item['route'],'web.') ){
+
+                if (!strexists($menu_item['route'], 'web.') && $module != 'admin') {
                     $menu_item['route'] = "web." . $menu_item['route'];
                 }
 
