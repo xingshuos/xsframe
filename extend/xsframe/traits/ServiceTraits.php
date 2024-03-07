@@ -15,13 +15,14 @@ trait ServiceTraits
      * 获取数据基本信息
      * @param $where
      * @param string $field
+     * @param string $order
      * @return array|mixed|Db|Model|null
      */
-    public function getInfo($where, string $field = "*")
+    public function getInfo($where, string $field = "*", string $order = "")
     {
         try {
             extract(self::getWhere($where));
-            $info = Db::name($this->tableName)->field($field)->where($where, $op, $condition)->find();
+            $info = Db::name($this->tableName)->field($field)->where($where, $op, $condition)->order($order)->find();
         } catch (\Exception $exception) {
             $info = [];
         }

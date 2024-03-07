@@ -34,14 +34,6 @@ return [
                 'title' => '用户管理',
                 'route' => 'list',
             ),
-            // array(
-            //     'title' => '角色管理',
-            //     'route' => 'role',
-            // ),
-            // array(
-            //     'title' => '操作日志',
-            //     'route' => 'log',
-            // ),
         )
     ),
     'sysset'  => array(
