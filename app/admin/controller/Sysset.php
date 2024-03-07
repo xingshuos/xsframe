@@ -2,6 +2,7 @@
 
 namespace app\admin\controller;
 
+use xsframe\util\RequestUtil;
 use xsframe\wrapper\AccountHostWrapper;
 use xsframe\wrapper\AttachmentWrapper;
 use xsframe\enum\SysSettingsKeyEnum;
@@ -61,13 +62,13 @@ class Sysset extends Base
 
         $accountSettings = $this->settingsController->getSysSettings(SysSettingsKeyEnum::ATTACHMENT_KEY);
 
-        $vars = [
+        $result = [
             'post_max_size'       => $post_max_size,
             'upload_max_filesize' => $upload_max_filesize,
             'accountSettings'     => $accountSettings,
             'local_attachment'    => $localAttachment,
         ];
-        return $this->template('attachment', $vars);
+        return $this->template('attachment', $result);
     }
 
     // 网站设置
@@ -86,12 +87,12 @@ class Sysset extends Base
 
         $list = Db::name('sys_account')->where(['deleted' => 0])->order('uniacid desc')->select();
 
-        $vars = [
+        $result = [
             'data' => $websiteSets,
             'list' => $list,
             'ip'   => $this->ip,
         ];
-        return $this->template('site', $vars);
+        return $this->template('site', $result);
     }
 
     // 域名设置
@@ -273,9 +274,34 @@ class Sysset extends Base
             show_json(1, ['url' => url('sysset/bom')]);
         }
 
-        $vars = [
+        $result = [
             'bomTree' => $bomTree
         ];
-        return $this->template('bom', $vars);
+        return $this->template('bom', $result);
+    }
+
+    // 系统升级
+    public function upgrade(): \think\response\View
+    {
+        $key = 'cloudFrameUpgradeList';
+        $upgradeList = Cache::get($key);
+
+        if (empty($upgradeList)) {
+            $response = RequestUtil::httpGet("https://www.xsframe.cn/cloud/api/upgrade");
+            $result = json_decode($response, true);
+
+            if (empty($result) || $result['code'] != 200) {
+                $upgradeList = array();
+            } else {
+                $upgradeList = $result['data']['list'];
+            }
+
+            Cache::set($key, $upgradeList, 7200);
+        }
+
+        $result = [
+            'upgradeList' => $upgradeList
+        ];
+        return $this->template('upgrade', $result);
     }
 }
