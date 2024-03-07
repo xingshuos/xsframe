@@ -2,11 +2,11 @@
 
 use think\facade\Route;
 
-Route::group(function () {
+Route::group('api', function () {
 
     //无需登录
     Route::group(function () {
-
+        Route::any('upgrade', 'api.upgrade/getUpgradeList');
     });
 
     // 需要登陆

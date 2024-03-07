@@ -53,6 +53,7 @@
                 <th style='width:80px'>版本号</th>
                 <th style='width:200px;'>标题</th>
                 <th style="width: 80px;">创建时间</th>
+                <th style="width: 80px;">更新时间</th>
                 <th style="width: 80px;">下载量</th>
                 <th style='width:80px'>状态</th>
                 <th style="width: 100px;">操作</th>
@@ -75,6 +76,10 @@
                 <td>
                     {:date('Y-m-d',$row['createtime'])}<br>
                     {:date('H:i:s',$row['createtime'])}
+                </td>
+                <td>
+                    {:date('Y-m-d',$row['updatetime'])}<br>
+                    {:date('H:i:s',$row['updatetime'])}
                 </td>
                 <td>
                     {$row['downloadTotal']}
@@ -116,7 +121,7 @@
                         </button>
                     </div>
                 </td>
-                <td colspan="3" style="text-align: right">
+                <td colspan="4" style="text-align: right">
                     {$pager | raw}
                 </td>
             </tr>

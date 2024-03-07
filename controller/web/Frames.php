@@ -6,6 +6,7 @@ use app\xs_cloud\facade\service\FrameLogServiceFacade;
 use app\xs_cloud\facade\service\FrameVersionServiceFacade;
 use app\xs_cloud\service\FrameVersionService;
 use xsframe\base\AdminBaseController;
+use xsframe\util\FileUtil;
 use xsframe\util\StringUtil;
 
 class Frames extends AdminBaseController
@@ -97,6 +98,10 @@ class Frames extends AdminBaseController
             } else {
                 $id = FrameVersionServiceFacade::insertInfo($data);
             }
+
+            # 创建框架版本文件夹
+            $this->createFramePackage($data['version']);
+
             show_json(1, array("url" => webUrl("frames/edit", array("id" => $id, "tab" => str_replace("#tab_", "", $this->params["tab"])))));
         }
 
@@ -107,6 +112,35 @@ class Frames extends AdminBaseController
         }
 
         return $this->template('post', ['item' => $item]);
+    }
+
+    // 创建软件包
+    private function createFramePackage($version): bool
+    {
+        # 1.创建目录
+        $framesPath = IA_ROOT . "/storage/releases/frames/{$version}";
+        FileUtil::mkDirs($framesPath);
+
+        # 2.主目录
+        $mainDirectory = array(
+            IA_ROOT . '/app/admin',
+            IA_ROOT . '/config',
+            IA_ROOT . '/extend',
+            IA_ROOT . '/public/app/admin',
+            IA_ROOT . '/vendor',
+            IA_ROOT . '/public/index.php',
+            IA_ROOT . '/public/router.php',
+        );
+
+        $data = [];
+        foreach ($mainDirectory as $item) {
+            $data = array_merge($data, FileUtil::getDir($item));
+            FileUtil::oldDirToNewDir($item, $framesPath . str_replace(IA_ROOT, "", $item));
+        }
+
+        # 3.写入对比日志
+        file_put_contents($framesPath . "/upgrade.log", json_encode($data));
+        return true;
     }
 
     public function delete()

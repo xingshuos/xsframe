@@ -2,16 +2,15 @@
 
 {block name='content'}
 
-<style>
-    .multi-item {
-        margin-bottom: 18px;
-    }
-</style>
-
 <div class="page-header">
     当前位置：<span class="text-primary">{if !empty($item)}编辑{else}新建{/if}版本
     	<small>{if !empty($item)}(名称: {$item['company']}){/if}</small>
     </span>
+</div>
+
+<div class="alert alert-info">
+    <p>1.在添加版本前请更新当前框架为指定版本</p>
+    <p>2.添加的版本是以当前系统为参照，所以做好系统内侧再提交版本</p>
 </div>
 
 <div class="page-content">
@@ -22,16 +21,16 @@
         <div class="form-group-title">版本信息</div>
 
         <div class="form-group">
-            <label class="col-lg control-label">版本号</label>
+            <label class="col-lg control-label must">版本号</label>
             <div class="col-sm-9 col-xs-12">
-                <input type="text" name="version" class="form-control" value="{$item['version']}" placeholder="1.0.1"/>
+                <input type="text" name="version" class="form-control" value="{$item['version']}" placeholder="1.0.1" data-rule-required="true"/>
             </div>
         </div>
 
         <div class="form-group">
-            <label class="col-lg control-label">标题</label>
+            <label class="col-lg control-label must">标题</label>
             <div class="col-sm-9 col-xs-12">
-                <input type="text" name="title" class="form-control" value="{$item['title']}"/>
+                <input type="text" name="title" class="form-control" value="{$item['title']}" data-rule-required="true"/>
             </div>
         </div>
 
