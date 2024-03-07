@@ -34,6 +34,7 @@ GitHub.sublime-settings
 /.idea
 /.vscode
 /runtime
+/storage
 /public/install/install.lock
 *.log
 .env

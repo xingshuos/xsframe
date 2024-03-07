@@ -4,7 +4,6 @@ error_reporting(0);
 ob_start();
 header('content-type: text/html; charset=utf-8');
 define('PATH_ROOT', str_replace("\\", '/', dirname(dirname(__FILE__))));
-define("PERMISSIONS", 755);
 $actions = array('license', 'env', 'db', 'finish');
 $action = $_COOKIE['action'];
 $action = in_array($action, $actions) ? $action : 'license';
@@ -242,7 +241,7 @@ if ($action == 'env') {
     if (!is_file(dirname(PATH_ROOT) . '/.env')) {
         $envPath = dirname(PATH_ROOT) . '/.env';
         @touch($envPath);
-        chmod($envPath, PERMISSIONS);
+        @chmod($envPath, 777);
     }
 
     $ret['write']['database']['ok'] = is_writable(dirname(PATH_ROOT) . '/.env');

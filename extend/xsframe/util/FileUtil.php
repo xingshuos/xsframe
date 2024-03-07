@@ -22,7 +22,7 @@ class FileUtil
     {
         if (!is_dir($path)) {
             self::mkdirs(dirname($path));
-            mkDir($path);
+            mkDir($path, 0777, true);
         }
         return is_dir($path);
     }
@@ -103,7 +103,7 @@ class FileUtil
 
                     if (is_dir($tmpPath)) {
                         if (!is_dir($newPath . $pathName)) {
-                            mkdir($newPath . $pathName);
+                            mkdir($newPath . $pathName, 0777, true);
                         }
                         self::oldDirToNewDir($tmpPath, $newPath, $oldPath);
                     } elseif (is_file($tmpPath)) {
@@ -111,12 +111,23 @@ class FileUtil
                         $newFilePath = str_replace("//", '/', $newPath . $pathName . "/" . $fileName);
 
                         if (!is_file($newFilePath) || md5_file($tmpFile) != md5_file($newFilePath)) {
+                            $newFilePathInfo = pathinfo($newFilePath);
+                            if (!is_dir($newFilePathInfo['dirname'])) {
+                                @mkdir($newFilePathInfo['dirname'], 0777, true);
+                            }
+
                             @copy($tmpFile, $newFilePath);
+                            @chmod($newFilePath, 777);
                         }
                     }
                 }
             }
             $dp->close();
+        } else {
+            if (!is_file($newPath) || md5_file($path) != md5_file($newPath)) {
+                @copy($path, $newPath);
+                @chmod($newPath, 777);
+            }
         }
         return true;
     }
