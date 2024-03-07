@@ -283,9 +283,9 @@ class Sysset extends Base
     // 系统升级
     public function upgrade(): \think\response\View
     {
+        // 获取更新日志 start
         $key = 'cloudFrameUpgradeList';
         $upgradeList = Cache::get($key);
-
         if (empty($upgradeList)) {
             $response = RequestUtil::httpGet("https://www.xsframe.cn/cloud/api/upgrade");
             $result = json_decode($response, true);
@@ -298,9 +298,38 @@ class Sysset extends Base
 
             Cache::set($key, $upgradeList, 7200);
         }
+        // 获取更新日志 end
+
+        # 版本对比是否存在最新版本 start
+        $updateFiles = [];
+        $systemVersion = "1.0.1";
+        if (!empty($upgradeList[0]) && version_compare($upgradeList[0]['version'], $systemVersion, '>')) {
+            $response = RequestUtil::httpGet("https://www.xsframe.cn/cloud/api/upgradeFiles");
+//            $response = RequestUtil::httpGet("http://www.xsframe.com/cloud/api/upgradeFiles");
+            $result = json_decode($response, true);
+
+            if (empty($result) || $result['code'] != 200) {
+                $updateFiles = array();
+            } else {
+                $files = json_decode($result['data']['upgradeFiles'], true);
+
+                if (!empty($files)) {
+                    foreach ($files as $file) {
+                        $entry = IA_ROOT . $file['path'];
+
+                        if (!is_file($entry) || md5_file($entry) != $file['checksum'] ) {
+                            $updateFiles[] = $file['path'];
+                        }
+                    }
+                    unset($file);
+                }
+            }
+        }
+        # 版本对比是否存在最新版本 end
 
         $result = [
-            'upgradeList' => $upgradeList
+            'upgradeList' => $upgradeList,
+            'updateFiles' => $updateFiles,
         ];
         return $this->template('upgrade', $result);
     }

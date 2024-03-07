@@ -28,13 +28,13 @@
             <div class="panel-heading">更新系统 </div>
             <div class="panel-body">
 
-                {if !empty($upgradeList)}
+                {if !empty($updateFiles)}
                     <div class="form-group">
                         <label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">文件同步情况</label>
                         <div class="col-sm-10">
                             <div class="help-block"><strong>注意: 重要: 本次更新涉及到程序变动, 请做好备份.</strong></div>
                             <div class="alert alert-info" style="line-height:20px;margin-top:20px;">
-                                {foreach $upgradeList as $key => $file}
+                                {foreach $updateFiles as $key => $file}
                                     <div><span style="display:inline-block; width:30px;">M</span>{$file}</div>
                                 {/foreach}
                             </div>
