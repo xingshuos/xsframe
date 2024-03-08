@@ -7,6 +7,8 @@ Route::group('api', function () {
     //无需登录
     Route::group(function () {
         Route::any('upgrade', 'api.upgrade/getUpgradeList');
+        Route::any('upgradeFiles', 'api.upgrade/getUpgradeFiles');
+        Route::any('upgradeFileData', 'api.upgrade/getUpgradeFileData');
     });
 
     // 需要登陆

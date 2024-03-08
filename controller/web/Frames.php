@@ -132,10 +132,19 @@ class Frames extends AdminBaseController
             IA_ROOT . '/public/router.php',
         );
 
+        # 3.设置同步文件的类型
+        $syncTypes = ['php', 'html', 'js', 'xml', 'css', 'png', 'jpg', 'jpeg', 'gif'];
+
         $data = [];
         foreach ($mainDirectory as $item) {
-            $data = array_merge($data, FileUtil::getDir($item));
             FileUtil::oldDirToNewDir($item, $framesPath . str_replace(IA_ROOT, "", $item));
+            $getDataItem = FileUtil::getDir($item, $syncTypes);
+
+            foreach ($getDataItem as $i => $d) {
+                $getDataItem[$i]['path'] = str_replace(IA_ROOT, "", $d['path']);
+            }
+
+            $data = array_merge($data, $getDataItem);
         }
 
         # 3.写入对比日志
