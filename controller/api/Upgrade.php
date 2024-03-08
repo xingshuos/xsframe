@@ -2,6 +2,7 @@
 
 namespace app\xs_cloud\controller\api;
 
+use app\xs_cloud\facade\service\FrameLogServiceFacade;
 use app\xs_cloud\facade\service\FrameVersionServiceFacade;
 use xsframe\base\ApiBaseController;
 
@@ -40,6 +41,8 @@ class Upgrade extends ApiBaseController
 
     public function getUpgradeFileData(): \think\response\Json
     {
+        $hostIp = $this->params['host_ip'] ?? '';
+        $hostUrl = $this->params['host_url'] ?? '';
         $filePath = $this->params['file_path'] ?? '';
         $fileType = substr(strrchr($filePath, '.'), 1);
 
@@ -55,6 +58,8 @@ class Upgrade extends ApiBaseController
                 }
             }
         }
+        
+        FrameLogServiceFacade::insertInfo(['mid' => 0, 'host_url' => $hostUrl, 'host_ip' => $hostIp, 'createtime' => time(), 'version' => $upgradeInfo['version']]);
 
         $result = [
             'version'  => $upgradeInfo['version'],
