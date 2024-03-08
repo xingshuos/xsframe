@@ -296,6 +296,29 @@ class Sysset extends Base
         return $this->template('upgrade', $result);
     }
 
+    // 更新完毕
+    private function upgradeSuccess($version): bool
+    {
+        $tpl = <<<EOF
+<?php
+
+// +----------------------------------------------------------------------
+// | 星数 [ WE CAN DO IT JUST THINK ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2023~2024 http://xsframe.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+// +----------------------------------------------------------------------
+// | Author: guiHai <786824455@qq.com>
+// +----------------------------------------------------------------------
+
+define('IMS_VERSION', '{$version}');
+
+EOF;
+        file_put_contents(IA_ROOT . "/public/version.php", $tpl);
+        return true;
+    }
+
     // 执行文件升级
     private function doUpgradeFiles($updateFiles)
     {
@@ -321,23 +344,7 @@ class Sysset extends Base
 
                 file_put_contents(IA_ROOT . $filePath, $fileData);
 
-                $tpl = <<<EOF
-<?php
-
-// +----------------------------------------------------------------------
-// | 星数 [ WE CAN DO IT JUST THINK ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2023~2024 http://xsframe.cn All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
-// +----------------------------------------------------------------------
-// | Author: guiHai <786824455@qq.com>
-// +----------------------------------------------------------------------
-
-define('IMS_VERSION', '{$version}');
-
-EOF;
-                file_put_contents(IA_ROOT . "/public/version.php", $tpl);
+                $this->upgradeSuccess($version);
             }
 
             $filesKey = 'cloudFrameUpgradeFiles';
@@ -382,6 +389,7 @@ EOF;
             if (empty($result) || $result['code'] != 200) {
                 $updateFiles = array();
             } else {
+                $version = $result['data']['version'];
                 $files = json_decode($result['data']['upgradeFiles'], true);
 
                 if (!empty($files)) {
@@ -394,6 +402,8 @@ EOF;
                         }
                     }
                     unset($file);
+                } else {
+                    $this->upgradeSuccess($version);
                 }
             }
 
