@@ -242,7 +242,7 @@ if ($action == 'env') {
     if (!is_file(dirname(PATH_ROOT) . '/.env')) {
         $envPath = dirname(PATH_ROOT) . '/.env';
         @touch($envPath);
-        @chmod($envPath, 777);
+        @chmod($envPath, 0777);
     }
 
     $ret['write']['database']['ok'] = is_writable(dirname(PATH_ROOT) . '/.env');

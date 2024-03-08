@@ -117,7 +117,7 @@ class FileUtil
                             }
 
                             @copy($tmpFile, $newFilePath);
-                            @chmod($newFilePath, 777);
+                            @chmod($newFilePath, 0777);
                         }
                     }
                 }
@@ -126,7 +126,7 @@ class FileUtil
         } else {
             if (!is_file($newPath) || md5_file($path) != md5_file($newPath)) {
                 @copy($path, $newPath);
-                @chmod($newPath, 777);
+                @chmod($newPath, 0777);
             }
         }
         return true;
