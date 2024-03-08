@@ -281,11 +281,14 @@ class Sysset extends Base
     // 系统升级
     public function upgrade(): \think\response\View
     {
+        $isCheckUpdate = $this->params['is_update'] ?? 0;
         $upgradeList = $this->getUpgradeList();
-        $updateFiles = $this->getUpdateFiles($upgradeList[0]);
+        $updateFiles = $this->getUpdateFiles($upgradeList[0], $isCheckUpdate);
 
         if ($this->request->isPost()) {
-            $this->doUpgradeFiles($updateFiles);
+            if( empty($isCheckUpdate) ){
+                $this->doUpgradeFiles($updateFiles);
+            }
             show_json(1, ["url" => url("sysset/upgrade", ['tab' => str_replace("#tab_", "", $this->params['tab'])])]);
         }
 
@@ -375,15 +378,14 @@ EOF;
     }
 
     // 获取待更新文件列表
-    private function getUpdateFiles($upgradeInfo = null)
+    private function getUpdateFiles($upgradeInfo = null, $isCheckUpdate = 0)
     {
         # 版本对比是否存在最新版本 start
         $filesKey = 'cloudFrameUpgradeFiles';
         $updateFiles = Cache::get($filesKey);
 
-        if (empty($updateFiles) && (!empty($upgradeInfo) && version_compare($upgradeInfo['version'], IMS_VERSION, '>'))) {
+        if ((empty($updateFiles) && (!empty($upgradeInfo) && version_compare($upgradeInfo['version'], IMS_VERSION, '>'))) || !empty($isCheckUpdate)) {
             $response = RequestUtil::httpGet("https://www.xsframe.cn/cloud/api/upgradeFiles");
-            // $response = RequestUtil::httpGet("http://www.xsframe.com/cloud/api/upgradeFiles");
             $result = json_decode($response, true);
 
             if (empty($result) || $result['code'] != 200) {
@@ -404,7 +406,7 @@ EOF;
                     unset($file);
                 }
 
-                if( empty($updateFiles) ){
+                if (empty($updateFiles)) {
                     $this->upgradeSuccess($version);
                 }
             }
