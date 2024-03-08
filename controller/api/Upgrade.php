@@ -31,7 +31,7 @@ class Upgrade extends ApiBaseController
         }
 
         $result = [
-            'upgradeInfo'  => $upgradeInfo,
+            'version'      => $upgradeInfo['version'],
             'upgradeFiles' => $upgradeFiles,
         ];
 
