@@ -99,8 +99,11 @@ class Frames extends AdminBaseController
                 $id = FrameVersionServiceFacade::insertInfo($data);
             }
 
-            # 创建框架版本文件夹
-            $this->createFramePackage($data['version']);
+            # 创建框架版本文件夹 是否存在最新版本 如果存在不允许再次发布到旧版本中
+            $upgradeInfo = FrameVersionServiceFacade::getInfo(['status' => 1, 'deleted' => 0], "version,title,updatetime", "id desc");
+            if (!version_compare($upgradeInfo['version'], $data['version'], '>')) {
+                $this->createFramePackage($data['version']);
+            }
 
             show_json(1, array("url" => webUrl("frames/edit", array("id" => $id, "tab" => str_replace("#tab_", "", $this->params["tab"])))));
         }
