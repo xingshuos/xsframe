@@ -10,7 +10,7 @@ class Upgrade extends ApiBaseController
 {
     public function getUpgradeList(): \think\response\Json
     {
-        $upgradeList = FrameVersionServiceFacade::getList(['status' => 1, 'deleted' => 0], "version,title,updatetime", "id desc");
+        $upgradeList = FrameVersionServiceFacade::getList(['status' => 1, 'deleted' => 0], "version,title,updatetime,content", "id desc");
 
         $result = [
             'list' => $upgradeList,
@@ -58,7 +58,7 @@ class Upgrade extends ApiBaseController
                 }
             }
         }
-        
+
         FrameLogServiceFacade::insertInfo(['mid' => 0, 'host_url' => $hostUrl, 'host_ip' => $hostIp, 'createtime' => time(), 'version' => $upgradeInfo['version']]);
 
         $result = [
