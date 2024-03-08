@@ -16,7 +16,7 @@
                 <h2><i class="fa fa-refresh"></i> 更新日志</h2>
                 <ul class="list-unstyled" style="margin-top: 15px;">
                     {foreach $upgradeList as $key => $row}
-                        <li style="line-height: 28px;font-size: 14px;"><span class="pull-right"> {:date('Y-m-d H:i:s',$row['updatetime'])}</span><a href="javascript:;" title="{$row['title']}">{$row['version']} {$row['title']}</a></li>
+                        <li style="line-height: 28px;font-size: 14px;"><span class="pull-right"> {:date('Y-m-d H:i:s',$row['updatetime'])}</span><a href="javascript:;" title="{$row['title']}" onclick="ajaxModel(this)" data-url="{:webUrl('sysset/versionContent',['version' => $row['version'],'content' => $row['content']])}">{$row['version']} {$row['title']}</a></li>
                     {/foreach}
                 </ul>
             </div>

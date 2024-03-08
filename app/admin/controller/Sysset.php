@@ -286,7 +286,7 @@ class Sysset extends Base
         $updateFiles = $this->getUpdateFiles($upgradeList[0], $isCheckUpdate);
 
         if ($this->request->isPost()) {
-            if( empty($isCheckUpdate) ){
+            if (empty($isCheckUpdate)) {
                 $this->doUpgradeFiles($updateFiles);
             }
             show_json(1, ["url" => url("sysset/upgrade", ['tab' => str_replace("#tab_", "", $this->params['tab'])])]);
@@ -297,6 +297,19 @@ class Sysset extends Base
             'updateFiles' => $updateFiles,
         ];
         return $this->template('upgrade', $result);
+    }
+
+    // 显示升级内容
+    public function versionContent()
+    {
+        $version = $this->params['version'] ?? '';
+        $content = $this->params['content'] ?? '';
+
+        $result = [
+            'version' => $version,
+            'content' => $content,
+        ];
+        return $this->template('version', $result);
     }
 
     // 更新完毕
@@ -331,7 +344,7 @@ EOF;
                 mkdir($file_dir, 0777, true);
             }
 
-            $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/upgradeFileData", array('file_path' => $filePath,'host_ip' => $this->ip,'host_url' => $_SERVER['HTTP_HOST']));
+            $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/upgradeFileData", array('file_path' => $filePath, 'host_ip' => $this->ip, 'host_url' => $_SERVER['HTTP_HOST']));
             $result = json_decode($response, true);
 
             if (empty($result) || $result['code'] != 200) {
@@ -417,4 +430,5 @@ EOF;
 
         return $updateFiles;
     }
+
 }

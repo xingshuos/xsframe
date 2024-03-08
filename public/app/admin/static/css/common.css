@@ -2603,7 +2603,7 @@ a.form-control-static {
 /*}*/
 
 .modal.in .modal-dialog, .modal-dialog {
-    min-width: 720px !important;
+    min-width: 920px !important;
     position: absolute;
     left: 0;
     right: 0;
