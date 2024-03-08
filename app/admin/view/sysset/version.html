@@ -8,7 +8,7 @@
 
             <div class="modal-body">
                 {if !empty($content)}
-                    {$content}
+                    {$content|raw}
                 {else}
                     暂无内容
                 {/if}
