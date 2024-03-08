@@ -282,7 +282,7 @@ class Sysset extends Base
     public function upgrade(): \think\response\View
     {
         $isCheckUpdate = $this->params['is_update'] ?? 0;
-        $upgradeList = $this->getUpgradeList();
+        $upgradeList = $this->getUpgradeList($isCheckUpdate);
         $updateFiles = $this->getUpdateFiles($upgradeList[0], $isCheckUpdate);
 
         if ($this->request->isPost()) {
@@ -331,7 +331,7 @@ EOF;
                 mkdir($file_dir, 0777, true);
             }
 
-            $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/upgradeFileData", array('file_path' => $filePath));
+            $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/upgradeFileData", array('file_path' => $filePath,'host_ip' => $this->ip,'host_url' => $_SERVER['HTTP_HOST']));
             $result = json_decode($response, true);
 
             if (empty($result) || $result['code'] != 200) {
@@ -356,12 +356,12 @@ EOF;
     }
 
     // 获取升级日志列表
-    private function getUpgradeList()
+    private function getUpgradeList($isCheckUpdate = null)
     {
         // 获取更新日志 start
         $key = 'cloudFrameUpgradeList';
         $upgradeList = Cache::get($key);
-        if (empty($upgradeList)) {
+        if (empty($upgradeList) || !empty($isCheckUpdate)) {
             $response = RequestUtil::httpGet("https://www.xsframe.cn/cloud/api/upgrade");
             $result = json_decode($response, true);
 
@@ -378,7 +378,7 @@ EOF;
     }
 
     // 获取待更新文件列表
-    private function getUpdateFiles($upgradeInfo = null, $isCheckUpdate = 0)
+    private function getUpdateFiles($upgradeInfo = null, $isCheckUpdate = null)
     {
         # 版本对比是否存在最新版本 start
         $filesKey = 'cloudFrameUpgradeFiles';
