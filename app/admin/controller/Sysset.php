@@ -402,7 +402,9 @@ EOF;
                         }
                     }
                     unset($file);
-                } else {
+                }
+
+                if( empty($updateFiles) ){
                     $this->upgradeSuccess($version);
                 }
             }
