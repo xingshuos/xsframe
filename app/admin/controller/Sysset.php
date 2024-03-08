@@ -312,13 +312,17 @@ class Sysset extends Base
 
             if (empty($result) || $result['code'] != 200) {
                 continue;
-            }else{
+            } else {
                 $fileData = $result['data']['fileData'];
+                $fileType = substr(strrchr($filePath, '.'), 1);
+
+                if (in_array($fileType, ['gif', 'jpg', 'jpeg', 'bmp', 'png', 'ico', 'heic'])) {
+                    $fileData = base64_decode($fileData);
+                }
+
                 file_put_contents(IA_ROOT . $filePath, $fileData);
             }
-
-            $fileType = substr(strrchr($fileData, '.'), 1);
-
+            
             $filesKey = 'cloudFrameUpgradeFiles';
             Cache::delete($filesKey);
         }
