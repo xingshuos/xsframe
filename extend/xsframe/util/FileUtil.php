@@ -133,13 +133,17 @@ class FileUtil
     }
 
     // 查找文件夹下所有文件
-    public static function searchDir($path, &$data)
+    public static function searchDir($path, &$data, $syncTypes = null)
     {
         if (is_dir($path)) {
             $dp = dir($path);
             while ($file = $dp->read()) {
+                $extension = pathinfo($file, PATHINFO_EXTENSION);
                 if ($file != '.' && $file != '..') {
-                    self::searchDir($path . '/' . $file, $data);
+                    if (!empty($syncTypes) && !empty($extension) && !in_array($extension, $syncTypes)) {
+                        continue;
+                    }
+                    self::searchDir($path . '/' . $file, $data, $syncTypes);
                 }
             }
             $dp->close();
@@ -158,10 +162,10 @@ class FileUtil
     }
 
     // 获取目录下所有文件
-    public static function getDir($dir): array
+    public static function getDir($dir, $syncTypes = null): array
     {
         $data = array();
-        self::searchDir($dir, $data);
+        self::searchDir($dir, $data, $syncTypes);
         return $data;
     }
 
