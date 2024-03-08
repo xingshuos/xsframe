@@ -295,6 +295,7 @@ class Sysset extends Base
         $result = [
             'upgradeList' => $upgradeList,
             'updateFiles' => $updateFiles,
+            'version'     => IMS_VERSION,
         ];
         return $this->template('upgrade', $result);
     }

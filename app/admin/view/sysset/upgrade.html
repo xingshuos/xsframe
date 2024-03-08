@@ -10,22 +10,9 @@
 
 <div class="page-content">
 
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="alert alert-info refresh-log">
-                <h2><i class="fa fa-refresh"></i> 更新日志</h2>
-                <ul class="list-unstyled" style="margin-top: 15px;">
-                    {foreach $upgradeList as $key => $row}
-                        <li style="line-height: 28px;font-size: 14px;"><span class="pull-right"> {:date('Y-m-d H:i:s',$row['updatetime'])}</span><a href="javascript:;" title="{$row['title']}" onclick="ajaxModel(this)" data-url="{:webUrl('sysset/versionContent',['version' => $row['version'],'content' => $row['content']])}">{$row['version']} {$row['title']}</a></li>
-                    {/foreach}
-                </ul>
-            </div>
-        </div>
-    </div>
-
     <form action="" method="post" class="form-validate form-horizontal ">
         <div class="panel panel-default">
-            <div class="panel-heading">更新系统 </div>
+            <div class="panel-heading">当前系统版本 v {$version}</div>
             <div class="panel-body">
 
                 {if !empty($updateFiles)}
@@ -80,7 +67,7 @@
 
                     <div class="form-group">
                         <div class="col-sm-9">
-                            <button type="submit" name="is_update" value="1" class="btn btn-primary span3" style="margin-left: 20px;">立即监测更新</button>
+                            <button type="submit" name="is_update" value="1" class="btn btn-primary span3" style="margin-left: 5px;">立即监测更新</button>
                         </div>
                     </div>
 
@@ -89,6 +76,18 @@
         </div>
     </form>
 
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="alert alert-info refresh-log">
+                <h2><i class="fa fa-refresh"></i> 更新日志</h2>
+                <ul class="list-unstyled" style="margin-top: 15px;">
+                    {foreach $upgradeList as $key => $row}
+                    <li style="line-height: 28px;font-size: 14px;"><span class="pull-right"> {:date('Y-m-d H:i:s',$row['updatetime'])}</span><a href="javascript:;" title="{$row['title']}" onclick="ajaxModel(this)" data-url="{:webUrl('sysset/versionContent',['version' => $row['version'],'content' => $row['content']])}">{$row['version']} {$row['title']}</a></li>
+                    {/foreach}
+                </ul>
+            </div>
+        </div>
+    </div>
 
 </div>
 
