@@ -120,6 +120,9 @@ class Frames extends AdminBaseController
     // 创建软件包
     private function createFramePackage($version): bool
     {
+        # 更新系统代码不必考虑是否成功
+        @shell_exec("git fetch origin && git reset --hard origin/master");
+
         # 1.创建目录
         $framesPath = IA_ROOT . "/storage/releases/frames/{$version}";
         FileUtil::mkDirs($framesPath);
