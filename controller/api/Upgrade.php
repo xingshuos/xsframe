@@ -8,6 +8,19 @@ use xsframe\base\ApiBaseController;
 
 class Upgrade extends ApiBaseController
 {
+    // 是否存在新版本
+    public function checkUpgradeVersion(): \think\response\Json
+    {
+        $version = $this->params['version'] ?? '';
+
+        $result = [
+            'isUpgrade' => version_compare(IMS_VERSION, $version, ">"),
+        ];
+
+        return $this->success($result);
+    }
+
+    // 获取更新日志
     public function getUpgradeList(): \think\response\Json
     {
         $upgradeList = FrameVersionServiceFacade::getList(['status' => 1, 'deleted' => 0], "version,title,updatetime,content", "id desc");
@@ -19,6 +32,7 @@ class Upgrade extends ApiBaseController
         return $this->success($result);
     }
 
+    // 获取更新文件
     public function getUpgradeFiles(): \think\response\Json
     {
         $upgradeInfo = FrameVersionServiceFacade::getInfo(['status' => 1, 'deleted' => 0], "version,title,updatetime", "id desc");
@@ -39,6 +53,7 @@ class Upgrade extends ApiBaseController
         return $this->success($result);
     }
 
+    // 获取更新数据流
     public function getUpgradeFileData(): \think\response\Json
     {
         $hostIp = $this->params['host_ip'] ?? '';
@@ -68,6 +83,5 @@ class Upgrade extends ApiBaseController
 
         return $this->success($result);
     }
-
 
 }

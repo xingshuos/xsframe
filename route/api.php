@@ -9,6 +9,7 @@ Route::group('api', function () {
         Route::any('upgrade', 'api.upgrade/getUpgradeList');
         Route::any('upgradeFiles', 'api.upgrade/getUpgradeFiles');
         Route::any('upgradeFileData', 'api.upgrade/getUpgradeFileData');
+        Route::any('checkVersion', 'api.upgrade/checkUpgradeVersion');
     });
 
     // 需要登陆
