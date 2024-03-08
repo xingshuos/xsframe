@@ -278,6 +278,18 @@ class Sysset extends Base
         return $this->template('bom', $result);
     }
 
+    // 监测更新
+    public function checkVersion()
+    {
+        $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/checkVersion", array('version' => IMS_VERSION));
+        $result = json_decode($response, true);
+        $isUpgrade = $result['data']['isUpgrade'];
+        $result = [
+            'isUpgrade' => $isUpgrade
+        ];
+        return $this->success($result);
+    }
+
     // 系统升级
     public function upgrade(): \think\response\View
     {
@@ -332,6 +344,7 @@ class Sysset extends Base
 define('IMS_VERSION', '{$version}');
 
 EOF;
+        isetcookie('isUpgradeSystemNotice', 0);
         file_put_contents(IA_ROOT . "/public/version.php", $tpl);
         return true;
     }

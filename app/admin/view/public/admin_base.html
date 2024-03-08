@@ -273,6 +273,40 @@
             let body = document.querySelector('body');
             body.classList.remove('no-scroll');
         })
+
+        let isSystem = parseInt("{$isSystem}");
+        if( isSystem === 1 ){
+            let isUpgradeSystemNotice = util.cookie.get('isUpgradeSystemNotice') || 0;
+            console.log(isUpgradeSystemNotice)
+            if( parseInt(isUpgradeSystemNotice) === 0 ){
+                checkSystemVersion();
+            }
+            // 定义一个异步函数
+            async function checkSystemVersion() {
+                try {
+                    // 假设我们从某个API获取数据，这是一个异步操作
+                    const response = await fetch("{:webUrl('sysset/checkVersion')}");
+                    const data = await response.json();
+
+                    // 在这里，你可以对数据做一些处理
+                    // console.log('Received data:', data);
+                    // console.log('result:', data.result);
+                    let isUpgrade = data.result.isUpgrade;
+
+                    if( !isUpgrade ){
+                        util.cookie.set('isUpgradeSystemNotice', 1);
+                        tip.confirm("系统检测到有新版本，请及时更新",function(){
+                            location.href = "{:webUrl('sysset/upgrade')}"
+                        });
+                    }
+
+                    // ... 其他操作 ...
+
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                }
+            }
+        }
     })
 
     // 图片放大
