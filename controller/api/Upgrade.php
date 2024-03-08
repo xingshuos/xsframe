@@ -50,13 +50,14 @@ class Upgrade extends ApiBaseController
         if (is_file($upgradeFile)) {
             $fileData = file_get_contents($upgradeFile);
             if ($fileData !== false) { // 假设是图片数据
-                if( in_array($fileType,['gif','jpg','jpeg','bmp','png','ico','heic']) ){
+                if (in_array($fileType, ['gif', 'jpg', 'jpeg', 'bmp', 'png', 'ico', 'heic'])) {
                     $fileData = base64_encode($fileData);
                 }
             }
         }
 
         $result = [
+            'version'  => $upgradeInfo['version'],
             'fileData' => $fileData,
         ];
 
