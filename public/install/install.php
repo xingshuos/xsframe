@@ -4,6 +4,7 @@ error_reporting(0);
 ob_start();
 header('content-type: text/html; charset=utf-8');
 define('PATH_ROOT', str_replace("\\", '/', dirname(dirname(__FILE__))));
+
 $actions = array('license', 'env', 'db', 'finish');
 $action = $_COOKIE['action'];
 $action = in_array($action, $actions) ? $action : 'license';
@@ -81,10 +82,10 @@ if ($action == 'env') {
 
     $ret['php']['version']['value'] = PHP_VERSION;
     $ret['php']['version']['class'] = 'success';
-    if (version_compare(PHP_VERSION, '5.5.0') == -1) {
+    if (version_compare(PHP_VERSION, '7.4.0') == -1) {
         $ret['php']['version']['class'] = 'danger';
         $ret['php']['version']['failed'] = true;
-        $ret['php']['version']['remark'] = 'PHP版本必须为 5.5.0 以上.';
+        $ret['php']['version']['remark'] = 'PHP版本必须为 7.4.0 以上.';
     }
 
     $ret['php']['mysql']['ok'] = function_exists('mysqli_connect');
@@ -307,10 +308,10 @@ if ($action == 'db') {
                 }
                 $query = mysqli_query($link, "SHOW DATABASES LIKE  '{$db['name']}';");
                 if (!mysqli_fetch_assoc($query)) {
-                    $error .= "数据库不存在且创建数据库失败. <br />";
+                    $error = "数据库不存在且创建数据库失败. <br />";
                 }
                 if (mysqli_errno($link)) {
-                    $error .= mysqli_error($link);
+                    $error = mysqli_error($link);
                 }
             }
         }
@@ -385,9 +386,10 @@ if ($action == 'db') {
  */
 if ($action == 'finish') {
     setcookie('action', '', time() - 3600);
-    $sitepath = strtolower(substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/')));
-    $sitepath = str_replace('/install', "", $sitepath);
-    $url = strtolower('http://' . $_SERVER['HTTP_HOST'] . $sitepath);
+    $sitePath = strtolower(substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/')));
+    $sitePath = str_replace('/install', "", $sitePath);
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
+    $url = strtolower($protocol . $_SERVER['HTTP_HOST'] . $sitePath);
     @unlink(PATH_ROOT . '/install/install.php');
     @unlink(PATH_ROOT . '/install/install.sql');
     tpl_install_finish($url);
@@ -676,7 +678,7 @@ function tpl_install_env($ret = array())
 				</tr>
 				<tr class="{$ret['php']['version']['class']}">
 					<td>PHP版本</td>
-					<td>5.5或者5.5以上</td>
+					<td>7.4以上</td>
 					<td>{$ret['php']['version']['value']}</td>
 					<td>{$ret['php']['version']['remark']}</td>
 				</tr>

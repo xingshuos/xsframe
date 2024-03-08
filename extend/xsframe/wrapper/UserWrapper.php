@@ -181,7 +181,7 @@ class UserWrapper
             $moduleName = self::getModuleNameByUserId($userId);
 
             if (empty($moduleName)) {
-                return ErrorUtil::error(-1, "暂未开通应用管理");
+                return ErrorUtil::error(-1, "暂无管理功能权限");
             }
 
             if (!empty($hostUrl)) {

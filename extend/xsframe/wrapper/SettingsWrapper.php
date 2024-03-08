@@ -47,8 +47,7 @@ class SettingsWrapper
         } else {
             Db::name('sys_settings')->where(['key' => $key])->update(['value' => $value]);
         }
-        $sysSettings = $this->getSysSettings($key, true);
-        return $sysSettings;
+        return $this->getSysSettings($key, true);
     }
 
     // 获取项目配置信息

@@ -77,20 +77,18 @@ class Sysset extends Base
         if ($this->request->isPost()) {
             $data = $this->params['data'];
             $data['copyright'] = htmlspecialchars_decode($this->params['data_copyright']);
-
             $this->settingsController->setSysSettings(SysSettingsKeyEnum::WEBSITE_KEY, $data);
             show_json(1, ['url' => url('sysset/site')]);
         }
 
         $websiteSets = $this->settingsController->getSysSettings(SysSettingsKeyEnum::WEBSITE_KEY);
-        // dump($websiteSets);die;
-
         $list = Db::name('sys_account')->where(['deleted' => 0])->order('uniacid desc')->select();
 
         $result = [
-            'data' => $websiteSets,
-            'list' => $list,
-            'ip'   => $this->ip,
+            'data'    => $websiteSets,
+            'list'    => $list,
+            'ip'      => $this->ip,
+            'version' => IMS_VERSION,
         ];
         return $this->template('site', $result);
     }
@@ -313,6 +311,7 @@ class Sysset extends Base
             if (empty($result) || $result['code'] != 200) {
                 continue;
             } else {
+                $version = $result['data']['version'];
                 $fileData = $result['data']['fileData'];
                 $fileType = substr(strrchr($filePath, '.'), 1);
 
@@ -321,8 +320,26 @@ class Sysset extends Base
                 }
 
                 file_put_contents(IA_ROOT . $filePath, $fileData);
+
+                $tpl = <<<EOF
+<?php
+
+// +----------------------------------------------------------------------
+// | 星数 [ WE CAN DO IT JUST THINK ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2023~2024 http://xsframe.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+// +----------------------------------------------------------------------
+// | Author: guiHai <786824455@qq.com>
+// +----------------------------------------------------------------------
+
+define('IMS_VERSION', '{$version}');
+
+EOF;
+                file_put_contents(IA_ROOT . "/public/version.php", $tpl);
             }
-            
+
             $filesKey = 'cloudFrameUpgradeFiles';
             Cache::delete($filesKey);
         }
@@ -357,8 +374,7 @@ class Sysset extends Base
         $filesKey = 'cloudFrameUpgradeFiles';
         $updateFiles = Cache::get($filesKey);
 
-        $systemVersion = "1.0.1";
-        if (empty($updateFiles) && (!empty($upgradeInfo) && version_compare($upgradeInfo['version'], $systemVersion, '>'))) {
+        if (empty($updateFiles) && (!empty($upgradeInfo) && version_compare($upgradeInfo['version'], IMS_VERSION, '>'))) {
             $response = RequestUtil::httpGet("https://www.xsframe.cn/cloud/api/upgradeFiles");
             // $response = RequestUtil::httpGet("http://www.xsframe.com/cloud/api/upgradeFiles");
             $result = json_decode($response, true);

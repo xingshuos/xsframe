@@ -54,6 +54,10 @@ return [
                 'route' => 'attachment',
             ),
             array(
+                'title' => '系统升级',
+                'route' => 'upgrade',
+            ),
+            array(
                 'title' => '常用工具',
                 'route' => '',
                 'items' => array(

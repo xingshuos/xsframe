@@ -14,6 +14,10 @@ namespace think;
 
 require __DIR__ . '/../vendor/autoload.php';
 
+if (is_file(__DIR__ . '/version.php')) {
+    require 'version.php';
+}
+
 if (is_dir('./install')) {
     if (!is_file('./install/install.lock')) {
         header("location:/install/install.php");
@@ -24,7 +28,7 @@ if (is_dir('./install')) {
 $app = (new App());
 
 // 执行HTTP应用并响应
-$http     = $app->http;
+$http = $app->http;
 $response = $http->run();
 $response->send();
 $http->end($response);

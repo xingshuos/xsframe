@@ -13,6 +13,13 @@
     <form action="" method="post" class="form-horizontal form-validate" enctype="multipart/form-data">
 
         <div class="form-group">
+            <label class="col-lg control-label">网站版本</label>
+            <div class="col-sm-9 col-xs-12">
+                <div class="form-control-static">v {$version}</div>
+            </div>
+        </div>
+
+        <div class="form-group">
             <label class="col-lg control-label">网站状态</label>
             <div class="col-sm-9 col-xs-12">
                 <label class='radio-inline'><input type='radio' name='data[status]' value='1' {if $websiteSets['status']==1}checked{/if} /> 开启</label>
@@ -36,7 +43,7 @@
                     <option value="{$row['uniacid']}" {if $row['uniacid'] == $websiteSets['uniacid']}selected{/if}>{$row['name']}</option>
                     {/foreach}
                 </select>
-                <span class="help-block">如果选择默认项目后，后端管理登录页面将会显示默认项目的设置信息</span>
+                <span class="help-block">选择默认项目后，网站初始数据按照默认项目的数据显示</span>
             </div>
         </div>
 
