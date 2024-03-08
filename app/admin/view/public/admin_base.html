@@ -293,7 +293,7 @@
                     // console.log('result:', data.result);
                     let isUpgrade = data.result.isUpgrade;
 
-                    if( !isUpgrade ){
+                    if( isUpgrade ){
                         util.cookie.set('isUpgradeSystemNotice', 1);
                         tip.confirm("系统检测到有新版本，请及时更新",function(){
                             location.href = "{:webUrl('sysset/upgrade')}"
