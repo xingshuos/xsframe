@@ -155,6 +155,8 @@ class Frames extends AdminBaseController
 
         # 3.写入对比日志
         file_put_contents($framesPath . "/upgrade.log", json_encode($data));
+        @chmod($framesPath . "/upgrade.log", 0777);
+
         return true;
     }
 
