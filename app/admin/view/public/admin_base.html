@@ -277,7 +277,7 @@
         let isSystem = parseInt("{$isSystem}");
         if( isSystem === 1 ){
             let isUpgradeSystemNotice = util.cookie.get('isUpgradeSystemNotice') || 0;
-            console.log(isUpgradeSystemNotice)
+            // console.log(isUpgradeSystemNotice)
             if( parseInt(isUpgradeSystemNotice) === 0 ){
                 checkSystemVersion();
             }
