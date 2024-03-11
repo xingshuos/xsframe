@@ -121,7 +121,7 @@ class Frames extends AdminBaseController
     private function createFramePackage($version): bool
     {
         # 更新系统代码不必考虑是否成功
-        @shell_exec("git fetch origin && git reset --hard origin/master");
+        @shell_exec("cd " . IA_ROOT . " && git fetch origin && git reset --hard origin/master");
 
         # 1.创建目录
         $framesPath = IA_ROOT . "/storage/releases/frames/{$version}";
