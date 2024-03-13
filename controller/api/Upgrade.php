@@ -10,6 +10,8 @@ use xsframe\base\ApiBaseController;
 
 class Upgrade extends ApiBaseController
 {
+    private $memberInfo = null;
+
     public function _api_initialize()
     {
         parent::_api_initialize();
@@ -41,6 +43,7 @@ class Upgrade extends ApiBaseController
         if (empty($memberSiteInfo) || $memberSiteInfo['mid'] != $memberInfo['id']) {
             return $this->error("请查看站点设置中“站点ID”和“通信秘钥”是否配置正确");
         }
+        $this->memberInfo = $memberInfo;
     }
 
     // 是否存在新版本
@@ -110,7 +113,7 @@ class Upgrade extends ApiBaseController
             }
         }
 
-        FrameLogServiceFacade::insertInfo(['mid' => 0, 'host_url' => $hostUrl, 'host_ip' => $hostIp, 'createtime' => time(), 'version' => $upgradeInfo['version'], 'php_version' => $phpVersion]);
+        FrameLogServiceFacade::insertInfo(['mid' => $this->memberInfo['mid'], 'host_url' => $hostUrl, 'host_ip' => $hostIp, 'createtime' => time(), 'version' => $upgradeInfo['version'], 'php_version' => $phpVersion]);
 
         $result = [
             'version'  => $upgradeInfo['version'],
