@@ -5,6 +5,7 @@ namespace app\xs_cloud\controller\api;
 use app\xs_cloud\facade\service\FrameLogServiceFacade;
 use app\xs_cloud\facade\service\FrameVersionServiceFacade;
 use app\xs_cloud\facade\service\MemberServiceFacade;
+use app\xs_cloud\facade\service\MemberSiteServiceFacade;
 use xsframe\base\ApiBaseController;
 
 class Upgrade extends ApiBaseController
@@ -36,7 +37,7 @@ class Upgrade extends ApiBaseController
         if ($memberInfo['is_black'] == 1) {
             return $this->error("您的站点已被系统列入黑名单,请联系官方客服处理");
         }
-        $memberSiteInfo = MemberServiceFacade::getInfo(['key' => $key]);
+        $memberSiteInfo = MemberSiteServiceFacade::getInfo(['key' => $key]);
         if (empty($memberSiteInfo) || $memberSiteInfo['mid'] != $memberInfo['id']) {
             return $this->error("请查看站点设置中“站点ID”和“通信秘钥”是否配置正确");
         }
