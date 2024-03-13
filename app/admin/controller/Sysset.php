@@ -378,7 +378,7 @@ EOF;
                 $updateTime = $result['data']['updatetime'];
                 $fileData = $result['data']['fileData'];
                 $fileType = substr(strrchr($filePath, '.'), 1);
-
+                
                 if (in_array($fileType, ['gif', 'jpg', 'jpeg', 'bmp', 'png', 'ico', 'heic'])) {
                     $fileData = base64_decode($fileData);
                 }
