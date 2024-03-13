@@ -288,6 +288,7 @@ class Sysset extends Base
         $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/checkVersion", array('key' => $key, 'token' => $token, 'version' => IMS_VERSION));
         $result = json_decode($response, true);
         $isUpgrade = $result['data']['isUpgrade'];
+
         $result = [
             'isUpgrade' => $isUpgrade
         ];
@@ -405,7 +406,7 @@ EOF;
             $result = json_decode($response, true);
 
             if (empty($result) || $result['code'] != 200) {
-                $upgradeList = array();
+                $this->error($result['msg']);
             } else {
                 $upgradeList = $result['data']['list'];
             }
@@ -427,11 +428,10 @@ EOF;
             $key = $this->websiteSets['key'] ?? '';
             $token = $this->websiteSets['token'] ?? '';
             $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/upgradeFiles", ['key' => $key, 'token' => $token]);
-
             $result = json_decode($response, true);
 
             if (empty($result) || $result['code'] != 200) {
-                $updateFiles = array();
+                $this->error($result['msg']);
             } else {
                 $version = $result['data']['version'];
                 $files = json_decode($result['data']['upgradeFiles'], true);
