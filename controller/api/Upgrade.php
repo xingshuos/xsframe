@@ -85,6 +85,7 @@ class Upgrade extends ApiBaseController
 
         $result = [
             'version'      => $upgradeInfo['version'],
+            'updatetime'   => $upgradeInfo['updatetime'],
             'upgradeFiles' => $upgradeFiles,
         ];
 
@@ -116,8 +117,9 @@ class Upgrade extends ApiBaseController
         FrameLogServiceFacade::insertInfo(['mid' => $this->memberInfo['mid'], 'host_url' => $hostUrl, 'host_ip' => $hostIp, 'createtime' => time(), 'version' => $upgradeInfo['version'], 'php_version' => $phpVersion]);
 
         $result = [
-            'version'  => $upgradeInfo['version'],
-            'fileData' => $fileData,
+            'version'    => $upgradeInfo['version'],
+            'updatetime' => $upgradeInfo['updatetime'],
+            'fileData'   => $fileData,
         ];
 
         return $this->success($result);
