@@ -5,9 +5,32 @@ namespace app\xs_cloud\controller\api;
 use app\xs_cloud\facade\service\FrameLogServiceFacade;
 use app\xs_cloud\facade\service\FrameVersionServiceFacade;
 use xsframe\base\ApiBaseController;
+use xsframe\exception\ApiException;
 
 class Upgrade extends ApiBaseController
 {
+    public function _api_initialize()
+    {
+        parent::_api_initialize();
+
+        try {
+            $this->checkToken();
+        } catch (ApiException $e) {
+
+        }
+    }
+
+    // 监测站点信息
+    private function checkToken()
+    {
+        $key = $this->params['key'];
+        $token = $this->params['token'];
+
+        if (empty($key) || empty($token)) {
+            throw new ApiException("情监测站点ID和通信秘钥是否配置正确");
+        }
+    }
+
     // 是否存在新版本
     public function checkUpgradeVersion(): \think\response\Json
     {
