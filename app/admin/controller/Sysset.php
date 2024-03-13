@@ -384,7 +384,7 @@ EOF;
                 }
 
                 file_put_contents(IA_ROOT . $filePath, $fileData);
-
+                
                 $this->upgradeSuccess($version, $updateTime);
             }
 
