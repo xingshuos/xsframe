@@ -4,8 +4,8 @@ namespace app\xs_cloud\controller\api;
 
 use app\xs_cloud\facade\service\FrameLogServiceFacade;
 use app\xs_cloud\facade\service\FrameVersionServiceFacade;
+use app\xs_cloud\facade\service\MemberServiceFacade;
 use xsframe\base\ApiBaseController;
-use xsframe\exception\ApiException;
 
 class Upgrade extends ApiBaseController
 {
@@ -13,21 +13,32 @@ class Upgrade extends ApiBaseController
     {
         parent::_api_initialize();
 
-        try {
-            $this->checkToken();
-        } catch (ApiException $e) {
-
-        }
+        $this->checkToken();
     }
 
     // 监测站点信息
     private function checkToken()
     {
-        $key = $this->params['key'];
-        $token = $this->params['token'];
+        $key = $this->params['key']; // 站点ID
+        $token = $this->params['token']; // 通信秘钥
 
         if (empty($key) || empty($token)) {
-            throw new ApiException("情监测站点ID和通信秘钥是否配置正确");
+            return $this->error("请查看站点设置中“站点ID”和“通信秘钥”是否配置");
+        }
+
+        $memberInfo = MemberServiceFacade::getInfo(['token' => $token]);
+        if (empty($memberInfo)) {
+            return $this->error("当前站点不存在或已暂停服务,请联系官方客服处理");
+        }
+        if ($memberInfo['status'] == 0) {
+            return $this->error("您的站点已暂停服务,请联系官方客服处理");
+        }
+        if ($memberInfo['is_black'] == 1) {
+            return $this->error("您的站点已被系统列入黑名单,请联系官方客服处理");
+        }
+        $memberSiteInfo = MemberServiceFacade::getInfo(['key' => $key]);
+        if (empty($memberSiteInfo) || $memberSiteInfo['mid'] != $memberInfo['id']) {
+            return $this->error("请查看站点设置中“站点ID”和“通信秘钥”是否配置正确");
         }
     }
 
