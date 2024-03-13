@@ -121,7 +121,7 @@ class Frames extends AdminBaseController
     private function createFramePackage($version): bool
     {
         # 更新系统代码不必考虑是否成功
-        $command = "cd " . IA_ROOT . " && chown www:www * && git fetch origin && git reset --hard origin/master && git pull";
+        $command = "cd " . IA_ROOT . " && chown www:www * && git pull && git fetch origin && git reset --hard origin/master ";
         if (function_exists('shell_exec')) {
             @shell_exec($command);
         }
