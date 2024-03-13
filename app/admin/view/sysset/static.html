@@ -242,6 +242,12 @@
             <ul class="dropdown-menu">
 
                                     <li>
+                        <a href="/admin/sysset/upgrade.html">
+                            <i class="icon icon-cloud-upload" style="font-size: 22px;"></i>
+                            <span style="display: block">系统升级</span>
+                        </a>
+                    </li>
+                    <li>
                         <a href="/admin/users/profile.html" target="_blank">
                             <i class="icon icon-lock " style="font-size: 22px;"></i>
                             <span style="display: block">修改密码</span>
@@ -315,6 +321,9 @@
                                                             <ul class="single">
                             <li  style=" position: relative"><a href="/admin/sysset/attachment.html" style="cursor: pointer;" data-route="/admin/sysset/attachment.html">附件设置</a></li>
                         </ul>
+                                                            <ul class="single">
+                            <li  style=" position: relative"><a href="/admin/sysset/upgrade.html" style="cursor: pointer;" data-route="/admin/sysset/upgrade.html">系统升级</a></li>
+                        </ul>
                                                             <div class='menu-header active data-active'><div class="menu-icon icon icon-caret-down"></div>常用工具</div>
                         <ul style="display: block">
                                                         <li ><a href="/admin/sysset/form.html" style="cursor: pointer;" data-route="/admin/sysset/form.html">系统表单</a>
@@ -384,6 +393,33 @@
             let body = document.querySelector('body');
             body.classList.remove('no-scroll');
         })
+
+        let isSystem = parseInt("1");
+        if( isSystem === 1 ){
+            let isUpgradeSystemNotice = util.cookie.get('isUpgradeSystemNotice') || 0;
+            // console.log(isUpgradeSystemNotice)
+            if( parseInt(isUpgradeSystemNotice) === 0 ){
+                checkSystemVersion();
+            }
+            // 定义一个异步函数
+            async function checkSystemVersion() {
+                try {
+                    const response = await fetch("http://www.xsframe.com/admin/sysset/checkVersion.html");
+                    const data = await response.json();
+
+                    let isUpgrade = data.result.isUpgrade;
+
+                    if( isUpgrade ){
+                        util.cookie.set('isUpgradeSystemNotice', 1,3600);
+                        tip.confirm("系统检测到有新版本，请及时更新",function(){
+                            location.href = "http://www.xsframe.com/admin/sysset/upgrade.html"
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                }
+            }
+        }
     })
 
     // 图片放大
