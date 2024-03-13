@@ -332,9 +332,8 @@ class Sysset extends Base
     }
 
     // 更新完毕
-    private function upgradeSuccess($version): bool
+    private function upgradeSuccess($version, $updateTime = null): bool
     {
-        $updateTime = TIMESTAMP;
         $tpl = <<<EOF
 <?php
 
@@ -376,6 +375,7 @@ EOF;
                 continue;
             } else {
                 $version = $result['data']['version'];
+                $updateTime = $result['data']['updatetime'];
                 $fileData = $result['data']['fileData'];
                 $fileType = substr(strrchr($filePath, '.'), 1);
 
@@ -385,7 +385,7 @@ EOF;
 
                 file_put_contents(IA_ROOT . $filePath, $fileData);
 
-                $this->upgradeSuccess($version);
+                $this->upgradeSuccess($version, $updateTime);
             }
 
             Cache::delete(CacheKeyEnum::CLOUD_FRAME_UPGRADE_FILES_KEY);
@@ -434,6 +434,7 @@ EOF;
                 $this->error($result['msg']);
             } else {
                 $version = $result['data']['version'];
+                $updateTime = $result['data']['updatetime'];
                 $files = json_decode($result['data']['upgradeFiles'], true);
 
                 if (!empty($files)) {
@@ -449,7 +450,7 @@ EOF;
                 }
 
                 if (empty($updateFiles)) {
-                    $this->upgradeSuccess($version);
+                    $this->upgradeSuccess($version, $updateTime);
                 }
             }
 
