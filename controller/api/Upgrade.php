@@ -59,6 +59,7 @@ class Upgrade extends ApiBaseController
         $hostIp = $this->params['host_ip'] ?? '';
         $hostUrl = $this->params['host_url'] ?? '';
         $filePath = $this->params['file_path'] ?? '';
+        $phpVersion = $this->params['php_version'] ?? '';
         $fileType = substr(strrchr($filePath, '.'), 1);
 
         $upgradeInfo = FrameVersionServiceFacade::getInfo(['status' => 1, 'deleted' => 0], "version,title,updatetime", "id desc");
@@ -74,7 +75,7 @@ class Upgrade extends ApiBaseController
             }
         }
 
-        FrameLogServiceFacade::insertInfo(['mid' => 0, 'host_url' => $hostUrl, 'host_ip' => $hostIp, 'createtime' => time(), 'version' => $upgradeInfo['version']]);
+        FrameLogServiceFacade::insertInfo(['mid' => 0, 'host_url' => $hostUrl, 'host_ip' => $hostIp, 'createtime' => time(), 'version' => $upgradeInfo['version'], 'php_version' => $phpVersion]);
 
         $result = [
             'version'  => $upgradeInfo['version'],
