@@ -12,7 +12,7 @@
 
     <form action="" method="post" class="form-validate form-horizontal ">
         <div class="panel panel-default">
-            <div class="panel-heading">当前系统版本 v {$version}</div>
+            <div class="panel-heading h4">当前系统版本 v{$version}（{$versionTime}）</div>
             <div class="panel-body">
 
                 {if !empty($updateFiles)}
@@ -107,6 +107,25 @@
             if(!$("#agreement_2").is(':checked')){
                 tip.msgbox.err("请选择>理解官方的辛勤劳动并报以感恩的心态点击更新按钮！")
                 return false;
+            }
+        }
+        // 监测更新
+
+        // 监测更新
+        let isNewUpgrade = parseInt("{:count($updateFiles ?? [])}");
+        if( isNewUpgrade <= 0 ){
+            checkSystemVersion();
+        }
+        async function checkSystemVersion() {
+            try {
+                const response = await fetch("{:webUrl('sysset/checkVersion')}");
+                const data = await response.json();
+                let isUpgrade = data.result.isUpgrade;
+                if( isUpgrade ){
+                    $("button[name=is_update]").trigger('click')
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
             }
         }
     </script>

@@ -27,12 +27,6 @@ class SettingsWrapper
             $sysSettings = unserialize($sysSettings);
             Cache::set($key, $sysSettings);
         }
-
-        if ($key == SysSettingsKeyEnum::WEBSITE_KEY && !empty($sysSettings['uniacid'])) {
-            $sysSettings = self::getAccountSettings($sysSettings['uniacid']);
-            unset($sysSettings['settings']);
-        }
-
         return empty($sysSettings) ? [] : $sysSettings;
     }
 

@@ -13,9 +13,24 @@
     <form action="" method="post" class="form-horizontal form-validate" enctype="multipart/form-data">
 
         <div class="form-group">
+            <label class="col-lg control-label">站点信息</label>
+            <div class="col-sm-9 col-xs-12">
+                <div class="input-group">
+                    <span class="input-group-addon">站点ID</span>
+                    <input type="text" name="data[key]" class="form-control" value="{$websiteSets['key']}" placeholder="请输入站点ID" data-rule-required='true' {if !empty($websiteSets['key'])}readonly ondblclick="this.readOnly=false" οnchange="this.readOnly=true" data-toggle="tooltip" data-placement="top" data-original-title="双击修改"{/if}/>
+                    <span class="input-group-addon btn btn-info js-clip" data-url="{$websiteSets['key']}">复制</span>
+                    <span class="input-group-addon">通信密钥</span>
+                    <input type="text" name="data[token]" class="form-control" value="{$websiteSets['token']}" placeholder="请输入通信密钥" {if !empty($websiteSets['token'])}readonly ondblclick="this.readOnly=false" οnchange="this.readOnly=true" data-toggle="tooltip" data-placement="top" data-original-title="双击修改"{/if}/>
+                    <span class="input-group-addon btn btn-info js-clip" data-url="{$websiteSets['token']}">复制</span>
+                </div>
+                <div class="help-block">请查看您的站点ID和通信密钥, 需要保证与云商城平台记录的值一致, 否则不能正常使用云平台的各项服务. </div>
+            </div>
+        </div>
+
+        <div class="form-group">
             <label class="col-lg control-label">系统版本</label>
             <div class="col-sm-9 col-xs-12">
-                <div class="form-control-static">v {$version}</div>
+                <div class="form-control-static">v{$version}（{$versionTime}）</div>
             </div>
         </div>
 
@@ -43,11 +58,13 @@
                     <option value="{$row['uniacid']}" {if $row['uniacid'] == $websiteSets['uniacid']}selected{/if}>{$row['name']}</option>
                     {/foreach}
                 </select>
-                <span class="help-block">选择默认项目后，网站初始数据按照默认项目的数据显示</span>
+                <span class="help-block">选择默认项目后，为选择项目的应用初始数据按照默认项目的数据显示</span>
             </div>
         </div>
 
-        <div id="default-website-sets" style="{if !empty($websiteSets['uniacid'])}display: none;{/if}">
+        <!--<div class="form-group-title">网站基础设置</div>-->
+
+        <div id="default-website-sets"><!--style="{if !empty($websiteSets['uniacid'])}display: none;{/if}"-->
             <div class="form-group">
                 <label class="col-lg control-label">LOGO</label>
                 <div class="col-sm-9 col-xs-12">
@@ -99,12 +116,17 @@
 <script>
     function changeUniacid(This) {
         let uniacid = $(This).val();
-        if (uniacid > 0) {
+        /*if (uniacid > 0) {
             $("#default-website-sets").hide();
         }else{
             $("#default-website-sets").show();
-        }
+        }*/
     }
+
+    $('#xiangqing').click(function(){
+        $('#xiangqing').attr("class","hidden");
+        $('#token').attr("type","text");
+    })
 </script>
 
 {/block}

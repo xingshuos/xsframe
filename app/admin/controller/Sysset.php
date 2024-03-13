@@ -2,6 +2,7 @@
 
 namespace app\admin\controller;
 
+use app\admin\enum\CacheKeyEnum;
 use xsframe\util\RequestUtil;
 use xsframe\wrapper\AccountHostWrapper;
 use xsframe\wrapper\AttachmentWrapper;
@@ -85,10 +86,11 @@ class Sysset extends Base
         $list = Db::name('sys_account')->where(['deleted' => 0])->order('uniacid desc')->select();
 
         $result = [
-            'data'    => $websiteSets,
-            'list'    => $list,
-            'ip'      => $this->ip,
-            'version' => IMS_VERSION,
+            'data'        => $websiteSets,
+            'list'        => $list,
+            'ip'          => $this->ip,
+            'version'     => IMS_VERSION,
+            'versionTime' => IMS_VERSION_TIME,
         ];
         return $this->template('site', $result);
     }
@@ -281,7 +283,9 @@ class Sysset extends Base
     // 监测更新
     public function checkVersion()
     {
-        $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/checkVersion", array('version' => IMS_VERSION));
+        $key = $this->websiteSets['key'] ?? '';
+        $token = $this->websiteSets['token'] ?? '';
+        $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/checkVersion", array('key' => $key, 'token' => $token, 'version' => IMS_VERSION));
         $result = json_decode($response, true);
         $isUpgrade = $result['data']['isUpgrade'];
         $result = [
@@ -308,6 +312,7 @@ class Sysset extends Base
             'upgradeList' => $upgradeList,
             'updateFiles' => $updateFiles,
             'version'     => IMS_VERSION,
+            'versionTime' => IMS_VERSION_TIME,
         ];
         return $this->template('upgrade', $result);
     }
@@ -328,6 +333,7 @@ class Sysset extends Base
     // 更新完毕
     private function upgradeSuccess($version): bool
     {
+        $updateTime = TIMESTAMP;
         $tpl = <<<EOF
 <?php
 
@@ -342,6 +348,7 @@ class Sysset extends Base
 // +----------------------------------------------------------------------
 
 define('IMS_VERSION', '{$version}');
+define('IMS_VERSION_TIME', '{$updateTime}');
 
 EOF;
         isetcookie('isUpgradeSystemNotice', 0);
@@ -352,13 +359,16 @@ EOF;
     // 执行文件升级
     private function doUpgradeFiles($updateFiles)
     {
+        $key = $this->websiteSets['key'] ?? '';
+        $token = $this->websiteSets['token'] ?? '';
+
         foreach ($updateFiles as $filePath) {
             $file_dir = dirname(IA_ROOT . $filePath);
             if (!is_dir($file_dir)) {
                 mkdir($file_dir, 0777, true);
             }
 
-            $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/upgradeFileData", array('file_path' => $filePath, 'host_ip' => $this->ip, 'host_url' => $_SERVER['HTTP_HOST']));
+            $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/upgradeFileData", array('key' => $key, 'token' => $token, 'file_path' => $filePath, 'host_ip' => $this->ip, 'host_url' => $_SERVER['HTTP_HOST'], 'php_version' => PHP_VERSION));
             $result = json_decode($response, true);
 
             if (empty($result) || $result['code'] != 200) {
@@ -377,8 +387,7 @@ EOF;
                 $this->upgradeSuccess($version);
             }
 
-            $filesKey = 'cloudFrameUpgradeFiles';
-            Cache::delete($filesKey);
+            Cache::delete(CacheKeyEnum::CLOUD_FRAME_UPGRADE_FILES_KEY);
         }
     }
 
@@ -386,10 +395,13 @@ EOF;
     private function getUpgradeList($isCheckUpdate = null)
     {
         // 获取更新日志 start
-        $key = 'cloudFrameUpgradeList';
-        $upgradeList = Cache::get($key);
+        $upgradeList = Cache::get(CacheKeyEnum::CLOUD_FRAME_UPGRADE_LIST_KEY);
+
         if (empty($upgradeList) || !empty($isCheckUpdate)) {
-            $response = RequestUtil::httpGet("https://www.xsframe.cn/cloud/api/upgrade");
+            $key = $this->websiteSets['key'] ?? '';
+            $token = $this->websiteSets['token'] ?? '';
+            $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/upgrade", ['key' => $key, 'token' => $token]);
+
             $result = json_decode($response, true);
 
             if (empty($result) || $result['code'] != 200) {
@@ -398,7 +410,7 @@ EOF;
                 $upgradeList = $result['data']['list'];
             }
 
-            Cache::set($key, $upgradeList, 7200);
+            Cache::set(CacheKeyEnum::CLOUD_FRAME_UPGRADE_LIST_KEY, $upgradeList, 7200);
         }
         // 获取更新日志 end
         return $upgradeList;
@@ -408,11 +420,14 @@ EOF;
     private function getUpdateFiles($upgradeInfo = null, $isCheckUpdate = null)
     {
         # 版本对比是否存在最新版本 start
-        $filesKey = 'cloudFrameUpgradeFiles';
-        $updateFiles = Cache::get($filesKey);
+        $updateFiles = Cache::get(CacheKeyEnum::CLOUD_FRAME_UPGRADE_FILES_KEY);
 
         if ((empty($updateFiles) && (!empty($upgradeInfo) && version_compare($upgradeInfo['version'], IMS_VERSION, '>'))) || !empty($isCheckUpdate)) {
-            $response = RequestUtil::httpGet("https://www.xsframe.cn/cloud/api/upgradeFiles");
+
+            $key = $this->websiteSets['key'] ?? '';
+            $token = $this->websiteSets['token'] ?? '';
+            $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/upgradeFiles", ['key' => $key, 'token' => $token]);
+
             $result = json_decode($response, true);
 
             if (empty($result) || $result['code'] != 200) {
@@ -438,7 +453,7 @@ EOF;
                 }
             }
 
-            Cache::set($filesKey, $updateFiles, 7200);
+            Cache::set(CacheKeyEnum::CLOUD_FRAME_UPGRADE_FILES_KEY, $updateFiles, 7200);
         }
         # 版本对比是否存在最新版本 end
 
