@@ -18,6 +18,7 @@ use think\exception\HttpException;
 use think\Response;
 use Throwable;
 use think\exception\ValidateException;
+use xsframe\util\LoggerUtil;
 
 class ExceptionHandler extends Handle
 {
@@ -67,6 +68,19 @@ class ExceptionHandler extends Handle
             }
             return json($result, $code);
         }
+
+        // 记录异常信息到日志
+        $logData = [
+            'url'       => $request->url(),
+            'method'    => $request->method(),
+            'ip'        => $request->ip(),
+            'params'    => $request->param(),
+            'exception' => $e->getMessage(),
+            'code'      => $e->getCode(),
+            'file'      => $e->getFile(),
+            'line'      => $e->getLine(),
+        ];
+        LoggerUtil::error($logData);
 
         // 其他错误交给系统处理
         return parent::render($request, $e);
