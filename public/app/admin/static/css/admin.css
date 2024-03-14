@@ -2679,13 +2679,7 @@ modal
 
 .popover {
     border: 1px solid #efefef;
-    border: 1px solid #efefef;
     border-radius: 6px;
-    /*-webkit-box-shadow: 0 5px 10px rgba(0,0,0,.1);*/
-    /*box-shadow: 0 5px 10px rgba(0,0,0,.1);*/
-    -webkit-filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.1));
-    -moz-filter: drop-shadow(0 5px 10px rgba(0, 0, 0, .1));
-    -o-filter: drop-shadow(0 5px 10px rgba(0, 0, 0, .1));
     filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.1));
 }
 
@@ -2828,7 +2822,7 @@ select.we7-select {
 
 /*用户详情，鼠标滑动到上边显示的内容样式调整*/
 .popover {
-    width: 170px;
+    min-width: 170px;
     font-size: 12px;
     line-height: 21px;
     color: #0d0706;
