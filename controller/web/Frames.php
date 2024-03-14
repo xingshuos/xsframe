@@ -4,8 +4,6 @@ namespace app\xs_cloud\controller\web;
 
 use app\xs_cloud\facade\service\FrameLogServiceFacade;
 use app\xs_cloud\facade\service\FrameVersionServiceFacade;
-use app\xs_cloud\service\FrameVersionService;
-use think\Exception;
 use xsframe\base\AdminBaseController;
 use xsframe\util\FileUtil;
 use xsframe\util\LoggerUtil;
