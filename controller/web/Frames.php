@@ -124,9 +124,10 @@ class Frames extends AdminBaseController
         $command = "cd " . IA_ROOT . " && chown www:www * && git pull && git fetch origin && git reset --hard origin/master ";
         if (function_exists('shell_exec')) {
             @shell_exec($command);
-        }
-        if (function_exists('exec')) {
-            @exec($command);
+        }else{
+            if (function_exists('exec')) {
+                @exec($command);
+            }
         }
 
         # 1.创建目录

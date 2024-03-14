@@ -13,7 +13,7 @@ $menu = [
     'frames' => array(
         'title'    => '框架',
         'subtitle' => '框架管理',
-        'icon'     => 'icon-list-alt',
+        'icon'     => 'icon-th-list',
     ),
 
     'apps' => array(
