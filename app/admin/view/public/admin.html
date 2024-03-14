@@ -16,7 +16,7 @@
             <div class="title">{$websiteSets['name']}</div>
         {else/}
             {if !empty($moduleInfo['logo'])}
-                <img class="logo-img" src="{$moduleInfo['logo']}" onerror="this.src='__ADMIN_IMG__/nopic.png'">
+                <img class="logo-img" src="{:tomedia($moduleInfo['logo'])}" onerror="this.src='__ADMIN_IMG__/nopic.png'">
             {else}
                 <img class="logo-img" src="{$siteRoot}/app/{$module}/icon.png" onerror="this.src='__ADMIN_IMG__/nopic.png'">
             {/if}

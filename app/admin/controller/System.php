@@ -32,7 +32,7 @@ class System extends AdminBaseController
             'am.deleted' => 0
         ];
 
-        $field = "am.id,am.module,am.settings," . "m.name,m.identifie,m.logo";
+        $field = "am.id,am.module,am.settings," . "m.name,m.identifie,m.logo,m.ability";
         $list = Db::name('sys_account_modules')->alias('am')->field($field)->leftJoin("sys_modules m", "m.identifie = am.module")->where($condition)->order("am.displayorder asc")->page($this->pIndex, $this->pSize)->select()->toArray();
         $total = Db::name('sys_account_modules')->alias('am')->field($field)->leftJoin("sys_modules m", "m.identifie = am.module")->where($condition)->count();
         $pager = pagination2($total, $this->pIndex, $this->pSize);
