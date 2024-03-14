@@ -3,6 +3,7 @@
 namespace app\admin\controller;
 
 use app\admin\enum\CacheKeyEnum;
+use think\Exception;
 use xsframe\util\RequestUtil;
 use xsframe\wrapper\AccountHostWrapper;
 use xsframe\wrapper\AttachmentWrapper;
@@ -362,6 +363,10 @@ EOF;
         $key = $this->websiteSets['key'] ?? '';
         $token = $this->websiteSets['token'] ?? '';
 
+        $version = IMS_VERSION;
+        $versionTime = IMS_VERSION_TIME;
+
+        $isSuccess = true;
         foreach ($updateFiles as $filePath) {
             $file_dir = dirname(IA_ROOT . $filePath);
             if (!is_dir($file_dir)) {
@@ -375,7 +380,7 @@ EOF;
                 continue;
             } else {
                 $version = $result['data']['version'];
-                $updateTime = $result['data']['updatetime'];
+                $versionTime = $result['data']['updatetime'];
                 $fileData = $result['data']['fileData'];
                 $fileType = substr(strrchr($filePath, '.'), 1);
 
@@ -383,13 +388,22 @@ EOF;
                     $fileData = base64_decode($fileData);
                 }
 
-                file_put_contents(IA_ROOT . $filePath, $fileData);
-                
-                $this->upgradeSuccess($version, $updateTime);
+                try {
+                    file_put_contents(IA_ROOT . $filePath, $fileData);
+                } catch (Exception $exception) {
+                    $isSuccess = false;
+                }
+
             }
 
             Cache::delete(CacheKeyEnum::CLOUD_FRAME_UPGRADE_FILES_KEY);
         }
+
+        if (!$isSuccess) {
+            show_json(0, "有部分文件更新失败，请设置根目录权限为777");
+        }
+
+        $this->upgradeSuccess($version, $versionTime);
     }
 
     // 获取升级日志列表
