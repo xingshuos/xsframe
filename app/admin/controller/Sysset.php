@@ -433,8 +433,6 @@ EOF;
             if (empty($result) || $result['code'] != 200) {
                 $this->error($result['msg']);
             } else {
-                $version = $result['data']['version'];
-                $updateTime = $result['data']['updatetime'];
                 $files = json_decode($result['data']['upgradeFiles'], true);
 
                 if (!empty($files)) {
@@ -447,10 +445,6 @@ EOF;
                         }
                     }
                     unset($file);
-                }
-
-                if (empty($updateFiles)) {
-                    $this->upgradeSuccess($version, $updateTime);
                 }
             }
 
