@@ -124,9 +124,9 @@ class Frames extends AdminBaseController
     {
         # 更新系统代码不必考虑是否成功
         $command = "cd " . IA_ROOT . " && chown www:www * && git pull && git fetch origin && git reset --hard origin/master ";
-        @exec($command, $output, $returnVar);
-        if ($returnVar !== 0) {
-            LoggerUtil::error($output);
+        $resultMsg = @shell_exec($command);
+        if (!empty($resultMsg) && !StringUtil::strexists($resultMsg, 'Already up-to-date')) {
+            LoggerUtil::error($resultMsg);
         }
 
         # 1.创建目录
