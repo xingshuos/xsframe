@@ -5,8 +5,10 @@ namespace app\xs_cloud\controller\web;
 use app\xs_cloud\facade\service\FrameLogServiceFacade;
 use app\xs_cloud\facade\service\FrameVersionServiceFacade;
 use app\xs_cloud\service\FrameVersionService;
+use think\Exception;
 use xsframe\base\AdminBaseController;
 use xsframe\util\FileUtil;
+use xsframe\util\LoggerUtil;
 use xsframe\util\StringUtil;
 
 class Frames extends AdminBaseController
@@ -122,12 +124,9 @@ class Frames extends AdminBaseController
     {
         # 更新系统代码不必考虑是否成功
         $command = "cd " . IA_ROOT . " && chown www:www * && git pull && git fetch origin && git reset --hard origin/master ";
-        if (function_exists('shell_exec')) {
-            @shell_exec($command);
-        }else{
-            if (function_exists('exec')) {
-                @exec($command);
-            }
+        @exec($command, $output, $returnVar);
+        if ($returnVar !== 0) {
+            LoggerUtil::error($output);
         }
 
         # 1.创建目录
