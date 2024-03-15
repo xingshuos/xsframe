@@ -286,7 +286,7 @@ class Sysset extends Base
     {
         $key = $this->websiteSets['key'] ?? '';
         $token = $this->websiteSets['token'] ?? '';
-        $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/checkVersion", array('key' => $key, 'token' => $token, 'version' => IMS_VERSION));
+        $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/frame/checkVersion", array('key' => $key, 'token' => $token));
         $result = json_decode($response, true);
         $isUpgrade = $result['data']['isUpgrade'];
 
@@ -373,7 +373,7 @@ EOF;
                 mkdir($file_dir, 0777, true);
             }
 
-            $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/upgradeFileData", array('key' => $key, 'token' => $token, 'file_path' => $filePath, 'host_ip' => $this->ip, 'host_url' => $_SERVER['HTTP_HOST'], 'php_version' => PHP_VERSION));
+            $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/frame/upgradeFileData", array('key' => $key, 'token' => $token, 'file_path' => $filePath));
             $result = json_decode($response, true);
 
             if (empty($result) || $result['code'] != 200) {
@@ -415,7 +415,7 @@ EOF;
         if (empty($upgradeList) || !empty($isCheckUpdate)) {
             $key = $this->websiteSets['key'] ?? '';
             $token = $this->websiteSets['token'] ?? '';
-            $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/upgrade", ['key' => $key, 'token' => $token]);
+            $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/frame/upgrade", ['key' => $key, 'token' => $token]);
 
             $result = json_decode($response, true);
 
@@ -441,7 +441,7 @@ EOF;
 
             $key = $this->websiteSets['key'] ?? '';
             $token = $this->websiteSets['token'] ?? '';
-            $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/upgradeFiles", ['key' => $key, 'token' => $token]);
+            $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/frame/upgradeFiles", ['key' => $key, 'token' => $token]);
             $result = json_decode($response, true);
 
             if (empty($result) || $result['code'] != 200) {

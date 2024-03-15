@@ -14,12 +14,12 @@ return [
     'account' => array(
         'title'    => '项目',
         'subtitle' => '项目管理',
-        'icon'     => 'icon-th-large',
+        'icon'     => 'icon-archive',
     ),
     'app'     => array(
         'title'    => '应用',
         'subtitle' => '应用管理',
-        'icon'     => 'icon-puzzle-piece',
+        'icon'     => 'icon-th-large',
     ),
     'users'   => array(
         'title'    => '用户',

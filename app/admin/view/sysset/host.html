@@ -44,9 +44,10 @@
                 <tr>
                     <th style="width:50px;"></th>
                     <th style='width:100px'>顺序</th>
-                    <th style='width:120px'>域名</th>
-                    <th style='width:120px'>指定项目</th>
-                    <th style='width:120px;'>默认访问应用</th>
+                    <th style='width:80px'>项目ID</th>
+                    <th style='width:120px'>项目名称</th>
+                    <th style='width:120px'>绑定域名</th>
+                    <th style='width:120px;'>默认应用</th>
                     <th style="width: 100px;">操作</th>
                 </tr>
                 </thead>
@@ -61,10 +62,13 @@
                         <i class="icow icow-weibiaoti-- " data-toggle="ajaxEdit2"></i>
                     </td>
                     <td>
-                        {$row['host_url']}
+                        {$row['account']['uniacid']}
                     </td>
                     <td>
-                        {$row['account']['name']}（{$row['account']['uniacid']}）
+                        {$row['account']['name']}
+                    </td>
+                    <td>
+                        {$row['host_url']}
                     </td>
                     <td>
                         {$row['module']['name']}（{$row['default_module'] ? $row['default_module'] : '未设置'}）
@@ -94,7 +98,7 @@
                             </button>
                         </div>
                     </td>
-                    <td colspan="2" style="text-align: right">
+                    <td colspan="3" style="text-align: right">
                         {$pager | raw}
                     </td>
                 </tr>

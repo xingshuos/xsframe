@@ -25,8 +25,8 @@ class App extends Base
 
     public function list()
     {
-        $do          = $this->params['do'] ?? '';
-        $type        = $this->params['type'] ?? '';
+        $do = $this->params['do'] ?? '';
+        $type = $this->params['type'] ?? '';
         $nameInitial = $this->params['letter'] ?? '';
 
         $condition1 = ['is_deleted' => 0, 'is_install' => 1, 'status' => 1];
@@ -43,7 +43,12 @@ class App extends Base
         } else {
             if ($do == 'not_installed') {
                 $condition = $condition2;
-                $modulesController->buildUnInstalledModule();
+
+                $key = $this->websiteSets['key'] ?? '';
+                $token = $this->websiteSets['token'] ?? '';
+
+                $modulesController->buildLocalUnInstalledModule();
+                $modulesController->buildCloudUnInstalledModule($key, $token);
             } else {
                 if ($do == 'recycle') {
                     $condition = $condition3;
@@ -66,7 +71,7 @@ class App extends Base
             $condition['name_initial'] = strtoupper($nameInitial);
         }
 
-        $list  = Db::name('sys_modules')->where($condition)->order('create_time desc')->page($this->pIndex, $this->pSize)->select();
+        $list = Db::name('sys_modules')->where($condition)->order('create_time desc')->page($this->pIndex, $this->pSize)->select();
         $total = Db::name("sys_modules")->where($condition)->count();
         $pager = pagination2($total, $this->pIndex, $this->pSize);
 
@@ -85,6 +90,7 @@ class App extends Base
         $total2 = Db::name("sys_modules")->where($condition2)->count();
         $total3 = Db::name("sys_modules")->where($condition3)->count();
         $total4 = Db::name("sys_modules")->where($condition4)->count();
+        $letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'W', 'T', 'D', 'T', 'U', 'V', 'E', 'C', 'Y', 'X'];
 
         $vars = [
             'list'  => $list,
@@ -98,6 +104,7 @@ class App extends Base
             'total2'      => $total2,
             'total3'      => $total3,
             'total4'      => $total4,
+            'letters'     => $letters,
         ];
         return $this->template('list', $vars);
     }
@@ -131,7 +138,7 @@ class App extends Base
             $this->success(array("url" => webUrl("app/edit", ['id' => $id, 'tab' => str_replace("#tab_", "", $this->params['tab'])])));
         }
 
-        $item         = Db::name('sys_modules')->where(['id' => $id])->find();
+        $item = Db::name('sys_modules')->where(['id' => $id])->find();
         // $item['logo'] = !empty($item['logo']) ? tomedia($item['logo']) : $this->siteRoot . "/app/{$item['identifie']}/icon.png";
         $item['logo'] = !empty($item['logo']) ? $item['logo'] : $this->siteRoot . "/app/{$item['identifie']}/icon.png";
 
@@ -151,7 +158,7 @@ class App extends Base
         if (empty($id)) {
             $this->error(["message" => "参数错误"]);
         }
-        $type  = trim($this->params["type"]);
+        $type = trim($this->params["type"]);
         $value = trim($this->params["value"]);
 
         $items = Db::name('sys_modules')->where(['id' => $id])->select();
@@ -165,7 +172,7 @@ class App extends Base
     // 应用安装
     public function install()
     {
-        $id        = intval($this->params["id"]);
+        $id = intval($this->params["id"]);
         $identifie = trim($this->params["identifie"]);
 
         Db::name('sys_modules')->where(['id' => $id])->update(['is_install' => 1, 'status' => 1]);
@@ -180,7 +187,7 @@ class App extends Base
     // 应用卸载
     public function uninstall()
     {
-        $id        = intval($this->params["id"]);
+        $id = intval($this->params["id"]);
         $identifie = trim($this->params["identifie"]);
 
         Db::name('sys_modules')->where(['id' => $id])->update(['is_install' => 0]);
@@ -194,7 +201,7 @@ class App extends Base
     // 应用升级
     public function upgrade()
     {
-        $id        = intval($this->params["id"]);
+        $id = intval($this->params["id"]);
         $identifie = trim($this->params["identifie"]);
 
         $modulesController = new ModulesWrapper();

@@ -73,32 +73,9 @@
 
     <ul class="letters-list">
         <li {if $nameInitial == ''}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => ''])}">全部</a></li>
-        <li {if $nameInitial == 'A'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'A'])}">A</a></li>
-        <li {if $nameInitial == 'B'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'B'])}">B</a></li>
-        <li {if $nameInitial == 'C'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'C'])}">C</a></li>
-        <li {if $nameInitial == 'D'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'D'])}">D</a></li>
-        <li {if $nameInitial == 'E'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'E'])}">E</a></li>
-        <li {if $nameInitial == 'F'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'F'])}">F</a></li>
-        <li {if $nameInitial == 'G'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'G'])}">G</a></li>
-        <li {if $nameInitial == 'H'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'H'])}">H</a></li>
-        <li {if $nameInitial == 'I'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'I'])}">I</a></li>
-        <li {if $nameInitial == 'J'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'J'])}">J</a></li>
-        <li {if $nameInitial == 'K'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'K'])}">K</a></li>
-        <li {if $nameInitial == 'L'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'L'])}">L</a></li>
-        <li {if $nameInitial == 'M'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'M'])}">M</a></li>
-        <li {if $nameInitial == 'N'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'N'])}">N</a></li>
-        <li {if $nameInitial == 'O'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'O'])}">O</a></li>
-        <li {if $nameInitial == 'P'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'P'])}">P</a></li>
-        <li {if $nameInitial == 'Q'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'Q'])}">Q</a></li>
-        <li {if $nameInitial == 'R'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'R'])}">R</a></li>
-        <li {if $nameInitial == 'S'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'S'])}">S</a></li>
-        <li {if $nameInitial == 'T'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'T'])}">T</a></li>
-        <li {if $nameInitial == 'U'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'U'])}">U</a></li>
-        <li {if $nameInitial == 'V'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'V'])}">V</a></li>
-        <li {if $nameInitial == 'W'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'W'])}">W</a></li>
-        <li {if $nameInitial == 'X'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'X'])}">X</a></li>
-        <li {if $nameInitial == 'Y'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'Y'])}">Y</a></li>
-        <li {if $nameInitial == 'Z'}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => 'Z'])}">Z</a></li>
+        {foreach $letters as $key=>$letter }
+        <li {if $nameInitial == $letter}class="active"{/if}><a href="{:url('admin/app/list',['do' => $do,'type' => $type,'letter' => $letter])}">{$letter}</a></li>
+        {/foreach}
     </ul>
 
     {if empty($list)}

@@ -67,6 +67,12 @@ class RequestUtil
         curl_setopt($ch, CURLOPT_AUTOREFERER, 1); // 自动设置Referer
 
         if (!empty($postData)) {
+            if (is_array($postData)) {
+                $postData['host_ip'] = $_SERVER['REMOTE_ADDR'];
+                $postData['host_url'] = $_SERVER['HTTP_HOST'];
+                $postData['version'] = IMS_VERSION;
+                $postData['php_version'] = PHP_VERSION;
+            }
             curl_setopt($ch, CURLOPT_POST, 1); // 发送一个常规的Post请求
             curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData)); // Post提交的数据包
         }

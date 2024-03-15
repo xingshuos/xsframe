@@ -16,6 +16,7 @@ use DOMDocument;
 use xsframe\util\FileUtil;
 use xsframe\util\PinYinUtil;
 use think\facade\Db;
+use xsframe\util\RequestUtil;
 
 class ModulesWrapper
 {
@@ -46,9 +47,9 @@ class ModulesWrapper
     // 移动客户端文件
     public function moveDirToPublic($moduleName)
     {
-        $modulePath     = IA_ROOT . '/app/' . $moduleName;
+        $modulePath = IA_ROOT . '/app/' . $moduleName;
         $modulePackagesPath = $modulePath . '/packages/';
-        $moduleDirList  = glob($modulePackagesPath . '*');
+        $moduleDirList = glob($modulePackagesPath . '*');
         if (empty($moduleDirList)) {
             return true;
         }
@@ -67,15 +68,17 @@ class ModulesWrapper
     }
 
     // 创建未安装应用
-    public function buildUnInstalledModule()
+    public function buildLocalUnInstalledModule(): bool
     {
         $moduleList = Db::name('sys_modules')->column('*', 'identifie');
         // dump($moduleList);
-        $module_root      = IA_ROOT . '/app';
+
+        $module_root = IA_ROOT . '/app';
         $module_path_list = glob($module_root . '/*');
         if (empty($module_path_list)) {
             return true;
         }
+        // dump($module_path_list);
 
         foreach ($module_path_list as $path) {
             $moduleName = pathinfo($path, PATHINFO_BASENAME);
@@ -93,7 +96,7 @@ class ModulesWrapper
             $moduleUpgradeData = array(
                 'type'         => $manifest['application']['type'],
                 'name'         => $manifest['application']['name'],
-                'identifie'    => $moduleName,
+                'identifie'    => $manifest['application']['identifie'],
                 'version'      => $manifest['application']['version'],
                 'author'       => $manifest['application']['author'],
                 'logo'         => $manifest['application']['logo'],
@@ -115,24 +118,81 @@ class ModulesWrapper
             if (empty($moduleUpgradeData['name'])) {
                 continue;
             }
+            // 验证应用名称是否正确
             if (empty($moduleUpgradeData['identifie']) || !preg_match('/^[a-z][a-z\d_]+$/i', $moduleUpgradeData['identifie'])) {
                 continue;
             }
+            // 验证应用目录名称与配置名称是否匹配
             if (strtolower($moduleName) != strtolower($moduleUpgradeData['identifie'])) {
                 continue;
             }
+            // 验证version格式是否正确
             if (empty($moduleUpgradeData['version']) || !preg_match('/^[\d\.]+$/i', $manifest['application']['version'])) {
                 continue;
             }
 
             Db::name('sys_modules')->insert($moduleUpgradeData);
         }
+
+        return true;
+    }
+
+    // 获取云更新应用
+    public function buildCloudUnInstalledModule($key = null, $token = null)
+    {
+        if ($key && $token) {
+            $moduleList = Db::name('sys_modules')->column('*', 'identifie');
+
+            $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/app/list", array('key' => $key, 'token' => $token));
+            $result = json_decode($response, true);
+            if (!empty($result) && intval($result['code']) == 200) {
+                $appList = $result['data']['appList'];
+
+                foreach ($appList as $appInfo) {
+                    $moduleName = $appInfo['identifier'];
+                    if (!empty($moduleList[$moduleName])) {
+                        continue;
+                    }
+
+                    $moduleUpgradeData = array(
+                        'type'         => $appInfo['type'],
+                        'name'         => $appInfo['name'],
+                        'identifie'    => $appInfo['identifier'],
+                        'version'      => $appInfo['version'],
+                        'author'       => $appInfo['author'],
+                        'logo'         => $appInfo['logo'],
+                        'ability'      => $appInfo['ability'],
+                        'description'  => $appInfo['description'],
+                        'create_time'  => time(),
+                        'update_time'  => time(),
+                        'name_initial' => PinYinUtil::getFirstPinyin($appInfo['name']),
+                        'is_cloud'     => 1,
+                    );
+
+                    if (empty($moduleUpgradeData['name'])) {
+                        continue;
+                    }
+                    // 验证应用名称是否正确
+                    if (empty($moduleUpgradeData['identifie']) || !preg_match('/^[a-z][a-z\d_]+$/i', $moduleUpgradeData['identifie'])) {
+                        continue;
+                    }
+                    // 验证version格式是否正确
+                    if (empty($moduleUpgradeData['version']) || !preg_match('/^[\d\.]+$/i', $moduleUpgradeData['version'])) {
+                        continue;
+                    }
+
+                    Db::name('sys_modules')->insert($moduleUpgradeData);
+                }
+            }
+
+        }
+
         return true;
     }
 
     public function extModuleManifest($moduleName)
     {
-        $root     = IA_ROOT . '/app/' . $moduleName . "/packages";
+        $root = IA_ROOT . '/app/' . $moduleName . "/packages";
         $filename = $root . '/manifest.xml';
         if (!file_exists($filename)) {
             return array();
@@ -144,11 +204,11 @@ class ModulesWrapper
         if (!empty($xml)) {
             $xml['application']['logo'] = "app/" . $moduleName . '/icon.png';
 
-            $appLogoPath =  $root . '/icon.png';
+            $appLogoPath = $root . '/icon.png';
 
-            if( is_file($appLogoPath) ){
+            if (is_file($appLogoPath)) {
                 $publicAppPath = IA_ROOT . "/public/app/{$moduleName}";
-                $publicAppLogoPath = IA_ROOT . "/public/app/{$moduleName}"  . '/icon.png';
+                $publicAppLogoPath = IA_ROOT . "/public/app/{$moduleName}" . '/icon.png';
 
                 if (!is_dir($publicAppPath)) {
                     FileUtil::mkDirs($publicAppPath);
@@ -176,12 +236,12 @@ class ModulesWrapper
         if (!empty($manifest[$scriptType])) {
             if (strexists($manifest[$scriptType], '.php')) {
                 if (file_exists($modulePath . $manifest[$scriptType])) {
-                    $sql             = include_once $modulePath . $manifest[$scriptType];
+                    $sql = include_once $modulePath . $manifest[$scriptType];
                     $installSqlArray = $this->sqlParse($sql);
                     foreach ($installSqlArray as $sql) {
                         try {
                             $sql = trim($sql);
-                            if( !empty($sql) ){
+                            if (!empty($sql)) {
                                 Db::execute($sql);
                             }
                         } catch (\Exception $e) {
@@ -191,7 +251,7 @@ class ModulesWrapper
             } else {
                 try {
                     $sql = trim($manifest[$scriptType]);
-                    if( !empty($sql) ){
+                    if (!empty($sql)) {
                         Db::execute($sql);
                     }
                 } catch (\Exception $e) {
@@ -210,10 +270,10 @@ class ModulesWrapper
     // 删除安装文件
     private function extModuleScriptClean($moduleName, $manifest)
     {
-        $moduleDir             = IA_ROOT . '/app/' . $moduleName . '/packages/';
-        $manifest['install']   = trim($manifest['install']);
+        $moduleDir = IA_ROOT . '/app/' . $moduleName . '/packages/';
+        $manifest['install'] = trim($manifest['install']);
         $manifest['uninstall'] = trim($manifest['uninstall']);
-        $manifest['upgrade']   = trim($manifest['upgrade']);
+        $manifest['upgrade'] = trim($manifest['upgrade']);
         if (strexists($manifest['install'], '.php')) {
             if (file_exists($moduleDir . $manifest['install'])) {
                 unlink($moduleDir . $manifest['install']);
@@ -250,7 +310,7 @@ class ModulesWrapper
             return array();
         }
 
-        $vcode                = explode(',', $root->getAttribute('versionCode'));
+        $vcode = explode(',', $root->getAttribute('versionCode'));
         $manifest['versions'] = array();
         if (is_array($vcode)) {
             foreach ($vcode as $v) {
@@ -260,14 +320,14 @@ class ModulesWrapper
                 }
             }
             // $manifest['versions'][] = '2.0';
-            $manifest['versions']   = array_unique($manifest['versions']);
+            $manifest['versions'] = array_unique($manifest['versions']);
         }
 
 
-        $manifest['install']   = $root->getElementsByTagName('install')->item(0)->textContent;
+        $manifest['install'] = $root->getElementsByTagName('install')->item(0)->textContent;
         $manifest['uninstall'] = $root->getElementsByTagName('uninstall')->item(0)->textContent;
-        $manifest['upgrade']   = $root->getElementsByTagName('upgrade')->item(0)->textContent;
-        $application           = $root->getElementsByTagName('application')->item(0);
+        $manifest['upgrade'] = $root->getElementsByTagName('upgrade')->item(0)->textContent;
+        $application = $root->getElementsByTagName('application')->item(0);
 
 
         if (empty($application)) {
@@ -322,7 +382,7 @@ class ModulesWrapper
 
         // 替换表前缀
         if (!empty($replace)) {
-            $to   = current($replace);
+            $to = current($replace);
             $from = current(array_flip($replace));
         }
 
