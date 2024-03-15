@@ -21,10 +21,18 @@ use xsframe\util\RequestUtil;
 class ModulesWrapper
 {
     // 执行安装应用
-    public function runInstalledModule($moduleName)
+    public function runInstalledModule($moduleName, $key = null, $token = null)
     {
-        $manifest = $this->extModuleManifest($moduleName);
-        $this->extModuleRunScript($manifest, 'install');
+        if (is_dir(IA_ROOT . '/app/' . $moduleName)) {
+            $manifest = $this->extModuleManifest($moduleName);
+            $this->extModuleRunScript($manifest, 'install');
+        } else {
+            $cloudWrapper = new CloudWrapper();
+            $ret = $cloudWrapper->downloadCloudApp($moduleName, $key, $token);
+            if ($ret) {
+                $this->runInstalledModule($moduleName, $key, $token);
+            }
+        }
         return true;
     }
 
@@ -37,11 +45,20 @@ class ModulesWrapper
     }
 
     // 执行升级应用
-    public function runUpgradeModule($moduleName)
+    public function runUpgradeModule($moduleName, $key = null, $token = null, $isCloud = false)
     {
-        $manifest = $this->extModuleManifest($moduleName);
-        $this->extModuleRunScript($manifest, 'upgrade');
-        return $manifest;
+        $ret = true;
+        if ($isCloud) {
+            $cloudWrapper = new CloudWrapper();
+            $ret = $cloudWrapper->downloadCloudApp($moduleName, $key, $token);
+        }
+
+        if ($ret) {
+            $manifest = $this->extModuleManifest($moduleName);
+            $this->extModuleRunScript($manifest, 'upgrade');
+            return $manifest;
+        }
+        return false;
     }
 
     // 移动客户端文件
@@ -145,6 +162,7 @@ class ModulesWrapper
 
             $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/app/list", array('key' => $key, 'token' => $token));
             $result = json_decode($response, true);
+
             if (!empty($result) && intval($result['code']) == 200) {
                 $appList = $result['data']['appList'];
 

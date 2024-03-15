@@ -28,7 +28,7 @@ class FileUtil
     }
 
     // 删除目录
-    public static function rmDirs($path, $clean = false): bool
+    public static function rmDirs($path, $unFiles = [], $clean = false): bool
     {
         if (!is_dir($path)) {
             return false;
@@ -36,11 +36,42 @@ class FileUtil
         $files = glob($path . '/*');
         if ($files) {
             foreach ($files as $file) {
-                is_dir($file) ? self::rmDirs($file) : @unlink($file);
+                if (!in_array($file, $unFiles)) {
+                    is_dir($file) ? self::deleteDirectoryRecursively($file) : @unlink($file);
+                }
             }
         }
 
-        return $clean ? true : @rmdir($path);
+        return $clean || @rmdir($path);
+    }
+
+    // 清空隐藏文件
+    public static function deleteDirectoryRecursively($dir): bool
+    {
+        if (!is_dir($dir)) {
+            // 如果不是目录，直接返回 false
+            return false;
+        }
+
+        // 开启目录句柄
+        $files = @scandir($dir);
+
+        foreach ($files as $file) {
+            if ($file !== '.' && $file !== '..') {
+                $filePath = $dir . DIRECTORY_SEPARATOR . $file;
+
+                if (is_dir($filePath)) {
+                    // 如果是目录，则递归删除子目录
+                    self::deleteDirectoryRecursively($filePath);
+                } else {
+                    // 如果是文件，则直接删除文件
+                    unlink($filePath);
+                }
+            }
+        }
+
+        // 当目录为空时，删除父目录
+        return @rmdir($dir);
     }
 
     // 加载所有应用的命令行对应路径

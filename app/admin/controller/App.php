@@ -12,6 +12,7 @@
 
 namespace app\admin\controller;
 
+use xsframe\util\FileUtil;
 use xsframe\wrapper\ModulesWrapper;
 use xsframe\util\PinYinUtil;
 use think\facade\Db;
@@ -172,15 +173,23 @@ class App extends Base
     // 应用安装
     public function install()
     {
+        $key = $this->websiteSets['key'] ?? '';
+        $token = $this->websiteSets['token'] ?? '';
+
         $id = intval($this->params["id"]);
         $identifie = trim($this->params["identifie"]);
 
         Db::name('sys_modules')->where(['id' => $id])->update(['is_install' => 1, 'status' => 1]);
 
         $modulesController = new ModulesWrapper();
-        $modulesController->runInstalledModule($identifie);
-        $modulesController->moveDirToPublic($identifie);
+        $isTrue = $modulesController->runInstalledModule($identifie, $key, $token);
 
+        if (!$isTrue) {
+            $this->success('安装失败');
+        }
+
+        $modulesController->moveDirToPublic($identifie);
+        $this->removePackages($identifie);
         $this->success('安装成功');
     }
 
@@ -201,25 +210,51 @@ class App extends Base
     // 应用升级
     public function upgrade()
     {
+        $key = $this->websiteSets['key'] ?? '';
+        $token = $this->websiteSets['token'] ?? '';
+
         $id = intval($this->params["id"]);
         $identifie = trim($this->params["identifie"]);
+        $isCloud = $this->params['is_cloud'] ?? 0;
 
         $modulesController = new ModulesWrapper();
+        $manifest = $modulesController->runUpgradeModule($identifie, $key, $token, $isCloud);
 
-        $manifest = $modulesController->runUpgradeModule($identifie);
-        $modulesController->moveDirToPublic($identifie);
+        if ($manifest) {
+            $modulesController->moveDirToPublic($identifie);
 
-        $updateData = [
-            'type'         => $manifest['application']['type'],
-            'name'         => $manifest['application']['name'],
-            'version'      => $manifest['application']['version'],
-            'author'       => $manifest['application']['author'],
-            'ability'      => $manifest['application']['ability'],
-            'description'  => $manifest['application']['description'],
-            'update_time'  => time(),
-            'name_initial' => PinYinUtil::getFirstPinyin($manifest['application']['name']),
+            $updateData = [
+                'type'         => $manifest['application']['type'],
+                'name'         => $manifest['application']['name'],
+                'version'      => $manifest['application']['version'],
+                'author'       => $manifest['application']['author'],
+                'ability'      => $manifest['application']['ability'],
+                'description'  => $manifest['application']['description'],
+                'update_time'  => time(),
+                'name_initial' => PinYinUtil::getFirstPinyin($manifest['application']['name']),
+            ];
+            Db::name('sys_modules')->where(['id' => $id])->update($updateData);
+
+            $this->removePackages($identifie);
+
+            $this->success('升级成功');
+        } else {
+            $this->success('升级失败');
+        }
+    }
+
+    // 删除多余资源包
+    private function removePackages($identifie)
+    {
+        $packagesPath = IA_ROOT . "/app/{$identifie}/packages";
+        $unFiles = [
+            $packagesPath . "/source",
+            $packagesPath . "/install.php",
+            $packagesPath . "/manifest.xml",
+            $packagesPath . "/uninstall.php",
+            $packagesPath . "/upgrade.php",
         ];
-        Db::name('sys_modules')->where(['id' => $id])->update($updateData);
-        $this->success('升级成功');
+        FileUtil::rmDirs($packagesPath, $unFiles);
+        return true;
     }
 }

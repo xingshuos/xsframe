@@ -109,6 +109,7 @@
                     <th style='width:120px'>简介</th>
                     <th style="width: 80px;">作者</th>
                     <th style='width:80px;'>版本号</th>
+                    <th style='width:80px;'>类型</th>
                     {if $do != 'not_installed'}
                     <th style='width:80px;'>启用</th>
                     {/if}
@@ -177,6 +178,13 @@
                             {/if}
                         </span>
                     </td>
+                    <td>
+                        {if $row['is_cloud'] == 1}
+                            <label class="label label-info">云应用</label>
+                        {else}
+                            <label class="label label-default">本地应用</label>
+                        {/if}
+                    </td>
                     {if $do != 'not_installed'}
                     <td>
                         <span class='label {if $row['status']==1}label-primary{else}label-default{/if}'
@@ -201,7 +209,7 @@
                                 <a href="{:webUrl('admin/app/uninstall', array('identifie' => $row['identifie'],'id' => $row['id']))}" data-toggle="ajaxPost" data-confirm="卸载后将同时删除该应用所有数据,确认要卸载 “{$row['name']}” 么 ?" class="btn btn-danger btn-op btn-operation">卸载</a>
                             {/if}
                             {if ( $do == 'installed' || empty($do) ) && $row['new_version']}
-                                <a href="{:webUrl('admin/app/upgrade', array('identifie' => $row['identifie'],'id' => $row['id']))}" data-toggle="ajaxPost" data-confirm="确认要升级 “{$row['name']}” 到最新版本么 ?" class="btn btn-primary btn-op btn-operation">升级</a>
+                                <a href="{:webUrl('admin/app/upgrade', array('identifie' => $row['identifie'],'id' => $row['id'],'is_cloud' => $row['is_cloud']))}" data-toggle="ajaxPost" data-confirm="升级前请备份好您的应用文件,确认要升级 “{$row['name']}” 到最新版本么 ?" class="btn btn-primary btn-op btn-operation">升级</a>
                             {/if}
                             <a href="{:webUrl('admin/app/edit', array('id' => $row['id']))}" class="btn btn-op btn-operation">
                                 <span data-toggle="tooltip" data-placement="top" data-original-title="修改">
@@ -229,7 +237,7 @@
                 <tfoot>
                 <tr>
                     <td><input type="checkbox"></td>
-                    <td colspan="4">
+                    <td colspan="5">
                         <div class="btn-group">
                             <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('admin/app/change',array('type' => 'status','value'=>1))}"><i class='icow icow-xianshi'></i> 启用</button>
                             <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('admin/app/change',array('type' => 'status','value'=>0))}"><i class='icow icow-yincang'></i> 禁用</button>
