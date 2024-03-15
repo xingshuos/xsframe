@@ -14,6 +14,17 @@ $menu = [
         'title'    => '框架',
         'subtitle' => '框架管理',
         'icon'     => 'icon-th-list',
+        'items'    => array(
+            array(
+                'title' => '框架列表',
+                'route' => 'main',
+            ),
+            array(
+                'title' => '下载日志',
+                'route' => 'log',
+            ),
+        ),
+
     ),
 
     'apps' => array(

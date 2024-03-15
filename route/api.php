@@ -6,10 +6,13 @@ Route::group('api', function () {
 
     //无需登录
     Route::group(function () {
-        Route::any('upgrade', 'api.upgrade/getUpgradeList');
-        Route::any('upgradeFiles', 'api.upgrade/getUpgradeFiles');
-        Route::any('upgradeFileData', 'api.upgrade/getUpgradeFileData');
-        Route::any('checkVersion', 'api.upgrade/checkUpgradeVersion');
+        Route::any('frame/upgrade', 'api.frames/getUpgradeList');
+        Route::any('frame/upgradeFiles', 'api.frames/getUpgradeFiles');
+        Route::any('frame/upgradeFileData', 'api.frames/getUpgradeFileData');
+        Route::any('frame/checkVersion', 'api.frames/checkUpgradeVersion');
+
+        Route::any('app/list', 'api.apps/getAppList');
+        Route::any('app/upgrade', 'api.apps/checkAppUpgrade');
     });
 
     // 需要登陆

@@ -82,7 +82,7 @@
                     {:date('H:i:s',$row['updatetime'])}
                 </td>
                 <td>
-                    {$row['downloadTotal']}
+                    <a href="{:webUrl('frames/log',['keyword' => $row['version']])}">{$row['downloadTotal']}</a>
                 </td>
                 <td>
                     <span class='label {if $row['status']==1}label-primary{else}label-default{/if}'

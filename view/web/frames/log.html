@@ -1,0 +1,112 @@
+{extend name="../../admin/view/public/admin"}
+
+{block name='content'}
+
+<div class="page-header">当前位置：<span class="text-primary">框架下载记录</span></div>
+
+<div class="page-content">
+
+    <form action="" method="get" class="form-horizontal form-search" role="form">
+
+        <div class="page-toolbar">
+            <div class="pull-left col-md-12">
+                <div class="input-group">
+                    <span class="input-group-select">
+                        <select name='searchtime' class='form-control' style="width:100px;padding:0 5px;"
+                                id="searchtime">
+                            <option value=''>不按时间</option>
+                            <option value='create' {if $_GET['searchtime']=='create'}selected{/if}>添加时间</option>
+                        </select>
+                    </span>
+                    <span class="input-group-btn">
+                        {:tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
+                    </span>
+                    <input type="text" class="form-control" name='keyword' value="{$_GET['keyword']}"
+                           placeholder="请输入关键词、版本号、域名、ip、php版本"/>
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit"> 搜索</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    {if empty($list)}
+    <div class="panel panel-default">
+        <div class="panel-body empty-data">未查询到相关数据</div>
+    </div>
+    {else}
+    <form action="" method="post">
+        <table class="table table-responsive table-hover">
+            <thead class="navbar-inner">
+            <tr>
+                <th style="width:40px;"></th>
+                <th style="width: 80px;">更新版本</th>
+                <th style='width:100px'>用户</th>
+                <th style='width:120px;'>域名</th>
+                <th style="width: 120px;">IP</th>
+                <th style="width: 80px;">PHP版本</th>
+                <th style='width:80px'>更新时间</th>
+                <th style='width:80px'>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {foreach $list as $key => $row}
+            <tr>
+                <td>
+                    <input type='checkbox' value="{$row['id']}"/>
+                </td>
+                <td>
+                    {$row['version']}
+                </td>
+                <td class='full'>
+                    {$row['mid']}
+                </td>
+                <td class='full'>
+                    {$row['host_url']}
+                </td>
+                <td>
+                    {$row['host_ip']}
+                </td>
+                <td>
+                    {$row['php_version']}
+                </td>
+                <td>
+                    {:date('Y-m-d',$row['createtime'])}<br>
+                    {:date('H:i:s',$row['createtime'])}
+                </td>
+                <td style="text-align:left;">
+                    <a data-toggle='ajaxRemove' href="{:webUrl('frames/change', array('table' => 'log','type' => 'deleted','value' => 1,'id' => $row['id']))}"
+                       class="btn btn-op btn-operation" data-confirm='确认要删除此版本吗?'>
+                        <span data-toggle="tooltip" data-placement="top" data-original-title="删除">
+                            <i class='icow icow-shanchu1'></i>
+                        </span>
+                    </a>
+                </td>
+            </tr>
+            {/foreach}
+            </tbody>
+            <tfoot>
+            <tr>
+                <td><input type="checkbox"></td>
+                <td colspan="3">
+                    <div class="btn-group">
+                        <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove'
+                                data-confirm="确认要删除?"
+                                data-href="{:webUrl('frames/change',array('table' => 'log','type' => 'deleted','value'=>1))}">
+                            <i class='icow icow-shanchu1'></i> 删除
+                        </button>
+                    </div>
+                </td>
+                <td colspan="4" style="text-align: right">
+                    {$pager | raw}
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </form>
+    {/if}
+
+</div>
+
+{/block}

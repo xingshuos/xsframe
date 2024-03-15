@@ -68,6 +68,45 @@ class Frames extends AdminBaseController
         return $this->template('list', $result);
     }
 
+    public function log()
+    {
+        $keyword = trim($this->params['keyword']);
+        $searchTime = trim($this->params["searchtime"]);
+
+        $startTime = strtotime("-1 month");
+        $endTime = time();
+
+        $condition = " deleted=0 ";
+        $params = [];
+
+        if (!empty($searchTime) && is_array($this->params["time"]) && in_array($searchTime, array("create", "update"))) {
+            $startTime = strtotime($this->params["time"]["start"]);
+            $endTime = strtotime($this->params["time"]["end"]);
+            $condition .= " and `" . $searchTime . "time" . "` between " . $startTime . " and " . $endTime;
+        }
+        if (!empty($keyword)) {
+            $condition .= " and ( version like :version or host_url = :host_url or host_ip = :host_ip or php_version = :php_version ) ";
+            $params['version'] = $keyword . "%";
+            $params['host_url'] = $keyword;
+            $params['host_ip'] = $keyword;
+            $params['php_version'] = $keyword;
+        }
+
+        $list = FrameLogServiceFacade::getList([$condition, $params], "*", "id desc");
+        $total = FrameLogServiceFacade::getTotal([$condition, $params]);
+        $pager = pagination2($total, $this->pIndex, $this->pSize);
+
+        $result = [
+            'list'      => $list,
+            'pager'     => $pager,
+            'total'     => $total,
+            'starttime' => $startTime,
+            'endtime'   => $endTime,
+        ];
+
+        return $this->template('log', $result);
+    }
+
     public function edit()
     {
         return $this->post();
@@ -164,26 +203,9 @@ class Frames extends AdminBaseController
         return true;
     }
 
-    public function delete()
-    {
-        $id = intval($this->params["id"]);
-
-        if (empty($id)) {
-            $id = $this->params["ids"];
-        }
-
-        if (empty($id)) {
-            show_json(0, array("message" => "参数错误"));
-        }
-        $items = FrameVersionServiceFacade::getAll(['id' => $id]);
-        foreach ($items as $item) {
-            FrameVersionServiceFacade::updateInfo(['deleted' => 1], ['id' => $item['id']]);
-        }
-        $this->success(array("url" => referer()));
-    }
-
     public function change()
     {
+        $table = $this->params["table"] ?? '';
         $id = intval($this->params["id"]);
 
         if (empty($id)) {
@@ -197,10 +219,20 @@ class Frames extends AdminBaseController
         $type = trim($this->params["type"]);
         $value = trim($this->params["value"]);
 
-        $items = FrameVersionServiceFacade::getAll(['id' => $id]);
-        foreach ($items as $item) {
-            FrameVersionServiceFacade::updateInfo([$type => $value], ['id' => $item['id']]);
+        if (empty($table)) {
+            $items = FrameVersionServiceFacade::getAll(['id' => $id]);
+            foreach ($items as $item) {
+                FrameVersionServiceFacade::updateInfo([$type => $value], ['id' => $item['id']]);
+            }
+        } else {
+            if ($table == 'log') {
+                $items = FrameLogServiceFacade::getAll(['id' => $id]);
+                foreach ($items as $item) {
+                    FrameLogServiceFacade::updateInfo([$type => $value], ['id' => $item['id']]);
+                }
+            }
         }
+
 
         $this->success();
     }
