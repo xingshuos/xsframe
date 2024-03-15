@@ -76,7 +76,7 @@ class Frames extends Base
             }
         }
 
-        FrameLogServiceFacade::insertInfo(['mid' => $this->memberInfo['mid'], 'host_url' => $hostUrl, 'host_ip' => $hostIp, 'createtime' => time(), 'version' => $upgradeInfo['version'], 'php_version' => $phpVersion]);
+        FrameLogServiceFacade::insertInfo(['mid' => $this->memberInfo['id'], 'host_url' => $hostUrl, 'host_ip' => $hostIp, 'createtime' => time(), 'version' => $upgradeInfo['version'], 'php_version' => $phpVersion]);
 
         $result = [
             'version'    => $upgradeInfo['version'],

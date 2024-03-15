@@ -13,6 +13,7 @@ Route::group('api', function () {
 
         Route::any('app/list', 'api.apps/getAppList');
         Route::any('app/upgrade', 'api.apps/checkAppUpgrade');
+        Route::any('app/download', 'api.apps/downloadModule');
     });
 
     // 需要登陆
