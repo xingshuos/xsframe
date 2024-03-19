@@ -420,7 +420,10 @@ EOF;
             $result = json_decode($response, true);
 
             if (empty($result) || $result['code'] != 200) {
-                $this->error($result['msg']);
+                if ($this->request->isPost()) {
+                    $this->error($result['msg']);
+                }
+                $upgradeList = [];
             } else {
                 $upgradeList = $result['data']['list'];
             }

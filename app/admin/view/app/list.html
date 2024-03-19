@@ -222,7 +222,7 @@
                                 </span>
                             </a>
                             {if ( $do == 'installed' || empty($do) ) && !$row['new_version']}
-                                <a href="{:webUrl('admin/app/upgrade', array('identifie' => $row['identifie'],'id' => $row['id']))}" data-toggle="ajaxPost" data-confirm="确认要升级 “{$row['name']}” 到最新版本么 ?" class="btn btn-default btn-op btn-operation">
+                                <a href="{:webUrl('admin/app/upgrade', array('identifie' => $row['identifie'],'id' => $row['id'],'is_cloud' => $row['is_cloud']))}" data-toggle="ajaxPost" data-confirm="已经是最新版本，确认要再次更新 “{$row['name']}” 到最新版本么，更新前请做好备份 ?" class="btn btn-default btn-op btn-operation">
                                     <span data-toggle="tooltip" data-placement="top" data-original-title="强制更新">
                                        <i class='icon icon-refresh'></i>
                                     </span>
