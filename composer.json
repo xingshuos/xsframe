@@ -47,7 +47,8 @@
     "alibabacloud/vod-20170321": "2.16.12",
     "alibabacloud/iot": "^1.8",
     "ext-imagick": "*",
-    "topthink/think-queue": "^3.0"
+    "topthink/think-queue": "^3.0",
+    "ext-bcmath": "*"
   },
   "require-dev": {
     "symfony/var-dumper": "^4.2",
