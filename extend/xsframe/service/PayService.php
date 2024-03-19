@@ -106,54 +106,6 @@ class PayService extends BaseService
     }
 
 
-    /**
-     * web - 支付宝支付
-     * @param $ordersn
-     * @param $price
-     * @param int $serviceType
-     * @param string $title
-     * @param null $returnUrl
-     * @param bool $returnQrcode
-     * @param int $qrcodeWidth
-     * @return string|array
-     * @throws ApiException
-     */
-    public function aliPagePay($ordersn, $price, int $serviceType = 0, string $title = '', $returnUrl = null, bool $returnQrcode = false, int $qrcodeWidth = 300)
-    {
-        try {
-            $params = [
-                'out_trade_no' => $ordersn,
-                'total_amount' => $price,
-                'subject' => $title,
-                'body' => $this->module . ":" . $this->uniacid . ":" . $serviceType,
-                'product_code' => 'FAST_INSTANT_TRADE_PAY',
-            ];
-
-            if ($returnQrcode) {
-                $params['qr_pay_mode'] = 4;
-                $params['qrcode_width'] = $qrcodeWidth;
-            }
-
-            $params['return_url'] = $returnUrl;
-
-            if (!$this->aliPayService instanceof AliPayService) {
-                $paymentSet = $this->account['settings']['alipay'];
-                $gatewayUrl = "https://openapi.alipay.com/gateway.do";
-                $notifyUrl = $this->siteRoot . "/" . $this->module . "/alipay/notify";
-
-                if (empty($paymentSet['appid']) || empty($paymentSet['encrypt_key'])) {
-                    return ErrorUtil::error(-1, "后台支付宝支付配置信息未配置");
-                }
-
-                $this->aliPayService = new AliPayService($gatewayUrl, $paymentSet['appid'], $paymentSet['encrypt_key'], $paymentSet['private_key'], $paymentSet['public_key'], $notifyUrl, $returnUrl);
-            }
-
-            return $this->aliPayService->pagePay($params);
-        } catch (ApiException|\Exception $e) {
-            throw new ApiException($e->getMessage());
-        }
-    }
-
     // 获取token与user_id（唯一）
     // 文档地址1:https://opendocs.alipay.com/open/284/web?pathHash=9ec22daf
     // 文档地址2:https://opendocs.alipay.com/open/02np96?pathHash=db2cdfed
@@ -199,7 +151,7 @@ class PayService extends BaseService
     }
 
     /**
-     * web - 支付宝支付
+     * web - 支付宝支付 pc网页支付
      * @param $ordersn
      * @param $price
      * @param int $serviceType
@@ -210,14 +162,62 @@ class PayService extends BaseService
      * @return string|array
      * @throws ApiException
      */
+    public function aliPagePay($ordersn, $price, int $serviceType = 0, string $title = '', $returnUrl = null, bool $returnQrcode = false, int $qrcodeWidth = 300)
+    {
+        try {
+            $params = [
+                'out_trade_no' => $ordersn,
+                'total_amount' => $price,
+                'subject'      => $title,
+                'body'         => $this->module . ":" . $this->uniacid . ":" . $serviceType,
+                'product_code' => 'FAST_INSTANT_TRADE_PAY',
+            ];
+
+            if ($returnQrcode) {
+                $params['qr_pay_mode'] = 4;
+                $params['qrcode_width'] = $qrcodeWidth;
+            }
+
+            $params['return_url'] = $returnUrl;
+
+            if (!$this->aliPayService instanceof AliPayService) {
+                $paymentSet = $this->account['settings']['alipay'];
+                $gatewayUrl = "https://openapi.alipay.com/gateway.do";
+                $notifyUrl = $this->siteRoot . "/" . $this->module . "/alipay/notify";
+
+                if (empty($paymentSet['appid']) || empty($paymentSet['encrypt_key'])) {
+                    return ErrorUtil::error(-1, "后台支付宝支付配置信息未配置");
+                }
+
+                $this->aliPayService = new AliPayService($gatewayUrl, $paymentSet['appid'], $paymentSet['encrypt_key'], $paymentSet['private_key'], $paymentSet['public_key'], $notifyUrl, $returnUrl);
+            }
+
+            return $this->aliPayService->pagePay($params);
+        } catch (ApiException|\Exception $e) {
+            throw new ApiException($e->getMessage());
+        }
+    }
+
+    /**
+     * wap - 支付宝支付 手机端支付
+     * @param $ordersn
+     * @param $price
+     * @param int $serviceType
+     * @param string $title
+     * @param null $returnUrl
+     * @param bool $returnQrcode
+     * @param int $qrcodeWidth
+     * @return string
+     * @throws ApiException
+     */
     public function wapPay($ordersn, $price, int $serviceType = 0, string $title = '', $returnUrl = null)
     {
         try {
             $params = [
                 'out_trade_no' => $ordersn,
                 'total_amount' => $price,
-                'subject' => $title,
-                'body' => $this->module . ":" . $this->uniacid . ":" . $serviceType,
+                'subject'      => $title,
+                'body'         => $this->module . ":" . $this->uniacid . ":" . $serviceType,
                 'product_code' => 'FAST_INSTANT_TRADE_PAY',
             ];
 
