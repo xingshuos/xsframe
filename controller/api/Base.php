@@ -32,7 +32,7 @@ class Base extends ApiBaseController
 
         $memberInfo = MemberServiceFacade::getInfo(['token' => $token]);
         if (empty($memberInfo)) {
-            $this->error("当前站点不存在或已暂停服务,请联系官方客服处理");
+            $this->error("当前站点不存在或已暂停服务,请查看 站点设置>站点信息（站点ID与通信秘钥）是否配置正确,或联系官方客服处理");
         }
         if ($memberInfo['status'] == 0) {
             $this->error("您的站点已暂停服务,请联系官方客服处理");
