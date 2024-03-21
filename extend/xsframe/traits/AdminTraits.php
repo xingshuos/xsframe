@@ -8,16 +8,48 @@ trait AdminTraits
 {
     protected $tableName = '';
 
-    // 回收站
     public function index()
+    {
+        return $this->main();
+    }
+
+    public function main()
     {
         $result = [];
 
         if (!empty($this->tableName)) {
+            $keyword = $this->params['keyword'] ?? '';
+            $kwFields = $this->params['kwFields'] ?? '';
+            $status = $this->params['status'] ?? 0;
+            $searchTime = trim($this->params["searchtime"] ?? 0);
+
+            $startTime = strtotime("-1 month");
+            $endTime = time();
+
             $condition = [
                 'uniacid' => $this->uniacid,
                 'deleted' => 0,
             ];
+
+            if (is_numeric($status)) {
+                $condition['status'] = $status;
+            }
+
+            if (!empty($searchTime) && is_array($this->params["time"]) && in_array($searchTime, ["create"])) {
+                $startTime = strtotime($this->params["time"]["start"]);
+                $endTime = strtotime($this->params["time"]["end"]);
+
+                $condition[$searchTime . "time"] = Db::raw("between {$startTime} and {$endTime} ");
+            }
+
+            if (!empty($keyword) && !empty($kwFields)) {
+                $kwFieldsList = explode(",", $kwFields);
+                $kwSql = "";
+                foreach ($kwFieldsList as $field) {
+                    $kwSql = (!empty($kwSql) ? ' or ' : '') . " {$field} like '%" . trim($keyword) . "%' ";
+                }
+                $condition[''] = Db::raw($kwSql);
+            }
 
             $field = "*";
             $order = "id desc";
@@ -29,15 +61,13 @@ trait AdminTraits
                 'list'  => $list,
                 'pager' => $pager,
                 'total' => $total,
+
+                'starttime' => $startTime,
+                'endtime'   => $endTime,
             ];
         }
 
         return $this->template('list', $result);
-    }
-
-    public function main()
-    {
-        return $this->template("list", []);
     }
 
     public function edit()
@@ -52,7 +82,21 @@ trait AdminTraits
 
     public function post()
     {
-        return [];
+        $result = [];
+
+        if (!empty($this->tableName)) {
+            $id = intval($this->params["id"] ?? 0);
+
+            $field = "*";
+            $condition = ['id' => $id];
+            $item = Db::name($this->tableName)->field($field)->where($condition)->find();
+
+            $result = [
+                'item' => $item
+            ];
+        }
+
+        return $this->template('post', $result);
     }
 
     public function change()
@@ -101,7 +145,7 @@ trait AdminTraits
                 Db::name($this->tableName)->where(["id" => $item['id']])->update(['deleted' => 1]);
             }
         }
-        $this->success(array("url" => referer()));
+        $this->success(["url" => referer()]);
     }
 
     // 真实删除
@@ -126,7 +170,7 @@ trait AdminTraits
                 Db::name($this->tableName)->where(["id" => $item['id']])->delete();
             }
         }
-        $this->success(array("url" => referer()));
+        $this->success(["url" => referer()]);
     }
 
     // 还原数据
@@ -148,7 +192,7 @@ trait AdminTraits
                 Db::name($this->tableName)->where(["id" => $item['id']])->update(['deleted' => 0]);
             }
         }
-        $this->success(array("url" => referer()));
+        $this->success(["url" => referer()]);
     }
 
     // 回收站
