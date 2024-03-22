@@ -99,6 +99,7 @@ class ComposerStaticInit8b9040558554b2c09c58884a2bd8d650
         ),
         'A' => 
         array (
+            'AntCloudSDKCore\\' => 16,
             'AlibabaCloud\\Tea\\XML\\' => 21,
             'AlibabaCloud\\Tea\\Utils\\' => 23,
             'AlibabaCloud\\Tea\\' => 17,
@@ -135,8 +136,8 @@ class ComposerStaticInit8b9040558554b2c09c58884a2bd8d650
             1 => __DIR__ . '/..' . '/topthink/think-helper/src',
             2 => __DIR__ . '/..' . '/topthink/think-image/src',
             3 => __DIR__ . '/..' . '/topthink/think-orm/src',
-            4 => __DIR__ . '/..' . '/topthink/think-template/src',
-            5 => __DIR__ . '/..' . '/topthink/think-queue/src',
+            4 => __DIR__ . '/..' . '/topthink/think-queue/src',
+            5 => __DIR__ . '/..' . '/topthink/think-template/src',
         ),
         'clagiordano\\weblibs\\configmanager\\' => 
         array (
@@ -258,6 +259,10 @@ class ComposerStaticInit8b9040558554b2c09c58884a2bd8d650
         'Carbon\\' => 
         array (
             0 => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon',
+        ),
+        'AntCloudSDKCore\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/tinywan/antfin-php-sdk/src',
         ),
         'AlibabaCloud\\Tea\\XML\\' => 
         array (

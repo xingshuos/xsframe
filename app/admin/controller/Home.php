@@ -24,9 +24,9 @@ class Home extends Base
 
     public function welcome()
     {
-        $accountTotal    = Db::name('sys_account')->where(['deleted' => 0])->count();
-        $moduleTotal     = Db::name('sys_modules')->where(['is_deleted' => 0, 'status' => 1, 'is_install' => 1])->count();
-        $userTotal       = Db::name('sys_users')->where(['status' => 1, 'deleted' => 0, 'role' => 'owner'])->count();
+        $accountTotal = Db::name('sys_account')->where(['deleted' => 0])->count();
+        $moduleTotal = Db::name('sys_modules')->where(['is_deleted' => 0, 'status' => 1, 'is_install' => 1])->count();
+        $userTotal = Db::name('sys_users')->where(['status' => 1, 'deleted' => 0, 'role' => 'owner'])->count();
         $userModuleTotal = Db::name('sys_users')->where(['status' => 1, 'deleted' => 0, 'role' => 'manager'])->count();
 
         $result = [

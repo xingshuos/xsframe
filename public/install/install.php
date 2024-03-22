@@ -5,7 +5,7 @@ ob_start();
 header('content-type: text/html; charset=utf-8');
 define('PATH_ROOT', str_replace("\\", '/', dirname(dirname(__FILE__))));
 
-$actions = array('license', 'env', 'db', 'finish');
+$actions = ['license', 'env', 'db', 'finish'];
 $action = $_COOKIE['action'];
 $action = in_array($action, $actions) ? $action : 'license';
 $ispost = strtolower($_SERVER['REQUEST_METHOD']) == 'post';
@@ -22,7 +22,7 @@ if ($_GET['step'] == 'get_dblist') {
     if (mysqli_connect_errno()) {
         $error = mysqli_connect_errno();
         if (strpos($error, '1045') !== false) {
-            $result = array('code' => '100', 'msg' => '您的数据库访问用户名或是密码错误');
+            $result = ['code' => '100', 'msg' => '您的数据库访问用户名或是密码错误'];
         }
     } else {
         $sql = "SELECT `SCHEMA_NAME` FROM `information_schema`.`SCHEMATA`";
@@ -30,7 +30,7 @@ if ($_GET['step'] == 'get_dblist') {
         while ($rs = mysqli_fetch_array($result)) {
             $databases[] = $rs[0];
         }
-        $result = array('code' => '200', 'data' => implode(',', $databases));
+        $result = ['code' => '200', 'data' => implode(',', $databases)];
     }
     echo json_encode($result);
     die;
@@ -57,7 +57,7 @@ if ($action == 'env') {
         exit;
     }
 
-    $ret = array();
+    $ret = [];
     $ret['server']['os']['value'] = php_uname();
     // $ret['server']['os']['value'] = mb_convert_encoding($ret['server']['os']['value'], "UTF-8", "CP936");
     $ret['server']['os']['value'] = iconv("CP936", "UTF-8", $ret['server']['os']['value']);
@@ -320,11 +320,11 @@ if ($action == 'db') {
             $pieces = explode(':', $db['server']);
             $db['port'] = !empty($pieces[1]) ? $pieces[1] : '3306';
             $config = db_config();
-            $config = str_replace(array(
-                '{db-server}', '{db-username}', '{db-password}', '{db-port}', '{db-name}', '{db-prefix}'
-            ), array(
-                $db['server'], $db['username'], $db['password'], $db['port'], $db['name'], $db['prefix']
-            ), $config);
+            $config = str_replace([
+                '{db-server}', '{db-username}', '{db-password}', '{db-port}', '{db-name}', '{db-prefix}', '{authkey}'
+            ], [
+                $db['server'], $db['username'], $db['password'], $db['port'], $db['name'], $db['prefix'], generateRandomString()
+            ], $config);
 
             mysqli_close($link);
 
@@ -333,7 +333,7 @@ if ($action == 'db') {
             mysqli_query($link, "SET character_set_connection=utf8, character_set_results=utf8, character_set_client=binary");
             mysqli_query($link, "SET sql_mode=''");
 
-            //循环添加数据
+            // 循环添加数据
             if (file_exists(PATH_ROOT . '/install/install.sql')) {
                 $sql = file_get_contents(PATH_ROOT . '/install/install.sql');
 
@@ -357,7 +357,7 @@ if ($action == 'db') {
                 die('<script type="text/javascript">alert("安装包不正确, 数据安装脚本缺失.");history.back();</script>');
             }
 
-            //添加用户管理员
+            // 添加用户管理员
             $curTime = time();
             $authkey = local_salt(6);
             $password = md5($user['password'] . $authkey);
@@ -366,10 +366,10 @@ if ($action == 'db') {
                 die('<script type="text/javascript">alert("管理员账户注册失败.");history.back();</script>');
             }
 
-            //配置数据库
+            // 配置数据库
             file_put_contents(dirname(PATH_ROOT) . '/.env', $config);
 
-            //生成辨识
+            // 生成辨识
             @touch(PATH_ROOT . '/install/install.lock');
 
             setcookie('action', 'finish');
@@ -393,6 +393,17 @@ if ($action == 'finish') {
     @unlink(PATH_ROOT . '/install/install.php');
     @unlink(PATH_ROOT . '/install/install.sql');
     tpl_install_finish($url);
+}
+
+function generateRandomString($length = 8)
+{
+    $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    $result = '';
+    for ($i = 0; $i < $length; $i++) {
+        $index = mt_rand(0, strlen($chars) - 1);
+        $result .= $chars[$index];
+    }
+    return $result;
 }
 
 function tpl_install_license()
@@ -459,7 +470,7 @@ function tpl_frame()
     global $action, $actions;
     $action = $_COOKIE['action'];
     $step = array_search($action, $actions);
-    $steps = array();
+    $steps = [];
     for ($i = 0; $i <= $step; $i++) {
         if ($i == $step) {
             $steps[$i] = ' list-group-item-info';
@@ -617,7 +628,7 @@ function local_writeable($dir)
     return $writeable;
 }
 
-function tpl_install_env($ret = array())
+function tpl_install_env($ret = [])
 {
     if (!$ret['continue']) {
         $continue = '<li class="previous disabled"><a href="javascript:;">请先解决环境问题后继续</a></li>';
@@ -795,9 +806,9 @@ function tpl_install_db($error = '')
     if (!empty($error)) {
         $message = '<div class="alert alert-danger">发生错误: ' . $error . '</div>';
     }
-    $insTypes = array();
+    $insTypes = [];
     if (!empty($_POST['type'])) {
-        $insTypes = array();
+        $insTypes = [];
         $insTypes[$_POST['type']] = ' checked="checked"';
     }
     $disabled = empty($insTypes['local']) ? ' disabled="disabled"' : '';
@@ -961,6 +972,7 @@ function db_config()
     
 APP_DEBUG = false
 DEFAULT_APP = admin
+AUTHKEY = {authkey}
 
 [CACHE]
 driver=file

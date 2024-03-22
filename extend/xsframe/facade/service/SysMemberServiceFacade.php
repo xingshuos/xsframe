@@ -14,12 +14,17 @@ namespace xsframe\facade\service;
 
 
 use xsframe\base\BaseFacade;
-use xsframe\service\MemberService;
+use xsframe\service\SysMemberService;
 
-class MemberServiceFacade extends BaseFacade
+/**
+ * @method static checkLogin(string $token = null)
+ * @method static logout(string $token = null)
+ * @method static mobileLogin(string $mobile, string $password = null, int $code = null)
+ */
+class SysMemberServiceFacade extends BaseFacade
 {
     protected static function getFacadeClass()
     {
-        return MemberService::class;
+        return SysMemberService::class;
     }
 }

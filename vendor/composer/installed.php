@@ -3,7 +3,7 @@
         'name' => 'topthink/think',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '8f5fb27723f2a1eaf132a3ecab3570304e81b722',
+        'reference' => '54a20d1e35aa5db7bfae82ca56bd307bd0505f3d',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -427,6 +427,15 @@
             'aliases' => array(),
             'dev_requirement' => true,
         ),
+        'tinywan/antfin-php-sdk' => array(
+            'pretty_version' => 'v0.0.1',
+            'version' => '0.0.1.0',
+            'reference' => '67c749edd2408398645f7ee5f92a7080f575e883',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../tinywan/antfin-php-sdk',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'topthink/framework' => array(
             'pretty_version' => 'v6.1.4',
             'version' => '6.1.4.0',
@@ -439,7 +448,7 @@
         'topthink/think' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '8f5fb27723f2a1eaf132a3ecab3570304e81b722',
+            'reference' => '54a20d1e35aa5db7bfae82ca56bd307bd0505f3d',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

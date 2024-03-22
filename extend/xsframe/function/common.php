@@ -84,10 +84,10 @@ if (!function_exists('getPageNum')) {
 if (!function_exists('show_json')) {
     function show_json($status = 1, $return = null)
     {
-        $ret = array(
+        $ret = [
             'status' => $status,
-            'result' => $status == 1 ? array('url' => referer()) : array()
-        );
+            'result' => $status == 1 ? ['url' => referer()] : []
+        ];
         if (!is_array($return)) {
             if ($return) {
                 $ret['result']['message'] = $return;
@@ -160,9 +160,9 @@ if (!function_exists('referer')) {
         $referer = str_replace('&amp;', '&', $referer);
         $reurl = parse_url($referer);
 
-        if (!empty($reurl['host']) && !in_array($reurl['host'], array($_SERVER['HTTP_HOST'], 'www.' . $_SERVER['HTTP_HOST'])) && !in_array($_SERVER['HTTP_HOST'], array($reurl['host'], 'www.' . $reurl['host']))) {
+        if (!empty($reurl['host']) && !in_array($reurl['host'], [$_SERVER['HTTP_HOST'], 'www.' . $_SERVER['HTTP_HOST']]) && !in_array($_SERVER['HTTP_HOST'], [$reurl['host'], 'www.' . $reurl['host']])) {
             $referer = getSiteRoot();
-        } elseif (empty($reurl['host'])) {
+        } else if (empty($reurl['host'])) {
             $referer = ($referer ? getSiteRoot() . './' . $referer : '');
         }
         return strip_tags($referer);
@@ -284,9 +284,9 @@ if (!function_exists('mobileUrl')) {
         if ((substr($t, 0, 7) == 'http://') || (substr($t, 0, 8) == 'https://') || (substr($t, 0, 2) == '//')) {
             $url = $src;
         } else {
-            if( env('site.mRootUrl') ){
+            if (env('site.mRootUrl')) {
                 $url = env('site.mRootUrl') . "/" . trim($src, '/');
-            }else{
+            } else {
                 $url = request()->domain() . "/" . trim($src, '/');
             }
         }
@@ -330,10 +330,10 @@ if (!function_exists('videoTomedia')) {
 
 // 设置图片完整路径
 if (!function_exists('set_medias')) {
-    function set_medias($list = array(), $fields = null, $suffix = null)
+    function set_medias($list = [], $fields = null, $suffix = null)
     {
         if (empty($list)) {
-            return array();
+            return [];
         }
 
         if (empty($fields)) {
@@ -410,7 +410,7 @@ if (!function_exists('iunserializer')) {
     function iunserializer($value)
     {
         if (empty($value)) {
-            return array();
+            return [];
         }
         if (!is_serialized($value)) {
             return $value;
@@ -465,7 +465,7 @@ if (!function_exists('is_serialized')) {
                     if ('"' !== substr($data, -2, 1)) {
                         return false;
                     }
-                } elseif (false === strpos($data, '"')) {
+                } else if (false === strpos($data, '"')) {
                     return false;
                 }
             case 'a' :
@@ -479,6 +479,19 @@ if (!function_exists('is_serialized')) {
                 return (bool)preg_match("/^{$token}:[0-9.E-]+;$end/", $data);
         }
         return false;
+    }
+}
+
+if (!function_exists('authcode2')) {
+    function authcode2($string, $operation = 'DECODE', $expiry = 0)
+    {
+        $key = env('authkey') ?? 'xsframe';
+
+        if ($operation == 'DECODE') {
+            return \xsframe\util\OpensslUtil::decrypt($string, $key, substr(md5($key), 0, 16));
+        } else {
+            return \xsframe\util\OpensslUtil::encrypt($string, $key, substr(md5($key), 0, 16), !empty($expiry) && $expiry > 0 ? time() + $expiry : null);
+        }
     }
 }
 
@@ -501,7 +514,7 @@ if (!function_exists('authcode')) {
         $result = '';
         $box = range(0, 255);
 
-        $rndkey = array();
+        $rndkey = [];
         for ($i = 0; $i <= 255; $i++) {
             $rndkey[$i] = ord($cryptkey[$i % $key_length]);
         }
@@ -553,7 +566,7 @@ if (!function_exists('is_mobile_request')) {
         if (isset($_SERVER['HTTP_PROFILE']))
             $mobile_browser++;
         $mobile_ua = strtolower(substr($_SERVER['HTTP_USER_AGENT'], 0, 4));
-        $mobile_agents = array(
+        $mobile_agents = [
             'w3c ', 'acs-', 'alav', 'alca', 'amoi', 'audi', 'avan', 'benq', 'bird', 'blac',
             'blaz', 'brew', 'cell', 'cldc', 'cmd-', 'dang', 'doco', 'eric', 'hipt', 'inno',
             'ipaq', 'java', 'jigs', 'kddi', 'keji', 'leno', 'lg-c', 'lg-d', 'lg-g', 'lge-',
@@ -563,7 +576,7 @@ if (!function_exists('is_mobile_request')) {
             'sie-', 'siem', 'smal', 'smar', 'sony', 'sph-', 'symb', 't-mo', 'teli', 'tim-',
             'tosh', 'tsm-', 'upg1', 'upsi', 'vk-v', 'voda', 'wap-', 'wapa', 'wapi', 'wapp',
             'wapr', 'webc', 'winw', 'winw', 'xda', 'xda-'
-        );
+        ];
         if (in_array($mobile_ua, $mobile_agents))
             $mobile_browser++;
         if (strpos(strtolower($_SERVER['ALL_HTTP']), 'operamini') !== false)
@@ -622,9 +635,9 @@ if (!function_exists('sizeCount')) {
     {
         if ($size >= 1073741824) {
             $size = round($size / 1073741824 * 100) / 100 . ' GB';
-        } elseif ($size >= 1048576) {
+        } else if ($size >= 1048576) {
             $size = round($size / 1048576 * 100) / 100 . ' MB';
-        } elseif ($size >= 1024) {
+        } else if ($size >= 1024) {
             $size = round($size / 1024 * 100) / 100 . ' KB';
         } else {
             $size = $size . ' Bytes';
@@ -654,7 +667,7 @@ if (!function_exists('byteCount')) {
 if (!function_exists('parsePath')) {
     function parsePath($path)
     {
-        $danger_char = array('../', '{php', '<?php', '<%', '<?', '..\\', '\\\\', '\\', '..\\\\', '%00', '\0', '\r');
+        $danger_char = ['../', '{php', '<?php', '<%', '<?', '..\\', '\\\\', '\\', '..\\\\', '%00', '\0', '\r'];
         foreach ($danger_char as $char) {
             if (strexists($path, $char)) {
                 return false;

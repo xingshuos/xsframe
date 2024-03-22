@@ -14,12 +14,12 @@ namespace xsframe\facade\service;
 
 
 use xsframe\base\BaseFacade;
-use xsframe\service\MemberAddressService;
+use xsframe\service\SysMemberAddressService;
 
-class MemberAddressServiceFacade extends BaseFacade
+class SysMemberAddressServiceFacade extends BaseFacade
 {
     protected static function getFacadeClass()
     {
-        return MemberAddressService::class;
+        return SysMemberAddressService::class;
     }
 }

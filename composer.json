@@ -48,7 +48,8 @@
     "alibabacloud/iot": "^1.8",
     "ext-imagick": "*",
     "topthink/think-queue": "^3.0",
-    "ext-bcmath": "*"
+    "ext-bcmath": "*",
+    "tinywan/antfin-php-sdk": "^0.0.1"
   },
   "require-dev": {
     "symfony/var-dumper": "^4.2",

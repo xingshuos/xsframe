@@ -3118,6 +3118,47 @@
             "install-path": "../symfony/var-dumper"
         },
         {
+            "name": "tinywan/antfin-php-sdk",
+            "version": "v0.0.1",
+            "version_normalized": "0.0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Tinywan/antfin-php-sdk.git",
+                "reference": "67c749edd2408398645f7ee5f92a7080f575e883"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Tinywan/antfin-php-sdk/zipball/67c749edd2408398645f7ee5f92a7080f575e883",
+                "reference": "67c749edd2408398645f7ee5f92a7080f575e883",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6"
+            },
+            "time": "2020-06-09T02:14:54+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "AntCloudSDKCore\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "蚂蚁金服金融API平台网关第三方PHP SDK",
+            "keywords": [
+                "antcloud",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/Tinywan/antfin-php-sdk/issues",
+                "source": "https://github.com/Tinywan/antfin-php-sdk/tree/master"
+            },
+            "install-path": "../tinywan/antfin-php-sdk"
+        },
+        {
             "name": "topthink/framework",
             "version": "v6.1.4",
             "version_normalized": "6.1.4.0",
