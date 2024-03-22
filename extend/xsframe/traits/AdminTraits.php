@@ -20,7 +20,8 @@ trait AdminTraits
         if (!empty($this->tableName)) {
             $keyword = $this->params['keyword'] ?? '';
             $kwFields = $this->params['kwFields'] ?? '';
-            $status = $this->params['status'] ?? 0;
+            $status = $this->params['status'] ?? '';
+            $enabled = $this->params['enabled'] ?? '';
             $searchTime = trim($this->params["searchtime"] ?? 0);
 
             $startTime = strtotime("-1 month");
@@ -33,6 +34,10 @@ trait AdminTraits
 
             if (is_numeric($status)) {
                 $condition['status'] = $status;
+            }
+
+            if (is_numeric($enabled)) {
+                $condition['enabled'] = $enabled;
             }
 
             if (!empty($searchTime) && is_array($this->params["time"]) && in_array($searchTime, ["create"])) {
