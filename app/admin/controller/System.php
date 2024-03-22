@@ -27,6 +27,7 @@ class System extends AdminBaseController
     // 应用列表
     public function index()
     {
+        $this->pSize = 20;
         $condition = [
             'am.uniacid' => $this->uniacid,
             'am.deleted' => 0
