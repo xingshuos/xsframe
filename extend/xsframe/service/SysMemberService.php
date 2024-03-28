@@ -20,6 +20,16 @@ class SysMemberService extends BaseService
         return md5($this->uniacid . "_" . env('authkey') . "_sysMemberInfo_" . $key);
     }
 
+    // 获取用户ID
+    public function getUserId($token = null)
+    {
+        try {
+            return $this->checkLogin($token);
+        } catch (ApiException $e) {
+            return 0;
+        }
+    }
+
     // 验证用户登录信息
     public function checkLogin($token = null)
     {

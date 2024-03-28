@@ -102,6 +102,9 @@ let myConfig = {
         datetimepicker: {
             deps: ["loadcss!components/datetimepicker/jquery.datetimepicker.css"]
         },
+        switchery: {
+            deps: ["loadcss!components/switchery/switchery.css"]
+        },
         colorpicker: {
             deps: ["loadcss!components/colorpicker/spectrum.css"]
         },

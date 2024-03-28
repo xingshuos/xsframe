@@ -2,6 +2,11 @@
 
 error_reporting(E_ALL ^ E_NOTICE);
 
+use think\facade\Config;
+use think\facade\Route;
+use think\response\View;
+use xsframe\util\OpensslUtil;
+use xsframe\util\StringUtil;
 use xsframe\wrapper\SettingsWrapper;
 use xsframe\enum\SysSettingsKeyEnum;
 use xsframe\facade\wrapper\PermFacade;
@@ -284,17 +289,25 @@ if (!function_exists('mobileUrl')) {
         if ((substr($t, 0, 7) == 'http://') || (substr($t, 0, 8) == 'https://') || (substr($t, 0, 2) == '//')) {
             $url = $src;
         } else {
+            $moduleName = app('http')->getName();
+            $appMaps = Config::get('app.app_map') ?? [];
+            $appKey = array_search($moduleName, $appMaps);
+            $moduleName = !empty($appKey) ? $appKey : $moduleName;
+
+            $src = StringUtil::strexists($src, "mobile") ? trim($src, '/') : "mobile/" . trim($src, '/');
+            $src = StringUtil::strexists($src, $moduleName) ? trim($src, '/') : $moduleName . "/" . trim($src, '/');
+
             if (env('site.mRootUrl')) {
-                $url = env('site.mRootUrl') . "/" . trim($src, '/');
+                $url = env('site.mRootUrl') . "/" . $src;
             } else {
-                $url = request()->domain() . "/" . trim($src, '/');
+                $url = request()->domain() . "/" . $src;
             }
         }
 
         if (strpos($src, '?') !== false) {
             $url = $url . "&" . $paramsUrl;
         } else {
-            $url = $url . "?" . $paramsUrl;
+            $url = $url . (empty($paramsUrl) ? "" : "?" . $paramsUrl);
         }
 
         return $url;
@@ -488,9 +501,9 @@ if (!function_exists('authcode2')) {
         $key = env('authkey') ?? 'xsframe';
 
         if ($operation == 'DECODE') {
-            return \xsframe\util\OpensslUtil::decrypt($string, $key, substr(md5($key), 0, 16));
+            return OpensslUtil::decrypt($string, $key, substr(md5($key), 0, 16));
         } else {
-            return \xsframe\util\OpensslUtil::encrypt($string, $key, substr(md5($key), 0, 16), !empty($expiry) && $expiry > 0 ? time() + $expiry : null);
+            return OpensslUtil::encrypt($string, $key, substr(md5($key), 0, 16), !empty($expiry) && $expiry > 0 ? time() + $expiry : null);
         }
     }
 }
@@ -700,7 +713,7 @@ if (!function_exists('searchUrl')) {
     function searchUrl(string $url = '', array $vars = [], $suffix = true, $domain = false)
     {
         $params = request()->param();
-        return \think\facade\Route::buildUrl($url, array_filter(array_merge($params, $vars)))->suffix($suffix)->domain($domain);
+        return Route::buildUrl($url, array_filter(array_merge($params, $vars)))->suffix($suffix)->domain($domain);
     }
 }
 
@@ -711,7 +724,7 @@ if (!function_exists('viewOther')) {
      * @param $vars
      * @param $code
      * @param $filter
-     * @return \think\response\View
+     * @return View
      */
     function viewOther($template = '', $vars = [], $code = 200, $filter = null)
     {

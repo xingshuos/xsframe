@@ -15,6 +15,7 @@ namespace xsframe\base;
 
 
 use xsframe\util\FileUtil;
+use xsframe\util\StringUtil;
 use xsframe\wrapper\MenuWrapper;
 use xsframe\enum\SysSettingsKeyEnum;
 use xsframe\util\RandomUtil;
@@ -40,6 +41,7 @@ abstract class MobileBaseController extends BaseController
     protected function template($name, $var = null)
     {
         $var = $this->getDefaultVars($var);
+        $name = StringUtil::strexists($name, "/") ? $name : "mobile/{$name}";
         return view($name, $var);
     }
 
@@ -112,5 +114,45 @@ abstract class MobileBaseController extends BaseController
             /*echo "<script>let apiroot = `{$this->siteRoot}`;</script>";*/
             require_once $source;
         }
+    }
+
+    /**
+     * 正确的数组数据
+     * @param array $data
+     * @param string $code
+     * @param string $message
+     * @return \think\response\Json
+     */
+    protected function success(array $data = [], string $code = "200", string $message = 'success'): \think\response\Json
+    {
+        $code = $data['code'] ?? $code;
+        $message = $data['msg'] ?? $message;
+        $data = $data['data'] ?? $data;
+
+        $retData = [
+            'code' => (string)$code,
+            'msg'  => $message,
+            'data' => $data
+        ];
+        return json($retData);
+    }
+
+    /**
+     * 错误的数组数据
+     * @param string $message
+     * @param string $code
+     * @return array
+     */
+    protected function error(string $message = 'fail', string $code = "404"): array
+    {
+        $code = $data['code'] ?? $code;
+        $message = $data['msg'] ?? $message;
+
+        $retData = [
+            'code' => (string)$code,
+            'msg'  => $message,
+            'data' => [],
+        ];
+        die(json_encode($retData));
     }
 }
