@@ -277,12 +277,8 @@ if (!function_exists('getAttachmentUrl')) {
 
 // 补手机端路径
 if (!function_exists('mobileUrl')) {
-    function mobileUrl($src, $params = [])
+    function mobileUrl($src = null, $params = [])
     {
-        if (empty($src)) {
-            return '';
-        }
-
         $paramsUrl = http_build_query($params);
 
         $t = strtolower($src);
@@ -294,8 +290,12 @@ if (!function_exists('mobileUrl')) {
             $appKey = array_search($moduleName, $appMaps);
             $moduleName = !empty($appKey) ? $appKey : $moduleName;
 
-            $src = StringUtil::strexists($src, "mobile") ? trim($src, '/') : "mobile/" . trim($src, '/');
-            $src = StringUtil::strexists($src, $moduleName) ? trim($src, '/') : $moduleName . "/" . trim($src, '/');
+            if (empty($src)) {
+                $src = "{$moduleName}/mobile";
+            }else{
+                $src = StringUtil::strexists($src, "mobile") ? trim($src, '/') : "mobile/" . trim($src, '/');
+                $src = StringUtil::strexists($src, $moduleName) ? trim($src, '/') : $moduleName . "/" . trim($src, '/');
+            }
 
             if (env('site.mRootUrl')) {
                 $url = env('site.mRootUrl') . "/" . $src;

@@ -8,6 +8,7 @@ use xsframe\exception\ApiException;
 use xsframe\facade\service\JingTanServiceFacade;
 use xsframe\facade\service\PayServiceFacade;
 use xsframe\facade\service\SmsServiceFacade;
+use xsframe\facade\service\SysMemberCreditsRecordServiceFacade;
 
 class SysMemberService extends BaseService
 {
@@ -156,6 +157,47 @@ class SysMemberService extends BaseService
     // 退出登录 TODO
     public function logout($token = null): bool
     {
+        return true;
+    }
+
+    // 更新积分或余额字段
+    public function setCredit($userId, $credittype = 'credit1', $credits = 0, $log = []): bool
+    {
+        if (empty($log)) {
+            $log = [$userId, '未记录'];
+        } else {
+            if (!is_array($log)) {
+                $log = [0, $log];
+            }
+        }
+
+        $log_data = [
+            'uid'        => intval($userId),
+            'credittype' => $credittype,
+            'uniacid'    => $this->uniacid,
+            'num'        => $credits,
+            'createtime' => TIMESTAMP,
+            'module'     => $this->module,
+            'operator'   => intval($log[0]),
+            'remark'     => $log[1]
+        ];
+
+        if (!empty($userId)) {
+            $member = self::getInfo(['id' => $userId]);
+            $value = $member[$credittype];
+            $newcredit = $credits + $value;
+
+            if ($newcredit <= 0) {
+                $newcredit = 0;
+            }
+
+            $log_data['remark'] = $log_data['remark'] . ' 剩余: ' . $newcredit;
+            self::updateInfo([$credittype => $newcredit], ['id' => $userId]);
+
+            $a = $newcredit;
+            SysMemberCreditsRecordServiceFacade::insertInfo($log_data);
+        }
+
         return true;
     }
 }

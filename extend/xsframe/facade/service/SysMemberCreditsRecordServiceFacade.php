@@ -12,21 +12,13 @@
 
 namespace xsframe\facade\service;
 
-
 use xsframe\base\BaseFacade;
-use xsframe\service\SysMemberService;
+use xsframe\service\SysMemberCreditsRecordService;
 
-/**
- * @method static getUserId(string $token = null)
- * @method static checkLogin(string $token = null)
- * @method static logout(string $token = null)
- * @method static mobileLogin(string $mobile, string $password = null, int $code = null)
- * @method static setCredit($userId, string $filed, int|mixed $value, array|string $remark = [])
- */
-class SysMemberServiceFacade extends BaseFacade
+class SysMemberCreditsRecordServiceFacade extends BaseFacade
 {
     protected static function getFacadeClass()
     {
-        return SysMemberService::class;
+        return SysMemberCreditsRecordService::class;
     }
 }

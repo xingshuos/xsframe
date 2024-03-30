@@ -41,7 +41,11 @@ abstract class MobileBaseController extends BaseController
     protected function template($name, $var = null)
     {
         $var = $this->getDefaultVars($var);
-        $name = StringUtil::strexists($name, "/") ? $name : "mobile/{$name}";
+
+        if (!empty($name) && $name[0] !== '/') {
+            $name = "mobile/{$name}";
+        }
+
         return view($name, $var);
     }
 
