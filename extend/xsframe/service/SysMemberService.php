@@ -132,6 +132,12 @@ class SysMemberService extends BaseService
         return $this->checkMember('jt_openid', $authUserInfo['open_user_id'], $authUserInfo['nick_name'], $authUserInfo['avatar']);
     }
 
+    // 获取登录凭证token
+    public function getToken($memberId)
+    {
+        return authcode2($memberId, "ENCODE", $this->expire);
+    }
+
     // 校验注册用户
     private function checkMember($type, $value, $nickname = '', $avatar = '')
     {
@@ -151,7 +157,7 @@ class SysMemberService extends BaseService
             $memberId = $memberInfo['id'];
         }
 
-        return authcode2($memberId, "ENCODE", $this->expire);
+        return $this->getToken($memberId);
     }
 
     // 退出登录 TODO
