@@ -119,7 +119,7 @@ class App extends Base
     {
         $id = $this->params['id'];
         if ($this->request->isPost()) {
-            $data = array(
+            $data = [
                 "name"        => trim($this->params["name"]),
                 "logo"        => trim($this->params["logo"]),
                 "author"      => trim($this->params["author"]),
@@ -134,9 +134,9 @@ class App extends Base
                 "aliapp_support" => intval($this->params["aliapp_support"]),
                 "bdapp_support"  => intval($this->params["bdapp_support"]),
                 "uniapp_support" => intval($this->params["uniapp_support"]),
-            );
+            ];
             Db::name('sys_modules')->where(['id' => $id])->update($data);
-            $this->success(array("url" => webUrl("app/edit", ['id' => $id, 'tab' => str_replace("#tab_", "", $this->params['tab'])])));
+            $this->success(["url" => webUrl("app/edit", ['id' => $id, 'tab' => str_replace("#tab_", "", $this->params['tab'])])]);
         }
 
         $item = Db::name('sys_modules')->where(['id' => $id])->find();
@@ -180,6 +180,7 @@ class App extends Base
         $identifie = trim($this->params["identifie"]);
 
         Db::name('sys_modules')->where(['id' => $id])->update(['is_install' => 1, 'status' => 1]);
+        Db::name('sys_account_modules')->where(['module' => $identifie])->update(['deleted' => 0]);
 
         $modulesController = new ModulesWrapper();
         $isTrue = $modulesController->runInstalledModule($identifie, $key, $token);
@@ -200,6 +201,7 @@ class App extends Base
         $identifie = trim($this->params["identifie"]);
 
         Db::name('sys_modules')->where(['id' => $id])->update(['is_install' => 0]);
+        Db::name('sys_account_modules')->where(['module' => $identifie])->update(['deleted' => 1]);
 
         $modulesController = new ModulesWrapper();
         $modulesController->runUninstalledModule($identifie);
