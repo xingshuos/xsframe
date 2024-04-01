@@ -81,7 +81,7 @@ class UserWrapper
             show_json(-1, $url['msg']);
         }
 
-        $cookie = array();
+        $cookie = [];
         $cookie['uid'] = $userInfo['id'];
         $cookie['username'] = $username;
         $cookie['role'] = $userInfo['role'];
@@ -121,7 +121,7 @@ class UserWrapper
 
             $moduleName = !empty($appKey) ? $appKey : $moduleName;
 
-            if (!strexists($oneMenusKeys[0], "web.")) {
+            if (!StringUtil::strexists($oneMenusKeys[0], "web.")) {
                 $oneMenusKeys[0] = "web." . $oneMenusKeys[0];
             }
 
