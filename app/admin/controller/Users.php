@@ -131,7 +131,7 @@ class Users extends Base
                 $id = Db::name('sys_users')->insertGetId($data);
             }
 
-            # 非超级管理员分配项目 start
+            # 非超级管理员分配商户 start
             if ($role != UserRoleKeyEnum::OWNER_KEY && !empty($uniacid)) {
                 $usersAccount     = Db::name('sys_account_users')->where(['user_id' => $id])->count();
                 $usersAccountData = [
@@ -147,7 +147,7 @@ class Users extends Base
                     Db::name('sys_account_users')->insertGetId($usersAccountData);
                 }
             }
-            # 非超级管理员分配项目 end
+            # 非超级管理员分配商户 end
 
             $this->success(array("url" => webUrl("users/list")));
         }

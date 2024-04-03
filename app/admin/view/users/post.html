@@ -45,7 +45,7 @@
                                     <label class="col-lg control-label">角色</label>
                                     <div class="col-sm-9 col-xs-12">
                                         <label class="radio-inline">
-                                            <input type="radio" name="role" value="manager" {if $item['role']=='manager'}checked="checked"{/if}> 项目管理员
+                                            <input type="radio" name="role" value="manager" {if $item['role']=='manager'}checked="checked"{/if}> 商户管理员
                                         </label>
                                         <label class="radio-inline">
                                             <input type="radio" name="role" value="operator" {if $item['role']=='operator'}checked="checked"{/if}> 普通管理员
@@ -57,10 +57,10 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-lg control-label must">管理项目</label>
+                                    <label class="col-lg control-label must">管理商户</label>
                                     <div class="col-sm-9 col-xs-12">
-                                        {:tpl_selector('uniacid',array('text'=>'name','value'=>$item['name'],'preview'=>true,'readonly'=>true,'multi'=>0,'type'=>'image', 'required'=>false,  'thumb'=>'logo','placeholder'=>'项目名称','buttontext'=>'选择项目 ', 'items'=>$accountInfo,'url'=>webUrl('account/query')))}
-                                        <span class='help-block'>当前管理员所管理的项目，一个项目管理员只能管理一个项目</span>
+                                        {:tpl_selector('uniacid',array('text'=>'name','value'=>$item['name'],'preview'=>true,'readonly'=>true,'multi'=>0,'type'=>'image', 'required'=>false,  'thumb'=>'logo','placeholder'=>'商户名称','buttontext'=>'选择商户 ', 'items'=>$accountInfo,'url'=>webUrl('account/query')))}
+                                        <span class='help-block'>当前管理员所管理的商户，一个商户管理员只能管理一个商户</span>
                                     </div>
                                 </div>
 

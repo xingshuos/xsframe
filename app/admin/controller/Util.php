@@ -63,7 +63,7 @@ class Util extends Base
         return $this->template('module_selector', ['list' => $list, 'page_num_arr' => $page_num_arr, 'total' => $total, 'page' => $page]);
     }
 
-    // 项目应用
+    // 商户应用
     public function accountModuleSelector()
     {
         $uniacid = $this->params['uniacid'] ?? 0;

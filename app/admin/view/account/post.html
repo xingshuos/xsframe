@@ -10,7 +10,7 @@
 </style>
 
 <div class="page-header">
-    当前位置：<span class="text-primary">{if !empty($item)}编辑{else}新建{/if}项目
+    当前位置：<span class="text-primary">{if !empty($item)}编辑{else}新建{/if}商户
     	<small>{if !empty($item)}(名称: {$item['name']}){/if}</small>
     </span>
 </div>
@@ -55,7 +55,7 @@
 
             <div class="tab-pane {if $_GPC['tab'] == 'attachment'}active{/if}" id="tab_attachment">
                 <div class="alert alert-primary">
-                    <p>1.项目自定义存储设置</p>
+                    <p>1.商户自定义存储设置</p>
                     <p>2.默认是系统配置存储服务器</p>
                 </div>
                 {include file="../app/admin/view/public/sets/system/tabs/attachment.html" /}

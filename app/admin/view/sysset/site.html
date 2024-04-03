@@ -50,7 +50,7 @@
         </div>
 
         <div class="form-group">
-            <label class="col-lg control-label must">默认项目</label>
+            <label class="col-lg control-label must">默认商户</label>
             <div class="col-sm-9 col-xs-12">
                 <select name="data[uniacid]" class="form-control" onchange="changeUniacid(this)">
                     <option value="0" {if empty($websiteSets['uniacid'])}selected{/if}>未选择</option>
@@ -58,7 +58,7 @@
                     <option value="{$row['uniacid']}" {if $row['uniacid'] == $websiteSets['uniacid']}selected{/if}>{$row['name']}</option>
                     {/foreach}
                 </select>
-                <span class="help-block">选择默认项目后，为选择项目的应用初始数据按照默认项目的数据显示</span>
+                <span class="help-block">选择默认商户后，为选择商户的应用初始数据按照默认商户的数据显示</span>
             </div>
         </div>
 

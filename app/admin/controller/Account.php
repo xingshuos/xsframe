@@ -91,7 +91,7 @@ class Account extends Base
             $this->setAccountModules($uniacid);
             $this->bindHost($uniacid);
 
-            # 重新加载项目配置信息
+            # 重新加载商户配置信息
             $this->settingsController->reloadAccountSettings($uniacid);
 
             # 重新加载域名映射关系列表
@@ -152,15 +152,15 @@ class Account extends Base
         $this->success();
     }
 
-    // 跳转项目管理
+    // 跳转商户管理
     public function manager()
     {
         $uniacid = intval($this->params["id"]);
 
-        # 进入当前项目默认应用
+        # 进入当前商户默认应用
         $defaultModuleInfo = Db::name("sys_account_modules")->where(['uniacid' => $uniacid])->order("is_default desc")->find();
         if (empty($defaultModuleInfo)) {
-            $this->error(["message" => "该项目没有分配应用"]);
+            $this->error(["message" => "该商户没有分配应用"]);
         }
 
         # 获取后台地址

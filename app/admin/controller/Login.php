@@ -28,7 +28,7 @@ class Login extends Base
 
         $style = 'login';
 
-        # 检测是否配置独立域名 如果配置就读取对应项目网站信息 start
+        # 检测是否配置独立域名 如果配置就读取对应商户网站信息 start
         $url = $this->request->header()['host'];
 
         $accountHostWrapper = new AccountHostWrapper();

@@ -12,8 +12,8 @@
 
 return [
     'account' => array(
-        'title'    => '项目',
-        'subtitle' => '项目管理',
+        'title'    => '商户',
+        'subtitle' => '商户管理',
         'icon'     => 'icon-archive',
     ),
     'app'     => array(

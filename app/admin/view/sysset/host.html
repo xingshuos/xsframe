@@ -18,7 +18,7 @@
                     <div class="input-group">
                         <div class="input-group-select">
                             <select name="uniacid" class='form-control'>
-                                <option value="0" {if empty($_GET['uniacid'])}selected{/if}>选择项目</option>
+                                <option value="0" {if empty($_GET['uniacid'])}selected{/if}>选择商户</option>
                                 {foreach $accountList as $key => $row}
                                 <option value="{$row['uniacid']}" {if $row['uniacid']==$_GET['uniacid']}selected{/if}>{$row['name']}</option>
                                 {/foreach}
@@ -44,8 +44,8 @@
                 <tr>
                     <th style="width:50px;"></th>
                     <th style='width:100px'>顺序</th>
-                    <th style='width:80px'>项目ID</th>
-                    <th style='width:120px'>项目名称</th>
+                    <th style='width:80px'>商户ID</th>
+                    <th style='width:120px'>商户名称</th>
                     <th style='width:120px'>绑定域名</th>
                     <th style='width:120px;'>默认应用</th>
                     <th style="width: 100px;">操作</th>
@@ -127,10 +127,10 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-lg control-label must">指定项目</label>
+                    <label class="col-lg control-label must">指定商户</label>
                     <div class="col-sm-9 col-xs-12">
                         <select name="uniacid" class='form-control' id="selectUniacid">
-                            <option value="0" {if empty($_GET['uniacid'])}selected{/if}>选择项目</option>
+                            <option value="0" {if empty($_GET['uniacid'])}selected{/if}>选择商户</option>
                             {foreach $accountList as $key => $row}
                             <option value="{$row['uniacid']}" {if $row['uniacid']==$item['uniacid']}selected{/if}>{$row['name']}</option>
                             {/foreach}
@@ -183,7 +183,7 @@
                                             if( parseInt(uniacid) > 0 ){
                                                 Gselector.open('modules_show','',0,true,'../util/accountModuleSelector?uniacid=' + uniacid,ids);
                                             }else{
-                                                tip.msgbox.err("请先选择项目");
+                                                tip.msgbox.err("请先选择商户");
                                             }
                                         });
                                     });
