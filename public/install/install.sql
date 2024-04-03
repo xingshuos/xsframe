@@ -95,21 +95,6 @@ CREATE TABLE `#__sys_account_users`
     PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `#__sys_area`;
-
-CREATE TABLE `#__sys_area`
-(
-    `id`             int(11) unsigned NOT NULL AUTO_INCREMENT,
-    `letter`         varchar(3)   DEFAULT '',
-    `area_name`      varchar(50)  DEFAULT '',
-    `keyword`        varchar(100) DEFAULT NULL,
-    `area_parent_id` int(11) unsigned DEFAULT '0',
-    `area_sort`      int(6) unsigned DEFAULT '0',
-    `area_deep`      tinyint(1) unsigned DEFAULT '1',
-    PRIMARY KEY (`id`),
-    KEY              `area_parent_id` (`area_parent_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-
 DROP TABLE IF EXISTS `#__sys_attachment`;
 
 CREATE TABLE `#__sys_attachment`
@@ -341,3 +326,4 @@ CREATE TABLE `#__sys_users`
     PRIMARY KEY (`id`),
     UNIQUE KEY `username` (`username`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
