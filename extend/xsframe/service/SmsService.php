@@ -97,9 +97,8 @@ class SmsService extends BaseService
 
         $sendCode = Cache::get($key);
         $sendTime = Cache::get($keyTime);
-
-        # 通用验证码 调试方便
-        if ($verifyCode == $testCode) {
+        
+        if ($testCode && $verifyCode == $testCode) {
             return true;
         }
 
