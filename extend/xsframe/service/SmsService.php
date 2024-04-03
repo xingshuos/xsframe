@@ -28,8 +28,12 @@ class SmsService extends BaseService
     // 发送注册验证码
     public function sendLoginCode($mobile, $tplId = null, $smsSet = null)
     {
-        if (empty($smsSet)) {
+        if (empty($smsSet)) { // 应用设置
             $smsSet = $this->moduleSetting['sms'];
+
+            if (empty($smsSet)) { // 系统设置
+                $smsSet = $this->accountSetting['sms'];
+            }
         }
 
         if (!empty($smsSet)) {
@@ -97,7 +101,7 @@ class SmsService extends BaseService
 
         $sendCode = Cache::get($key);
         $sendTime = Cache::get($keyTime);
-        
+
         if ($testCode && $verifyCode == $testCode) {
             return true;
         }
