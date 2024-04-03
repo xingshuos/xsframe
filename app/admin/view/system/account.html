@@ -36,6 +36,7 @@
                     <li {if $_GPC['tab']=='wechat'}class="active"{/if}><a href="#tab_wechat">微信公众号</a></li>
                     <li {if $_GPC['tab']=='wxapp'}class="active"{/if}><a href="#tab_wxapp">微信小程序</a></li>
                     <li  {if $_GPC['tab']=='weixin'}class="active"{/if}><a href="#tab_weixin">企业微信</a></li>
+                    <li  {if $_GPC['tab']=='sms'}class="active"{/if}><a href="#tab_sms">短信设置</a></li>
                     <li {if $_GPC['tab']=='wechatPay'}class="active"{/if}><a href="#tab_wechatPay">微信支付</a></li>
                     <li {if $_GPC['tab']=='aliPay'}class="active"{/if}><a href="#tab_aliPay">支付宝支付</a></li>
                     <li {if $_GET['tab']=='remote'}class="active"{/if}><a href="#tab_remote">远程附件</a></li>
@@ -62,6 +63,11 @@
                         <!--企业微信-->
                         <div class="tab-pane {if $_GPC['tab']=='weixin'}active{/if}" id="tab_weixin">
                             {include file="../app/admin/view/public/sets/system/tabs/weixin.html" /}
+                        </div>
+
+                        <!--短信设置-->
+                        <div class="tab-pane {if $_GPC['tab']=='sms'}active{/if}" id="tab_sms">
+                            {include file="../app/admin/view/public/sets/system/tabs/sms.html" /}
                         </div>
 
                         <!--微信支付-->
