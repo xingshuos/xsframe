@@ -20,6 +20,7 @@ use think\Facade;
  * @method static sendSMS($smsSet, string $mobile, $tplId)
  * @method static checkSmsCode(string $mobile, string $verifyCode, bool $clear = true)
  * @method static send($accessKeyId, $accessKeySecret, $signName, $mobile, string $tplId, array $array)
+ * @method static sendLoginCode(string $mobile)
  */
 class SmsServiceFacade extends Facade
 {

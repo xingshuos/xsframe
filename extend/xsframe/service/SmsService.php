@@ -13,23 +13,32 @@
 namespace xsframe\service;
 
 use think\facade\Cache;
+use xsframe\base\BaseService;
 use xsframe\enum\ExceptionEnum;
 use xsframe\exception\ApiException;
 use xsframe\util\ErrorUtil;
 use xsframe\util\RandomUtil;
 use xsframe\util\RequestUtil;
 
-class SmsService
+class SmsService extends BaseService
 {
-    private $aliyunUrl = "http://cf.51welink.com/submitdata/service.asmx/g_Submit?";
-
     private $codeKey = "member_verify_code_session_";
     private $codeTimeKey = "member_verify_code_sendtime_";
 
-    // 获取key
-    private function getKey($key)
+    // 发送注册验证码
+    public function sendLoginCode($mobile, $tplId = null, $smsSet = null)
     {
-        return md5($key);
+        if (empty($smsSet)) {
+            $smsSet = $this->moduleSetting['sms'];
+        }
+
+        if (!empty($smsSet)) {
+            if (empty($tplId)) {
+                $tplId = $smsSet['login_code'];
+            }
+        }
+
+        return $this->sendSMS($smsSet, $mobile, $tplId);
     }
 
     // 发送验证码
