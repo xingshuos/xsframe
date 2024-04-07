@@ -234,43 +234,44 @@ if (!function_exists('getAttachmentUrl')) {
     {
         $hostUrl = request()->domain() . ($isAttachment ? "/attachment" : '');
 
-        if (empty($uniacid)) {
-            $module = app('http')->getName();
-            $uniacid = request()->param('uniacid') ?? ($_COOKIE['uniacid'] ?? 0);
+        if ($isAttachment) {
+            if (empty($uniacid)) {
+                $module = app('http')->getName();
+                $uniacid = request()->param('uniacid') ?? ($_COOKIE['uniacid'] ?? 0);
 
-            if ($module == 'admin' && empty(request()->param('module'))) {
-                $uniacid = 0;
+                if ($module == 'admin' && empty(request()->param('module'))) {
+                    $uniacid = 0;
+                }
+            }
+
+            $settingsController = new SettingsWrapper();
+
+            if ($uniacid > 0) { // 读取项目配置
+                $settings = $settingsController->getAccountSettings($uniacid, 'settings');
+            } else {// 读取系统配置
+                $settings = $settingsController->getSysSettings(SysSettingsKeyEnum::ATTACHMENT_KEY);
+            }
+
+            if (!empty($settings) && $settings['remote']['type'] > 0) {
+                $remote = $settings['remote'];
+                $remoteHostUrl = "";
+                switch ($remote['type']) {
+                    case 1:
+                        $remoteHostUrl = $remote['ftp']['url'];
+                        break;
+                    case 2:
+                        $remoteHostUrl = $remote['alioss']['url'];
+                        break;
+                    case 3:
+                        $remoteHostUrl = $remote['qiniu']['url'];
+                        break;
+                    case 4:
+                        $remoteHostUrl = $remote['cos']['url'];
+                        break;
+                }
+                $hostUrl = $remoteHostUrl ?: $hostUrl;
             }
         }
-
-        $settingsController = new SettingsWrapper();
-
-        if ($uniacid > 0) { // 读取项目配置
-            $settings = $settingsController->getAccountSettings($uniacid, 'settings');
-        } else {// 读取系统配置
-            $settings = $settingsController->getSysSettings(SysSettingsKeyEnum::ATTACHMENT_KEY);
-        }
-
-        if (!empty($settings) && $settings['remote']['type'] > 0) {
-            $remote = $settings['remote'];
-            $remoteHostUrl = "";
-            switch ($remote['type']) {
-                case 1:
-                    $remoteHostUrl = $remote['ftp']['url'];
-                    break;
-                case 2:
-                    $remoteHostUrl = $remote['alioss']['url'];
-                    break;
-                case 3:
-                    $remoteHostUrl = $remote['qiniu']['url'];
-                    break;
-                case 4:
-                    $remoteHostUrl = $remote['cos']['url'];
-                    break;
-            }
-            $hostUrl = $remoteHostUrl ?: $hostUrl;
-        }
-
         return $hostUrl;
     }
 }
@@ -292,7 +293,7 @@ if (!function_exists('mobileUrl')) {
 
             if (empty($src)) {
                 $src = "{$moduleName}/mobile";
-            }else{
+            } else {
                 $src = StringUtil::strexists($src, "mobile") ? trim($src, '/') : "mobile/" . trim($src, '/');
                 $src = StringUtil::strexists($src, $moduleName) ? trim($src, '/') : $moduleName . "/" . trim($src, '/');
             }
