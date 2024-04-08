@@ -55,7 +55,6 @@ class DomainBindMiddleware
 
                 $appMap = array_flip(config('app.app_map'));
                 $realModuleName = array_key_exists($module, $appMap) ? $appMap[$module] : '';
-
                 $url = UserWrapper::getModuleOneUrl($realModuleName ?: $module);
                 exit(header("location:" . $url));
             }

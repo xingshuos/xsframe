@@ -101,35 +101,39 @@ class UserWrapper
     public static function getModuleOneUrl($moduleName)
     {
         $rootPath = App::getRootPath();
-        $moduleMenuConfigFile = $rootPath . "app/" . $moduleName . "/config/menu.php";
+        $modulePath = $rootPath . "app/" . $moduleName;
 
         $appMaps = Config::get('app.app_map') ?? [];
         $appKey = array_search($moduleName, $appMaps);
+        $moduleName = !empty($appKey) ? $appKey : $moduleName;
 
-        if (is_file($moduleMenuConfigFile)) {
-            $menuConfig = include($moduleMenuConfigFile);
-            $oneMenus = array_slice($menuConfig, 0, 1);
-            $oneMenusKeys = array_keys($oneMenus);
+        $url = $moduleName;
+        if (!is_file($modulePath . "/controller/Index.php")) {
+            $moduleMenuConfigFile = $modulePath . "/config/menu.php";
 
-            $actionUrl = $oneMenus[$oneMenusKeys[0]]['items'][0]['route'];
+            if (is_file($moduleMenuConfigFile)) {
+                $menuConfig = include($moduleMenuConfigFile);
+                $oneMenus = array_slice($menuConfig, 0, 1);
+                $oneMenusKeys = array_keys($oneMenus);
 
-            if (StringUtil::strexists($actionUrl, "/")) {
-                $actionUrl = "." . $actionUrl;
+                $actionUrl = $oneMenus[$oneMenusKeys[0]]['items'][0]['route'];
+
+                if (StringUtil::strexists($actionUrl, "/")) {
+                    $actionUrl = "." . $actionUrl;
+                } else {
+                    $actionUrl = "/" . $actionUrl;
+                }
+
+                if (!StringUtil::strexists($oneMenusKeys[0], "web.")) {
+                    $oneMenusKeys[0] = "web." . $oneMenusKeys[0];
+                }
+
+                $url = url("/" . $moduleName . "/" . $oneMenusKeys[0] . $actionUrl);
             } else {
-                $actionUrl = "/" . $actionUrl;
+                $url = url('/' . $moduleName);
             }
-
-            $moduleName = !empty($appKey) ? $appKey : $moduleName;
-
-            if (!StringUtil::strexists($oneMenusKeys[0], "web.")) {
-                $oneMenusKeys[0] = "web." . $oneMenusKeys[0];
-            }
-
-            $url = url("/" . $moduleName . "/" . $oneMenusKeys[0] . $actionUrl);
-        } else {
-            $moduleName = !empty($appKey) ? $appKey : $moduleName;
-            $url = url('/' . $moduleName);
         }
+
         return $url;
     }
 
