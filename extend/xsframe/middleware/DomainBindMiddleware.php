@@ -40,9 +40,9 @@ class DomainBindMiddleware
     public function handle($request, \Closure $next)
     {
         $module = app('http')->getName();
-        if (empty($module) || (empty($request->root()) && !empty($module))) {
-            $url = $request->header()['host'];
 
+        if (empty($module) || empty($request->root())) { // 独立域名访问逻辑
+            $url = $request->header()['host'];
             $domainMappingArr = $this->accountHostWrapper->getAccountHost();
             if (!empty($domainMappingArr) && !empty($domainMappingArr[$url])) {
                 $module = $domainMappingArr[$url]['default_module'];
@@ -59,6 +59,15 @@ class DomainBindMiddleware
 
                 header("location:" . $url);
                 exit();
+            }
+        } else { // 自动访问逻辑
+            $pathInfo = $request->pathinfo();
+            if (empty($pathInfo)) {
+                $url = UserWrapper::getModuleOneUrl($module);
+                if ($url != $module) {
+                    header("location:" . $url);
+                    exit();
+                }
             }
         }
 
