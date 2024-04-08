@@ -43,8 +43,7 @@ class DomainBindMiddleware
         if (empty($module) || (empty($request->root()) && !empty($module))) {
             $url = $request->header()['host'];
 
-            // TODO 每次加载最新数据 可以优化为读取缓存的方式
-            $domainMappingArr = $this->accountHostWrapper->getAccountHost(true);
+            $domainMappingArr = $this->accountHostWrapper->getAccountHost();
             if (!empty($domainMappingArr) && !empty($domainMappingArr[$url])) {
                 $module = $domainMappingArr[$url]['default_module'];
 
