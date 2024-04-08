@@ -47,6 +47,7 @@ composer.lock
 /public/sitemap.xml
 app/*
 !app/admin
+config/appMap.php
 public/app/*
 !public/app/admin
 .gitmodules
