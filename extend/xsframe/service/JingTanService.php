@@ -99,11 +99,11 @@ class JingTanService extends BaseService
     }
 
     // 获取所有藏品列表
-    public function getAllAssetListByMobile($mobile)
+    public function getAllAssetListByMobile($mobile, $reload = false)
     {
         $key = "asset_all_list_mobile";
         $assetList = $this->getCache($key);
-        if (empty($assetList)) {
+        if (empty($assetList) || $reload) {
             $assetList = self::getAllAssetList($mobile);
             $this->setCache($key, $assetList, 60 * 60 * 3); // 缓存3小时
         }
