@@ -44,9 +44,9 @@ class DomainBindMiddleware
 
         if (empty($module) || empty($request->root())) { // 独立域名访问逻辑
             $domainMappingArr = $this->accountHostWrapper->getAccountHost();
+
             if (!empty($domainMappingArr) && !empty($domainMappingArr[$url])) {
                 $module = $domainMappingArr[$url]['default_module'];
-
                 // 未设置默认访问应用时取第一个授权应用
                 if (empty($module)) {
                     $module = $this->accountHostWrapper->getAccountModuleDefault($domainMappingArr[$url]['uniacid']);
@@ -67,16 +67,17 @@ class DomainBindMiddleware
         } else { // 应用非空 自动访问逻辑 route > index > web
             $pathInfo = $request->pathinfo();
             if (empty($pathInfo)) { // 参数为空访问默认应用
-                $appMap = config('app.app_map');
-                $realModuleName = array_key_exists($url, $appMap) ? $appMap[$url] : '';
-                if ($realModuleName && $realModuleName != $module) {
-                    $url = UserWrapper::getModuleOneUrl($module);
-                    $url = strval($url);
+                $url = UserWrapper::getModuleOneUrl($module);
+                $url = strval($url);
+                if ($url && $url != $module) {
+                    $appMap = config('app.app_map');
+                    $realModuleName = array_key_exists($url, $appMap) ? $appMap[$url] : '';
 
-                    if ($url && $url != $module) {
+                    if ((!empty($realModuleName) && $realModuleName != $module) || empty($realModuleName)) {
                         header("location:" . $url);
                         exit();
                     }
+
                 }
             }
         }
