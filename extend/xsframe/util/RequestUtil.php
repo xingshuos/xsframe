@@ -26,11 +26,11 @@ class RequestUtil
 
         if (!empty($extra)) {
             if (!empty($extra) && is_array($extra)) {
-                $headers = array();
+                $headers = [];
                 foreach ($extra as $opt => $value) {
                     if (strexists($opt, 'CURLOPT_')) {
                         curl_setopt($ch, constant($opt), $value);
-                    } elseif (is_numeric($opt)) {
+                    } else if (is_numeric($opt)) {
                         curl_setopt($ch, $opt, $value);
                     } else {
                         $headers[] = "{$opt}: {$value}";
@@ -67,12 +67,6 @@ class RequestUtil
         curl_setopt($ch, CURLOPT_AUTOREFERER, 1); // 自动设置Referer
 
         if (!empty($postData)) {
-            if (is_array($postData)) {
-                $postData['host_ip'] = $_SERVER['REMOTE_ADDR'];
-                $postData['host_url'] = $_SERVER['HTTP_HOST'];
-                $postData['version'] = IMS_VERSION;
-                $postData['php_version'] = PHP_VERSION;
-            }
             curl_setopt($ch, CURLOPT_POST, 1); // 发送一个常规的Post请求
             curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData)); // Post提交的数据包
         }
@@ -87,11 +81,11 @@ class RequestUtil
         // 设置header
         if (!empty($extra)) {
             if (!empty($extra) && is_array($extra)) {
-                $headers = array();
+                $headers = [];
                 foreach ($extra as $opt => $value) {
                     if (strexists($opt, 'CURLOPT_')) {
                         curl_setopt($ch, constant($opt), $value);
-                    } elseif (is_numeric($opt)) {
+                    } else if (is_numeric($opt)) {
                         curl_setopt($ch, $opt, $value);
                     } else {
                         $headers[] = "{$opt}: {$value}";
@@ -133,16 +127,16 @@ class RequestUtil
 
         // 设置header
         if (!empty($extra)) {
-            if (!empty($extra) && is_array($extra)) {
-                $headers = array(
+            if (is_array($extra)) {
+                $headers = [
                     'Content-Type: application/json; charset=utf-8',
                     'Expect: ', //解决内容体过大问题
                     'Content-Length: ' . strlen($dataString),
-                );
+                ];
                 foreach ($extra as $opt => $value) {
                     if (strexists($opt, 'CURLOPT_')) {
                         curl_setopt($ch, constant($opt), $value);
-                    } elseif (is_numeric($opt)) {
+                    } else if (is_numeric($opt)) {
                         curl_setopt($ch, $opt, $value);
                     } else {
                         $headers[] = "{$opt}: {$value}";

@@ -141,13 +141,13 @@ class Sysset extends Base
 
         if ($this->request->isPost()) {
 
-            $data = array(
+            $data = [
                 "uniacid"        => trim($this->params["uniacid"]),
                 "host_url"       => trim($this->params["host_url"]),
                 "default_module" => trim($this->params["default_module"] ?? ''),
                 "default_url"    => trim($this->params["default_url"]),
                 "displayorder"   => trim($this->params["displayorder"]),
-            );
+            ];
 
             if (empty($data['default_module'])) {
                 $this->error("请选择默认应用");
@@ -162,7 +162,7 @@ class Sysset extends Base
             $accountHostWrapper = new AccountHostWrapper();
             $accountHostWrapper->setAccountHost();
 
-            $this->success(array("url" => webUrl("admin/sysset/host")));
+            $this->success(["url" => webUrl("admin/sysset/host")]);
         }
 
         $item = Db::name("sys_account_host")->where(['id' => $id])->find();
@@ -194,7 +194,7 @@ class Sysset extends Base
         foreach ($items as $item) {
             Db::name('sys_account_host')->where(["id" => $item['id']])->delete();
         }
-        $this->success(array("url" => referer()));
+        $this->success(["url" => referer()]);
     }
 
     // 更新域名
@@ -255,7 +255,7 @@ class Sysset extends Base
         if ($this->request->isPost()) {
             $path = $this->iaRoot;
             $trees = FileUtil::fileTree($path);
-            $bomTree = array();
+            $bomTree = [];
             foreach ($trees as $tree) {
                 $tree = str_replace($path, '', $tree);
                 $tree = str_replace('\\', '/', $tree);
@@ -286,8 +286,8 @@ class Sysset extends Base
     {
         $key = $this->websiteSets['key'] ?? '';
         $token = $this->websiteSets['token'] ?? '';
-        $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/frame/checkVersion", array('key' => $key, 'token' => $token));
-        $result = json_decode($response, true);
+
+        $result = $this->httpPost("frame/checkVersion", ['key' => $key, 'token' => $token]);
         $isUpgrade = $result['data']['isUpgrade'];
 
         $result = [
@@ -373,7 +373,7 @@ EOF;
                 mkdir($file_dir, 0777, true);
             }
 
-            $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/frame/upgradeFileData", array('key' => $key, 'token' => $token, 'file_path' => $filePath));
+            $response = $this->httpPost("frame/upgradeFileData", ['key' => $key, 'token' => $token, 'file_path' => $filePath]);
             $result = json_decode($response, true);
 
             if (empty($result) || $result['code'] != 200) {
@@ -415,7 +415,7 @@ EOF;
         if (empty($upgradeList) || !empty($isCheckUpdate)) {
             $key = $this->websiteSets['key'] ?? '';
             $token = $this->websiteSets['token'] ?? '';
-            $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/frame/upgrade", ['key' => $key, 'token' => $token]);
+            $response = $this->httpPost("frame/upgrade", ['key' => $key, 'token' => $token]);
 
             $result = json_decode($response, true);
 
@@ -444,7 +444,7 @@ EOF;
 
             $key = $this->websiteSets['key'] ?? '';
             $token = $this->websiteSets['token'] ?? '';
-            $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/frame/upgradeFiles", ['key' => $key, 'token' => $token]);
+            $response = $this->httpPost("frame/upgradeFiles", ['key' => $key, 'token' => $token]);
             $result = json_decode($response, true);
 
             if (empty($result) || $result['code'] != 200) {
@@ -453,7 +453,7 @@ EOF;
                 $files = json_decode($result['data']['upgradeFiles'], true);
 
                 if (!empty($files)) {
-                    $updateFiles = array();
+                    $updateFiles = [];
                     foreach ($files as $file) {
                         $entry = IA_ROOT . $file['path'];
 
@@ -472,4 +472,16 @@ EOF;
         return $updateFiles;
     }
 
+    private function httpPost($url, $postData = [])
+    {
+        if (is_array($postData)) {
+            $postData['host_ip'] = $_SERVER['REMOTE_ADDR'];
+            $postData['host_url'] = $_SERVER['HTTP_HOST'];
+            $postData['version'] = IMS_VERSION;
+            $postData['php_version'] = PHP_VERSION;
+        }
+
+        $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/" . $url, $postData);
+        return json_decode($response, true);
+    }
 }
