@@ -29,7 +29,7 @@ class Base extends AdminBaseController
                     $moduleName = UserWrapper::getModuleNameByUserId($this->adminSession['uid']);
 
                     if (!empty($moduleName)) {
-                        $url = UserWrapper::getModuleOneUrl($moduleName);
+                        $url = UserWrapper::getModuleOneUrl($moduleName, true);
                         header('location: ' . $url);
                     } else {
                         header('location: ' . url('/admin/error/index', ['type' => 403]));

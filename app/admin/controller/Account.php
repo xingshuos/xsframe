@@ -70,7 +70,7 @@ class Account extends Base
             $settingsData = $this->params['data'] ?? [];
             $settingsData = array_merge($accountSettings, $settingsData);
 
-            $data = array(
+            $data = [
                 "name"         => trim($this->params["name"]),
                 "logo"         => trim($this->params["logo"]),
                 "keywords"     => trim($this->params["keywords"]),
@@ -78,7 +78,7 @@ class Account extends Base
                 "copyright"    => trim($this->params["copyright"]),
                 "displayorder" => intval($this->params["displayorder"]),
                 "status"       => intval($this->params["status"]),
-            );
+            ];
             $data['settings'] = serialize($settingsData);
 
             if (!empty($uniacid)) {
@@ -98,7 +98,7 @@ class Account extends Base
             $accountHost = new AccountHostWrapper();
             $accountHost->reloadAccountHost();
 
-            $this->success(array("url" => webUrl("account/edit", ['id' => $uniacid, 'tab' => str_replace("#tab_", "", $this->params['tab'])])));
+            $this->success(["url" => webUrl("account/edit", ['id' => $uniacid, 'tab' => str_replace("#tab_", "", $this->params['tab'])])]);
         }
 
         $item = Db::name('sys_account')->where(['uniacid' => $uniacid])->find();
@@ -164,8 +164,8 @@ class Account extends Base
         }
 
         # 获取后台地址
-        $realUrl = UserWrapper::getModuleOneUrl($defaultModuleInfo['module']);
-        $url = webUrl(rtrim($realUrl,'.html'), ['i' => $uniacid]);
+        $realUrl = UserWrapper::getModuleOneUrl($defaultModuleInfo['module'], true);
+        $url = webUrl(rtrim($realUrl, '.html'), ['i' => $uniacid]);
         $this->success(['url' => $url]);
     }
 
@@ -173,9 +173,9 @@ class Account extends Base
     {
         $kwd = trim($this->params['keyword']);
 
-        $where = array(
+        $where = [
             'deleted' => 0
-        );
+        ];
 
         if (!empty($kwd)) {
             $where['name'] = Db::Raw("like '%" . $kwd . "%'");
@@ -184,7 +184,7 @@ class Account extends Base
         $list = Db::name('sys_account')->field("uniacid,uniacid id,name,logo")->where($where)->select();
         $list = set_medias($list, ['logo']);
         if ($this->params['suggest']) {
-            exit(json_encode(array('value' => $list)));
+            exit(json_encode(['value' => $list]));
         }
 
         $result = [
@@ -230,13 +230,13 @@ class Account extends Base
         if (!empty($hostIds)) {
             foreach ($hostIds as $k => $v) {
                 $hostUrl = trim($this->params["hostUrls"][$k]);
-                $data = array(
+                $data = [
                     "uniacid"        => $uniacid,
                     "host_url"       => $hostUrl,
                     "default_module" => trim($this->params["hostModules"][$k]),
                     "default_url"    => trim($this->params["hostModulesUrls"][$k]),
                     "displayorder"   => $k,
-                );
+                ];
                 if (empty($v)) {
                     $exitHostInfo = Db::name('sys_account_host')->where(['host_url' => $hostUrl])->find();
                     if (!empty($exitHostInfo)) {

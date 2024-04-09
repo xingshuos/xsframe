@@ -98,7 +98,7 @@ class UserWrapper
     }
 
     // 获取当前应用第一个子菜单当做首页
-    public static function getModuleOneUrl($moduleName)
+    public static function getModuleOneUrl($moduleName, $isAdmin = false)
     {
         $rootPath = App::getRootPath();
         $modulePath = $rootPath . "app/" . $moduleName;
@@ -108,7 +108,7 @@ class UserWrapper
         $moduleName = !empty($appKey) ? $appKey : $moduleName;
 
         $url = $moduleName;
-        if (!is_file($modulePath . "/controller/Index.php")) {
+        if (!is_file($modulePath . "/controller/Index.php") || $isAdmin) {
             $moduleMenuConfigFile = $modulePath . "/config/menu.php";
 
             if (is_file($moduleMenuConfigFile)) {

@@ -51,12 +51,12 @@
             <tr>
                 <th style="width:40px;"></th>
                 <th style='width:80px'>排序</th>
-                <th style='width:140px'>商户名称</th>
-<!--                <th style='width:120px'>绑定域名</th>-->
+                <th style='width:200px'>商户名称</th>
+               <th style='width:80px'>访问域名</th>
+                <th style="width: 80px;">应用数量</th>
                 <th style='width:120px'>备注</th>
-                <th style="width: 120px;">应用数量</th>
-                <th style='width:120px;'>商户状态</th>
-                <th style="width: 140px;">操作</th>
+                <th style='width:80px;'>商户状态</th>
+                <th style="width: 100px;">操作</th>
             </tr>
             </thead>
             <tbody>
@@ -73,18 +73,18 @@
                     <a data-toggle='ajaxHref' href="{:webUrl('account/manager', array('id' => $row['uniacid']))}" target="_blank" rel="pop" style="display: flex" data-content="">
                         <img class="img-40" src="{:tomedia($row['logo'])}" style='border-radius:50%;border:1px solid #efefef;' onerror="this.src='__ADMIN_IMG__/noface.png'"/>
                         <span style="display: flex;flex-direction: column;justify-content: center;align-items: flex-start;padding-left: 5px">
-                            <span class="nickname">{$row['name']}</span>
+                            <span class="nickname">[{$row['uniacid']}] {$row['name']}</span>
                         </span>
                     </a>
                 </td>
-<!--                <td>-->
-<!--                    {$row['hostTotal']}-->
-<!--                </td>-->
-                <td style="overflow: visible;white-space:normal;">
-                    {$row['description']}
+                <td>
+                    {$row['hostTotal']}
                 </td>
                 <td>
                     {$row['total']}
+                </td>
+                <td style="overflow: visible;white-space:normal;">
+                    {$row['description']}
                 </td>
                 <td>
                     <span class='label {if $row['status']==1}label-primary{else}label-default{/if}'
@@ -129,7 +129,7 @@
                         </button>
                     </div>
                 </td>
-                <td colspan="3" style="text-align: right">
+                <td colspan="4" style="text-align: right">
                     {$pager | raw}
                 </td>
             </tr>
