@@ -90,10 +90,10 @@ class MultiApp
                 if (isset($bind[$domain])) {
                     $appName = $bind[$domain];
                     $this->app->http->setBind();
-                } elseif (isset($bind[$subDomain])) {
+                } else if (isset($bind[$subDomain])) {
                     $appName = $bind[$subDomain];
                     $this->app->http->setBind();
-                } elseif (isset($bind['*'])) {
+                } else if (isset($bind['*'])) {
                     $appName = $bind['*'];
                     $this->app->http->setBind();
                 }
@@ -116,9 +116,13 @@ class MultiApp
                     } else {
                         $appName = $map[$name];
                     }
-                } elseif ($name && (false !== array_search($name, $map) || in_array($name, $deny))) {
-                    throw new HttpException(404, 'app not exists:' . $name);
-                } elseif ($name && isset($map['*'])) {
+                } else if ($name && (false !== array_search($name, $map) || in_array($name, $deny))) {
+                    if (in_array($name, $deny)) {
+                        throw new HttpException(404, 'app not exists:' . $name);
+                    } else {
+                        $appName = array_search($name, $map);
+                    }
+                } else if ($name && isset($map['*'])) {
                     $appName = $map['*'];
                 } else {
                     $appName = $name ?: $defaultApp;
@@ -156,7 +160,7 @@ class MultiApp
     {
         if (isset($_SERVER['SCRIPT_FILENAME'])) {
             $file = $_SERVER['SCRIPT_FILENAME'];
-        } elseif (isset($_SERVER['argv'][0])) {
+        } else if (isset($_SERVER['argv'][0])) {
             $file = realpath($_SERVER['argv'][0]);
         }
 
