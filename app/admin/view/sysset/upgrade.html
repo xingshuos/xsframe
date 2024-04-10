@@ -112,20 +112,25 @@
         // 监测更新
 
         // 监测更新
-        let isNewUpgrade = parseInt("{:count($updateFiles ?? [])}");
-        if( isNewUpgrade <= 0 ){
-            checkSystemVersion();
-        }
-        async function checkSystemVersion() {
-            try {
-                const response = await fetch("{:webUrl('sysset/checkVersion')}");
-                const data = await response.json();
-                let isUpgrade = data.result.isUpgrade;
-                if( isUpgrade ){
-                    $("button[name=is_update]").trigger('click')
+        let isOwner = parseInt("{php}echo in_array($userInfo['role'],['owner']) ? 1 : 0;{/php}");
+        let isSystem = parseInt("{$isSystem?1:0}");
+
+        if( isOwner === 1 && isSystem === 1 ){
+            let isNewUpgrade = parseInt("{:count($updateFiles ?? [])}");
+            if( isNewUpgrade <= 0 ){
+                checkSystemVersion();
+            }
+            async function checkSystemVersion() {
+                try {
+                    const response = await fetch("{:webUrl('sysset/checkVersion')}");
+                    const data = await response.json();
+                    let isUpgrade = data.result.isUpgrade;
+                    if( isUpgrade ){
+                        $("button[name=is_update]").trigger('click')
+                    }
+                } catch (error) {
+                    console.error('Error fetching data:', error);
                 }
-            } catch (error) {
-                console.error('Error fetching data:', error);
             }
         }
     </script>
