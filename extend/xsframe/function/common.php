@@ -34,7 +34,7 @@ if (!function_exists('realModuleName')) {
     {
         $map = config("app.app_map");
         $realModuleName = array_search($moduleName, $map);
-        return $realModuleName ? $realModuleName : $moduleName;
+        return $realModuleName ?: $moduleName;
     }
 }
 
