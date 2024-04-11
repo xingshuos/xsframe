@@ -24,21 +24,20 @@ class RequestUtil
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_URL, $url);
 
-        if (!empty($extra)) {
-            if (!empty($extra) && is_array($extra)) {
-                $headers = [];
-                foreach ($extra as $opt => $value) {
-                    if (strexists($opt, 'CURLOPT_')) {
-                        curl_setopt($ch, constant($opt), $value);
-                    } else if (is_numeric($opt)) {
-                        curl_setopt($ch, $opt, $value);
-                    } else {
-                        $headers[] = "{$opt}: {$value}";
-                    }
+        if (!empty($extra) && is_array($extra)) {
+            $headers = [];
+            foreach ($extra as $opt => $value) {
+                if (StringUtil::strexists($opt, 'CURLOPT_')) {
+                    curl_setopt($ch, constant($opt), $value);
+                } else if (is_numeric($opt)) {
+                    curl_setopt($ch, $opt, $value);
+                } else {
+                    $headers[] = "{$opt}: {$value}";
                 }
-                if (!empty($headers)) {
-                    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-                }
+            }
+
+            if (!empty($headers)) {
+                curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
             }
         }
 
@@ -83,7 +82,7 @@ class RequestUtil
             if (!empty($extra) && is_array($extra)) {
                 $headers = [];
                 foreach ($extra as $opt => $value) {
-                    if (strexists($opt, 'CURLOPT_')) {
+                    if (StringUtil::strexists($opt, 'CURLOPT_')) {
                         curl_setopt($ch, constant($opt), $value);
                     } else if (is_numeric($opt)) {
                         curl_setopt($ch, $opt, $value);
@@ -134,7 +133,7 @@ class RequestUtil
                     'Content-Length: ' . strlen($dataString),
                 ];
                 foreach ($extra as $opt => $value) {
-                    if (strexists($opt, 'CURLOPT_')) {
+                    if (StringUtil::strexists($opt, 'CURLOPT_')) {
                         curl_setopt($ch, constant($opt), $value);
                     } else if (is_numeric($opt)) {
                         curl_setopt($ch, $opt, $value);
