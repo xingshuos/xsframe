@@ -19,7 +19,7 @@ class SysSettingsKeyEnum extends BaseEnum
     // 以下常量是为系统常用缓存做键值使用
 
     # 管理员
-    const ADMIN_USER_KEY = "__admin_session";
+    const ADMIN_USER_KEY = "admin_session";
 
     # 站点设置
     const WEBSITE_KEY = 'website_sets';

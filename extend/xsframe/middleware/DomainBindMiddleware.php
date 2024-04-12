@@ -68,14 +68,22 @@ class DomainBindMiddleware
             $pathInfo = $request->pathinfo();
             if (empty($pathInfo)) { // 参数为空访问默认应用
                 $url = UserWrapper::getModuleOneUrl($module);
+
                 $url = strval($url);
                 if ($url && $url != $module) {
                     $appMap = config('app.app_map');
                     $realModuleName = array_key_exists($url, $appMap) ? $appMap[$url] : '';
 
-                    if ((!empty($realModuleName) && $realModuleName != $module) || empty($realModuleName)) {
-                        header("location:" . $url);
+                    $rootPath = dirname(dirname(__FILE__));
+
+                    if (!is_dir($rootPath . "/" . $module) && is_dir($rootPath . "/" . $realModuleName) && empty($realModuleName)) {
+                        header("location:admin");
                         exit();
+                    } else {
+                        if ((!empty($realModuleName) && $realModuleName != $module) || empty($realModuleName)) {
+                            header("location:" . $url);
+                            exit();
+                        }
                     }
 
                 }
