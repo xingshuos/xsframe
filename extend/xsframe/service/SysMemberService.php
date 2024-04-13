@@ -162,6 +162,7 @@ class SysMemberService extends BaseService
         if (!$memberInfo) {
             $insertData = [
                 'uniacid'     => $this->uniacid,
+                'username'    => $value,
                 'nickname'    => $nickname,
                 'avatar'      => $avatar ?? '',
                 'create_time' => TIMESTAMP,
