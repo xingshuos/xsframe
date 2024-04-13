@@ -107,6 +107,8 @@ abstract class WebBaseController extends BaseController
         $var['moduleInfo'] = $this->moduleInfo;
         $var['attachUrl'] = getAttachmentUrl() . "/";
 
+        $var['isLogin'] = $this->isLogin;
+
         if (!empty($params)) {
             $var = array_merge($var, $params);
         }

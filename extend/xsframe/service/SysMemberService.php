@@ -16,9 +16,9 @@ class SysMemberService extends BaseService
     protected $expire = 60 * 60 * 24 * 7; // 默认1周时间过期
 
     // 暂时无用 主要是用来缓存用户信息
-    private function getMemberInfoKey($key): string
+    private function getMemberInfoKey($key = null): string
     {
-        return md5($this->uniacid . "_" . env('authkey') . "_sysMemberInfo_" . $key);
+        return md5($this->uniacid . "_" . env('authkey') . "_sysMemberInfo") . ($key ? '_' . $key : '');
     }
 
     // 获取用户ID
@@ -35,6 +35,10 @@ class SysMemberService extends BaseService
     public function checkLogin($token = null)
     {
         $token = empty($token) ? ($this->header['authorization'] ?? ($this->header['Authorization'] ?? null)) : $token;
+
+        if (empty($token)) {
+            $token = $_COOKIE[$this->getMemberInfoKey()];
+        }
 
         if (env('APP_DEBUG') && empty($token)) {
             $token = $this->params['token'] ?? '';
@@ -61,7 +65,6 @@ class SysMemberService extends BaseService
         }
 
         $memberInfo = [];
-        $type = "";
         if (!empty($code)) {
             $type = "mobile";
             if (empty($password)) {
@@ -149,12 +152,6 @@ class SysMemberService extends BaseService
         return $this->checkMember('jt_openid', $authUserInfo['open_user_id'], $authUserInfo['nick_name'], $authUserInfo['avatar']);
     }
 
-    // 获取登录凭证token
-    public function getToken($memberId)
-    {
-        return authcode2($memberId, "ENCODE", $this->expire);
-    }
-
     // 校验注册用户
     private function checkMember($type, $value, $nickname = '', $avatar = '', $memberInfo = null)
     {
@@ -181,6 +178,14 @@ class SysMemberService extends BaseService
         }
 
         return $this->getToken($memberId);
+    }
+
+    // 获取登录凭证token
+    public function getToken($memberId)
+    {
+        $token = authcode2($memberId, "ENCODE", $this->expire);
+        isetcookie($this->getMemberInfoKey(), $token, 30 * 86400);
+        return $token;
     }
 
     // 退出登录 TODO
