@@ -12,6 +12,7 @@
 
 namespace xsframe\service;
 
+use PHPMailer\PHPMailer\PHPMailer;
 use think\facade\Cache;
 use xsframe\base\BaseService;
 use xsframe\enum\ExceptionEnum;
@@ -25,8 +26,97 @@ class SmsService extends BaseService
     private $codeKey = "member_verify_code_session_";
     private $codeTimeKey = "member_verify_code_sendtime_";
 
-    // 发送注册验证码
-    public function sendLoginCode($mobile, $tplId = null, $smsSet = null)
+    // 发送登录、注册邮箱验证码
+    public function sendEmailCode($to, $subject, $body = null, $smtpSet = null)
+    {
+        if (empty($smtpSet)) { // 应用设置
+            $smtpSet = $this->moduleSetting['smtp'];
+
+            if (empty($smtpSet)) { // 系统设置
+                $smtpSet = $this->accountSetting['smtp'];
+            }
+        }
+
+        $mailer = new PHPMailer(true);
+
+        $smtpSet['charset'] = 'utf-8';
+        if ($smtpSet['type'] == '163') {
+            $smtpSet['server'] = 'smtp.163.com';
+            $smtpSet['port'] = 25;
+        } else if ($smtpSet['type'] == 'qq') {
+            $smtpSet['server'] = 'ssl://smtp.qq.com';
+            $smtpSet['port'] = 465;
+        } else {
+            if (!empty($smtpSet['authmode'])) {
+                $smtpSet['server'] = 'ssl://' . $smtpSet['server'];
+            }
+        }
+
+        if (!empty($smsSet['smtp']['authmode'])) {
+            if (!extension_loaded('openssl')) {
+                throw new ApiException("请开启 php_openssl 扩展");
+            }
+        }
+
+        //Server settings
+        $mailer->SMTPDebug = 0;                                       // Enable verbose debug output
+        $mailer->isSMTP();                                            // Set mailer to use SMTP
+        $mailer->CharSet = $smtpSet['charset'];
+        $mailer->Host = $smtpSet['server'];;                           // Specify main and backup SMTP servers
+        $mailer->Port = $smtpSet['port'];                                // TCP port to connect to
+        $mailer->SMTPAuth = true;                                   // Enable SMTP authentication
+        $mailer->Username = $smtpSet['username'];                      // SMTP username
+        $mailer->Password = $smtpSet['password'];                 // SMTP password
+        !empty($smtpSet['authmode']) && $mailer->SMTPSecure = 'ssl'; // Enable TLS encryption, `ssl` also accepted
+
+        $mailer->From = $smtpSet['username'];
+        $mailer->FromName = $smtpSet['sender'];
+        $mailer->isHTML(true);                                  // Set email format to HTML
+
+        if ($body) {
+            if (is_array($body)) {
+                $newBody = '';
+                foreach ($body as $value) {
+                    if (substr($value, 0, 1) == '@') {
+                        if (!is_file($file = ltrim($value, '@'))) {
+                            throw new ApiException("附件不存在或非文件");
+                        }
+                        $mailer->addAttachment($file);
+                    } else {
+                        $newBody .= $value . '\n';
+                    }
+                }
+                $body = $newBody;
+            } else {
+                if (substr($body, 0, 1) == '@') {
+                    $mailer->addAttachment(ltrim($body, '@'));
+                    $body = '';
+                }
+            }
+
+            $code = self::getCode($to);
+            $body = str_replace("[code]", $code, $body);
+        }
+
+        if (!empty($mailer->signature)) {
+            $body .= htmlspecialchars_decode($smtpSet['signature'] ?? '');
+        }
+
+        $mailer->Subject = $subject;
+        $mailer->Body = $body;
+        $mailer->addAddress($to);
+
+        try {
+            $mailer->send();
+        } catch (\PHPMailer\PHPMailer\Exception $e) {
+            throw new ApiException($e->getMessage());
+        }
+
+        return true;
+    }
+
+    // 发送登录注册验证码
+    public function sendLoginCode($mobile, $tplId = null, $smsSet = null): bool
     {
         if (empty($smsSet)) { // 应用设置
             $smsSet = $this->moduleSetting['sms'];
@@ -46,7 +136,7 @@ class SmsService extends BaseService
     }
 
     // 发送验证码
-    public function sendSMS($smsSet, $mobile, $tplId)
+    public function sendSMS($smsSet, $mobile, $tplId): bool
     {
         if (!preg_match("/^1[3456789]{1}\d{9}$/", $mobile)) {
             throw new ApiException(ExceptionEnum::getText(ExceptionEnum::SMS_MOBILE_ERROR));
@@ -60,8 +150,32 @@ class SmsService extends BaseService
             throw new ApiException(ExceptionEnum::getText(ExceptionEnum::SMS_PARAMS_ERROR));
         }
 
-        $key = $this->getKey($this->codeKey . $mobile);
-        $keyTime = $this->getKey($this->codeTimeKey . $mobile);
+        $code = self::getCode($mobile);
+
+        $accessKeyId = $smsSet['accessKeyId'];
+        $accessKeySecret = $smsSet['accessKeySecret'];
+        $signName = $smsSet['sign'];
+
+        $ret = self::send($accessKeyId, $accessKeySecret, $signName, $mobile, $tplId, ['code' => $code]);
+
+        if (!$ret['status']) {
+            $key = $this->getKey($this->codeKey . $mobile);
+            $keyTime = $this->getKey($this->codeTimeKey . $mobile);
+            Cache::delete($key);
+            Cache::delete($keyTime);
+            throw new ApiException($ret['message']);
+        }
+
+        return true;
+    }
+
+    // 设置验证码缓存过期时间
+    private function getCode($obj): int
+    {
+        $code = RandomUtil::random(4, true);
+
+        $key = $this->getKey($this->codeKey . $obj);
+        $keyTime = $this->getKey($this->codeTimeKey . $obj);
 
         $sendTime = Cache::get($keyTime);
 
@@ -75,29 +189,16 @@ class SmsService extends BaseService
             throw new ApiException(ExceptionEnum::getText(ExceptionEnum::SMS_RATE_ERROR));
         }
 
-        $code = RandomUtil::random(4, true);
-
-        $accessKeyId = $smsSet['accessKeyId'];
-        $accessKeySecret = $smsSet['accessKeySecret'];
-        $signName = $smsSet['sign'];
-
-        $ret = self::send($accessKeyId, $accessKeySecret, $signName, $mobile, $tplId, ['code' => $code]);
-
-        if ($ret['status']) {
-            Cache::set($key, $code, 10 * 60);
-            Cache::set($keyTime, TIMESTAMP, 10 * 60);
-        } else {
-            throw new ApiException($ret['message']);
-        }
-
-        return true;
+        Cache::set($key, $code, 10 * 60);
+        Cache::set($keyTime, TIMESTAMP, 10 * 60);
+        return intval($code);
     }
 
     // 校验验证码
-    public function checkSmsCode($mobile, $verifyCode, $testCode = null, $clear = true)
+    public function checkSmsCode($username, $verifyCode, $testCode = null, $clear = true)
     {
-        $key = $this->getKey($this->codeKey . $mobile);
-        $keyTime = $this->getKey($this->codeTimeKey . $mobile);
+        $key = $this->getKey($this->codeKey . $username);
+        $keyTime = $this->getKey($this->codeTimeKey . $username);
 
         $sendCode = Cache::get($key);
         $sendTime = Cache::get($keyTime);
@@ -106,8 +207,8 @@ class SmsService extends BaseService
             return true;
         }
 
-        if (!preg_match("/^1[3456789]{1}\d{9}$/", $mobile)) {
-            throw new ApiException("请输入正确的手机号!");
+        if (!preg_match("/^1[3456789]{1}\d{9}$/", $username) && !filter_var($username, FILTER_VALIDATE_EMAIL)) {
+            throw new ApiException("请输入正确的账号信息");
         }
 
         if (!isset($sendCode) || $sendCode !== $verifyCode) {

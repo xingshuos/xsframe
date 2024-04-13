@@ -280,46 +280,29 @@ if (!function_exists('getAttachmentUrl')) {
 if (!function_exists('mobileUrl')) {
     function mobileUrl($src = null, $params = [])
     {
-        $paramsUrl = http_build_query($params);
+        return buildUrl($src, $params, 'mobile');
+    }
+}
 
-        $t = strtolower($src);
-        if ((substr($t, 0, 7) == 'http://') || (substr($t, 0, 8) == 'https://') || (substr($t, 0, 2) == '//')) {
-            $url = $src;
-        } else {
-            $moduleName = app('http')->getName();
-            $appMaps = Config::get('app.app_map') ?? [];
-            $appKey = array_search($moduleName, $appMaps);
-            $moduleName = !empty($appKey) ? $appKey : $moduleName;
-
-            if (empty($src)) {
-                $src = "{$moduleName}/mobile";
-            } else {
-                if (substr($src, 0, 1) != '/') {
-                    $src = StringUtil::strexists($src, "mobile") ? trim($src, '/') : "mobile/" . trim($src, '/');
-                }
-                $src = StringUtil::strexists($src, $moduleName) ? trim($src, '/') : $moduleName . "/" . trim($src, '/');
-            }
-
-            if (env('site.mRootUrl')) {
-                $url = env('site.mRootUrl') . "/" . rtrim($src, "/");
-            } else {
-                $url = request()->domain() . "/" . rtrim($src, "/");
-            }
-        }
-
-        if (strpos($src, '?') !== false) {
-            $url = $url . "&" . $paramsUrl;
-        } else {
-            $url = $url . (empty($paramsUrl) ? "" : "?" . $paramsUrl);
-        }
-
-        return $url;
+// 补API端路径
+if (!function_exists('apiUrl')) {
+    function apiUrl($src = null, $params = [])
+    {
+        return buildUrl($src, $params, 'api');
     }
 }
 
 // 补PC端路径
 if (!function_exists('pcUrl')) {
     function pcUrl($src = null, $params = [])
+    {
+        return buildUrl($src, $params, 'pc');
+    }
+}
+
+// 补PC端路径
+if (!function_exists('buildUrl')) {
+    function buildUrl($src = null, $params = [], $type = null): string
     {
         $paramsUrl = http_build_query($params);
 
@@ -333,10 +316,10 @@ if (!function_exists('pcUrl')) {
             $moduleName = !empty($appKey) ? $appKey : $moduleName;
 
             if (empty($src)) {
-                $src = "{$moduleName}/pc";
+                $src = "{$moduleName}" . ($type ? "/{$type}" : '');
             } else {
                 if (substr($src, 0, 1) != '/') {
-                    $src = StringUtil::strexists($src, "pc") ? trim($src, '/') : "pc/" . trim($src, '/');
+                    $src = StringUtil::strexists($src, $type) ? trim($src, '/') : "{$type}/" . trim($src, '/');
                 }
                 $src = StringUtil::strexists($src, $moduleName) ? trim($src, '/') : $moduleName . "/" . trim($src, '/');
             }

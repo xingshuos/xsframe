@@ -65,6 +65,7 @@ class ComposerStaticInit8b9040558554b2c09c58884a2bd8d650
             'Psr\\Container\\' => 14,
             'Psr\\Clock\\' => 10,
             'PhpOffice\\PhpSpreadsheet\\' => 25,
+            'PHPMailer\\PHPMailer\\' => 20,
         ),
         'O' => 
         array (
@@ -207,6 +208,10 @@ class ComposerStaticInit8b9040558554b2c09c58884a2bd8d650
         'PhpOffice\\PhpSpreadsheet\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet',
+        ),
+        'PHPMailer\\PHPMailer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
         ),
         'OneSm\\' => 
         array (

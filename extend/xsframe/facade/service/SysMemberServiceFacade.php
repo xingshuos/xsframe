@@ -23,6 +23,7 @@ use xsframe\service\SysMemberService;
  * @method static mobileLogin(string $mobile, string $password = null, int $code = null, int $testCode = null)
  * @method static setCredit($userId, string $filed, int|mixed $value, array|string $remark = [])
  * @method static getToken(int $memberId)
+ * @method static register(mixed|string $username, string $code = null, int $testCode = null, array $updateData = [])
  */
 class SysMemberServiceFacade extends BaseFacade
 {

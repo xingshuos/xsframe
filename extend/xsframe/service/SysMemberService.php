@@ -9,6 +9,7 @@ use xsframe\facade\service\JingTanServiceFacade;
 use xsframe\facade\service\PayServiceFacade;
 use xsframe\facade\service\SmsServiceFacade;
 use xsframe\facade\service\SysMemberCreditsRecordServiceFacade;
+use xsframe\util\RandomUtil;
 
 class SysMemberService extends BaseService
 {
@@ -55,49 +56,59 @@ class SysMemberService extends BaseService
     }
 
     /**
+     * 用户注册
+     * @param $username - 手机号或邮箱
+     * @throws ApiException
+     */
+    public function register($username, $code = null, $testCode = null, $updateData = [])
+    {
+        $memberInfoRet = self::getMemberInfo($username, $code, $testCode);
+        $memberInfo = $memberInfoRet['memberInfo'];
+        $type = $memberInfoRet['type'];
+
+        if (!empty($memberInfo)) {
+            if ($type == 'username') {
+                throw new ApiException("该账号已经注册过了，请直接登录");
+            }
+            if ($type == 'mobile') {
+                throw new ApiException("该手机号已经注册过了，请直接登录");
+            }
+            if ($type == 'email') {
+                throw new ApiException("该邮箱已经注册过了，请直接登录");
+            }
+        }
+
+        return self::checkMember($memberInfoRet['type'], $username, null, null, $memberInfo, $updateData);
+    }
+
+    /**
      * 手机号登录
      * @throws ApiException
      */
-    public function mobileLogin($mobile, $password = null, $code = null, $testCode = null): string
+    public function mobileLogin($username, $password = null, $code = null, $testCode = null): string
     {
-        if (!preg_match("/^1[3456789]{1}\d{9}$/", $mobile) && !filter_var($mobile, FILTER_VALIDATE_EMAIL)) {
-            throw new ApiException("请输入正确的账号信息");
+        if (empty($password) && empty($code)) {
+            throw new ApiException("参数错误");
         }
 
-        $memberInfo = [];
-        if (!empty($code)) {
-            $type = "mobile";
-            if (empty($password)) {
-                SmsServiceFacade::checkSmsCode($mobile, $code, $testCode);
+        $memberInfoRet = self::getMemberInfo($username, $code, $testCode);
+        $memberInfo = $memberInfoRet['memberInfo'];
+        $type = $memberInfoRet['type'];
 
-                $memberInfo = self::getInfo(['username' => $mobile], "id,password,salt");
-                if (empty($memberInfo)) {
-                    $memberInfo = self::getInfo(['mobile' => $mobile], "id,password,salt");
-                }
+        $updateData = [];
+        if (!empty($code)) {
+            if (!empty($password)) {
+                $updateData['password'] = $password;
             }
         } else {
-            if (empty($password)) {
-                throw new ApiException("请输入正确的密码信息");
-            } else {
-                $memberInfo = self::getInfo(['username' => $mobile], "id,password,salt");
-                $type = "username";
-                if (empty($memberInfo)) {
-                    $memberInfo = self::getInfo(['mobile' => $mobile], "id,password,salt");
-                    $type = "mobile'";
-                    if (empty($memberInfo)) {
-                        $memberInfo = self::getInfo(['email' => $mobile], "id,password,salt");
-                        $type = "email'";
-                    }
-                }
-                if ($memberInfo['password'] != md5($password . $memberInfo['salt'])) {
-                    throw new ApiException("用户密码错误请重试");
-                }
+            if ($memberInfo['password'] != md5($password . $memberInfo['salt'])) {
+                throw new ApiException("用户密码错误请重试");
             }
         }
 
-        $nickname = substr($mobile, 0, 3) . "xxxx" . substr($mobile, 7, 4);
-        return self::checkMember($type, $mobile, $nickname, null, $memberInfo);
+        return self::checkMember($type, $username, null, null, $memberInfo, $updateData);
     }
+
 
     /**
      * 阿里H5授权登录
@@ -152,8 +163,39 @@ class SysMemberService extends BaseService
         return $this->checkMember('jt_openid', $authUserInfo['open_user_id'], $authUserInfo['nick_name'], $authUserInfo['avatar']);
     }
 
+    // 通过账号获取用户信息
+    private function getMemberInfo($username, $code = null, $testCode = null): array
+    {
+        if (!preg_match("/^1[3456789]{1}\d{9}$/", $username) && !filter_var($username, FILTER_VALIDATE_EMAIL)) {
+            throw new ApiException("请输入正确的账号信息");
+        }
+
+        if (!empty($code)) {
+            SmsServiceFacade::checkSmsCode($username, $code, $testCode);
+        }
+
+        $memberInfo = self::getInfo(['username' => $username], "id,password,salt");
+        $type = "username";
+        if (empty($memberInfo)) {
+            $memberInfo = self::getInfo(['mobile' => $username], "id,password,salt");
+            $type = "mobile";
+            if (empty($memberInfo)) {
+                $memberInfo = self::getInfo(['email' => $username], "id,password,salt");
+                $type = "email";
+                if (empty($memberInfo)) {
+                    $type = "";
+                }
+            }
+        }
+
+        return [
+            'memberInfo' => $memberInfo,
+            'type'       => $type,
+        ];
+    }
+
     // 校验注册用户
-    private function checkMember($type, $value, $nickname = '', $avatar = '', $memberInfo = null)
+    private function checkMember($type, $value, $nickname = '', $avatar = '', $memberInfo = null, $updateData = [])
     {
         if (empty($memberInfo)) {
             $memberInfo = self::getInfo([$type => $value]);
@@ -163,18 +205,50 @@ class SysMemberService extends BaseService
             $insertData = [
                 'uniacid'     => $this->uniacid,
                 'username'    => $value,
-                'nickname'    => $nickname,
+                'nickname'    => $nickname ?? '',
                 'avatar'      => $avatar ?? '',
                 'create_time' => TIMESTAMP,
                 'update_time' => TIMESTAMP,
             ];
             $insertData[$type] = $value;
+
+            if (empty($nickname)) {
+                $insertData['nickname'] = substr($value, 0, 3) . "xxxx" . substr($value, 7, 4);
+            }
+
+            if (!empty($updateData)) {
+                $insertData = array_merge($insertData, $updateData);
+                if (!empty($updateData['password'])) {
+                    $salt = RandomUtil::random(6);
+                    if (strlen($updateData['password']) < 6) {
+                        throw new ApiException('密码过于简单');
+                    }
+                    $insertData['password'] = md5($updateData['password'] . $salt);
+                    $insertData['salt'] = $salt;
+                }
+            }
+
             $memberId = self::insertInfo($insertData);
             if (!$memberId) throw new ApiException('创建用户信息失败，请稍后再试');
         } else {
             $memberId = $memberInfo['id'];
+
             if (empty($memberInfo['username'])) {
-                self::updateInfo(['username' => $value, 'update_time' => TIMESTAMP], ['id' => $memberId]);
+                $updateData['username'] = $value;
+                $updateData['update_time'] = TIMESTAMP;
+            }
+
+            if (!empty($updateData['password']) && $memberInfo['password'] != md5($updateData['password'] . $memberInfo['salt'])) {
+                $salt = RandomUtil::random(6);
+                if (strlen($updateData['password']) < 6) {
+                    throw new ApiException('密码过于简单');
+                }
+                $updateData['password'] = md5($updateData['password'] . $salt);
+                $updateData['salt'] = $salt;
+            }
+
+            if (!empty($updateData)) {
+                self::updateInfo($updateData, ['id' => $memberId]);
             }
         }
 
