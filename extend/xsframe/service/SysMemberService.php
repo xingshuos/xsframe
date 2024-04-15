@@ -43,7 +43,7 @@ class SysMemberService extends BaseService
 
         if (env('APP_DEBUG') && empty($token)) {
             $token = $this->params['token'] ?? '';
-            $memberId = $token ? authcode2($token) : 1;
+            $memberId = $token ? authcode2($token) : 0;
         } else {
             $memberId = authcode2($token);
         }
@@ -263,10 +263,10 @@ class SysMemberService extends BaseService
         return $token;
     }
 
-    // 退出登录 TODO
-    public function logout($token = null): bool
+    // 退出登录
+    public function logout(): bool
     {
-        return true;
+        return isetcookie($this->getMemberInfoKey(), false, -100);
     }
 
     // 更新积分或余额字段
