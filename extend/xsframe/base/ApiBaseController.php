@@ -13,6 +13,8 @@
 namespace xsframe\base;
 
 
+use xsframe\facade\service\SysMemberServiceFacade;
+
 abstract class ApiBaseController extends BaseController
 {
     protected function _initialize()
@@ -81,13 +83,7 @@ abstract class ApiBaseController extends BaseController
     // 默认获取userid
     protected function getUserId()
     {
-        $token = $this->header['authorization'] ?? '';
-        if (env('APP_DEBUG') && empty($token)) {
-            $token = $this->params['token'] ?? '';
-            $this->userId = $token ? authcode(base64_decode($token), "DECODE", $this->module) : 1;
-        } else {
-            $this->userId = authcode(base64_decode($token), "DECODE", $this->module);
-        }
+        $this->userId = SysMemberServiceFacade::getUserId();
         return $this->userId;
     }
 }
