@@ -49,7 +49,7 @@ class PayService extends BaseService
 
             $unifiedReturn = $this->wxPayService->unifiedOrder($body, $orderPrice, $outTradeNo, $attach, $tradeType, $goodsTag, $openid, $bundleName, $timeExpire);
 
-            $wOpt = array();
+            $wOpt = [];
             $string = "";
             $wOpt['appId'] = $paymentSet['appid'];
             $wOpt['timeStamp'] = strval(time());
@@ -93,7 +93,7 @@ class PayService extends BaseService
                 $notifyUrl = $this->siteRoot . "/" . $this->module . "/wechat/notify";
 
                 if (empty($paymentSet['appid']) || empty($paymentSet['mchid']) || empty($paymentSet['apikey'])) {
-                    return ErrorUtil::error(-1, "后台微信支付配置信息未配置");
+                    throw new ApiException("后台微信支付配置信息未配置");
                 }
 
                 $this->wxPayService = new WxPayService($paymentSet['appid'], $paymentSet['mchid'], $paymentSet['apikey'], $notifyUrl);
@@ -117,7 +117,7 @@ class PayService extends BaseService
                 $gatewayUrl = "https://openapi.alipay.com/gateway.do";
 
                 if (empty($paymentSet['appid']) || empty($paymentSet['encrypt_key'])) {
-                    return ErrorUtil::error(-1, "后台支付宝支付配置信息未配置");
+                    throw new ApiException("未配置支付宝支付参数");
                 }
 
                 $this->aliPayService = new AliPayService($gatewayUrl, $paymentSet['appid'], $paymentSet['encrypt_key'], $paymentSet['private_key'], $paymentSet['public_key']);
@@ -139,7 +139,7 @@ class PayService extends BaseService
                 $gatewayUrl = "https://openapi.alipay.com/gateway.do";
 
                 if (empty($paymentSet['appid']) || empty($paymentSet['encrypt_key'])) {
-                    return ErrorUtil::error(-1, "后台支付宝支付配置信息未配置");
+                    throw new ApiException("未配置支付宝支付参数");
                 }
 
                 $this->aliPayService = new AliPayService($gatewayUrl, $paymentSet['appid'], $paymentSet['encrypt_key'], $paymentSet['private_key'], $paymentSet['public_key']);
@@ -186,7 +186,7 @@ class PayService extends BaseService
                 $notifyUrl = $this->siteRoot . "/" . $this->module . "/alipay/notify";
 
                 if (empty($paymentSet['appid']) || empty($paymentSet['encrypt_key'])) {
-                    return ErrorUtil::error(-1, "后台支付宝支付配置信息未配置");
+                    throw new ApiException("未配置支付宝支付参数");
                 }
 
                 $this->aliPayService = new AliPayService($gatewayUrl, $paymentSet['appid'], $paymentSet['encrypt_key'], $paymentSet['private_key'], $paymentSet['public_key'], $notifyUrl, $returnUrl);
