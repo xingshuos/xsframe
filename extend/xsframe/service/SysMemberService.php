@@ -183,7 +183,15 @@ class SysMemberService extends BaseService
                 $memberInfo = self::getInfo(['email' => $username], "id,password,salt");
                 $type = "email";
                 if (empty($memberInfo)) {
-                    $type = "";
+                    if (!filter_var($username, FILTER_VALIDATE_EMAIL)) {
+                        if (preg_match("/^1[3456789]{1}\d{9}$/", $username)) {
+                            $type = "mobile";
+                        } else {
+                            $type = "username";
+                        }
+                    } else {
+                        $type = "username";
+                    }
                 }
             }
         }
@@ -229,6 +237,7 @@ class SysMemberService extends BaseService
             }
 
             $memberId = self::insertInfo($insertData);
+
             if (!$memberId) throw new ApiException('创建用户信息失败，请稍后再试');
         } else {
             $memberId = $memberInfo['id'];
