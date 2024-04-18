@@ -221,7 +221,7 @@ abstract class BaseController extends Controller
         }
         // end
 
-        $this->uniacid = $uniacid;
+        $this->uniacid = intval($uniacid);
         return $uniacid;
     }
 
