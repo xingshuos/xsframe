@@ -187,7 +187,7 @@ class MenuWrapper
                             $return_menu_child = [
                                 'title'  => $child['title'],
                                 'items'  => [],
-                                'active' => 0,
+                                'active' => 1, // 默认展开所有子菜单
                             ];
 
                             foreach ($child['items'] as $ii => $three) {
@@ -205,7 +205,6 @@ class MenuWrapper
                                 $return_submenu_three['route'] = $module . "/" . $menuRoute . "." . $return_submenu_three['route'];
 
                                 if (strexists($return_submenu_three['route'], $action)) {
-                                    $return_menu_child['active'] = 1; // 展开子菜单
                                     if (strexists($return_submenu_three['route'], $controller)) {
                                         $return_submenu_three['active'] = 1; // 是否选中
                                     }
