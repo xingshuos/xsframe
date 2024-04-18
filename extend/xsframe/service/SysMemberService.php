@@ -101,9 +101,14 @@ class SysMemberService extends BaseService
                 $updateData['password'] = $password;
             }
         } else {
-            if ($memberInfo['password'] != md5($password . $memberInfo['salt'])) {
-                throw new ApiException("用户密码错误请重试");
+            if (!empty($memberInfo)) {
+                if ($memberInfo['password'] != md5($password . $memberInfo['salt'])) {
+                    throw new ApiException("用户密码错误请重试");
+                }
+            } else {
+                throw new ApiException("当前账号不存在");
             }
+
         }
 
         return self::checkMember($type, $username, null, null, $memberInfo, $updateData);
@@ -149,7 +154,7 @@ class SysMemberService extends BaseService
     {
         $auth_code = $this->params['auth_code'] ?? '';
         if (empty($auth_code)) {
-            throw new ApiException('授权登录失败，授权码为空2');
+            throw new ApiException('授权登录失败，授权码为空');
         }
 
         $response = JingTanServiceFacade::getAccessToken($auth_code);
