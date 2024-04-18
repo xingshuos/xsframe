@@ -147,7 +147,18 @@ trait AdminTraits
                 if (!empty($item['is_default'])) {
                     $this->error("默认项不能被删除");
                 }
-                Db::name($this->tableName)->where(["id" => $item['id']])->update(['deleted' => 1]);
+
+                $updateData = [];
+                if (array_key_exists('deleted', $item)) {
+                    $updateData['deleted'] = 1;
+                }
+                if (array_key_exists('delete_time', $item)) {
+                    $updateData['delete_time'] = TIMESTAMP;
+                }
+                if (array_key_exists('is_deleted', $item)) {
+                    $updateData['is_deleted'] = 1;
+                }
+                Db::name($this->tableName)->where(["id" => $item['id']])->update($updateData);
             }
         }
         $this->success(["url" => referer()]);
