@@ -11,75 +11,74 @@
 // +----------------------------------------------------------------------
 
 return [
-    'account' => array(
+    'account' => [
         'title'    => '商户',
         'subtitle' => '商户管理',
         'icon'     => 'icon-archive',
-    ),
-    'app'     => array(
+    ],
+    'app'     => [
         'title'    => '应用',
         'subtitle' => '应用管理',
         'icon'     => 'icon-th-large',
-    ),
-    'users'   => array(
+    ],
+    'users'   => [
         'title'    => '用户',
         'subtitle' => '用户管理',
         'icon'     => 'icon-user',
-        'items'    => array(
-            array(
+        'items'    => [
+            [
                 'title' => '账号设置',
                 'route' => 'profile',
-            ),
-            array(
+            ],
+            [
                 'title' => '用户管理',
                 'route' => 'list',
-            ),
-        )
-    ),
-    'sysset'  => array(
+            ],
+        ]
+    ],
+    'sysset'  => [
         'title'    => '系统',
         'subtitle' => '系统设置',
         'icon'     => 'icon-desktop',
-        'items'    => array(
-            array(
+        'items'    => [
+            [
                 'title' => '站点设置',
                 'route' => 'site',
-            ),
-            array(
+            ],
+            [
                 'title' => '域名设置',
                 'route' => 'host',
-            ),
-            array(
+            ],
+            [
                 'title' => '附件设置',
                 'route' => 'attachment',
-            ),
-            array(
+            ],
+            [
                 'title' => '系统升级',
                 'route' => 'upgrade',
-            ),
-            array(
+            ],
+            [
                 'title' => '常用工具',
-                'route' => '',
-                'items' => array(
-                    array(
+                'items' => [
+                    [
                         'title' => '系统表单',
-                        'route' => 'form',
-                    ),
-                    array(
+                        'route' => '/form',
+                    ],
+                    [
                         'title' => '系统图标',
-                        'route' => 'icon',
-                    ),
-                    array(
+                        'route' => '/icon',
+                    ],
+                    [
                         'title' => '静态页面',
-                        'route' => 'static',
-                    ),
-                    array(
+                        'route' => '/static',
+                    ],
+                    [
                         'title' => '检测BOM',
-                        'route' => 'bom',
-                    ),
-                )
-            ),
-        )
-    ),
+                        'route' => '/bom',
+                    ],
+                ]
+            ],
+        ]
+    ],
 ];
 

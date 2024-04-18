@@ -202,7 +202,11 @@ class MenuWrapper
                                     $return_submenu_three['route'] = $child['route'];
                                 }
 
-                                $return_submenu_three['route'] = $module . "/" . $menuRoute . "." . $return_submenu_three['route'];
+                                if (strlen($return_submenu_three['route']) > 0 && $return_submenu_three['route'][0] === '/') {
+                                    $return_submenu_three['route'] = $module . "/" . $menuRoute . $return_submenu_three['route'];
+                                } else {
+                                    $return_submenu_three['route'] = $module . "/" . $menuRoute . "." . $return_submenu_three['route'];
+                                }
 
                                 if (strexists($return_submenu_three['route'], $action)) {
                                     if (strexists($return_submenu_three['route'], $controller)) {

@@ -274,14 +274,14 @@
 
                     <li >
                 <a data-href="/admin/account/index.html" class="wb-nav-item" data-module="admin">
-                                        <i class="icon icon-th-large"></i>
+                                        <i class="icon icon-archive"></i>
                                         <span class="wb-nav-title">商户</span>
                 </a>
                 <span class="wb-nav-tip">商户管理</span>
             </li>
                     <li >
                 <a data-href="/admin/app/index.html" class="wb-nav-item" data-module="admin">
-                                        <i class="icon icon-puzzle-piece"></i>
+                                        <i class="icon icon-th-large"></i>
                                         <span class="wb-nav-title">应用</span>
                 </a>
                 <span class="wb-nav-tip">应用管理</span>
@@ -394,10 +394,11 @@
             body.classList.remove('no-scroll');
         })
 
+        let isOwner = parseInt("1");
         let isSystem = parseInt("1");
-        if( isSystem === 1 ){
+
+        if( isOwner === 1 && isSystem === 1 ){
             let isUpgradeSystemNotice = util.cookie.get('isUpgradeSystemNotice') || 0;
-            // console.log(isUpgradeSystemNotice)
             if( parseInt(isUpgradeSystemNotice) === 0 ){
                 checkSystemVersion();
             }
@@ -416,10 +417,11 @@
                         });
                     }
                 } catch (error) {
-                    console.error('Error fetching data:', error);
+                    console.log('Error fetching data:', error);
                 }
             }
         }
+
     })
 
     // 图片放大
