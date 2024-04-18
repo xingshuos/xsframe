@@ -373,8 +373,7 @@ EOF;
                 mkdir($file_dir, 0777, true);
             }
 
-            $response = $this->httpPost("frame/upgradeFileData", ['key' => $key, 'token' => $token, 'file_path' => $filePath]);
-            $result = json_decode($response, true);
+            $result = $this->httpPost("frame/upgradeFileData", ['key' => $key, 'token' => $token, 'file_path' => $filePath]);
 
             if (empty($result) || $result['code'] != 200) {
                 continue;
@@ -415,10 +414,7 @@ EOF;
         if (empty($upgradeList) || !empty($isCheckUpdate)) {
             $key = $this->websiteSets['key'] ?? '';
             $token = $this->websiteSets['token'] ?? '';
-            $response = $this->httpPost("frame/upgrade", ['key' => $key, 'token' => $token]);
-
-            $result = json_decode($response, true);
-
+            $result = $this->httpPost("frame/upgrade", ['key' => $key, 'token' => $token]);
             if (empty($result) || $result['code'] != 200) {
                 if ($this->request->isPost()) {
                     $this->error($result['msg']);
@@ -427,7 +423,6 @@ EOF;
             } else {
                 $upgradeList = $result['data']['list'];
             }
-
             Cache::set(CacheKeyEnum::CLOUD_FRAME_UPGRADE_LIST_KEY, $upgradeList, 7200);
         }
         // 获取更新日志 end
@@ -444,8 +439,7 @@ EOF;
 
             $key = $this->websiteSets['key'] ?? '';
             $token = $this->websiteSets['token'] ?? '';
-            $response = $this->httpPost("frame/upgradeFiles", ['key' => $key, 'token' => $token]);
-            $result = json_decode($response, true);
+            $result = $this->httpPost("frame/upgradeFiles", ['key' => $key, 'token' => $token]);
 
             if (empty($result) || $result['code'] != 200) {
                 $this->error($result['msg']);
