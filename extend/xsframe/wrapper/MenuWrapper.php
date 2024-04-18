@@ -27,20 +27,20 @@ class MenuWrapper
     // 定义菜单结构
     private static function buildMenu($role, $allMenus, $module, $controller, $action, $full)
     {
-        $return_menu = array();
-        $return_submenu = array();
-        $submenu = array();
+        $return_menu = [];
+        $return_submenu = [];
+        $submenu = [];
 
         $module = realModuleName($module);
 
         if ($controller != 'login') {
             foreach ($allMenus as $key => $val) {
-                $menu_item = array(
+                $menu_item = [
                     'route'    => empty($val['route']) ? $key : $val['route'],
                     'text'     => $val['title'],
                     'subtitle' => $val['subtitle'],
                     'active'   => 0,
-                );
+                ];
 
                 if (!strexists($menu_item['route'], 'web.') && $module != 'admin') {
                     $menu_item['route'] = "web." . $menu_item['route'];
@@ -151,11 +151,10 @@ class MenuWrapper
 
                         # 二级目录
                         if (empty($child['items'])) {
-                            $return_menu_child = array(
-                                'title'  => $child['title'],
-                                'route'  => $child['route'],
-                                'active' => 0,
-                            );
+                            $return_menu_child = [
+                                'title' => $child['title'],
+                                'route' => $child['route'],
+                            ];
 
                             $return_menu_child['active'] = 0;
 
@@ -185,17 +184,17 @@ class MenuWrapper
                             }
                         } else {
                             # 三级目录 向下展开
-                            $return_menu_child = array(
+                            $return_menu_child = [
                                 'title'  => $child['title'],
-                                'items'  => array(),
+                                'items'  => [],
                                 'active' => 0,
-                            );
+                            ];
 
                             foreach ($child['items'] as $ii => $three) {
-                                $return_submenu_three = array(
+                                $return_submenu_three = [
                                     'title'  => $three['title'],
                                     'active' => 0,
-                                );
+                                ];
 
                                 if (!empty($three['route'])) {
                                     $return_submenu_three['route'] = $three['route'];
@@ -203,21 +202,21 @@ class MenuWrapper
                                     $return_submenu_three['route'] = $child['route'];
                                 }
 
-                                if (strexists($return_submenu_three['route'], $action)) {
-                                    $return_menu_child['active'] = 1;
-                                    $return_submenu_three['active'] = 1;
-                                }
+                                $return_submenu_three['route'] = $module . "/" . $menuRoute . "." . $return_submenu_three['route'];
 
-                                $return_submenu_three['route'] = $module . "/" . $menuRoute . (!empty($child['route']) ? "." . $child['route'] : '') . "/" . $return_submenu_three['route'];
+                                if (strexists($return_submenu_three['route'], $action)) {
+                                    $return_menu_child['active'] = 1; // 展开子菜单
+                                    if (strexists($return_submenu_three['route'], $controller)) {
+                                        $return_submenu_three['active'] = 1; // 是否选中
+                                    }
+                                }
 
                                 if ($full) {
                                     $return_submenu_three['url'] = getSiteRoot() . $return_submenu_three['route'];
                                 }
 
-                                $return_menu_child['items'][] = $return_submenu_three;
-
-                                if (!empty($child['items']) && empty($return_menu_child['items'])) {
-                                    continue;
+                                if (cs($return_submenu_three['route'])) {
+                                    $return_menu_child['items'][] = $return_submenu_three;
                                 }
                             }
 
@@ -231,9 +230,9 @@ class MenuWrapper
             }
         }
 
-        return array(
+        return [
             'menu'    => $return_menu,
             'submenu' => $return_submenu
-        );
+        ];
     }
 }
