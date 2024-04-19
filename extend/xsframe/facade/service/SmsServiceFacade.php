@@ -21,7 +21,7 @@ use think\Facade;
  * @method static checkSmsCode(string $mobile, string|int $verifyCode, string|int $testCode = null, bool $clear = true)
  * @method static send($accessKeyId, $accessKeySecret, $signName, $mobile, string $tplId, array $array)
  * @method static sendLoginCode(string $mobile, string $tplId = null, array $smsSet = null)
- * @method static sendEmailCode(string $email, string $subject = null, string $body = null, array $smsSet = null)
+ * @method static sendEmail(string $email, string $subject = null, string $body = null, array $smsSet = null)
  */
 class SmsServiceFacade extends Facade
 {

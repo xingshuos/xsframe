@@ -27,7 +27,7 @@ class SmsService extends BaseService
     private $codeTimeKey = "member_verify_code_sendtime_";
 
     // 发送登录、注册邮箱验证码
-    public function sendEmailCode($to, $subject, $body = null, $smtpSet = null)
+    public function sendEmail($to, $subject, $body = null, $smtpSet = null): bool
     {
         if (empty($smtpSet)) { // 应用设置
             $smtpSet = $this->moduleSetting['smtp'];
