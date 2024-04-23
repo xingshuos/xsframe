@@ -304,6 +304,14 @@ if (!function_exists('pcUrl')) {
 if (!function_exists('buildUrl')) {
     function buildUrl($src = null, $params = [], $type = null): string
     {
+        if (!empty($_GET['i'])) {
+            $params['i'] = $_GET['i'];
+        }
+
+        if (!empty($_GET['token'])) {
+            $params['token'] = $_GET['token'];
+        }
+
         $paramsUrl = http_build_query($params);
 
         $t = strtolower($src);
