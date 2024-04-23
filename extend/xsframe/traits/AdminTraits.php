@@ -92,6 +92,51 @@ trait AdminTraits
         if (!empty($this->tableName)) {
             $id = intval($this->params["id"] ?? 0);
 
+            if ($this->request->isPost()) {
+                $fieldList = Db::name($this->tableName)->getFields();
+                $updateData = [];
+                foreach ($fieldList as $filed => $fieldItem) {
+                    $updateData[$filed] = $this->params[$filed] ?? '';
+
+                    switch ($fieldItem['type']) {
+                        case 'text':
+                            $updateData[$filed] = htmlspecialchars_decode($updateData[$filed]);
+                            break;
+                        case 'datetime':
+                            $updateData[$filed] = strtotime($updateData[$filed]);
+                            break;
+                        case 'decimal':
+                            $updateData[$filed] = floatval($updateData[$filed]);
+                            break;
+                        default:
+                            $updateData[$filed] = trim($updateData[$filed]);
+                    }
+
+                    if (empty($updateData[$filed])) {
+                        switch ($filed) {
+                            case 'uniacid':
+                                $updateData[$filed] = $this->uniacid;
+                                break;
+                            case 'create_time':
+                            case 'createtime':
+                                $updateData[$filed] = TIMESTAMP;
+                                break;
+                            case 'deleted':
+                                $updateData[$filed] = 0;
+                                break;
+                        }
+                    }
+                }
+
+                if (!empty($id)) {
+                    Db::name($this->tableName)->where(['id' => $id])->update($updateData);
+                } else {
+                    $id = Db::name($this->tableName)->insertGetId($updateData);
+                }
+
+                $this->success(["url" => url("", ['id' => $id, 'tab' => str_replace("#tab_", "", $this->params['tab'])])]);
+            }
+
             $field = "*";
             $condition = ['id' => $id];
             $item = Db::name($this->tableName)->field($field)->where($condition)->find();
