@@ -72,7 +72,7 @@ class Account extends Base
 
             $data = [
                 "name"         => trim($this->params["name"]),
-                "logo"         => trim($this->params["logo"]),
+                "logo"         => tomedia(trim($this->params["logo"])),
                 "keywords"     => trim($this->params["keywords"]),
                 "description"  => trim($this->params["description"]),
                 "copyright"    => trim($this->params["copyright"]),

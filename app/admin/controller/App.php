@@ -121,7 +121,7 @@ class App extends Base
         if ($this->request->isPost()) {
             $data = [
                 "name"        => trim($this->params["name"]),
-                "logo"        => trim($this->params["logo"]),
+                "logo"        => tomedia(trim($this->params["logo"])),
                 "author"      => trim($this->params["author"]),
                 "description" => trim($this->params["description"]),
                 "status"      => intval($this->params["status"]),

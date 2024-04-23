@@ -78,6 +78,7 @@ class Sysset extends Base
     {
         if ($this->request->isPost()) {
             $data = $this->params['data'];
+            $data['logo'] = tomedia($data['logo']);
             $data['copyright'] = htmlspecialchars_decode($this->params['data_copyright']);
             $this->settingsController->setSysSettings(SysSettingsKeyEnum::WEBSITE_KEY, $data);
             show_json(1, ['url' => url('sysset/site')]);
