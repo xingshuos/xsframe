@@ -30,14 +30,14 @@
 </div>
 <div class="form-group custom-box" {if $accountSettings['smtp']['type']=='custom'}style="display:block;"{else}style="display:none;"{/if}>
     <label class="control-label col-sm-2">使用SSL加密</label>
-    <div class="form-controls col-sm-8  form-control-static">
+    <div class="form-controls col-sm-8">
         <label class="radio-inline">
             <input type="radio" name="data[smtp][authmode]" value="1" {if $accountSettings['smtp']['authmode']==1}checked="checked"{/if}> 是
         </label>
         <label class="radio-inline">
             <input type="radio" name="data[smtp][authmode]" value="0" {if $accountSettings['smtp']['authmode']==0}checked="checked"{/if}> 否
         </label>
-        <span class="help-block">开启此项后，连接将用SSL的形式，此项需要SMTP服务器支持</span>
+        <span class="help-block">开启此项后，连接将用SSL的形式，此项需要SMTP服务器支持(QQ,企业微信都需要开启)</span>
     </div>
 </div>
 

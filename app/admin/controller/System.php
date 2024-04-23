@@ -149,7 +149,7 @@ class System extends AdminBaseController
                 show_json(0, "更新失败");
             }
 
-            $data = array(
+            $data = [
                 "name"         => trim($this->params["name"]),
                 "logo"         => trim($this->params["logo"]),
                 "keywords"     => trim($this->params["keywords"]),
@@ -157,7 +157,7 @@ class System extends AdminBaseController
                 "copyright"    => trim($this->params["copyright"]),
                 "displayorder" => intval($this->params["displayorder"]),
                 "status"       => intval($this->params["status"]),
-            );
+            ];
             $data['settings'] = serialize($settingsData);
 
             Db::name('sys_account')->where(['uniacid' => $uniacid])->update($data);
@@ -169,7 +169,7 @@ class System extends AdminBaseController
                 $this->settingsController->reloadAccountSettings($uniacid);
             }
 
-            $this->success(array("url" => webUrl("account", ['tab' => str_replace("#tab_", "", $this->params['tab'])])));
+            $this->success(["url" => webUrl("account", ['tab' => str_replace("#tab_", "", $this->params['tab'])])]);
         }
 
         $attachmentPath = IA_ROOT . "/public/attachment/images/{$this->uniacid}";
@@ -180,7 +180,9 @@ class System extends AdminBaseController
 
         $result = [
             'item'             => $item,
+            'uniacid'          => $uniacid,
             'hostList'         => $hostList,
+            'postUrl'          => strval(url('system/attachment')),
             'accountSettings'  => $accountSettings,
             'local_attachment' => $localAttachment,
         ];
@@ -219,7 +221,7 @@ class System extends AdminBaseController
                 show_json(1, "上传成功");
         }
 
-        $this->success(array("url" => webUrl("account", ['tab' => str_replace("#tab_", "", $this->params['tab'])])));
+        $this->success(["url" => webUrl("account", ['tab' => str_replace("#tab_", "", $this->params['tab'])])]);
     }
 
 }

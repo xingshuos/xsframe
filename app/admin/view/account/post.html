@@ -2,7 +2,6 @@
 
 {block name='content'}
 
-
 <style>
     .multi-item {
         margin-bottom: 18px;
@@ -16,81 +15,7 @@
 </div>
 
 <div class="page-content">
-
-
-    <form action="" method="post" class="form-validate form-horizontal ">
-        <input type="hidden" id="tab" name="tab" value="{if empty($_GPC['tab'])}#tab_basic{else}#tab_{$_GPC['tab']}{/if}"/>
-        <input type="hidden" name="id" value="{$item['uniacid']}"/>
-
-        <ul class="nav nav-tabs" id="myTab">
-            <li class="{if empty($_GPC['tab']) || $_GPC['tab'] == 'basic'}active{/if}"><a href="#tab_basic">基础设置</a></li>
-            <li class="{if $_GPC['tab'] == 'host'}active{/if}"><a href="#tab_host">域名设置</a></li>
-            <li  {if $_GPC['tab']=='wechat'}class="active"{/if}><a href="#tab_wechat">微信公众号</a></li>
-            <li  {if $_GPC['tab']=='wxapp'}class="active"{/if}><a href="#tab_wxapp">微信小程序</a></li>
-            <li  {if $_GPC['tab']=='weixin'}class="active"{/if}><a href="#tab_weixin">企业微信</a></li>
-            <li {if $_GPC['tab']=='wechatPay'}class="active"{/if}><a href="#tab_wechatPay">微信支付</a></li>
-            <li {if $_GPC['tab']=='aliPay'}class="active"{/if}><a href="#tab_aliPay">支付宝支付</a></li>
-            <li class="{if $_GPC['tab'] == 'attachment'}active{/if}"><a href="#tab_attachment">附件设置</a></li>
-        </ul>
-
-        <div class="tab-content">
-
-            <div class="tab-pane {if empty($_GPC['tab']) || $_GPC['tab'] == 'basic'}active{/if}" id="tab_basic">
-                {include file="../app/admin/view/public/sets/system/tabs/basic.html" /}
-            </div>
-
-            <div class="tab-pane {if $_GPC['tab'] == 'host'}active{/if}" id="tab_host">
-                {include file="../app/admin/view/public/sets/system/tabs/host.html" /}
-            </div>
-
-            <!--微信支付-->
-            <div class="tab-pane {if $_GPC['tab']=='wechatPay'}active{/if}" id="tab_wechatPay">
-                {include file="../app/admin/view/public/sets/system/tabs/wxpay.html" /}
-            </div>
-
-            <!--支付宝支付-->
-            <div class="tab-pane {if $_GPC['tab']=='aliPay'}active{/if}" id="tab_aliPay">
-                {include file="../app/admin/view/public/sets/system/tabs/alipay.html" /}
-            </div>
-
-            <div class="tab-pane {if $_GPC['tab'] == 'attachment'}active{/if}" id="tab_attachment">
-                <div class="alert alert-primary">
-                    <p>1.商户自定义存储设置</p>
-                    <p>2.默认是系统配置存储服务器</p>
-                </div>
-                {include file="../app/admin/view/public/sets/system/tabs/attachment.html" /}
-            </div>
-
-            <div class="tab-pane {if $_GPC['tab']=='wechat'}active{/if}" id="tab_wechat">
-                {include file="../app/admin/view/public/sets/system/tabs/wechat.html" /}
-            </div>
-
-            <div class="tab-pane {if $_GPC['tab']=='wxapp'}active{/if}" id="tab_wxapp">
-                {include file="../app/admin/view/public/sets/system/tabs/wxapp.html" /}
-            </div>
-
-            <div class="tab-pane {if $_GPC['tab']=='weixin'}active{/if}" id="tab_weixin">
-                {include file="../app/admin/view/public/sets/system/tabs/weixin.html" /}
-            </div>
-
-            <div class="form-group">
-                <label class="col-lg control-label"></label>
-                <div class="col-sm-9">
-                    <input type="submit" class="btn btn-primary" value="保存">
-                    <a class="btn btn-default" href="{:webUrl('account/list')}">返回列表</a>
-                </div>
-            </div>
-
-        </div>
-
-    </form>
+    {include file="../app/admin/view/public/sets/system/tabs/form.html" /}
 </div>
-{/block}
 
-{block name="script"}
-<script>
-    $(".text-edit").off("click").on("click", function () {
-        $(this).hide().parent().find('textarea').show();
-    });
-</script>
 {/block}

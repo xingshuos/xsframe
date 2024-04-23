@@ -232,7 +232,7 @@
 
 <script type="text/javascript">
     $('input[name="data[image][is_reduce]"]').click(function () {
-        if ($(this).val() == 1) {
+        if (parseInt($(this).val()) === 1) {
             $('.upload-image-thumb-width-height').css('display', '');
         } else {
             $('.upload-image-thumb-width-height').css('display', 'none');
@@ -254,9 +254,9 @@
             'internal': $('[name="data[remote][alioss][internal]"]:checked').val()
         };
 
-        $.post("{:url('sysset/attachment')}", param, function (data) {
+        $.post("{$postUrl}", param, function (data) {
             var data = $.parseJSON(data);
-            if (data.status == 1) {
+            if (parseInt(data.status) === 1) {
                 tip.msgbox.suc('配置成功');
                 return false;
             }
@@ -267,9 +267,9 @@
         });
     });
 
-    let aliBucket2 = "{$accountSettings['remote']['alioss']['bucket']}";
+    let aliBucket = "{$accountSettings['remote']['alioss']['bucket']}";
 
-    let buck2 = function () {
+    let buck = function () {
         let key = $(':text[name="data[remote][alioss][key]"]').val();
         let secret = $(':text[name="data[remote][alioss][secret]"]').val();
 
@@ -278,15 +278,15 @@
             return false;
         }
 
-        $.post("{:url('sysset/attachment')}", {'type': 'buckets', 'key': key, 'secret': secret}, function (data) {
+        $.post("{$postUrl}", {'type': 'buckets', 'key': key, 'secret': secret}, function (data) {
             console.log(data);
-            if (data.status == 1) {
+            if (parseInt(data.status) === 1) {
                 $('#bucket').show();
                 let bucket = $('select[name="data[remote][alioss][bucket]"]');
                 bucket.empty();
                 let buckets = eval(data.result.data);
                 for (let i in buckets) {
-                    let selected = aliBucket2 == buckets[i]['name'] || aliBucket2 == buckets[i]['name'] + '@@' + buckets[i]['location'] ? 'selected' : '';
+                    let selected = aliBucket == buckets[i]['name'] || aliBucket == buckets[i]['name'] + '@@' + buckets[i]['location'] ? 'selected' : '';
                     bucket.append('<option value="' + buckets[i]['name'] + '@@' + buckets[i]['location'] + '"' + selected + '>' + buckets[i]['loca_name'] + '</option>');
                 }
             } else {
@@ -298,34 +298,33 @@
 
         }, 'json');
     };
-    buck2();
+    buck();
     $(':text[name="data[remote][alioss][secret]"]').blur(function () {
-        buck2();
+        buck();
     });
 
     // 一键上传
     $('.one-key').click(function () {
-        upload_remote2();
+        upload_remote();
         return false;
     });
-    let upload_remote2 = function () {
+    let upload_remote = function () {
         try {
             // $('#name').modal('show');
-            $.post("{:url('sysset/attachment')}", {type: 'upload_remote'}, function (data) {
+            $.post("{$postUrl}", {type: 'upload_remote'}, function (data) {
                 console.log(data);
                 // $('#name').modal('hide');
 
-                if (data.status == 2) {
-                    upload_remote2();
+                if (parseInt(data.status) === 2) {
+                    upload_remote();
                 }
-                if (data.status == 0) {
+                if (parseInt(data.status) === 0) {
                     tip.msgbox.suc("上传完毕",location.reload());
                 }
-                if (data.status == 1) {
+                if (parseInt(data.status) === 1) {
                     tip.msgbox.suc(data.result.message);
                 }
-
-                if (data.status == -1) {
+                if (parseInt(data.status) === -1) {
                     tip.msgbox.err(data.result.message);
                 }
             }, 'json');

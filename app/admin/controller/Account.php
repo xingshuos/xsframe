@@ -112,9 +112,11 @@ class Account extends Base
 
         $result = [
             'item'            => $item,
+            'uniacid'         => $uniacid,
             'hostList'        => $hostList,
             'accountSettings' => $accountSettings,
             'modules'         => $modules,
+            'postUrl'         => strval(url('sysset/attachment')),
             'upload'          => (array)$accountSettings['attachment'],
         ];
         return $this->template('post', $result);
