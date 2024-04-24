@@ -284,7 +284,7 @@ class SysMemberService extends BaseService
     }
 
     // 更新积分或余额字段
-    public function setCredit($userId, $credittype = 'credit1', $credits = 0, $log = []): bool
+    public function setCredit($userId, $credittype = 'credit1', $credits = 0, $log = [])
     {
         if (empty($log)) {
             $log = [$userId, '未记录'];
