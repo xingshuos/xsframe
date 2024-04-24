@@ -42,12 +42,12 @@ GitHub.sublime-settings
 composer.lock
 
 # sxframe
-/public/attachment/*
-/public/robots.txt
-/public/sitemap.xml
+/public/*
+!public/app/admin
+!public/install/isntall.php
+!public/install/isntall.sql
+
 app/*
 !app/admin
 config/appMap.php
-public/app/*
-!public/app/admin
 .gitmodules
