@@ -121,7 +121,7 @@ class SmsService extends BaseService
         if (empty($smsSet)) { // 应用设置
             $smsSet = $this->moduleSetting['sms'];
 
-            if (empty($smsSet)) { // 系统设置
+            if (empty($smsSet) || empty($smsSet['accessKeyId']) || empty($smsSet['accessKeySecret']) || empty($smsSet['sign'])) { // 系统设置
                 $smsSet = $this->accountSetting['sms'];
             }
         }
