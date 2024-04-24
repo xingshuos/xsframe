@@ -179,13 +179,13 @@ class SysMemberService extends BaseService
             SmsServiceFacade::checkSmsCode($username, $code, $testCode);
         }
 
-        $memberInfo = self::getInfo(['username' => $username], "id,password,salt");
+        $memberInfo = self::getInfo(['username' => $username, 'uniacid' => $this->uniacid], "id,password,salt");
         $type = "username";
         if (empty($memberInfo)) {
-            $memberInfo = self::getInfo(['mobile' => $username], "id,password,salt");
+            $memberInfo = self::getInfo(['mobile' => $username, 'uniacid' => $this->uniacid], "id,password,salt");
             $type = "mobile";
             if (empty($memberInfo)) {
-                $memberInfo = self::getInfo(['email' => $username], "id,password,salt");
+                $memberInfo = self::getInfo(['email' => $username, 'uniacid' => $this->uniacid], "id,password,salt");
                 $type = "email";
                 if (empty($memberInfo)) {
                     if (!filter_var($username, FILTER_VALIDATE_EMAIL)) {
@@ -211,7 +211,7 @@ class SysMemberService extends BaseService
     private function checkMember($type, $value, $nickname = '', $avatar = '', $memberInfo = null, $updateData = [])
     {
         if (empty($memberInfo)) {
-            $memberInfo = self::getInfo([$type => $value]);
+            $memberInfo = self::getInfo([$type => $value, 'uniacid' => $this->uniacid]);
         }
 
         if (!$memberInfo) {

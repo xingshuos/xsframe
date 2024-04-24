@@ -177,7 +177,11 @@ CREATE TABLE `#__sys_member`
     `isblack`       tinyint(1) DEFAULT '0' COMMENT '是否拉入黑名单 0否 1是',
     `job`           varchar(30)    DEFAULT '' COMMENT '工作职务',
     PRIMARY KEY (`id`) USING BTREE,
-    KEY             `idx_jt_openid` (`jt_openid`)
+    KEY `idx_jt_openid` (`jt_openid`),
+    KEY `idx_username` (`username`),
+    KEY `idx_mobile` (`mobile`),
+    KEY `idx_wechat_openid` (`wechat_openid`),
+    KEY `idx_ali_openid` (`ali_openid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='系统会员表';
 
 DROP TABLE IF EXISTS `#__sys_member_address`;
