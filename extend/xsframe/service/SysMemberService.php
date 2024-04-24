@@ -305,22 +305,22 @@ class SysMemberService extends BaseService
             'remark'     => $log[1]
         ];
 
+        $newCredit = 0;
         if (!empty($userId)) {
             $member = self::getInfo(['id' => $userId]);
             $value = $member[$credittype];
-            $newcredit = $credits + $value;
+            $newCredit = $credits + $value;
 
-            if ($newcredit <= 0) {
-                $newcredit = 0;
+            if ($newCredit <= 0) {
+                $newCredit = 0;
             }
 
-            $log_data['remark'] = $log_data['remark'] . ' 剩余: ' . $newcredit;
-            self::updateInfo([$credittype => $newcredit], ['id' => $userId]);
+            $log_data['remark'] = $log_data['remark'] . ' 剩余: ' . $newCredit;
+            self::updateInfo([$credittype => $newCredit], ['id' => $userId]);
 
-            $a = $newcredit;
             SysMemberCreditsRecordServiceFacade::insertInfo($log_data);
         }
 
-        return true;
+        return $newCredit;
     }
 }
