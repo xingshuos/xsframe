@@ -94,19 +94,24 @@ class OpensslUtil
     // 解密
     public static function decrypt($string, $key, $iv = null, $type = 'aes-128-cbc')
     {
-        if (!$iv) {
-            $ivLength = openssl_cipher_iv_length($type);
-            $iv = substr(hex2bin($string), 0, $ivLength);
-            $string = substr(hex2bin($string), $ivLength);
-            $retStr = openssl_decrypt($string, $type, $key, OPENSSL_RAW_DATA, $iv);
-        } else {
-            $retStr = openssl_decrypt(hex2bin($string), $type, $key, OPENSSL_RAW_DATA, $iv);
-        }
+        try {
+            if (!$iv) {
+                $ivLength = openssl_cipher_iv_length($type);
+                $iv = substr(hex2bin($string), 0, $ivLength);
+                $string = substr(hex2bin($string), $ivLength);
+                $retStr = openssl_decrypt($string, $type, $key, OPENSSL_RAW_DATA, $iv);
+            } else {
+                $retStr = openssl_decrypt(hex2bin($string), $type, $key, OPENSSL_RAW_DATA, $iv);
+            }
 
-        [$data, $expirationTime] = explode(':', $retStr);
-        if ($expirationTime && time() > $expirationTime) {
+            [$data, $expirationTime] = explode(':', $retStr);
+            if ($expirationTime && time() > $expirationTime) {
+                $data = "";
+            }
+        } catch (\Exception $e) {
             $data = "";
         }
+
         return $data;
     }
 
