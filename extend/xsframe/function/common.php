@@ -278,31 +278,31 @@ if (!function_exists('getAttachmentUrl')) {
 
 // 补手机端路径
 if (!function_exists('mobileUrl')) {
-    function mobileUrl($src = null, $params = [])
+    function mobileUrl($src = null, $params = [], $isRewrite = true)
     {
-        return buildUrl($src, $params, 'mobile');
+        return buildUrl($src, $params, 'mobile', $isRewrite);
     }
 }
 
 // 补API端路径
 if (!function_exists('apiUrl')) {
-    function apiUrl($src = null, $params = [])
+    function apiUrl($src = null, $params = [], $isRewrite = false)
     {
-        return buildUrl($src, $params, 'api');
+        return buildUrl($src, $params, 'api', $isRewrite);
     }
 }
 
 // 补PC端路径
 if (!function_exists('pcUrl')) {
-    function pcUrl($src = null, $params = [])
+    function pcUrl($src = null, $params = [], $isRewrite = true)
     {
-        return buildUrl($src, $params, 'pc');
+        return buildUrl($src, $params, 'pc', $isRewrite);
     }
 }
 
 // 补PC端路径
 if (!function_exists('buildUrl')) {
-    function buildUrl($src = null, $params = [], $type = null): string
+    function buildUrl($src = null, $params = [], $type = null, $isRewrite = true): string
     {
         if (!empty($_GET['i'])) {
             $params['i'] = $_GET['i'];
@@ -342,7 +342,7 @@ if (!function_exists('buildUrl')) {
         if (strpos($src, '?') !== false) {
             $url = $url . "&" . $paramsUrl;
         } else {
-            $url = $url . (empty($paramsUrl) ? "" : "?" . $paramsUrl);
+            $url = $url . ($isRewrite ? ".html" : "") . (empty($paramsUrl) ? "" : "?" . $paramsUrl);
         }
 
         return $url;
