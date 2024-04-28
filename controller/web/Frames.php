@@ -36,7 +36,7 @@ class Frames extends AdminBaseController
             $condition .= " and `status` = " . intval($status);
         }
 
-        if (!empty($searchTime) && is_array($this->params["time"]) && in_array($searchTime, array("create", "update"))) {
+        if (!empty($searchTime) && is_array($this->params["time"]) && in_array($searchTime, ["create", "update"])) {
             $startTime = strtotime($this->params["time"]["start"]);
             $endTime = strtotime($this->params["time"]["end"]);
             $condition .= " and `" . $searchTime . "time" . "` between " . $startTime . " and " . $endTime;
@@ -79,7 +79,7 @@ class Frames extends AdminBaseController
         $condition = " deleted=0 ";
         $params = [];
 
-        if (!empty($searchTime) && is_array($this->params["time"]) && in_array($searchTime, array("create", "update"))) {
+        if (!empty($searchTime) && is_array($this->params["time"]) && in_array($searchTime, ["create", "update"])) {
             $startTime = strtotime($this->params["time"]["start"]);
             $endTime = strtotime($this->params["time"]["end"]);
             $condition .= " and `" . $searchTime . "time" . "` between " . $startTime . " and " . $endTime;
@@ -122,14 +122,14 @@ class Frames extends AdminBaseController
         $id = $this->params['id'];
 
         if ($this->request->isPost()) {
-            $data = array(
+            $data = [
                 'version'    => trim($this->params['version']),
                 'title'      => trim($this->params['title']),
                 'content'    => htmlspecialchars_decode($this->params['content']),
                 'status'     => intval($this->params['status']),
                 'createtime' => time(),
                 'updatetime' => time(),
-            );
+            ];
 
             if (!empty($id)) {
                 unset($data['createtime']);
@@ -144,7 +144,7 @@ class Frames extends AdminBaseController
                 $this->createFramePackage($data['version']);
             }
 
-            show_json(1, array("url" => webUrl("frames/edit", array("id" => $id, "tab" => str_replace("#tab_", "", $this->params["tab"])))));
+            show_json(1, ["url" => webUrl("frames/edit", ["id" => $id, "tab" => str_replace("#tab_", "", $this->params["tab"])])]);
         }
 
         $item = FrameVersionServiceFacade::getInfo(['id' => $id]);
@@ -170,8 +170,8 @@ class Frames extends AdminBaseController
         $framesPath = IA_ROOT . "/storage/releases/frames/{$version}";
         FileUtil::mkDirs($framesPath);
 
-        # 2.主目录
-        $mainDirectory = array(
+        # 2.同步主目录
+        $mainDirectory = [
             IA_ROOT . '/app/admin',
             IA_ROOT . '/config',
             IA_ROOT . '/extend',
@@ -179,18 +179,28 @@ class Frames extends AdminBaseController
             IA_ROOT . '/vendor',
             IA_ROOT . '/public/index.php',
             IA_ROOT . '/public/router.php',
-        );
+        ];
+
+        # 2-2.非同步文件
+        $unSyncFiles = [
+            IA_ROOT . '/config/appMap.php',
+            IA_ROOT . '/app/admin/view/sysset/static.html',
+        ];
 
         # 3.设置同步文件的类型
         $syncTypes = ['php', 'html', 'js', 'xml', 'css', 'png', 'jpg', 'jpeg', 'gif'];
 
         $data = [];
         foreach ($mainDirectory as $item) {
-            FileUtil::oldDirToNewDir($item, $framesPath . str_replace(IA_ROOT, "", $item));
+            FileUtil::oldDirToNewDir($item, $framesPath . str_replace(IA_ROOT, "", $item), '', $unSyncFiles);
             $getDataItem = FileUtil::getDir($item, $syncTypes);
 
             foreach ($getDataItem as $i => $d) {
-                $getDataItem[$i]['path'] = str_replace(IA_ROOT, "", $d['path']);
+                if (!in_array($d['path'], $unSyncFiles)) {
+                    $getDataItem[$i]['path'] = str_replace(IA_ROOT, "", $d['path']);
+                } else {
+                    unset($getDataItem[$i]);
+                }
             }
 
             $data = array_merge($data, $getDataItem);
@@ -213,7 +223,7 @@ class Frames extends AdminBaseController
         }
 
         if (empty($id)) {
-            show_json(0, array("message" => "参数错误"));
+            show_json(0, ["message" => "参数错误"]);
         }
 
         $type = trim($this->params["type"]);
