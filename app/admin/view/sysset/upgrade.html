@@ -20,7 +20,7 @@
                         <label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">文件同步情况</label>
                         <div class="col-sm-10">
                             <div class="help-block"><strong>注意: 重要: 本次更新涉及到程序变动, 请做好备份.</strong></div>
-                            <div class="alert alert-info" style="line-height:20px;margin-top:20px;">
+                            <div class="alert alert-info" style="line-height:20px;margin-top:20px;color:#2d8cf0;background-color: #ffffff;border-color: #2d8cf0;">
                                 {foreach $updateFiles as $key => $file}
                                     <div><span style="display:inline-block; width:30px;">M</span>{$file}</div>
                                 {/foreach}
@@ -78,7 +78,7 @@
 
     <div class="row">
         <div class="col-lg-12">
-            <div class="alert alert-info refresh-log">
+            <div class="alert alert-info refresh-log" style="color:#2d8cf0;background-color: #ffffff;border-color: #2d8cf0;">
                 <h2><i class="fa fa-refresh"></i> 更新日志</h2>
                 <ul class="list-unstyled" style="margin-top: 15px;">
                     {foreach $upgradeList as $key => $row}
