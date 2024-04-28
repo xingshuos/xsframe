@@ -368,39 +368,42 @@ EOF;
         $versionTime = IMS_VERSION_TIME;
 
         $isSuccess = true;
-        foreach ($updateFiles as $filePath) {
-            $file_dir = dirname(IA_ROOT . $filePath);
-            if (!is_dir($file_dir)) {
-                mkdir($file_dir, 0777, true);
-            }
 
-            $result = $this->httpPost("frame/upgradeFileData", ['key' => $key, 'token' => $token, 'file_path' => $filePath]);
-
-            if (empty($result) || $result['code'] != 200) {
-                continue;
-            } else {
-                $version = $result['data']['version'];
-                $versionTime = $result['data']['updatetime'];
-                $fileData = $result['data']['fileData'];
-                $fileType = substr(strrchr($filePath, '.'), 1);
-
-                if (in_array($fileType, ['gif', 'jpg', 'jpeg', 'bmp', 'png', 'ico', 'heic'])) {
-                    $fileData = base64_decode($fileData);
+        if (!empty($updateFiles)) {
+            foreach ($updateFiles as $filePath) {
+                $file_dir = dirname(IA_ROOT . $filePath);
+                if (!is_dir($file_dir)) {
+                    @mkdir($file_dir, 0777, true);
                 }
 
-                try {
-                    file_put_contents(IA_ROOT . $filePath, $fileData);
-                } catch (Exception $exception) {
-                    $isSuccess = false;
+                $result = $this->httpPost("frame/upgradeFileData", ['key' => $key, 'token' => $token, 'file_path' => $filePath]);
+
+                if (empty($result) || $result['code'] != 200) {
+                    continue;
+                } else {
+                    $version = $result['data']['version'];
+                    $versionTime = $result['data']['updatetime'];
+                    $fileData = $result['data']['fileData'];
+                    $fileType = substr(strrchr($filePath, '.'), 1);
+
+                    if (in_array($fileType, ['gif', 'jpg', 'jpeg', 'bmp', 'png', 'ico', 'heic'])) {
+                        $fileData = base64_decode($fileData);
+                    }
+
+                    try {
+                        file_put_contents(IA_ROOT . $filePath, $fileData);
+                    } catch (Exception $exception) {
+                        $isSuccess = false;
+                    }
+
                 }
-
             }
-
-            Cache::delete(CacheKeyEnum::CLOUD_FRAME_UPGRADE_FILES_KEY);
         }
 
         if (!$isSuccess) {
             show_json(0, "有部分文件更新失败，请设置根目录权限为777");
+        } else {
+            Cache::delete(CacheKeyEnum::CLOUD_FRAME_UPGRADE_FILES_KEY);
         }
 
         $this->upgradeSuccess($version, $versionTime);
