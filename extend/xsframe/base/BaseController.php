@@ -187,6 +187,11 @@ abstract class BaseController extends Controller
                 $moduleSetting['basic']['logo'] = tomedia($moduleSetting['basic']['logo']);
             if (!empty($moduleSetting['share']))
                 $moduleSetting['share']['imageUrl'] = tomedia($moduleSetting['share']['imageUrl']);
+            if (!empty($moduleSetting['website'])) {
+                $moduleSetting['website']['logo'] = tomedia($moduleSetting['website']['logo']);
+                $moduleSetting['website']['favicon'] = tomedia($moduleSetting['website']['favicon']);
+                $this->websiteSets = $moduleSetting['website'];
+            }
         }
         return $moduleSetting;
     }
