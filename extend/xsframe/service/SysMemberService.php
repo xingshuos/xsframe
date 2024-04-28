@@ -82,6 +82,31 @@ class SysMemberService extends BaseService
     }
 
     /**
+     * 手机号绑定
+     */
+    public function mobileBind($mobile, $code = null, $testCode = null, $token = null): bool
+    {
+        $userId = $this->getUserId($token);
+
+        if ($userId) {
+            if (!empty($code)) {
+                SmsServiceFacade::checkSmsCode($mobile, $code, $testCode);
+            }
+            try {
+                self::checkMember("id", $userId, '', '', null, [
+                    'username'      => $mobile,
+                    'mobile'        => $mobile,
+                    'mobile_verify' => 1,
+                ]);
+            } catch (ApiException $e) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * 手机号登录
      * @throws ApiException
      */
@@ -248,8 +273,14 @@ class SysMemberService extends BaseService
             $memberId = $memberInfo['id'];
 
             if (empty($memberInfo['username'])) {
-                $updateData['username'] = $value;
+                if ($type != 'id') {
+                    $updateData['username'] = $value;
+                }
                 $updateData['update_time'] = TIMESTAMP;
+            } else {
+                if (!empty($updateData['username'])) {
+                    unset($updateData['username']);
+                }
             }
 
             if (!empty($updateData['password']) && $memberInfo['password'] != md5($updateData['password'] . $memberInfo['salt'])) {

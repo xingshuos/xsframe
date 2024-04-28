@@ -20,6 +20,7 @@ use xsframe\service\SysMemberService;
  * @method static getUserId(string $token = null)
  * @method static checkLogin(string $token = null)
  * @method static mobileLogin(string $mobile, string $password = null, int $code = null, int $testCode = null)
+ * @method static mobileBind(string $mobile, string $code, int|string $int = null)
  * @method static setCredit($userId, string $filed, int|mixed $value, array|string $remark = [])
  * @method static getToken(int $memberId)
  * @method static register(mixed|string $username, string $code = null, int $testCode = null, array $updateData = [])
