@@ -109,7 +109,7 @@ class FileUtil
     }
 
     // 指定文件夹移动到新文件夹
-    public static function oldDirToNewDir($path, $newPath, $oldPath = ''): bool
+    public static function oldDirToNewDir($path, $newPath, $oldPath = '', $unSyncFiles = []): bool
     {
         if (empty($oldPath)) {
             $oldPath = $path;
@@ -124,7 +124,7 @@ class FileUtil
                 $isSvnPath = strpos($tmpFile, ".svn") !== false;
                 $isGitPath = strpos($tmpFile, ".git") !== false;
 
-                if ($isSvnPath || $isGitPath || in_array($fileName, ['install.php', 'uninstall.php', 'upgrade.php', 'manifest.xml'])) {
+                if ($isSvnPath || $isGitPath || in_array($tmpFile, $unSyncFiles) || in_array($fileName, ['install.php', 'uninstall.php', 'upgrade.php', 'manifest.xml'])) {
                     continue;
                 }
 
@@ -134,10 +134,10 @@ class FileUtil
 
                     if (is_dir($tmpPath)) {
                         if (!is_dir($newPath . $pathName)) {
-                            mkdir($newPath . $pathName, 0777, true);
+                            @mkdir($newPath . $pathName, 0777, true);
                         }
                         self::oldDirToNewDir($tmpPath, $newPath, $oldPath);
-                    } elseif (is_file($tmpPath)) {
+                    } else if (is_file($tmpPath)) {
                         $pathName = substr($pathName, 0, strrpos($pathName, "/"));
                         $newFilePath = str_replace("//", '/', $newPath . $pathName . "/" . $fileName);
 
@@ -185,17 +185,17 @@ class FileUtil
 
         if (is_file($path) && !$isSvnPath && !$isGitPath) {
             $path = ltrim($path, ".");
-            $data[] = array(
+            $data[] = [
                 'path'     => $path,
                 'checksum' => md5_file($path)
-            );
+            ];
         }
     }
 
     // 获取目录下所有文件
     public static function getDir($dir, $syncTypes = null): array
     {
-        $data = array();
+        $data = [];
         self::searchDir($dir, $data, $syncTypes);
         return $data;
     }
@@ -249,9 +249,9 @@ class FileUtil
     }
 
     // 循环查询目录结构
-    public static function fileTree($path, $include = array()): array
+    public static function fileTree($path, $include = []): array
     {
-        $files = array();
+        $files = [];
         if (!empty($include)) {
             $ds = glob($path . '/{' . implode(',', $include) . '}', GLOB_BRACE);
         } else {
@@ -299,13 +299,13 @@ class FileUtil
         if (is_dir($path)) {
             if ($dir = opendir($path)) {
                 while (($file = readdir($dir)) !== false) {
-                    if (in_array($file, array('.', '..'))) {
+                    if (in_array($file, ['.', '..'])) {
                         continue;
                     }
                     if (is_file($path . '/' . $file) && self::fileIsImage($path . '/' . $file)) {
                         if (strpos($path, $attachmentPath) === 0) {
                             $attachment = str_replace($attachmentPath . 'images/', '', $path . '/' . $file);
-                            list($file_account) = explode('/', $attachment);
+                            [$file_account] = explode('/', $attachment);
                             if ($file_account == 'global') {
                                 continue;
                             }
@@ -332,17 +332,17 @@ class FileUtil
         }
         $pathInfo = pathinfo($url);
         $extension = strtolower($pathInfo['extension']);
-        return !empty($extension) && in_array($extension, array('jpg', 'jpeg', 'gif', 'png'));
+        return !empty($extension) && in_array($extension, ['jpg', 'jpeg', 'gif', 'png']);
     }
 
     // 文件限制
     public static function fileTreeLimit($path, $limit = 0, $acquired_files_count = 0): array
     {
-        $files = array();
+        $files = [];
         if (is_dir($path)) {
             if ($dir = opendir($path)) {
                 while (($file = readdir($dir)) !== false) {
-                    if (in_array($file, array('.', '..'))) {
+                    if (in_array($file, ['.', '..'])) {
                         continue;
                     }
                     if (is_file($path . '/' . $file)) {
