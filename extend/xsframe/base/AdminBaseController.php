@@ -130,7 +130,7 @@ abstract class AdminBaseController extends BaseController
         $var['isSystem'] = $this->isSystem;
         $var['menusList'] = MenuWrapper::getMenusList($this->adminSession['role'], $this->module, $this->controller, $this->action);
         $var['userInfo'] = $this->adminSession;
-        $var['websiteSets'] = $this->settingsController->getSysSettings(SysSettingsKeyEnum::WEBSITE_KEY);
+        $var['websiteSets'] = $this->websiteSets;
 
         # 收缩菜单
         $var['foldNav'] = intval($_COOKIE["foldnav"] ?? 0);

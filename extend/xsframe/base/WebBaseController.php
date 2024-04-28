@@ -98,7 +98,7 @@ abstract class WebBaseController extends BaseController
         $var['url'] = $this->url;
         $var['siteRoot'] = $this->siteRoot;
         $var['iaRoot'] = $this->iaRoot;
-        $var['websiteSets'] = $this->settingsController->getSysSettings(SysSettingsKeyEnum::WEBSITE_KEY);
+        $var['websiteSets'] = $this->websiteSets;
 
         $var['moduleSiteRoot'] = $this->moduleSiteRoot;
         $var['moduleAttachUrl'] = $this->moduleAttachUrl;
