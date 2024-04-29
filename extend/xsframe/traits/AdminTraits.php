@@ -20,6 +20,7 @@ trait AdminTraits
         if (!empty($this->tableName)) {
             $keyword = $this->params['keyword'] ?? '';
             $kwFields = $this->params['kwFields'] ?? '';
+            $field = $this->params['field'] ?? '';
             $status = $this->params['status'] ?? '';
             $enabled = $this->params['enabled'] ?? '';
             $searchTime = trim($this->params["searchtime"] ?? 0);
@@ -48,12 +49,13 @@ trait AdminTraits
             }
 
             if (!empty($keyword) && !empty($kwFields)) {
-                $kwFieldsList = explode(",", $kwFields);
-                $kwSql = "";
-                foreach ($kwFieldsList as $field) {
-                    $kwSql = (!empty($kwSql) ? ' or ' : '') . " {$field} like '%" . trim($keyword) . "%' ";
-                }
-                $condition[''] = Db::raw($kwSql);
+                $kwFields = str_replace(",", "|", $kwFields);
+                $condition[] = [$kwFields, 'like', "%" . trim($keyword) . "%"];
+            }
+
+            if (!empty($keyword) && !empty($field)) {
+                $field = str_replace(",", "|", $field);
+                $condition[] = [$field, 'like', "%" . trim($keyword) . "%"];
             }
 
             $field = "*";
