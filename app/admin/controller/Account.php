@@ -68,6 +68,7 @@ class Account extends Base
 
         if ($this->request->isPost()) {
             $settingsData = $this->params['data'] ?? [];
+
             $settingsData = array_merge($accountSettings, $settingsData);
 
             $data = [
