@@ -50,4 +50,5 @@ composer.lock
 app/*
 !app/admin
 config/appMap.php
+config/workerMap.php
 .gitmodules
