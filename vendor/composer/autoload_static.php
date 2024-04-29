@@ -11,8 +11,8 @@ class ComposerStaticInit8b9040558554b2c09c58884a2bd8d650
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         'd767e4fc2dc52fe66584ab8c6684783e' => __DIR__ . '/..' . '/adbario/php-dot-notation/src/helpers.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
-        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '9b552a3cc426e3287cc811caefa3cf53' => __DIR__ . '/..' . '/topthink/think-helper/src/helper.php',
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '35fab96057f1bf5e7aba31a8a6d5fdde' => __DIR__ . '/..' . '/topthink/think-orm/stubs/load_stubs.php',
         'b067bc7112e384b61c701452d53a14a8' => __DIR__ . '/..' . '/mtdowling/jmespath.php/src/JmesPath.php',
@@ -28,6 +28,7 @@ class ComposerStaticInit8b9040558554b2c09c58884a2bd8d650
     public static $prefixLengthsPsr4 = array (
         't' => 
         array (
+            'think\\worker\\' => 13,
             'think\\view\\driver\\' => 18,
             'think\\trace\\' => 12,
             'think\\captcha\\' => 14,
@@ -45,6 +46,10 @@ class ComposerStaticInit8b9040558554b2c09c58884a2bd8d650
         'Z' => 
         array (
             'ZipStream\\' => 10,
+        ),
+        'W' => 
+        array (
+            'Workerman\\' => 10,
         ),
         'S' => 
         array (
@@ -86,6 +91,8 @@ class ComposerStaticInit8b9040558554b2c09c58884a2bd8d650
             'GuzzleHttp\\Psr7\\' => 16,
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
+            'GatewayWorker\\' => 14,
+            'GatewayClient\\' => 14,
         ),
         'D' => 
         array (
@@ -115,6 +122,10 @@ class ComposerStaticInit8b9040558554b2c09c58884a2bd8d650
     );
 
     public static $prefixDirsPsr4 = array (
+        'think\\worker\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/topthink/think-worker/src',
+        ),
         'think\\view\\driver\\' => 
         array (
             0 => __DIR__ . '/..' . '/topthink/think-view/src',
@@ -151,6 +162,10 @@ class ComposerStaticInit8b9040558554b2c09c58884a2bd8d650
         'ZipStream\\' => 
         array (
             0 => __DIR__ . '/..' . '/maennchen/zipstream-php/src',
+        ),
+        'Workerman\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/workerman/workerman',
         ),
         'Symfony\\Polyfill\\Php80\\' => 
         array (
@@ -244,6 +259,14 @@ class ComposerStaticInit8b9040558554b2c09c58884a2bd8d650
         'GuzzleHttp\\' => 
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
+        ),
+        'GatewayWorker\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/workerman/gateway-worker/src',
+        ),
+        'GatewayClient\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/workerman/gatewayclient',
         ),
         'Darabonba\\OpenApi\\' => 
         array (
