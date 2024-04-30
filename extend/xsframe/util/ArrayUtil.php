@@ -20,6 +20,38 @@ class ArrayUtil
     private static $type = 'Object';
 
     /**
+     * 合并数组(array_merge 的升级版本)
+     * 这个 customMergeArrays() 函数会检查 $array2 中的每个键值对，并决定是否要覆盖 $array1 中的值，或者保留原始值，或者递归合并数组。
+     * @param $array1
+     * @param $array2
+     * @return mixed
+     */
+    public static function customMergeArrays($array1, $array2)
+    {
+        $result = $array1;
+
+        foreach ($array2 as $key => $value) {
+            if (isset($result[$key])) {
+                if (is_array($result[$key]) && is_array($value)) {
+                    // 递归合并数组
+                    $result[$key] = self::customMergeArrays($result[$key], $value);
+                } else if ($value === '') {
+                    // 如果 $array2 中的值为空字符串，则保持 $array1 的值不变
+                    continue;
+                } else {
+                    // 如果 $array2 中的值不是空字符串，则覆盖 $array1 的值
+                    $result[$key] = $value;
+                }
+            } else {
+                // 如果 $array1 中没有该键，则直接添加
+                $result[$key] = $value;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * 获取列表内某一列的数据(有重复可能性 客户端自行处理).
      *
      * @param array $list 数组数据
@@ -45,7 +77,7 @@ class ArrayUtil
                     $data[] = $item->$getFunc();
                 }
             }
-        } elseif (self::$type == 'Array') {
+        } else if (self::$type == 'Array') {
             $data = array_filter(array_column($list, $keyField));
         }
         return $data;
@@ -79,7 +111,7 @@ class ArrayUtil
                 }
             }
             return $objectData;
-        } elseif (self::$type == 'Array') {
+        } else if (self::$type == 'Array') {
             $data = array_column($list, $keyField);
         }
         return $data;
@@ -112,7 +144,7 @@ class ArrayUtil
                     $data[$item->$getKeyField()] = $item;
                 }
             }
-        } elseif (self::$type == 'Array') {
+        } else if (self::$type == 'Array') {
             foreach ($list as $item) {
                 if ($valueField) {
                     $data[$item[$keyField]] = $item[$valueField];
@@ -143,7 +175,7 @@ class ArrayUtil
             if (!$class->hasProperty($field)) {
                 throw new \Exception("Object has not property {$field}");
             }
-        } elseif (is_array($first)) {
+        } else if (is_array($first)) {
             self::$type = 'Array';
             if (!array_key_exists($field, $first)) {
                 throw new \Exception("Array has not property {$field}");
@@ -199,7 +231,7 @@ class ArrayUtil
                     $temp = $data[$j - 1];
                     $data[$j - 1] = $data[$j];
                     $data[$j] = $temp;
-                } elseif ($data[$j]->get . $orderFirst() == $data[$j - 1]->get . $orderFirst()) {
+                } else if ($data[$j]->get . $orderFirst() == $data[$j - 1]->get . $orderFirst()) {
                     if ($data[$j]->get . $orderSecond() > $data[$j - 1]->get . $orderSecond()) {
                         $temp = $data[$j - 1];
                         $data[$j - 1] = $data[$j];
@@ -225,7 +257,7 @@ class ArrayUtil
                 $diff = $val == $v;
                 if ($diff && $i == 0) {
                     ++$i;
-                } elseif ($diff) {
+                } else if ($diff) {
                     unset($array[$k]);
                 }
             }
@@ -247,7 +279,7 @@ class ArrayUtil
         foreach ($insertData as $key => $row) {
             if (!in_array($key, $structData) || is_null($row)) {
                 unset($insertData[$key]);
-            } elseif (is_string($row)) {
+            } else if (is_string($row)) {
                 $insertData[$key] = $row;
             }
             if (($format === true) && ($key == 'created' || $key == 'updated') && !empty($row) && is_string($row)) {
@@ -451,7 +483,7 @@ class ArrayUtil
     public static function convertUrlQuery($query)
     {
         $queryParts = explode('&', $query);
-        $params = array();
+        $params = [];
         foreach ($queryParts as $param) {
             $item = explode('=', $param);
             if (is_array($item)) {
@@ -468,7 +500,7 @@ class ArrayUtil
      */
     public static function getUrlQuery($array_query)
     {
-        $tmp = array();
+        $tmp = [];
         foreach ($array_query as $k => $param) {
             $tmp[] = $k . '=' . $param;
         }
@@ -526,7 +558,7 @@ class ArrayUtil
     public static function iUnSerializer($value)
     {
         if (empty($value)) {
-            return array();
+            return [];
         }
         if (!self::isSerialized($value)) {
             return $value;
@@ -579,7 +611,7 @@ class ArrayUtil
                     if ('"' !== substr($data, -2, 1)) {
                         return false;
                     }
-                } elseif (false === strpos($data, '"')) {
+                } else if (false === strpos($data, '"')) {
                     return false;
                 }
             case 'a' :

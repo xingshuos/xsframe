@@ -17,6 +17,7 @@ use think\facade\Cache;
 use xsframe\base\BaseService;
 use xsframe\enum\ExceptionEnum;
 use xsframe\exception\ApiException;
+use xsframe\util\ArrayUtil;
 use xsframe\util\ErrorUtil;
 use xsframe\util\RandomUtil;
 use xsframe\util\RequestUtil;
@@ -25,30 +26,38 @@ class SmsService extends BaseService
 {
     private $codeKey = "member_verify_code_session_";
     private $codeTimeKey = "member_verify_code_sendtime_";
+    private $smsSet = null;
+    private $smtpSet = null;
+
+    protected function _service_initialize()
+    {
+        parent::_service_initialize();
+
+        if (empty($this->smsSet)) {
+            $this->smsSet = ArrayUtil::customMergeArrays($this->accountSetting['sms'] ?? [], $this->moduleSetting['sms'] ?? []);
+            $this->smtpSet = ArrayUtil::customMergeArrays($this->accountSetting['smtp'] ?? [], $this->moduleSetting['smtp'] ?? []);
+        }
+    }
 
     // 发送登录、注册邮箱验证码
     public function sendEmail($to, $subject, $body = null, $smtpSet = null): bool
     {
-        if (empty($smtpSet)) { // 应用设置
-            $smtpSet = $this->moduleSetting['smtp'];
-
-            if (empty($smtpSet)) { // 系统设置
-                $smtpSet = $this->accountSetting['smtp'];
-            }
+        if (!empty($smtpSet)) {
+            $this->smtpSet = ArrayUtil::customMergeArrays($this->smtpSet, $smtpSet);
         }
 
         $mailer = new PHPMailer(true);
 
-        $smtpSet['charset'] = 'utf-8';
-        if ($smtpSet['type'] == '163') {
-            $smtpSet['server'] = 'smtp.163.com';
-            $smtpSet['port'] = 25;
-        } else if ($smtpSet['type'] == 'qq') {
-            $smtpSet['server'] = 'ssl://smtp.qq.com';
-            $smtpSet['port'] = 465;
+        $this->smtpSet['charset'] = 'utf-8';
+        if ($this->smtpSet['type'] == '163') {
+            $this->smtpSet['server'] = 'smtp.163.com';
+            $this->smtpSet['port'] = 25;
+        } else if ($this->smtpSet['type'] == 'qq') {
+            $this->smtpSet['server'] = 'ssl://smtp.qq.com';
+            $this->smtpSet['port'] = 465;
         } else {
-            if (!empty($smtpSet['authmode'])) {
-                $smtpSet['server'] = 'ssl://' . $smtpSet['server'];
+            if (!empty($this->smtpSet['authmode'])) {
+                $this->smtpSet['server'] = 'ssl://' . $this->smtpSet['server'];
             }
         }
 
@@ -61,16 +70,16 @@ class SmsService extends BaseService
         //Server settings
         $mailer->SMTPDebug = 0;                                       // Enable verbose debug output
         $mailer->isSMTP();                                            // Set mailer to use SMTP
-        $mailer->CharSet = $smtpSet['charset'];
-        $mailer->Host = $smtpSet['server'];;                           // Specify main and backup SMTP servers
-        $mailer->Port = $smtpSet['port'];                                // TCP port to connect to
+        $mailer->CharSet = $this->smtpSet['charset'];
+        $mailer->Host = $this->smtpSet['server'];;                           // Specify main and backup SMTP servers
+        $mailer->Port = $this->smtpSet['port'];                                // TCP port to connect to
         $mailer->SMTPAuth = true;                                   // Enable SMTP authentication
-        $mailer->Username = $smtpSet['username'];                      // SMTP username
-        $mailer->Password = $smtpSet['password'];                 // SMTP password
-        !empty($smtpSet['authmode']) && $mailer->SMTPSecure = 'ssl'; // Enable TLS encryption, `ssl` also accepted
+        $mailer->Username = $this->smtpSet['username'];                      // SMTP username
+        $mailer->Password = $this->smtpSet['password'];                 // SMTP password
+        !empty($this->smtpSet['authmode']) && $mailer->SMTPSecure = 'ssl'; // Enable TLS encryption, `ssl` also accepted
 
-        $mailer->From = $smtpSet['username'];
-        $mailer->FromName = $smtpSet['sender'];
+        $mailer->From = $this->smtpSet['username'];
+        $mailer->FromName = $this->smtpSet['sender'];
         $mailer->isHTML(true);                                  // Set email format to HTML
 
         if ($body) {
@@ -118,21 +127,17 @@ class SmsService extends BaseService
     // 发送登录注册验证码
     public function sendLoginCode($mobile, $tplId = null, $smsSet = null): bool
     {
-        if (empty($smsSet)) { // 应用设置
-            $smsSet = $this->moduleSetting['sms'];
-
-            if (empty($smsSet) || empty($smsSet['accessKeyId']) || empty($smsSet['accessKeySecret']) || empty($smsSet['sign'])) { // 系统设置
-                $smsSet = $this->accountSetting['sms'];
-            }
+        if (!empty($smtpSet)) {
+            $this->smsSet = ArrayUtil::customMergeArrays($this->smsSet, $smtpSet);
         }
 
-        if (!empty($smsSet)) {
+        if (!empty($this->smsSet)) {
             if (empty($tplId)) {
-                $tplId = $smsSet['login_code'];
+                $tplId = $this->smsSet['login_code'];
             }
         }
 
-        return $this->sendSMS($smsSet, $mobile, $tplId);
+        return $this->sendSMS($this->smsSet, $mobile, $tplId);
     }
 
     // 发送验证码
@@ -227,6 +232,15 @@ class SmsService extends BaseService
         return true;
     }
 
+    // 自定义发送短信
+    public function customSendSMS($mobile, $tplId, $data, $smsSet = null, $replace = true): bool
+    {
+        if (!empty($smsSet)) {
+            $this->smsSet = ArrayUtil::customMergeArrays($this->smsSet, $smsSet);
+        }
+        return self::send($this->smsSet['accessKeyId'], $this->smsSet['accessKeySecret'], $this->smsSet['sign'], $mobile, $tplId, $data, $replace);
+    }
+
     /**
      * 发送短信
      * @param string $rootAccessKeyId
@@ -234,11 +248,12 @@ class SmsService extends BaseService
      * @param $signName
      * @param int $mobile 手机号
      * @param string $tplId 短信模板iID
-     * @param array $data 发送数据  $replace=true $data替换模板数据  $replace=false 则直接使用$data作为发送数据
+     * @param array $data 发送数据  $replace=true $data替换模板数据  $replace=false 则直接使用$data作为发送数据 ['code' => $code]
      * @param true $replace 是否替换数据
-     * @return
+     * @return true
+     * @throws ApiException
      */
-    public function send($rootAccessKeyId, $rootAccessKeySecret, $signName, $mobile, $tplId, $data, $replace = true)
+    public function send(string $rootAccessKeyId, string $rootAccessKeySecret, $signName, string $mobile, string $tplId, $data, $replace = true)
     {
         date_default_timezone_set('GMT');
         $post = [
@@ -275,30 +290,24 @@ class SmsService extends BaseService
 
         $result = RequestUtil::httpGet($url);
 
-        $ret = [
-            'status' => 0,
-        ];
-
         $result = @json_decode($result, true);
         if (ErrorUtil::isError($result)) {
-            $ret['message'] = "短信发送失败";
+            throw new ApiException("短信发送失败");
         } else {
             if ($result['Code'] != 'OK') {
                 if (isset($result['Code'])) {
                     $msg = $this->sms_error_code($result['Code']);
-                    $ret['message'] = $msg['msg'];
                 } else {
-                    $ret['message'] = "短信发送失败";
+                    $msg = "短信发送失败";
                 }
-            } else {
-                $ret['status'] = 1;
-                $ret['message'] = "success";
+                throw new ApiException($msg);
             }
         }
 
-        return $ret;
+        return true;
     }
 
+    // 对字符串进行URL编码
     private function encode($str)
     {
         $res = urlencode($str);
@@ -308,6 +317,7 @@ class SmsService extends BaseService
         return $res;
     }
 
+    // 短信发送失败提醒
     private function sms_error_code($code)
     {
         $msgs = [
@@ -372,6 +382,5 @@ class SmsService extends BaseService
 
         return $msgs[$code];
     }
-
 
 }
