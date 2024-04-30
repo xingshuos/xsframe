@@ -42,7 +42,7 @@ GitHub.sublime-settings
 composer.lock
 
 # sxframe
-/public/*
+public/*
 !public/app/admin
 !public/install/isntall.php
 !public/install/isntall.sql
