@@ -7,6 +7,7 @@ use think\facade\Db;
 trait AdminTraits
 {
     protected $tableName = '';
+    protected $orderBy = "id desc";
 
     public function index()
     {
@@ -59,8 +60,7 @@ trait AdminTraits
             }
 
             $field = "*";
-            $order = "id desc";
-            $list = Db::name($this->tableName)->field($field)->where($condition)->order($order)->page($this->pIndex, $this->pSize)->select()->toArray();
+            $list = Db::name($this->tableName)->field($field)->where($condition)->order($this->orderBy)->page($this->pIndex, $this->pSize)->select()->toArray();
             $total = Db::name($this->tableName)->where($condition)->count();
             $pager = pagination2($total, $this->pIndex, $this->pSize);
 
