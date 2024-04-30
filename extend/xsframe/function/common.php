@@ -312,7 +312,7 @@ if (!function_exists('buildUrl')) {
             $params['token'] = $_GET['token'];
         }
 
-        $paramsUrl = http_build_query($params);
+        $paramsUrl = http_build_query(array_filter($params));
 
         $t = strtolower($src);
         if ((substr($t, 0, 7) == 'http://') || (substr($t, 0, 8) == 'https://') || (substr($t, 0, 2) == '//')) {
