@@ -18,7 +18,6 @@ use xsframe\base\BaseService;
 use xsframe\enum\ExceptionEnum;
 use xsframe\exception\ApiException;
 use xsframe\util\ArrayUtil;
-use xsframe\util\ErrorUtil;
 use xsframe\util\RandomUtil;
 use xsframe\util\RequestUtil;
 
@@ -161,19 +160,7 @@ class SmsService extends BaseService
         $accessKeySecret = $smsSet['accessKeySecret'];
         $signName = $smsSet['sign'];
 
-        $ret = self::send($accessKeyId, $accessKeySecret, $signName, $mobile, $tplId, ['code' => $code]);
-
-        if (!$ret['status']) {
-            $key = $this->getKey($this->codeKey . $mobile);
-            $keyTime = $this->getKey($this->codeTimeKey . $mobile);
-            Cache::delete($key);
-            Cache::delete($keyTime);
-
-
-            throw new ApiException($ret['message']);
-        }
-
-        return true;
+        return self::send($accessKeyId, $accessKeySecret, $signName, $mobile, $tplId, ['code' => $code]);
     }
 
     // 设置验证码缓存过期时间
@@ -293,21 +280,17 @@ class SmsService extends BaseService
         $result = RequestUtil::httpGet($url);
         $result = @json_decode($result, true);
 
-        if (ErrorUtil::isError($result)) {
-            throw new ApiException("短信发送失败");
-        } else {
-            if ($result['Code'] != 'OK') {
-                if (isset($result['Code'])) {
-                    $msg = $this->sms_error_code($result['Code']);
-                    if (is_array($msg)) {
-                        $msg = $msg['msg'];
-                    }
-                } else {
-                    $msg = "短信发送失败";
+        if ($result['Code'] != 'OK') {
+            if (isset($result['Code'])) {
+                $msg = $this->sms_error_code($result['Code']);
+                if (is_array($msg)) {
+                    $msg = $msg['msg'];
                 }
-
-                throw new ApiException($msg);
+            } else {
+                $msg = "短信发送失败";
             }
+
+            throw new ApiException($msg);
         }
 
         return true;
