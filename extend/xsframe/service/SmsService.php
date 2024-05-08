@@ -127,8 +127,8 @@ class SmsService extends BaseService
     // 发送登录注册验证码
     public function sendLoginCode($mobile, $tplId = null, $smsSet = null): bool
     {
-        if (!empty($smtpSet)) {
-            $this->smsSet = ArrayUtil::customMergeArrays($this->smsSet, $smtpSet);
+        if (!empty($smsSet)) {
+            $this->smsSet = ArrayUtil::customMergeArrays($this->smsSet, $smsSet);
         }
 
         if (!empty($this->smsSet)) {
@@ -168,6 +168,8 @@ class SmsService extends BaseService
             $keyTime = $this->getKey($this->codeTimeKey . $mobile);
             Cache::delete($key);
             Cache::delete($keyTime);
+
+
             throw new ApiException($ret['message']);
         }
 
@@ -289,17 +291,21 @@ class SmsService extends BaseService
         $url = 'http://dysmsapi.aliyuncs.com/?' . http_build_query($post);
 
         $result = RequestUtil::httpGet($url);
-
         $result = @json_decode($result, true);
+
         if (ErrorUtil::isError($result)) {
             throw new ApiException("短信发送失败");
         } else {
             if ($result['Code'] != 'OK') {
                 if (isset($result['Code'])) {
                     $msg = $this->sms_error_code($result['Code']);
+                    if (is_array($msg)) {
+                        $msg = $msg['msg'];
+                    }
                 } else {
                     $msg = "短信发送失败";
                 }
+
                 throw new ApiException($msg);
             }
         }
