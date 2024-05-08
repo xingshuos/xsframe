@@ -109,6 +109,9 @@ abstract class WebBaseController extends BaseController
 
         $var['isLogin'] = $this->isLogin;
 
+        # 收缩菜单
+        $var['foldNav'] = intval($_COOKIE["foldnav"] ?? 0);
+
         if (!empty($params)) {
             $var = array_merge($var, $params);
         }

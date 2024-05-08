@@ -17,9 +17,9 @@ use think\facade\Config;
 class MenuWrapper
 {
     // 获取菜单
-    public static function getMenusList($role, $module, $controller, $action, $full = true)
+    public static function getMenusList($role, $module, $controller, $action, $full = true, $configKey = 'menu')
     {
-        $allMenus = Config::get('menu');
+        $allMenus = Config::get($configKey);
         $menusList = self::buildMenu($role, $allMenus, $module, $controller, $action, $full);
         return $menusList;
     }
