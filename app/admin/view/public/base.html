@@ -8,16 +8,15 @@
     <title>{block name='title'}{$websiteSets['name']}{/block}</title>
     <meta name="keywords" content="{block name='keywords'}{$websiteSets['keywords']}{/block}">
     <meta name="description" content="{block name='description'}{$websiteSets['description']}{/block}">
-
     <link rel="shortcut icon" href="{if !empty($websiteSets['logo'])}{:tomedia($websiteSets['logo'])}{else}favicon.ico{/if}">
+
+    {block name='baseCss'}
     <link rel="stylesheet" href="__ADMIN_COMPONENT__/bootstrap/bootstrap.min.css">
 
-    <link href="__ADMIN_FONTS__/awesome/font-awesome.min.css?v=3.2.1" rel="stylesheet">
     <link href="__ADMIN_COMPONENT__/animate/animate.css" rel="stylesheet">
 
     <!--商城icon 后期将作废-->
     <link rel="stylesheet" type="text/css" href="__ADMIN_FONTS__/shop/iconfont.css?v=20170503">
-    <script src="__ADMIN_FONTS__/shop/iconfont.js"></script>
 
     <!--原始样式-->
     <link rel="stylesheet" href="__ADMIN_CSS__/upload.css">
@@ -25,8 +24,11 @@
 
     <!--后台装修-->
     <link href="__ADMIN_CSS__/admin.css?v=4.1.0" rel="stylesheet">
+    {/block}
 
-    <script>var require = {urlArgs: 'v=20211031'};</script>
+    {block name='baseFont'}
+    <link href="__ADMIN_FONTS__/awesome/font-awesome.min.css?v=3.2.1" rel="stylesheet">
+    {/block}
 
     <script type="text/javascript">
         if (navigator.appName === 'Microsoft Internet Explorer') {
@@ -43,18 +45,6 @@
             'attachurl': '{$attachUrl}',
             'module': '{$module}',
         };
-    </script>
-
-    <script type="text/javascript" src="__ADMIN_COMPONENT__/jquery/jquery-1.11.1.min.js"></script>
-
-    <script type="text/javascript" src="__ADMIN_JS__/web/util.js"></script>
-    <script type="text/javascript" src="__ADMIN_COMPONENT__/bootstrap/bootstrap.min.js"></script>
-    <script type="text/javascript" src="__ADMIN_JS__/web/common.min.js"></script>
-    <script type="text/javascript" src="__ADMIN_JS__/require.js"></script>
-    <script src="__ADMIN_JS__/config.js"></script>
-
-    <script>
-        require(['jquery', 'jquery.gcjs', 'init', 'tip']);
     </script>
 </head>
 <style>
@@ -200,6 +190,7 @@
 {block name='header'}{/block}
 {block name='menus'}{/block}
 
+{block name='container'}
 <div class="wb-container">
 
     <div style="padding: 0 20px 30px 20px;box-sizing: border-box;" class="wb-content">
@@ -219,6 +210,8 @@
     {block name='copyright'}{/block}
 </div>
 
+{/block}
+
 <!--图片放大 start-->
 <div id="bg-bk" style="display: none;">
     <div class="overlay"></div>
@@ -230,23 +223,37 @@
 </div>
 <!--图片放大 end-->
 
-<script type="text/javascript">
-    $(() => {
-        $('.magnifier img').each(function () {
-            let img = $(this);
-            let src = img.attr('src');
-            let isNo = img.hasClass('magnifier-no');
-            if (!isNo) {
-                img.wrap(`<a data-magnify="gallery" style="cursor:pointer;" onclick="showMagnifier('${src}',10)"></a>`);
-            }
-        });
-        $(".overlay").click(() => {
-            $("#bg-bk").fadeOut()
-            let body = document.querySelector('body');
-            body.classList.remove('no-scroll');
-        })
-    })
+{block name='baseScript'}
+<script>var require = {urlArgs: 'v=20211031'};</script>
+<script src="__ADMIN_FONTS__/shop/iconfont.js"></script>
+<script type="text/javascript" src="__ADMIN_COMPONENT__/jquery/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="__ADMIN_JS__/web/util.js"></script>
+<script type="text/javascript" src="__ADMIN_COMPONENT__/bootstrap/bootstrap.min.js"></script>
+<script type="text/javascript" src="__ADMIN_JS__/web/common.min.js"></script>
+<script type="text/javascript" src="__ADMIN_JS__/require.js"></script>
+<script src="__ADMIN_JS__/config.js"></script>
 
+<script>
+    require(['jquery', 'jquery.gcjs', 'init', 'tip'],function($){
+        $(() => {
+            $('.magnifier img').each(function () {
+                let img = $(this);
+                let src = img.attr('src');
+                let isNo = img.hasClass('magnifier-no');
+                if (!isNo) {
+                    img.wrap(`<a data-magnify="gallery" style="cursor:pointer;" onclick="showMagnifier('${src}',10)"></a>`);
+                }
+            });
+            $(".overlay").click(() => {
+                $("#bg-bk").fadeOut()
+                let body = document.querySelector('body');
+                body.classList.remove('no-scroll');
+            })
+        })
+    });
+</script>
+
+<script type="text/javascript">
     // 图片放大
     $(window).keydown(function (e) {
         27 === e.which && ($("#bg-bk").fadeOut(), document.querySelector('body').classList.remove('no-scroll'))
@@ -424,7 +431,7 @@
     })
 </script>
 
-<script language="javascript">
+<script>
     if ($('form.form-validate').length <= 0) {
         window.formInited = true;
     }
@@ -469,6 +476,8 @@
         });
     }
 </script>
+{/block}
+
 {block name='script'}{/block}
 
 </body>
