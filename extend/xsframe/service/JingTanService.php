@@ -3,7 +3,6 @@
 namespace xsframe\service;
 
 use AntCloudSDKCore\AntCloudClient;
-use app\easy_shop\enum\JingTanKeyEnum;
 use xsframe\base\BaseService;
 
 class JingTanService extends BaseService
