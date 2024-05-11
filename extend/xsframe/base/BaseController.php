@@ -148,6 +148,16 @@ abstract class BaseController extends Controller
         }
     }
 
+    protected function success()
+    {
+
+    }
+
+    protected function error()
+    {
+
+    }
+
     // 加载默认配置信息
     protected function getDefaultSets()
     {
