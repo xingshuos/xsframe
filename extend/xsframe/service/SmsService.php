@@ -188,8 +188,8 @@ class SmsService extends BaseService
         return intval($code);
     }
 
-    // 校验验证码
-    public function checkSmsCode($username, $verifyCode, $testCode = null, $clear = true)
+    // 校验验证码 过期时间默认一个小时
+    public function checkSmsCode($username, $verifyCode, $testCode = null, $clear = true, $expirationTime = 600): bool
     {
         $key = $this->getKey($this->codeKey . $username);
         $keyTime = $this->getKey($this->codeTimeKey . $username);
@@ -209,7 +209,7 @@ class SmsService extends BaseService
             throw new ApiException("验证码错误!");
         }
 
-        if (!isset($sendTime) || 600 * 1000 < time() - $sendTime) {
+        if (!isset($sendTime) || $expirationTime * 1000 < time() - $sendTime) {
             throw new ApiException("验证码失效，请重新获取!");
         }
 
