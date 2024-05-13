@@ -108,9 +108,15 @@ class SysMemberService extends BaseService
 
     /**
      * 手机号登录
+     * @param $username - 手机号或邮箱
+     * @param string|null $password - 密码
+     * @param string|int $code - 验证码
+     * @param string|int $testCode - 测试验证码
+     * @param bool $autoLogin - 是否自动登录
+     * @return string
      * @throws ApiException
      */
-    public function mobileLogin($username, $password = null, $code = null, $testCode = null): string
+    public function mobileLogin($username, string $password = null, $code = null, $testCode = null, bool $autoLogin = true): string
     {
         if (empty($password) && empty($code)) {
             throw new ApiException("参数错误");
@@ -233,7 +239,7 @@ class SysMemberService extends BaseService
     }
 
     // 校验注册用户
-    private function checkMember($type, $value, $nickname = '', $avatar = '', $memberInfo = null, $updateData = [])
+    private function checkMember($type, $value, $nickname = '', $avatar = '', $memberInfo = null, $updateData = [], $autoLogin = true)
     {
         if (empty($memberInfo)) {
             $memberInfo = self::getInfo([$type => $value, 'uniacid' => $this->uniacid]);
@@ -297,14 +303,16 @@ class SysMemberService extends BaseService
             }
         }
 
-        return $this->getToken($memberId);
+        return $this->getToken($memberId, $autoLogin);
     }
 
     // 获取登录凭证token
-    public function getToken($memberId)
+    public function getToken($memberId, $autoLogin = true)
     {
         $token = authcode2($memberId, "ENCODE", $this->expire);
-        isetcookie($this->getMemberInfoKey(), $token, 30 * 86400);
+        if ($autoLogin) {
+            isetcookie($this->getMemberInfoKey(), $token, 30 * 86400);
+        }
         return $token;
     }
 
