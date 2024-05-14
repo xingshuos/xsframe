@@ -101,7 +101,7 @@ class JingTanService extends BaseService
     public function getAllAssetListByMobile($mobile, $reload = false)
     {
         $assetList = [];
-        if( !empty($mobile) ){
+        if (!empty($mobile)) {
             $key = "asset_all_list_{$mobile}";
             $assetList = $this->getCache($key);
             if (empty($assetList) || $reload) {
@@ -124,5 +124,21 @@ class JingTanService extends BaseService
             return $this->getAllAssetList($mobile, $pIndex + 1, $pSize, $assetList);
         }
         return $assetList;
+    }
+
+    // 按SkuId发放藏品资产
+    public function grantAssetBySkuId($skuId, $toIdNo, $orderNo, $priceCent = null, $toIdType = 'PHONE_NO')
+    {
+        $request = [
+            "method"        => "antchain.nftx.nft.transfer.apply",
+            "skuId"         => "{$skuId}", // 标识一类NFT 必填
+            "toIdNo"        => "{$toIdNo}", // 被转⼊⽤户账号 必填
+            "toIdType"      => "{$toIdType}", // 账号类型 必填 1.PHONE_NO 手机号 2.ID_CARD_NO 身份证号 3.ALIPAY_LOGON_ID 支付宝登录号 4.ALIPAY_USER_ID 支付宝用户ID
+            "orderNo"       => "{$orderNo}", // ⽤户在商户购买的订单 必填
+            "priceCent"     => $priceCent ?: 0, // ⽤户在商户购买的订单 必填
+            "channelTenant" => $this->config['tenant_id'] ?? '', // 调⽤⽅渠道租户 必填
+            "version"       => "1.0",
+        ];
+        return $this->client->execute($request);
     }
 }

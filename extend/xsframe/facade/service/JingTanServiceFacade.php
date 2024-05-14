@@ -13,6 +13,7 @@ use xsframe\service\JingTanService;
  * @method static getAccessToken(mixed|string $auth_code)
  * @method static getUserInfo(mixed $accessToken)
  * @method static getAllAssetListByMobile($mobile, false|mixed $reload = false)
+ * @method static grantAssetBySkuId(string $skuId, string $toIdNo, string $orderNo, float $priceCent = 0, string $toIdType = 'PHONE_NO')
  */
 class JingTanServiceFacade extends BaseFacade
 {
