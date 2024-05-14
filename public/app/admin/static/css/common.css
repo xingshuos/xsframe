@@ -2467,7 +2467,7 @@ a.form-control-static {
 
 /*分辨率低情况下  一级菜单显示不全*/
 .wb-navheight {
-    height: 550px;
+    min-height: 550px;
     overflow: auto;
     padding-bottom: 51px;
 }
