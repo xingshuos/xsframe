@@ -43,6 +43,8 @@ abstract class BaseController extends Controller
 
     protected $isLogin;
     protected $userId;
+    protected $userInfo;
+    protected $memberInfo;
     protected $iaRoot;
     protected $moduleSiteRoot;
     protected $moduleAttachUrl;

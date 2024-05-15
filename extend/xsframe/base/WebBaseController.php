@@ -105,6 +105,8 @@ abstract class WebBaseController extends BaseController
 
         $var['account'] = $this->account;
         $var['moduleInfo'] = $this->moduleInfo;
+        $var['memberInfo'] = $this->memberInfo;
+        $var['userInfo'] = $this->userInfo;
         $var['attachUrl'] = getAttachmentUrl() . "/";
 
         $var['isLogin'] = $this->isLogin;

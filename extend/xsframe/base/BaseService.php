@@ -9,6 +9,7 @@ use xsframe\traits\ServiceTraits;
 class BaseService extends BaseController
 {
     protected $expire = 7200;
+    protected $isolateModule = true; // 是否隔离模块
 
     /**
      * 引入后台通用的traits
@@ -32,16 +33,15 @@ class BaseService extends BaseController
     }
 
     // 获取KEY
-    protected function getKey($key)
+    protected function getKey($key): string
     {
-        $key = strtolower($this->module) . "_" . md5($this->uniacid . $key);
-        return $key;
+        return ($this->isolateModule ? strtolower($this->module) . "_" : '') . md5($this->uniacid . $key);
     }
 
     // 设置缓存
-    protected function setCache($key, $data, $expire = null)
+    protected function setCache($key, $data, $expire = null): bool
     {
-        Cache::set($key, $data, $expire ?? $this->expire);
+        return Cache::set($key, $data, $expire ?? $this->expire);
     }
 
     // 获取缓存
