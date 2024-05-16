@@ -142,14 +142,16 @@ class Account extends Base
         $type = trim($this->params["type"]);
         $value = trim($this->params["value"]);
 
-        $items = Db::name('sys_account')->where(['uniacid' => $id])->select();
-        if (empty($items)) {
-            $this->error(["message" => "参数错误"]);
-        }
-        Db::name('sys_account')->where(['uniacid' => $id])->update([$type => $value]);
+        $items = Db::name('sys_account')->field("uniacid,name")->where(['uniacid' => $id])->select()->toArray();
 
-        // 更新uniacid列表
-        Cache::set(CacheKeyEnum::SYSTEM_UNIACID_LIST_KEY, Db::name('sys_account')->where(['status' => 1, 'deleted' => 0])->column('uniacid'));
+        foreach ($items as $item) {
+            $uniacid = $item['uniacid'];
+            Db::name('sys_account')->where(['uniacid' => $item['uniacid']])->update([$type => $value]);
+            // 更新uniacid列表
+            Cache::set(CacheKeyEnum::SYSTEM_UNIACID_LIST_KEY, Db::name('sys_account')->where(['status' => 1, 'deleted' => 0])->column('uniacid'));
+            // 更新uniacid的应用列表
+            Cache::set(CacheKeyEnum::UNIACID_MODULE_LIST_KEY . "_{$uniacid}", Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'deleted' => 0])->column('module'));
+        }
 
         $this->success();
     }
@@ -178,6 +180,7 @@ class Account extends Base
         # 获取后台地址
         $realUrl = UserWrapper::getModuleOneUrl($defaultModuleInfo['module'], true);
         $url = webUrl(rtrim($realUrl, '.html'), ['i' => $uniacid]);
+
         $this->success(['url' => $url]);
     }
 

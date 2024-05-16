@@ -12,6 +12,8 @@
 
 namespace app\admin\controller;
 
+use app\admin\enum\CacheKeyEnum;
+use think\facade\Cache;
 use xsframe\util\FileUtil;
 use xsframe\wrapper\ModulesWrapper;
 use xsframe\util\PinYinUtil;
@@ -38,6 +40,8 @@ class App extends Base
         $condition = [];
 
         $modulesController = new ModulesWrapper();
+
+        $this->updateSystemModuleList();
 
         if (empty($do) || $do == 'installed') {
             $condition = $condition1;
@@ -162,11 +166,12 @@ class App extends Base
         $type = trim($this->params["type"]);
         $value = trim($this->params["value"]);
 
-        $items = Db::name('sys_modules')->where(['id' => $id])->select();
-        if (empty($items)) {
-            $this->error(["message" => "参数错误"]);
+        $items = Db::name('sys_modules')->field("id")->where(['id' => $id])->select()->toArray();
+        foreach ($items as $item) {
+            Db::name('sys_modules')->where(['id' => $item['id']])->update([$type => $value]);
         }
-        Db::name('sys_modules')->where(['id' => $id])->update([$type => $value]);
+
+        $this->updateSystemModuleList();
         $this->success();
     }
 
@@ -191,6 +196,8 @@ class App extends Base
 
         $modulesController->moveDirToPublic($identifie);
         $this->removePackages($identifie);
+
+        $this->updateSystemModuleList();
         $this->success('安装成功');
     }
 
@@ -205,7 +212,7 @@ class App extends Base
 
         $modulesController = new ModulesWrapper();
         $modulesController->runUninstalledModule($identifie);
-
+        $this->updateSystemModuleList();
         $this->success('卸载成功');
     }
 
@@ -238,7 +245,7 @@ class App extends Base
             Db::name('sys_modules')->where(['id' => $id])->update($updateData);
 
             $this->removePackages($identifie);
-
+            $this->updateSystemModuleList();
             $this->success('升级成功');
         } else {
             $this->success('升级失败');
@@ -258,5 +265,11 @@ class App extends Base
         ];
         FileUtil::rmDirs($packagesPath, $unFiles);
         return true;
+    }
+
+    // 更新系统的应用列表
+    private function updateSystemModuleList(): bool
+    {
+        return Cache::set(CacheKeyEnum::SYSTEM_MODULE_LIST_KEY, Db::name('sys_modules')->where(['status' => 1, 'is_install' => 1, 'is_deleted' => 0])->column('identifie'));
     }
 }

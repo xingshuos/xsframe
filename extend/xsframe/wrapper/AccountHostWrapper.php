@@ -73,7 +73,6 @@ class AccountHostWrapper
     // 获取域名绑定的uniacid值
     public function getAccountHostUniacid($hostUrl)
     {
-        // TODO 之后最好加入缓存，目前直接读取数据库
         $hostList = $this->getAccountHost(false);
 
         $uniacid = 0;

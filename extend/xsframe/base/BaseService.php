@@ -8,6 +8,7 @@ use xsframe\traits\ServiceTraits;
 
 class BaseService extends BaseController
 {
+    protected $clientBaseType = 'service';
     protected $expire = 7200;
     protected $isolateModule = true; // 是否隔离模块
 

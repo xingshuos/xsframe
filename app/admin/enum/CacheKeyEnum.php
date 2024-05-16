@@ -18,4 +18,7 @@ class CacheKeyEnum extends BaseEnum
 
     # 获取全部的商户应用列表(防止无权限的应用被访问)
     const UNIACID_MODULE_LIST_KEY = 'uniacid_module_list';
+
+    # 获取全部的系统应用列表(防止无权限的应用被访问)
+    const SYSTEM_MODULE_LIST_KEY = 'system_module_list';
 }

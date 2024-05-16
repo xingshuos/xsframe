@@ -123,7 +123,11 @@ if (!function_exists('webUrl')) {
             $url = "web." . $url;
         }
 
-        $url = url($url, $params, $suffix, $full);
+        if (!empty($_GET['i'])) {
+            $params['i'] = $_GET['i'];
+        }
+
+        $url = url($url, array_filter($params), $suffix, $full);
 
         // 负载均衡下域名协议会被强制转成http协议，所以这里需要转成https的方式 start
         if (StringUtil::strexists($_SERVER['HTTP_REFERER'], 'https')) {

@@ -19,6 +19,7 @@ use xsframe\enum\SysSettingsKeyEnum;
 
 abstract class WebBaseController extends BaseController
 {
+    protected $clientBaseType = 'web';
     protected $pIndex;
     protected $pSize;
 

@@ -23,6 +23,7 @@ use think\facade\View;
 
 abstract class AdminBaseController extends BaseController
 {
+    protected $clientBaseType = 'admin';
     protected $isSystem = false;
     protected $adminSession = [];
     protected $_GPC = [];
@@ -63,6 +64,7 @@ abstract class AdminBaseController extends BaseController
             $this->adminSession = $loginResult['adminSession'];
             $this->userId = $this->adminSession['uid'];
             $uniacid = $this->adminSession['uniacid'];
+
             if (!empty($uniacid)) {
                 $this->uniacid = $uniacid;
                 $_COOKIE['uniacid'] = $uniacid;
