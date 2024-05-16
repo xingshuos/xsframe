@@ -61,22 +61,20 @@ class AccountHostWrapper
     // 设置域名映射关系列表
     public function setAccountHost()
     {
-        $hostList = $this->getAccountHost(true);
-        return $hostList;
+        return $this->getAccountHost(true);
     }
 
     // 重新加载域名映射关系列表
     public function reloadAccountHost()
     {
-        $hostList = $this->getAccountHost(true);
-        return $hostList;
+        return $this->getAccountHost(true);
     }
 
     // 获取域名绑定的uniacid值
     public function getAccountHostUniacid($hostUrl)
     {
         // TODO 之后最好加入缓存，目前直接读取数据库
-        $hostList = $this->getAccountHost(true);
+        $hostList = $this->getAccountHost(false);
 
         $uniacid = 0;
         if (!empty($hostList)) {

@@ -160,8 +160,8 @@ class Sysset extends Base
                 Db::name("sys_account_host")->insert($data);
             }
 
-            $accountHostWrapper = new AccountHostWrapper();
-            $accountHostWrapper->setAccountHost();
+            $accountHost = new AccountHostWrapper();
+            $accountHost->reloadAccountHost();
 
             $this->success(["url" => webUrl("admin/sysset/host")]);
         }
@@ -195,6 +195,10 @@ class Sysset extends Base
         foreach ($items as $item) {
             Db::name('sys_account_host')->where(["id" => $item['id']])->delete();
         }
+
+        $accountHost = new AccountHostWrapper();
+        $accountHost->reloadAccountHost();
+
         $this->success(["url" => referer()]);
     }
 
@@ -218,6 +222,9 @@ class Sysset extends Base
         foreach ($items as $item) {
             Db::name("sys_account_host")->where("id", '=', $item['id'])->update([$type => $value]);
         }
+
+        $accountHost = new AccountHostWrapper();
+        $accountHost->reloadAccountHost();
 
         $this->success();
     }

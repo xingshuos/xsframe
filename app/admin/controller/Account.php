@@ -12,6 +12,8 @@
 
 namespace app\admin\controller;
 
+use app\admin\enum\CacheKeyEnum;
+use think\facade\Cache;
 use xsframe\wrapper\AccountHostWrapper;
 use think\facade\Db;
 use xsframe\wrapper\UserWrapper;
@@ -111,6 +113,9 @@ class Account extends Base
             $module['logo'] = !empty($module['logo']) ? tomedia($module['logo']) : $this->siteRoot . "/app/{$module['identifie']}/icon.png";
         }
 
+        // 更新uniacid列表
+        Cache::set(CacheKeyEnum::SYSTEM_UNIACID_LIST_KEY, Db::name('sys_account')->where(['status' => 1, 'deleted' => 0])->column('uniacid'));
+
         $result = [
             'item'            => $item,
             'uniacid'         => $uniacid,
@@ -142,6 +147,10 @@ class Account extends Base
             $this->error(["message" => "参数错误"]);
         }
         Db::name('sys_account')->where(['uniacid' => $id])->update([$type => $value]);
+
+        // 更新uniacid列表
+        Cache::set(CacheKeyEnum::SYSTEM_UNIACID_LIST_KEY, Db::name('sys_account')->where(['status' => 1, 'deleted' => 0])->column('uniacid'));
+
         $this->success();
     }
 
@@ -223,6 +232,10 @@ class Account extends Base
         } else {
             Db::name('sys_account_modules')->where(['uniacid' => $uniacid])->update(['deleted' => 1]);
         }
+
+        // 更新uniacid的应用列表
+        Cache::set(CacheKeyEnum::UNIACID_MODULE_LIST_KEY . "_{$uniacid}", Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'deleted' => 0])->column('module'));
+
         return true;
     }
 

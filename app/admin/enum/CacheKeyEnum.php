@@ -12,4 +12,10 @@ class CacheKeyEnum extends BaseEnum
 
     # 获取框架更新文件列表
     const CLOUD_FRAME_UPGRADE_FILES_KEY = 'cloud_frame_upgrade_files';
+
+    # 获取全部的商户列表(防止不存在的uniacid被记录)
+    const SYSTEM_UNIACID_LIST_KEY = 'system_uniacid_list';
+
+    # 获取全部的商户应用列表(防止无权限的应用被访问)
+    const UNIACID_MODULE_LIST_KEY = 'uniacid_module_list';
 }
