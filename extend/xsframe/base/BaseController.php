@@ -37,6 +37,7 @@ abstract class BaseController extends Controller
     protected $siteRoot;
     protected $ip;
     protected $view;
+    protected $clientBaseType;
 
     protected $module;
     protected $controller;
@@ -54,10 +55,9 @@ abstract class BaseController extends Controller
     protected $moduleIaRoot;
     protected $authkey;
     protected $expire;
-    protected $settingsController;
     protected $attachment;
-
-    protected $clientBaseType;
+    protected $settingsController;
+    protected $accountHostController;
 
     protected $websiteSets = [];
     protected $account = [];
@@ -75,6 +75,11 @@ abstract class BaseController extends Controller
         if (!$this->settingsController instanceof SettingsWrapper) {
             $this->settingsController = new SettingsWrapper();
         }
+
+        if (!$this->accountHostController instanceof AccountHostWrapper) {
+            $this->accountHostController = new AccountHostWrapper();
+        }
+
         if (method_exists($this, '_initialize')) {
             $this->_initialize();
         }
@@ -214,14 +219,17 @@ abstract class BaseController extends Controller
     }
 
     // 获取项目uniacid
-    protected function getUniacid()
+    protected function getUniacid($checkUrl = false)
     {
         $uniacid = $this->params['uniacid'] ?? ($_GET['i'] ?? ($_COOKIE['uniacid'] ?? 0));
 
         # 校验域名路由 start
         if (empty($uniacid) && $this->module != 'admin' && !empty($_SERVER['HTTP_HOST'])) { // 域名路由
-            $accountHost = new AccountHostWrapper();
-            $uniacid = $accountHost->getAccountHostUniacid($_SERVER['HTTP_HOST']);
+            $uniacid = $this->accountHostController->getAccountHostUniacid($_SERVER['HTTP_HOST']);
+        } else {
+            if ($checkUrl && empty($this->params['uniacid']) && empty($this->params['i'])) {
+                $uniacid = $this->accountHostController->getAccountHostUniacid($_SERVER['HTTP_HOST']);
+            }
         }
 
         // 判断系统是否存在uniacid start
@@ -229,14 +237,21 @@ abstract class BaseController extends Controller
 
             $uniacidList = Cache::get(CacheKeyEnum::SYSTEM_UNIACID_LIST_KEY);
             if ($uniacidList && !in_array($uniacid, $uniacidList)) {
-                $uniacid = 0;
+                if ($this->module != 'admin' && !empty($_SERVER['HTTP_HOST'])) { // 域名路由
+                    $uniacid = $this->accountHostController->getAccountHostUniacid($_SERVER['HTTP_HOST']);
+                } else {
+                    $uniacid = 0;
+                }
             } else {
                 // 还需要判定商户是否有应用权限
                 if ($this->module != 'admin') {
                     $uniacidModuleList = Cache::get(CacheKeyEnum::UNIACID_MODULE_LIST_KEY . "_{$uniacid}");
                     $systemModuleList = Cache::get(CacheKeyEnum::SYSTEM_MODULE_LIST_KEY);
 
-                    if ( ($uniacidModuleList && !in_array($this->module, $uniacidModuleList)) || ($systemModuleList && !in_array($this->module, $systemModuleList)) ) {
+                    if (($uniacidModuleList && !in_array($this->module, $uniacidModuleList)) || ($systemModuleList && !in_array($this->module, $systemModuleList))) {
+                        if (!$checkUrl) {
+                            self::getUniacid(true);
+                        }
                         if ($this->request->isAjax()) {
                             throw new ApiException("当前商户暂无权限访问该应用", 403);
                         } else {
