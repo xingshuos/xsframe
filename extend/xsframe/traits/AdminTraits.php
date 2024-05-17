@@ -31,8 +31,15 @@ trait AdminTraits
 
             $condition = [
                 'uniacid' => $this->uniacid,
-                'deleted' => 0,
             ];
+
+            $fieldList = Db::name($this->tableName)->getFields();
+            if (isset($fieldList['deleted'])) {
+                $condition['deleted'] = 0;
+            }
+            if (isset($fieldList['is_deleted'])) {
+                $condition['is_deleted'] = 0;
+            }
 
             if (is_numeric($status)) {
                 $condition['status'] = $status;
@@ -135,8 +142,11 @@ trait AdminTraits
                 } else {
                     $id = Db::name($this->tableName)->insertGetId($updateData);
                 }
-
-                $this->success(["url" => url("", ['id' => $id, 'tab' => str_replace("#tab_", "", $this->params['tab'])])]);
+                if ($this->params['isModel']) {
+                    $this->success();
+                } else {
+                    $this->success(["url" => url("", ['id' => $id, 'tab' => str_replace("#tab_", "", $this->params['tab'])])]);
+                }
             }
 
             $field = "*";
