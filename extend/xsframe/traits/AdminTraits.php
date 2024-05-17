@@ -284,4 +284,54 @@ trait AdminTraits
 
         return $this->template('recycle', $result);
     }
+
+    // 访问入口
+    public function cover(): \think\response\View
+    {
+        $moduleName = realModuleName($this->module);
+        $coverUrl = $this->siteRoot . "/{$moduleName}.html?i=" . $this->uniacid;
+        return $this->template('cover', ['coverUrl' => $coverUrl]);
+    }
+
+    // 设置项目应用配置信息
+    public function moduleSettings()
+    {
+        $moduleSettings = $this->settingsController->getModuleSettings(null, $this->module, $this->uniacid);
+        if ($this->request->isPost()) {
+            $settingsData = $this->params['data'] ?? [];
+
+            if (!empty($settingsData['contact'])) {
+                $settingsData['contact']['about'] = htmlspecialchars_decode($settingsData['contact']['about']);
+            }
+            if (!empty($settingsData['user'])) {
+                $settingsData['user']['agreement'] = htmlspecialchars_decode($settingsData['user']['agreement']);
+            }
+
+            $settingsData = array_merge($moduleSettings, $settingsData);
+
+            if (!empty($settingsData)) {
+                $data['settings'] = serialize($settingsData);
+                Db::name('sys_account_modules')->where(["uniacid" => $this->uniacid, 'module' => $this->module])->update($data);
+                # 更新缓存
+                $this->settingsController->reloadModuleSettings($this->module, $this->uniacid);
+            }
+
+            $moduleSettings = $settingsData;
+        }
+        return $moduleSettings;
+    }
+
+    // 当前项目应用配置信息
+    public function module()
+    {
+        $moduleSettings = $this->moduleSettings();
+        if ($this->request->isPost()) {
+            $this->success(["url" => webUrl("sets/module", ['tab' => str_replace("#tab_", "", $this->params['tab'])])]);
+        }
+
+        $var = [
+            'moduleSettings' => $moduleSettings
+        ];
+        return $this->template('module', $var);
+    }
 }

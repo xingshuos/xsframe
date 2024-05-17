@@ -244,11 +244,12 @@ abstract class BaseController extends Controller
                 }
             } else {
                 // 还需要判定商户是否有应用权限
-                if ($this->module != 'admin') {
+                if ($this->module && $this->module != 'admin') {
                     $uniacidModuleList = Cache::get(CacheKeyEnum::UNIACID_MODULE_LIST_KEY . "_{$uniacid}");
                     $systemModuleList = Cache::get(CacheKeyEnum::SYSTEM_MODULE_LIST_KEY);
 
                     if (($uniacidModuleList && !in_array($this->module, $uniacidModuleList)) || ($systemModuleList && !in_array($this->module, $systemModuleList))) {
+
                         if (!$checkUrl) {
                             self::getUniacid(true);
                         }
