@@ -85,6 +85,9 @@ abstract class BaseController extends Controller
         }
     }
 
+    /**
+     * @throws ApiException
+     */
     protected function _initialize()
     {
         $this->authkey = "xsframe_";
@@ -170,7 +173,9 @@ abstract class BaseController extends Controller
 
     }
 
-    // 加载默认配置信息
+    /** 加载默认配置信息
+     * @throws ApiException
+     */
     protected function getDefaultSets()
     {
         # 系统网站设置
@@ -222,6 +227,7 @@ abstract class BaseController extends Controller
     protected function getUniacid($checkUrl = false)
     {
         $uniacid = $this->params['uniacid'] ?? ($_GET['i'] ?? ($_COOKIE['uniacid'] ?? 0));
+        $this->module = empty($this->module) ? app('http')->getName() : $this->module;
 
         # 校验域名路由 start
         if (empty($uniacid) && $this->module != 'admin' && !empty($_SERVER['HTTP_HOST'])) { // 域名路由
@@ -264,8 +270,6 @@ abstract class BaseController extends Controller
                             }
                         }
                     }
-
-                    # TODO 还需要做一个应用停用的限制，当应用停用以后是禁止访问的
                 }
             }
         }
