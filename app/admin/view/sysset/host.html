@@ -42,12 +42,11 @@
             <table class="table table-responsive table-hover">
                 <thead class="navbar-inner">
                 <tr>
-                    <th style="width:50px;"></th>
-                    <th style='width:100px'>顺序</th>
-                    <th style='width:80px'>商户ID</th>
-                    <th style='width:120px'>商户名称</th>
-                    <th style='width:120px'>绑定域名</th>
-                    <th style='width:120px;'>默认应用</th>
+                    <th style="width:40px;"></th>
+                    <th style='width:100px'>排序</th>
+                    <th style='width:120px'>主域名</th>
+                    <th style='width:120px'>绑定商户</th>
+                    <th style='width:120px;'>默认访问应用</th>
                     <th style="width: 100px;">操作</th>
                 </tr>
                 </thead>
@@ -62,16 +61,16 @@
                         <i class="icow icow-weibiaoti-- " data-toggle="ajaxEdit2"></i>
                     </td>
                     <td>
-                        {$row['account']['uniacid']}
-                    </td>
-                    <td>
-                        {$row['account']['name']}
-                    </td>
-                    <td>
                         {$row['host_url']}
                     </td>
                     <td>
-                        {$row['module']['name']}（{$row['default_module'] ? $row['default_module'] : '未设置'}）
+                        <span style="color:red;">【{$row['account']['uniacid']}】</span>{$row['account']['name']}
+                        {if $row['account']['uniacid'] == $row['account']['default_acid']}
+                        <span class="label label-primary">系统默认</span>
+                        {/if}
+                    </td>
+                    <td>
+                        {$row['default_module'] ? $row['default_module'] : '未设置'}（{$row['module']['name']}）
                     </td>
                     <td style="text-align:left;">
                         <a href="{:webUrl('admin/sysset/hostEdit', array('id' => $row['id']))}" class="btn btn-op btn-operation">
@@ -91,7 +90,7 @@
                 <tfoot>
                 <tr>
                     <td><input type="checkbox"></td>
-                    <td colspan="3">
+                    <td colspan="2">
                         <div class="btn-group">
                             <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('admin/sysset/hostChange',array('type' => 'deleted','value'=>1))}">
                                 <i class='icow icow-shanchu1'></i> 删除
