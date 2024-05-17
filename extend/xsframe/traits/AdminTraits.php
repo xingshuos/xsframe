@@ -286,7 +286,7 @@ trait AdminTraits
     }
 
     // 访问入口
-    public function cover(): \think\response\View
+    public function cover()
     {
         $moduleName = realModuleName($this->module);
         $coverUrl = $this->siteRoot . "/{$moduleName}.html?i=" . $this->uniacid;
