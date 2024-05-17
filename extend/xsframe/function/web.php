@@ -160,7 +160,6 @@ if (!function_exists('pagination')) {
 if (!function_exists('pagination2')) {
     function pagination2($total, $pageIndex, $pageSize = 15, $url = '', $context = array('before' => 3, 'after' => 2, 'ajaxcallback' => '', 'callbackfuncname' => ''))
     {
-        global $_W;
         $pdata = array('tcount' => 0, 'tpage' => 0, 'cindex' => 0, 'findex' => 0, 'pindex' => 0, 'nindex' => 0, 'lindex' => 0, 'options' => '');
 
         $html = '<div><ul class="pagination pagination-centered"><li><span class="nobg">共' . $total . '条记录</span></li></ul>';
