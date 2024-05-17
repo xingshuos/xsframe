@@ -60,7 +60,7 @@ class SmsService extends BaseService
             }
         }
 
-        if (!empty($smsSet['smtp']['authmode'])) {
+        if (!empty($smtpSet['smtp']['authmode'])) {
             if (!extension_loaded('openssl')) {
                 throw new ApiException("请开启 php_openssl 扩展");
             }
@@ -117,6 +117,7 @@ class SmsService extends BaseService
         try {
             $mailer->send();
         } catch (\PHPMailer\PHPMailer\Exception $e) {
+            self::clearCode($to);
             throw new ApiException($e->getMessage());
         }
 
@@ -161,6 +162,18 @@ class SmsService extends BaseService
         $signName = $smsSet['sign'];
 
         return self::send($accessKeyId, $accessKeySecret, $signName, $mobile, $tplId, ['code' => $code]);
+    }
+
+    // 清除验证码
+    private function clearCode($obj): bool
+    {
+        $key = $this->getKey($this->codeKey . $obj);
+        $keyTime = $this->getKey($this->codeTimeKey . $obj);
+
+        Cache::delete($key);
+        Cache::delete($keyTime);
+
+        return true;
     }
 
     // 设置验证码缓存过期时间
@@ -289,6 +302,8 @@ class SmsService extends BaseService
             } else {
                 $msg = "短信发送失败";
             }
+
+            self::clearCode($mobile);
 
             throw new ApiException($msg);
         }
