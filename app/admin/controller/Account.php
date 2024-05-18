@@ -42,6 +42,9 @@ class Account extends Base
             $item['hostTotal'] = $hostTotal;
         }
 
+        // 更新uniacid列表
+        Cache::set(CacheKeyEnum::SYSTEM_UNIACID_LIST_KEY, Db::name('sys_account')->where(['status' => 1, 'deleted' => 0])->column('uniacid'));
+
         $vars = [
             'hostUrl' => $this->request->host(),
             'list'    => $list,
