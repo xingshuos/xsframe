@@ -63,6 +63,9 @@ let myConfig = {
         'table': "js/web/table",
         'util': "js/web/util",
     },
+    // shim配置项中的每个条目都代表一个非AMD模块，并包含以下两个关键属性：
+    // deps：这是一个数组，列出了该模块所依赖的其他模块。这些依赖模块将首先被加载，然后才会加载当前模块。
+    // exports：这是一个字符串，指定了从当前模块中导出到全局空间的变量名或对象属性名。这允许其他模块通过RequireJS引用该模块时，能够使用正确的接口。
     shim: {
         ueditor: {
             deps: ["/app/admin/static/components/ueditor/third-party/zeroclipboard/ZeroClipboard.min.js", "/app/admin/static/components/ueditor/ueditor.config.js"],
