@@ -242,7 +242,7 @@ class SysMemberService extends BaseService
     private function checkMember($type, $value, $nickname = '', $avatar = '', $memberInfo = null, $updateData = [], $autoLogin = true)
     {
         if (empty($memberInfo)) {
-            $memberInfo = self::getInfo([$type => $value, 'uniacid' => $this->uniacid]);
+            $memberInfo = self::getInfo([$type => $value, 'uniacid' => $this->uniacid, 'is_deleted' => 0]);
         }
 
         if (!$memberInfo) {
