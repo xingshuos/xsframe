@@ -215,7 +215,7 @@ class SysMemberService extends BaseService
     private function getMemberInfo($username, $code = null, $testCode = null): array
     {
         if (!preg_match("/^1[3456789]{1}\d{9}$/", $username) && !filter_var($username, FILTER_VALIDATE_EMAIL) && strlen($username) < 6) {
-            throw new ApiException("请输入正确的账号信息·".$username);
+            throw new ApiException("请输入正确的账号信息");
         }
 
         if (!empty($code)) {

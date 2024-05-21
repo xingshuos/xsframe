@@ -214,8 +214,8 @@ class SmsService extends BaseService
             return true;
         }
 
-        if (!preg_match("/^1[3456789]{1}\d{9}$/", $username) && !filter_var($username, FILTER_VALIDATE_EMAIL) && strlen($username) < 6) {
-            throw new ApiException("请输入正确的账号信息2".$username);
+        if (!preg_match("/^1[3456789]{1}\d{9}$/", $username) && !filter_var($username, FILTER_VALIDATE_EMAIL)) {
+            throw new ApiException("请输入正确的账号信息");
         }
 
         if (!isset($sendCode) || $sendCode !== $verifyCode) {
