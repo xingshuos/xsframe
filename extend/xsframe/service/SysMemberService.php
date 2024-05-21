@@ -2,6 +2,7 @@
 
 namespace xsframe\service;
 
+use think\facade\Cache;
 use xsframe\base\BaseService;
 use xsframe\enum\ExceptionEnum;
 use xsframe\exception\ApiException;
@@ -46,6 +47,18 @@ class SysMemberService extends BaseService
             $memberId = $token ? authcode2($token) : 0;
         } else {
             $memberId = authcode2($token);
+
+            if (!empty($memberId)) {
+                $deleteKey = $this->getMemberInfoKey() . "_" . $memberId;
+                $deleteMemberId = Cache::get($deleteKey);
+
+                if ($deleteMemberId) {
+                    $memberId = 0;
+                    Cache::delete($deleteKey);
+                }
+
+            }
+
         }
 
         if (empty($memberId)) {
@@ -139,10 +152,9 @@ class SysMemberService extends BaseService
             } else {
                 throw new ApiException("当前账号不存在");
             }
-
         }
 
-        return self::checkMember($type, $username, null, null, $memberInfo, $updateData);
+        return self::checkMember($type, $username, null, null, $memberInfo, $updateData, $autoLogin);
     }
 
 
@@ -273,8 +285,6 @@ class SysMemberService extends BaseService
             }
 
             $memberId = self::insertInfo($insertData);
-
-            if (!$memberId) throw new ApiException('创建用户信息失败，请稍后再试');
         } else {
             $memberId = $memberInfo['id'];
 
@@ -303,7 +313,7 @@ class SysMemberService extends BaseService
             }
         }
 
-        return $this->getToken($memberId, $autoLogin);
+        return $memberId ? $this->getToken($memberId, $autoLogin) : false;
     }
 
     // 获取登录凭证token
@@ -317,8 +327,11 @@ class SysMemberService extends BaseService
     }
 
     // 退出登录
-    public function logout(): bool
+    public function logout($memberId = null): bool
     {
+        if ($memberId) {
+            Cache::set($this->getMemberInfoKey() . "_" . $memberId, false, 86400 * 30);
+        }
         return isetcookie($this->getMemberInfoKey(), false, -100);
     }
 
