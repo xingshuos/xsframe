@@ -177,11 +177,11 @@ CREATE TABLE `#__sys_member`
     `isblack`       tinyint(1) DEFAULT '0' COMMENT '是否拉入黑名单 0否 1是',
     `job`           varchar(30)    DEFAULT '' COMMENT '工作职务',
     PRIMARY KEY (`id`) USING BTREE,
-    KEY `idx_jt_openid` (`jt_openid`),
-    KEY `idx_username` (`username`),
-    KEY `idx_mobile` (`mobile`),
-    KEY `idx_wechat_openid` (`wechat_openid`),
-    KEY `idx_ali_openid` (`ali_openid`)
+    KEY             `idx_jt_openid` (`jt_openid`),
+    KEY             `idx_username` (`username`),
+    KEY             `idx_mobile` (`mobile`),
+    KEY             `idx_wechat_openid` (`wechat_openid`),
+    KEY             `idx_ali_openid` (`ali_openid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='系统会员表';
 
 DROP TABLE IF EXISTS `#__sys_member_address`;
@@ -294,6 +294,22 @@ CREATE TABLE `#__sys_paylog`
     KEY          `idx_tid` (`ordersn`),
     KEY          `idx_uniacid` (`uniacid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `#__sys_queue`;
+
+CREATE TABLE `#__sys_queue`
+(
+    `id`         int(10) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+    `uniacid`    int(10) NOT NULL DEFAULT '0' COMMENT '商户uniacid',
+    `module`     varchar(20) NOT NULL DEFAULT '' COMMENT '应用标识',
+    `key`        varchar(50) NOT NULL COMMENT '队列key值',
+    `tag`        text COMMENT '业务数据 可以是json或者serialize 格式',
+    `status`     tinyint(1) DEFAULT '0' COMMENT '执行状态 0未执行 1已执行 -1执行失败 2已执行（执行后删除）',
+    `createtime` int(11) DEFAULT '0' COMMENT '创建时间',
+    `sign`       varchar(100)         DEFAULT '' COMMENT '唯一标识防止重复添加（特殊情境下可能需要）',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统队列表'
+
 
 DROP TABLE IF EXISTS `#__sys_settings`;
 
