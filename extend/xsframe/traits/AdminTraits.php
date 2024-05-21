@@ -199,23 +199,24 @@ trait AdminTraits
                 $this->error("参数错误");
             }
 
+            $updateData = [];
+            $fieldList = Db::name($this->tableName)->getFields();
+            if (array_key_exists('deleted', $fieldList)) {
+                $updateData['deleted'] = 1;
+            }
+            if (array_key_exists('delete_time', $fieldList)) {
+                $updateData['delete_time'] = TIMESTAMP;
+            }
+            if (array_key_exists('is_deleted', $fieldList)) {
+                $updateData['is_deleted'] = 1;
+            }
+
             $items = Db::name($this->tableName)->where(['id' => $id])->select();
             foreach ($items as $item) {
                 if (!empty($item['is_default'])) {
                     $this->error("默认项不能被删除");
                 }
-
-                $updateData = [];
-                if (array_key_exists('deleted', $item)) {
-                    $updateData['deleted'] = 1;
-                }
-                if (array_key_exists('delete_time', $item)) {
-                    $updateData['delete_time'] = TIMESTAMP;
-                }
-                if (array_key_exists('is_deleted', $item)) {
-                    $updateData['is_deleted'] = 1;
-                }
-                Db::name($this->tableName)->where(["id" => $item['id']])->update($updateData);
+                Db::name($this->tableName)->where(['uniacid' => $this->uniacid, "id" => $item['id']])->update($updateData);
             }
         }
         $this->success(["url" => referer()]);
@@ -235,7 +236,7 @@ trait AdminTraits
                 $this->error("参数错误");
             }
 
-            $items = Db::name($this->tableName)->where(['id' => $id])->select();
+            $items = Db::name($this->tableName)->where(['uniacid' => $this->uniacid, 'id' => $id])->select();
             foreach ($items as $item) {
                 if (!empty($item['is_default'])) {
                     $this->error("默认项不能被删除");
@@ -260,9 +261,18 @@ trait AdminTraits
                 $this->error("参数错误");
             }
 
+            $updateData = [];
+            $fieldList = Db::name($this->tableName)->getFields();
+            if (array_key_exists('deleted', $fieldList)) {
+                $updateData['deleted'] = 0;
+            }
+            if (array_key_exists('is_deleted', $fieldList)) {
+                $updateData['is_deleted'] = 0;
+            }
+
             $items = Db::name($this->tableName)->where(['id' => $id])->select();
             foreach ($items as $item) {
-                Db::name($this->tableName)->where(["id" => $item['id']])->update(['deleted' => 0]);
+                Db::name($this->tableName)->where(["id" => $item['id']])->update($updateData);
             }
         }
         $this->success(["url" => referer()]);

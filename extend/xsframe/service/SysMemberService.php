@@ -2,6 +2,7 @@
 
 namespace xsframe\service;
 
+use think\facade\Cache;
 use xsframe\base\BaseService;
 use xsframe\enum\ExceptionEnum;
 use xsframe\exception\ApiException;
@@ -46,6 +47,18 @@ class SysMemberService extends BaseService
             $memberId = $token ? authcode2($token) : 0;
         } else {
             $memberId = authcode2($token);
+
+            if (!empty($memberId)) {
+                $deleteKey = $this->getMemberInfoKey() . "_" . $memberId;
+                $deleteMemberId = Cache::get($deleteKey);
+
+                if ($deleteMemberId) {
+                    $memberId = 0;
+                    Cache::delete($deleteKey);
+                }
+
+            }
+
         }
 
         if (empty($memberId)) {
@@ -139,10 +152,9 @@ class SysMemberService extends BaseService
             } else {
                 throw new ApiException("当前账号不存在");
             }
-
         }
 
-        return self::checkMember($type, $username, null, null, $memberInfo, $updateData);
+        return self::checkMember($type, $username, null, null, $memberInfo, $updateData, $autoLogin);
     }
 
 
@@ -202,7 +214,7 @@ class SysMemberService extends BaseService
     // 通过账号获取用户信息
     private function getMemberInfo($username, $code = null, $testCode = null): array
     {
-        if (!preg_match("/^1[3456789]{1}\d{9}$/", $username) && !filter_var($username, FILTER_VALIDATE_EMAIL)) {
+        if (!preg_match("/^1[3456789]{1}\d{9}$/", $username) && !filter_var($username, FILTER_VALIDATE_EMAIL) && strlen($username) < 6) {
             throw new ApiException("请输入正确的账号信息");
         }
 
@@ -210,13 +222,13 @@ class SysMemberService extends BaseService
             SmsServiceFacade::checkSmsCode($username, $code, $testCode);
         }
 
-        $memberInfo = self::getInfo(['username' => $username, 'uniacid' => $this->uniacid], "id,password,salt");
+        $memberInfo = self::getInfo(['username' => $username, 'uniacid' => $this->uniacid, 'is_deleted' => 0], "id,password,salt");
         $type = "username";
         if (empty($memberInfo)) {
-            $memberInfo = self::getInfo(['mobile' => $username, 'uniacid' => $this->uniacid], "id,password,salt");
+            $memberInfo = self::getInfo(['mobile' => $username, 'uniacid' => $this->uniacid, 'is_deleted' => 0], "id,password,salt");
             $type = "mobile";
             if (empty($memberInfo)) {
-                $memberInfo = self::getInfo(['email' => $username, 'uniacid' => $this->uniacid], "id,password,salt");
+                $memberInfo = self::getInfo(['email' => $username, 'uniacid' => $this->uniacid, 'is_deleted' => 0], "id,password,salt");
                 $type = "email";
                 if (empty($memberInfo)) {
                     if (!filter_var($username, FILTER_VALIDATE_EMAIL)) {
@@ -242,7 +254,7 @@ class SysMemberService extends BaseService
     private function checkMember($type, $value, $nickname = '', $avatar = '', $memberInfo = null, $updateData = [], $autoLogin = true)
     {
         if (empty($memberInfo)) {
-            $memberInfo = self::getInfo([$type => $value, 'uniacid' => $this->uniacid]);
+            $memberInfo = self::getInfo([$type => $value, 'uniacid' => $this->uniacid, 'is_deleted' => 0]);
         }
 
         if (!$memberInfo) {
@@ -273,8 +285,6 @@ class SysMemberService extends BaseService
             }
 
             $memberId = self::insertInfo($insertData);
-
-            if (!$memberId) throw new ApiException('创建用户信息失败，请稍后再试');
         } else {
             $memberId = $memberInfo['id'];
 
@@ -303,7 +313,7 @@ class SysMemberService extends BaseService
             }
         }
 
-        return $this->getToken($memberId, $autoLogin);
+        return $memberId ? $this->getToken($memberId, $autoLogin) : false;
     }
 
     // 获取登录凭证token
@@ -317,8 +327,11 @@ class SysMemberService extends BaseService
     }
 
     // 退出登录
-    public function logout(): bool
+    public function logout($memberId = null): bool
     {
+        if ($memberId) {
+            Cache::set($this->getMemberInfoKey() . "_" . $memberId, false, 86400 * 30);
+        }
         return isetcookie($this->getMemberInfoKey(), false, -100);
     }
 

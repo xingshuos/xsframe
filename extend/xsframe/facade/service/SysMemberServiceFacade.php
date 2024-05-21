@@ -24,7 +24,7 @@ use xsframe\service\SysMemberService;
  * @method static setCredit($userId, string $filed, int|mixed $value, array|string $remark = [])
  * @method static getToken(int $memberId)
  * @method static register(mixed|string $username, string $code = null, int $testCode = null, array $updateData = [])
- * @method static logout()
+ * @method static logout(int $memberId = null)
  */
 class SysMemberServiceFacade extends BaseFacade
 {
