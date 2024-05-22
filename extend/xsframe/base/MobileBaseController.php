@@ -36,7 +36,6 @@ abstract class MobileBaseController extends BaseController
     // 初始化
     protected function _mobile_initialize()
     {
-
     }
 
     // 引入后端模板
