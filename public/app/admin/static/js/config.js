@@ -7,7 +7,7 @@ let myConfig = {
         'jquery': 'components/jquery/jquery-1.11.1.min',
         'jquery.form': 'components/jquery/jquery.form',
         'jquery.gcjs': 'components/jquery/jquery.gcjs',
-        'jquery.validate': 'components/jquery/jquery.validate.min',
+        'jquery.validate': 'validate.min',
         'jquery.nestable': 'components/jquery/nestable/jquery.nestable',
         'jquery.qrcode': 'components/jquery/jquery.qrcode.min',
 
