@@ -21,30 +21,10 @@ use xsframe\util\FileUtil;
 abstract class WebBaseController extends BaseController
 {
     protected $clientBaseType = 'web';
-    protected $pIndex;
-    protected $pSize;
-
-    protected $app;
-    protected $header;
-    protected $params;
-
-    protected $siteRoot;
-    protected $view;
-
-    protected $controller;
-    protected $action;
-    protected $url;
-    protected $iaRoot;
-
-    protected $expire = 86400;
 
     public function __construct(Request $request, App $app)
     {
         parent::__construct($request, $app);
-
-        $this->header = $this->request->header();
-        $this->app = $app;
-        $this->params = $this->request->param();
 
         if (method_exists($this, '_home_initialize')) {
             $this->_home_initialize();
