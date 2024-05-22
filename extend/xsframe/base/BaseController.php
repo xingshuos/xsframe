@@ -324,4 +324,50 @@ abstract class BaseController extends Controller
 
         return $url;
     }
+
+    // 自动执行客户端页面
+    protected function runWeb($filename = 'index', $version = null)
+    {
+        $this->baseRun('pc', $filename = 'index', $version = null);
+    }
+
+    // 自动执行客户端页面
+    protected function runMobile($filename = 'index', $version = null)
+    {
+        $this->baseRun('mobile', $filename = 'index', $version = null);
+    }
+
+    // 自动访问资源模版
+    protected function baseRun($entry, $filename, $version = null)
+    {
+        $addonsName = $this->module;
+
+        $template = "{$addonsName}/{$entry}/{$filename}.html";
+
+        $source = IA_ROOT . "/public/app/" . $template;
+
+        if (!strexists($filename, 'version')) {
+            $versionPath = IA_ROOT . "/public/app/" . $addonsName . "/{$entry}/version";
+
+            if (empty($version)) {
+                $trees = FileUtil::dirsOnes($versionPath);
+                $version = end($trees);
+                if (!empty($version)) {
+                    $template = "{$addonsName}/{$entry}/version/{$version}/{$filename}.html";
+                }
+            }
+
+            $source = IA_ROOT . "/public/app/{$addonsName}/{$entry}/version/{$version}/{$filename}.html";
+        }
+
+        if (!is_file($source)) {
+            exit("template source '{$template}' is not exist!");
+        } else {
+            echo "<script>let uniacid = `{$this->uniacid}`;</script>";
+            echo "<script>let version = '1.0';</script>";
+            echo "<script>let module = `{$this->module}`;</script>";
+            /*echo "<script>let apiroot = `{$this->siteRoot}`;</script>";*/
+            require_once $source;
+        }
+    }
 }
