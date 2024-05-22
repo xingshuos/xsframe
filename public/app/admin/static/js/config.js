@@ -1,4 +1,5 @@
 let version = +new Date();
+
 let myConfig = {
     baseUrl: '/app/admin/static/',
     path: '/app/admin/static/',
