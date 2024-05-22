@@ -16,6 +16,7 @@ use think\App;
 use think\Request;
 use think\response\Json;
 use xsframe\enum\SysSettingsKeyEnum;
+use xsframe\util\FileUtil;
 
 abstract class WebBaseController extends BaseController
 {
@@ -63,6 +64,40 @@ abstract class WebBaseController extends BaseController
     // 初始化
     protected function _init()
     {
+    }
+
+    // 自动执行客户端页面
+    public function runPc($filename = 'index', $version = null)
+    {
+        $addonsName = $this->module;
+
+        $template = "{$addonsName}/pc/{$filename}.html";
+
+        $source = IA_ROOT . "/public/app/" . $template;
+
+        if (!strexists($filename, 'version')) {
+            $versionPath = IA_ROOT . "/public/app/" . $addonsName . "/pc/version";
+
+            if (empty($version)) {
+                $trees = FileUtil::dirsOnes($versionPath);
+                $version = end($trees);
+                if (!empty($version)) {
+                    $template = "{$addonsName}/pc/version/{$version}/{$filename}.html";
+                }
+            }
+
+            $source = IA_ROOT . "/public/app/{$addonsName}/pc/version/{$version}/{$filename}.html";
+        }
+
+        if (!is_file($source)) {
+            exit("template source '{$template}' is not exist!");
+        } else {
+            echo "<script>let uniacid = `{$this->uniacid}`;</script>";
+            echo "<script>let version = '1.0';</script>";
+            echo "<script>let module = `{$this->module}`;</script>";
+            /*echo "<script>let apiroot = `{$this->siteRoot}`;</script>";*/
+            require_once $source;
+        }
     }
 
     // 引入模板
