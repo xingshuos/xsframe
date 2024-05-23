@@ -1977,6 +1977,12 @@ modal
     background: #f6f6f6;
     border: none
 }
+.modal-header:hover {
+    cursor: grab;
+}
+.modal-header:active {
+    cursor: grabbing;
+}
 
 .modal-content {
     -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .1);
