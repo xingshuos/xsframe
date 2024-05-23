@@ -65,20 +65,22 @@ class ExceptionHandler extends Handle
                     'line'  => $e->getLine(),
                     'trace' => $e->getTrace(),
                 ];
-
-                // 记录异常信息到日志
-                $logData = [
-                    'url'       => $request->url(),
-                    'method'    => $request->method(),
-                    'ip'        => $request->ip(),
-                    'params'    => $request->param(),
-                    'exception' => $e->getMessage(),
-                    'code'      => $e->getCode(),
-                    'file'      => $e->getFile(),
-                    'line'      => $e->getLine(),
-                ];
-                LoggerUtil::error($logData);
             }
+
+            // 记录异常信息到日志 start
+            $logData = [
+                'url'       => $request->url(),
+                'method'    => $request->method(),
+                'ip'        => $request->ip(),
+                'params'    => $request->param(),
+                'exception' => $e->getMessage(),
+                'code'      => $e->getCode(),
+                'file'      => $e->getFile(),
+                'line'      => $e->getLine(),
+            ];
+            LoggerUtil::error($logData);
+            // end
+
             return json($result, $code);
         }
 
