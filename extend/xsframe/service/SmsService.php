@@ -298,6 +298,8 @@ class SmsService extends BaseService
                 $msg = $this->sms_error_code($result['Code']);
                 if (is_array($msg)) {
                     $msg = $msg['msg'];
+                } else {
+                    $msg = $result['Message'];
                 }
             } else {
                 $msg = "短信发送失败";
@@ -384,7 +386,7 @@ class SmsService extends BaseService
             ],
         ];
 
-        return $msgs[$code];
+        return !empty($msgs[$code]) ? $msgs[$code] : "";
     }
 
 }
