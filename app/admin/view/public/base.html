@@ -53,7 +53,7 @@
     <script src="__ADMIN_FONTS__/shop/iconfont.js"></script>
     <script type="text/javascript" src="__ADMIN_COMPONENT__/jquery/jquery-1.11.1.min.js"></script>
     <script type="text/javascript" src="__ADMIN_JS__/web/util.js"></script>
-    <script type="text/javascript" src="__ADMIN_COMPONENT__/bootstrap/bootstrap.min.js"></script>
+    <!-- <script type="text/javascript" src="__ADMIN_COMPONENT__/bootstrap/bootstrap.min.js"></script> -->
     <script type="text/javascript" src="__ADMIN_JS__/web/common.min.js"></script>
     <script type="text/javascript" src="__ADMIN_JS__/require.js"></script>
     <script src="__ADMIN_JS__/config.js"></script>
@@ -168,8 +168,7 @@
         }
     </script>
 
-    <div class="modal fade" id="public_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-         aria-hidden="true"></div>
+    <div class="modal fade" id="public_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
 
     <script>
         // 计算页面高度
@@ -182,8 +181,9 @@
 
     <script>
         // 适当的post表单页面进行引用
-        require(['bootstrap', 'jquery.ui'], function ($) {
+        require(['bootstrap'], function ($) {
 
+            // 解决层级层级问题
             $('[data-toggle="popover"]').popover("destroy").popover({
                 container: $(document.body)
             });
@@ -220,11 +220,13 @@
 
             /*添加拖拽功能 start*/
             $(document).on("show.bs.modal", ".modal", function () {
-                $(this).draggable({
-                    handle: ".modal-header",   // 只能点击头部拖动
-                    cursor: 'move',
-                });
-                $(this).css("overflow", "hidden"); // 防止出现滚动条，出现的话，你会把滚动条一起拖着走的
+                require(['jquery.ui'],() => {
+                    $(this).draggable({
+                        handle: ".modal-header",   // 只能点击头部拖动
+                        cursor: 'move',
+                    });
+                    $(this).css("overflow", "hidden"); // 防止出现滚动条，出现的话，你会把滚动条一起拖着走的
+                })
             });
             /*添加拖拽功能 end*/
 
