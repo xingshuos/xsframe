@@ -78,7 +78,7 @@ class PayService extends BaseService
      * @return string|array
      * @throws ApiException
      */
-    public function wxNative($ordersn, $price, $serviceType = 1, string $title = '')
+    public function wxNative($ordersn, $price, $serviceType = 1, string $title = '',string $notifyUrl='')
     {
         try {
             $body = $title;
@@ -90,7 +90,10 @@ class PayService extends BaseService
 
             if (!$this->wxPayService instanceof WxPayService) {
                 $paymentSet = $this->account['settings']['wxpay'];
-                $notifyUrl = $this->siteRoot . "/" . $this->module . "/wechat/notify";
+                if(empty($notifyUrl)){
+                     $notifyUrl = $this->siteRoot . "/" . $this->module . "/wechat/notify";
+                }
+              
 
                 if (empty($paymentSet['appid']) || empty($paymentSet['mchid']) || empty($paymentSet['apikey'])) {
                     throw new ApiException("后台微信支付配置信息未配置");
