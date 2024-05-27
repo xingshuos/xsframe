@@ -202,7 +202,7 @@ class SmsService extends BaseService
     }
 
     // 校验验证码 过期时间默认一个小时
-    public function checkSmsCode($username, $verifyCode, $testCode = null, $clear = true, $expirationTime = 600): bool
+    public function checkSmsCode($username, $verifyCode, $testCode = null, $clear = false, $expirationTime = 600): bool
     {
         $key = $this->getKey($this->codeKey . $username);
         $keyTime = $this->getKey($this->codeTimeKey . $username);
@@ -226,9 +226,8 @@ class SmsService extends BaseService
             throw new ApiException("验证码失效，请重新获取!");
         }
 
-        if ($clear) {
-            Cache::delete($key);
-            Cache::delete($keyTime);
+        if ($clear) { // 验证成功删除验证码
+            self::clearCode($username);
         }
 
         return true;
