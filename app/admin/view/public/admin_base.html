@@ -5,22 +5,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    {block name='title'}
-    <title>{$websiteSets['name']}</title>
-    {/block}
-    {block name='keywords'}
-    <meta name="keywords" content="{$websiteSets['keywords']}">
-    {/block}
-    {block name='description'}
-    <meta name="description" content="{$websiteSets['description']}">
-    {/block}
+    <title>{block name='title'}{$websiteSets['name']}{/block}</title>
+    <meta name="keywords" content="{block name='keywords'}{$websiteSets['keywords']}{/block}">
+    <meta name="description" content="{block name='description'}{$websiteSets['description']}{/block}">
+    <link rel="shortcut icon" href="{if !empty($websiteSets['logo'])}{:tomedia($websiteSets['logo'])}{else}favicon.ico{/if}">
 
-    <link rel="shortcut icon"
-          href="{if !empty($websiteSets['logo'])}{:tomedia($websiteSets['logo'])}{else}favicon.ico{/if}">
-
+    {block name='baseCss'}
     <link rel="stylesheet" href="__ADMIN_COMPONENT__/bootstrap/bootstrap.min.css">
 
-    <link href="__ADMIN_FONTS__/awesome/font-awesome.min.css?v=3.2.1" rel="stylesheet">
     <link href="__ADMIN_COMPONENT__/animate/animate.css" rel="stylesheet">
 
     <!--商城icon 后期将作废-->
@@ -33,6 +25,11 @@
 
     <!--后台装修-->
     <link href="__ADMIN_CSS__/admin.css?v=4.1.0" rel="stylesheet">
+    {/block}
+
+    {block name='baseFont'}
+    <link href="__ADMIN_FONTS__/awesome/font-awesome.min.css?v=3.2.1" rel="stylesheet">
+    {/block}
 
     <script>var require = {urlArgs: 'v=20211031'};</script>
 
