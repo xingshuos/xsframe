@@ -53,7 +53,7 @@
     <script src="__ADMIN_FONTS__/shop/iconfont.js"></script>
     <script type="text/javascript" src="__ADMIN_COMPONENT__/jquery/jquery-1.11.1.min.js"></script>
     <script type="text/javascript" src="__ADMIN_JS__/web/util.js"></script>
-    <!-- <script type="text/javascript" src="__ADMIN_COMPONENT__/bootstrap/bootstrap.min.js"></script> -->
+    <script type="text/javascript" src="__ADMIN_COMPONENT__/bootstrap/bootstrap.min.js"></script>
     <script type="text/javascript" src="__ADMIN_JS__/web/common.min.js"></script>
     <script type="text/javascript" src="__ADMIN_JS__/require.js"></script>
     <script src="__ADMIN_JS__/config.js"></script>
@@ -180,10 +180,9 @@
     </script>
 
     <script>
-        // 适当的post表单页面进行引用
-        require(['bootstrap'], function ($) {
-
-            // 解决层级层级问题
+        // 二维码
+        $(() => {
+            // 鼠标移入弹出信息框
             $('[data-toggle="popover"]').popover("destroy").popover({
                 container: $(document.body)
             });
@@ -230,10 +229,6 @@
             });
             /*添加拖拽功能 end*/
 
-        });
-
-        // 二维码
-        $(() => {
             require(['jquery.qrcode'], function () {
                 $(".qrcode-box").hover(function () {
                     $(this).children('.qrcode').show().html("").qrcode({

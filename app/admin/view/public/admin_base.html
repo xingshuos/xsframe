@@ -402,9 +402,9 @@
 </script>
 
 <script>
-    // 适当的post表单页面进行引用
-    require(['bootstrap'], function ($) {
-
+    // 二维码
+    $(() => {
+        // 鼠标移入弹出信息框
         $('[data-toggle="popover"]').popover("destroy").popover({
             container: $(document.body)
         });
@@ -451,10 +451,6 @@
         });
         /*添加拖拽功能 end*/
 
-    });
-
-    // 二维码
-    $(() => {
         require(['jquery.qrcode'], function () {
             $(".qrcode-box").hover(function () {
                 $(this).children('.qrcode').show().html("").qrcode({
