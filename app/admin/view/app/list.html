@@ -87,10 +87,10 @@
             <div class="page-table-header">
                 <input type='checkbox'/>
                 <div class="btn-group" style="margin-left: 15px;">
-                    <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('admin/app/change',array('type' => 'status','value'=>1))}"><i class='icow icow-xianshi'></i> 启用</button>
-                    <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('admin/app/change',array('type' => 'status','value'=>0))}"><i class='icow icow-yincang'></i> 禁用</button>
+                    <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('admin/app/change',array('type' => 'status','value'=>1))}"><i class='icon icon-eye-open'></i> 启用</button>
+                    <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('admin/app/change',array('type' => 'status','value'=>0))}"><i class='icon icon-eye-close'></i> 禁用</button>
                     <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('admin/app/change',['type' => 'is_deleted','value' => 1])}">
-                        <i class='icow icow-shanchu1'></i> 删除
+                        <i class='icon icon-trash'></i> 删除
                     </button>
                     {if $do == 'delete'}
                         <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要恢复?" data-href="{:webUrl('admin/app/change',['type' => 'is_deleted','value' => 0])}">
@@ -239,10 +239,10 @@
                     <td><input type="checkbox"></td>
                     <td colspan="5">
                         <div class="btn-group">
-                            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('admin/app/change',array('type' => 'status','value'=>1))}"><i class='icow icow-xianshi'></i> 启用</button>
-                            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('admin/app/change',array('type' => 'status','value'=>0))}"><i class='icow icow-yincang'></i> 禁用</button>
+                            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('admin/app/change',array('type' => 'status','value'=>1))}"><i class='icon icon-eye-open'></i> 启用</button>
+                            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('admin/app/change',array('type' => 'status','value'=>0))}"><i class='icon icon-eye-close'></i> 禁用</button>
                             <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('admin/app/change',['type' => 'is_deleted','value' => 1])}">
-                                <i class='icow icow-shanchu1'></i> 删除
+                                <i class='icon icon-trash'></i> 删除
                             </button>
                             {if $do == 'delete'}
                             <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要恢复?" data-href="{:webUrl('admin/app/change',['type' => 'is_deleted','value' => 0])}">

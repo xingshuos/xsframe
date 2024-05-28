@@ -5,22 +5,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    
-<title>星数为来</title>
-
-    
+    <title>星数为来</title>
     <meta name="keywords" content="星数为来">
-    
-    
     <meta name="description" content="星数为来数字化引擎框架">
+    <link rel="shortcut icon" href="http://www.xsframe.com/attachment/images/global/2023/11/WVZETlzf9x9jXxz7.png">
+
     
-
-    <link rel="shortcut icon"
-          href="http://www.xsframe.com/attachment/images/global/2023/11/WVZETlzf9x9jXxz7.png">
-
     <link rel="stylesheet" href="/app/admin/static/components/bootstrap/bootstrap.min.css">
 
-    <link href="/app/admin/static/fonts/awesome/font-awesome.min.css?v=3.2.1" rel="stylesheet">
     <link href="/app/admin/static/components/animate/animate.css" rel="stylesheet">
 
     <!--商城icon 后期将作废-->
@@ -33,6 +25,11 @@
 
     <!--后台装修-->
     <link href="/app/admin/static/css/admin.css?v=4.1.0" rel="stylesheet">
+    
+
+    
+    <link href="/app/admin/static/fonts/awesome/font-awesome.min.css?v=3.2.1" rel="stylesheet">
+    
 
     <script>var require = {urlArgs: 'v=20211031'};</script>
 
@@ -254,13 +251,13 @@
                         </a>
                     </li>
                                     <li data-href="/admin/login/logout.html" class="wb-header-logout">
-                        <a><i class="icow icow-exit"></i> 退出系统</a>
+                        <a><i class="icon icon-off"></i> 退出系统</a>
                     </li>
                 
             </ul>
         </li>
         <li data-toggle="tooltip" data-placement="bottom" title="" data-href="/admin/login/logout.html" data-original-title="退出" class="wb-header-logout">
-            <a><i class="icow icow-exit"></i></a>
+            <a><i class="icon icon-off"></i></a>
         </li>
     </ul>
 </div>
@@ -525,9 +522,9 @@
 </script>
 
 <script>
-    // 适当的post表单页面进行引用
-    require(['bootstrap', 'jquery.ui'], function ($) {
-
+    // 二维码
+    $(() => {
+        // 鼠标移入弹出信息框
         $('[data-toggle="popover"]').popover("destroy").popover({
             container: $(document.body)
         });
@@ -564,18 +561,16 @@
 
         /*添加拖拽功能 start*/
         $(document).on("show.bs.modal", ".modal", function () {
-            $(this).draggable({
-                handle: ".modal-header",   // 只能点击头部拖动
-                cursor: 'move',
-            });
-            $(this).css("overflow", "hidden"); // 防止出现滚动条，出现的话，你会把滚动条一起拖着走的
+            require(['jquery.ui'],() => {
+                $(this).draggable({
+                    handle: ".modal-header",   // 只能点击头部拖动
+                    cursor: 'move',
+                });
+                $(this).css("overflow", "hidden"); // 防止出现滚动条，出现的话，你会把滚动条一起拖着走的
+            })
         });
         /*添加拖拽功能 end*/
 
-    });
-
-    // 二维码
-    $(() => {
         require(['jquery.qrcode'], function () {
             $(".qrcode-box").hover(function () {
                 $(this).children('.qrcode').show().html("").qrcode({

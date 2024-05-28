@@ -1,8 +1,6 @@
 {extend name="../../admin/view/public/admin_base"}
 
-{block name='title'}
-<title>{$moduleInfo['name'] ? $moduleInfo['name'] : $websiteSets['name']}</title>
-{/block}
+{block name='title'}{$moduleInfo['name'] ? $moduleInfo['name'] : $websiteSets['name']}{/block}
 
 {block name='style'}
 
@@ -101,14 +99,14 @@
                     </li>
                 {else}
                     <li data-href="{:url('admin/login/logout')}" class="wb-header-logout">
-                        <a><i class="icow icow-exit"></i> 退出系统</a>
+                        <a><i class="icon icon-off"></i> 退出系统</a>
                     </li>
                 {/if}
 
             </ul>
         </li>
         <li data-toggle="tooltip" data-placement="bottom" title="" data-href="{:url('admin/login/logout')}" data-original-title="退出" class="wb-header-logout">
-            <a><i class="icow icow-exit"></i></a>
+            <a><i class="icon icon-off"></i></a>
         </li>
     </ul>
 </div>

@@ -41,11 +41,11 @@
     <div class="page-table-header">
         <div class="btn-group">
             <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('perm/roleChange',array('type' => 'status','value'=>1))}">
-                <i class='icow icow-qiyong'></i> 启用</button>
+                <i class='icon icon-eye-open'></i> 启用</button>
             <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch'  data-href="{:webUrl('perm/roleChange',array('type' => 'status','value'=>0))}">
-                <i class='icow icow-jinyong'></i> 禁用</button>
+                <i class='icon icon-eye-close'></i> 禁用</button>
             <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('perm/delete')}">
-                <i class='icow icow-shanchu1'></i> 删除</button>
+                <i class='icon icon-trash'></i> 删除</button>
         </div>
     </div>
     <table class="table table-hover  table-responsive">
@@ -80,12 +80,12 @@
             <td>
                 <a class='btn btn-default btn-sm btn-operation btn-op' href="{:webUrl('perm/rolePost', array('id' => $row['id']))}">
                      <span data-toggle="tooltip" data-placement="top" title="" data-original-title="编辑">
-                        <i class="icow icow-bianji2"></i>
+                        <i class="icon icon-pencil"></i>
                      </span>
                 </a>
                 <a class='btn btn-default  btn-sm btn-operation btn-op' data-toggle="ajaxRemove"  href="{:webUrl('role/roleDelete', array('id' => $row['id']))}" data-confirm="确认删除此角色吗？">
                     <span data-toggle="tooltip" data-placement="top" title="" data-original-title="删除">
-                        <i class='icow icow-shanchu1'></i>
+                        <i class='icon icon-trash'></i>
                     </span>
                 </a>
             </td>
@@ -98,11 +98,11 @@
             <td colspan="2">
                 <div class="input-group-btn">
                     <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('perm/roleChange',array('type' => 'status','value'=>1))}">
-                        <i class='icow icow-qiyong'></i> 启用</button>
+                        <i class='icon icon-eye-open'></i> 启用</button>
                     <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch'  data-href="{:webUrl('perm/roleChange',array('type' => 'status','value'=>0))}">
-                        <i class='icow icow-jinyong'></i> 禁用</button>
+                        <i class='icon icon-eye-close'></i> 禁用</button>
                     <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('perm/roleDelete')}">
-                    <i class='icow icow-shanchu1'></i> 删除</button>
+                    <i class='icon icon-trash'></i> 删除</button>
                 </div>
             </td>
             <td colspan="3" class="text-right"> {$pager | raw}</td>
