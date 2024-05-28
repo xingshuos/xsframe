@@ -404,9 +404,39 @@
 <script>
     // 二维码
     $(() => {
+
         // 鼠标移入弹出信息框
+        $('[data-toggle="tooltip"]').tooltip("destroy").tooltip({
+            container: $(document.body)
+        });
+
         $('[data-toggle="popover"]').popover("destroy").popover({
             container: $(document.body)
+        });
+
+        require(['bootstrap'], function ($) {
+            // 鼠标选中弹出信息框
+            $("[rel=pop]").popover({
+                trigger: 'manual',
+                placement: 'right',
+                title: $(this).data('title'),
+                html: true,
+                content: $(this).data('content'),
+                animation: false
+            }).on("mouseenter", function () {
+                let _this = this;
+                $(this).popover("show");
+                $(this).siblings(".popover").on("mouseleave", function () {
+                    $(_this).popover('hide');
+                });
+            }).on("mouseleave", function () {
+                let _this = this;
+                setTimeout(function () {
+                    if (!$(".popover:hover").length) {
+                        $(_this).popover("hide")
+                    }
+                }, 100);
+            });
         });
 
         // tab切换
@@ -414,29 +444,6 @@
             $('#tab').val($(this).attr('href'));
             e.preventDefault();
             $(this).tab('show');
-        });
-
-        // 鼠标选中弹出信息框
-        $("[rel=pop]").popover({
-            trigger: 'manual',
-            placement: 'right',
-            title: $(this).data('title'),
-            html: 'true',
-            content: $(this).data('content'),
-            animation: false
-        }).on("mouseenter", function () {
-            var _this = this;
-            $(this).popover("show");
-            $(this).siblings(".popover").on("mouseleave", function () {
-                $(_this).popover('hide');
-            });
-        }).on("mouseleave", function () {
-            var _this = this;
-            setTimeout(function () {
-                if (!$(".popover:hover").length) {
-                    $(_this).popover("hide")
-                }
-            }, 100);
         });
 
         /*添加拖拽功能 start*/
