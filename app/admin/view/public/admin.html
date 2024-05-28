@@ -25,11 +25,11 @@
     <ul>
         {if $isSystem}
             <li>
-                <a href="{:url('home/welcome')}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="系统概况"><i class="icow icow-homeL"></i></a>
+                <a href="{:url('home/welcome')}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="系统概况"><i class="icon icon-home"></i></a>
             </li>
         {else}
             <li>
-                <a href="{:url($module.'/web.sets/account')}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="系统概况"><i class="icow icow-homeL"></i></a>
+                <a href="{:url($module.'/web.sets/account')}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="系统概况"><i class="icon icon-home"></i></a>
             </li>
         {/if}
     </ul>
@@ -134,7 +134,7 @@
         {if in_array($userInfo['role'],['operator','owner','manager']) && !$isSystem}
         <li class="sysset wb-nav-system" data-module="{$module}" {if $selSystemNav}style="background-color:#161f29;"{/if}>
             <a href="">
-                <i class="icow icow-qiehuan"></i>
+                <i class="icon icon-cog"></i>
                 <span class="wb-nav-title" data-href="">系统管理</span>
             </a>
         </li>
