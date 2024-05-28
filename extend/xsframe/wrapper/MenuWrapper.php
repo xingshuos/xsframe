@@ -17,11 +17,10 @@ use think\facade\Config;
 class MenuWrapper
 {
     // 获取菜单
-    public static function getMenusList($role, $module, $controller, $action, $full = true, $configKey = 'menu')
+    public static function getMenusList($role, $module, $controller, $action, $full = true, $configKey = 'menu'): ?array
     {
         $allMenus = Config::get($configKey);
-        $menusList = self::buildMenu($role, $allMenus, $module, $controller, $action, $full);
-        return $menusList;
+        return self::buildMenu($role, $allMenus, $module, $controller, $action, $full);
     }
 
     // 定义菜单结构
@@ -30,6 +29,7 @@ class MenuWrapper
         $return_menu = [];
         $return_submenu = [];
         $submenu = [];
+        $pageTitle = "";
 
         $module = realModuleName($module);
 
@@ -54,6 +54,11 @@ class MenuWrapper
                     $menu_item['active'] = 1;
                     $submenu = $val;
                     $return_submenu['subtitle'] = $submenu['subtitle'];
+
+                    $pageTitle = $submenu['subtitle'];
+                    if (empty($pageTitle)) {
+                        $pageTitle = $submenu['title'];
+                    }
                 }
 
                 # 设置一级目录路由 start
@@ -164,6 +169,7 @@ class MenuWrapper
                                 if ($return_menu_child['route'] != $actionTmp && !in_array($actionTmp, ['add', 'edit', 'post'])) {
                                     $return_menu_child['active'] = 0;
                                 } else {
+                                    $pageTitle = $return_menu_child['title'];
                                     $return_menu_child['active'] = 1;
                                 }
                             }
@@ -234,8 +240,9 @@ class MenuWrapper
         }
 
         return [
-            'menu'    => $return_menu,
-            'submenu' => $return_submenu
+            'menu'      => $return_menu,
+            'submenu'   => $return_submenu,
+            'pageTitle' => $pageTitle,
         ];
     }
 }

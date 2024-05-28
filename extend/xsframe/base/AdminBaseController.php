@@ -88,8 +88,11 @@ abstract class AdminBaseController extends BaseController
         return view($name, $var);
     }
 
-    // 生成静态文件
-    protected function buildHtml($htmlFile = '', $htmlPath = '', $templateFile = '', $templateVars = [])
+    /**
+     * 生成静态文件
+     * @throws \Exception
+     */
+    protected function buildHtml($htmlFile = '', $htmlPath = '', $templateFile = '', $templateVars = []): string
     {
         $templateVars = $this->getDefaultVars($templateVars);
 
@@ -103,12 +106,12 @@ abstract class AdminBaseController extends BaseController
 
     protected function success($data = [], $code = 1)
     {
-        return show_json($code, $data);
+        show_json($code, $data);
     }
 
     protected function error($data = [], $code = 0)
     {
-        return show_json($code, $data);
+        show_json($code, $data);
     }
 
     private function getDefaultVars($params = null): array
@@ -116,6 +119,8 @@ abstract class AdminBaseController extends BaseController
         if (!empty($this->moduleSetting['basic']) && !empty($this->moduleSetting['basic']['name'])) {
             $this->moduleInfo = array_merge(!empty($this->moduleInfo) ? $this->moduleInfo : [], $this->moduleSetting['basic']);
         }
+
+        $menusList = MenuWrapper::getMenusList($this->adminSession['role'], $this->module, $this->controller, $this->action);
 
         $var = [];
         $var['module'] = $this->module;
@@ -130,7 +135,8 @@ abstract class AdminBaseController extends BaseController
         $var['moduleAttachUrl'] = $this->moduleAttachUrl;
         $var['token'] = RandomUtil::random(8);
         $var['isSystem'] = $this->isSystem;
-        $var['menusList'] = MenuWrapper::getMenusList($this->adminSession['role'], $this->module, $this->controller, $this->action);
+        $var['menusList'] = $menusList;
+        $var['pageTitle'] = empty($menusList['pageTitle']) ? $this->websiteSets['name'] : $menusList['pageTitle'];
         $var['userInfo'] = $this->adminSession;
         $var['websiteSets'] = $this->websiteSets;
 
