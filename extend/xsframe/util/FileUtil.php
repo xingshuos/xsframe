@@ -78,6 +78,7 @@ class FileUtil
     public static function getAppCommands(): array
     {
         $rootPath = str_replace("\\", "/", app()->getRootPath());
+
         $appPath = $rootPath . "app";
         $dirList = FileUtil::dirsOnes($appPath);
 
@@ -86,11 +87,12 @@ class FileUtil
             $appCommands = FileUtil::getDir($appPath . "/$dirItem/command");
             if (!empty($appCommands)) {
                 foreach ($appCommands as $commandItem) {
-                    $commandPath = str_replace($rootPath, "", substr($commandItem['path'], 0, strpos($commandItem['path'], ".")));
+                    $commandPath = str_replace($rootPath, "", rtrim($commandItem['path'],".php"));
                     $commands[] = str_replace("/", "\\", $commandPath);
                 }
             }
         }
+
         return $commands;
     }
 
