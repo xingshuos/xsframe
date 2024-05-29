@@ -16,17 +16,23 @@ use think\facade\Db;
 
 class Util extends Base
 {
+    // 地图组件视图
+    public function map()
+    {
+        return $this->template('map');
+    }
+
     public function moduleSelector($page = 0, $identifie = null)
     {
-        $page       = empty($page) ? max(1, (int)$this->params['page']) : $page;
-        $page_size  = 8;
+        $page = empty($page) ? max(1, (int)$this->params['page']) : $page;
+        $page_size = 8;
         $page_start = ($page - 1) * $page_size;
 
-        $where = array(
+        $where = [
             'status'     => 1,
             'is_install' => 1,
             'is_deleted' => 0,
-        );
+        ];
 
         if (!empty($identifie)) {
             $where['identifie'] = $identifie;
@@ -37,7 +43,7 @@ class Util extends Base
             $where['name'] = Db::raw("like '%" . trim($keywords) . "%'");
         }
 
-        $list  = Db::name('sys_modules')->where($where)->limit($page_start, $page_size)->select();
+        $list = Db::name('sys_modules')->where($where)->limit($page_start, $page_size)->select();
         $count = Db::name('sys_modules')->where($where)->count();
 
         if (!empty($list)) {
@@ -48,8 +54,8 @@ class Util extends Base
         }
 
         $page_num = ceil($count / $page_size);
-        $total    = $page_num;
-        $i        = 1;
+        $total = $page_num;
+        $i = 1;
         while ($page_num) {
             $page_num_arr[] = $i++;
             --$page_num;
@@ -89,7 +95,7 @@ class Util extends Base
         if (is_array($column)) {
             foreach ($column as $ck => &$c) {
                 if (is_string($c)) {
-                    $c = array('name' => $ck, 'title' => $c);
+                    $c = ['name' => $ck, 'title' => $c];
                 } else {
                     if (is_array($c) && !empty($c['title'])) {
                         if (empty($c['name'])) {
@@ -104,7 +110,7 @@ class Util extends Base
             }
         }
 
-        $id     = intval($this->params['id']);
+        $id = intval($this->params['id']);
         $module = Db::name('sys_modules')->where(['id' => $id])->find();
         if (empty($module)) {
             $this->error('此应用已经不存在,请移除');

@@ -13,11 +13,11 @@
 use xsframe\util\StringUtil;
 
 if (!function_exists('tpl_selector')) {
-    function tpl_selector($name, $options = array())
+    function tpl_selector($name, $options = [])
     {
         $options['multi'] = intval($options['multi']);
         $options['buttontext'] = isset($options['buttontext']) ? $options['buttontext'] : '请选择';
-        $options['items'] = isset($options['items']) && $options['items'] ? $options['items'] : array();
+        $options['items'] = isset($options['items']) && $options['items'] ? $options['items'] : [];
         $options['readonly'] = isset($options['readonly']) ? $options['readonly'] : true;
         $options['callback'] = isset($options['callback']) ? $options['callback'] : '';
         $options['key'] = isset($options['key']) ? $options['key'] : 'id';
@@ -32,10 +32,10 @@ if (!function_exists('tpl_selector')) {
         $options['autosearch'] = isset($options['autosearch']) ? $options['autosearch'] : 0;
 
         if (empty($options['items'])) {
-            $options['items'] = array();
+            $options['items'] = [];
         } else {
             if (!is_array2($options['items'])) {
-                $options['items'] = array($options['items']);
+                $options['items'] = [$options['items']];
             }
         }
 
@@ -158,9 +158,9 @@ if (!function_exists('pagination')) {
 
 // 后台生成分页列表
 if (!function_exists('pagination2')) {
-    function pagination2($total, $pageIndex, $pageSize = 15, $url = '', $context = array('before' => 3, 'after' => 2, 'ajaxcallback' => '', 'callbackfuncname' => ''))
+    function pagination2($total, $pageIndex, $pageSize = 15, $url = '', $context = ['before' => 3, 'after' => 2, 'ajaxcallback' => '', 'callbackfuncname' => ''])
     {
-        $pdata = array('tcount' => 0, 'tpage' => 0, 'cindex' => 0, 'findex' => 0, 'pindex' => 0, 'nindex' => 0, 'lindex' => 0, 'options' => '');
+        $pdata = ['tcount' => 0, 'tpage' => 0, 'cindex' => 0, 'findex' => 0, 'pindex' => 0, 'nindex' => 0, 'lindex' => 0, 'options' => ''];
 
         $html = '<div><ul class="pagination pagination-centered"><li><span class="nobg">共' . $total . '条记录</span></li></ul>';
 
@@ -213,7 +213,7 @@ if (!function_exists('pagination2')) {
                 }
 
                 if ($context['after'] != 0 && $context['before'] != 0) {
-                    $range = array();
+                    $range = [];
                     $range['start'] = max(1, $pdata['cindex'] - $context['before']);
                     $range['end'] = min($pdata['tpage'], $pdata['cindex'] + $context['after']);
 
@@ -267,7 +267,7 @@ if (!function_exists('pagination2')) {
  * @param array $options
  * @return string
  */
-function tpl_form_field_image($name, $value = '', $default = '', $options = array())
+function tpl_form_field_image($name, $value = '', $default = '', $options = [])
 {
     if (empty($default)) {
         $default = '/app/admin/static/images/nopic.png';
@@ -277,7 +277,7 @@ function tpl_form_field_image($name, $value = '', $default = '', $options = arra
         $val = tomedia($value);
     }
     if (empty($options['tabs'])) {
-        $options['tabs'] = array('upload' => 'active', 'browser' => '', 'crawler' => '');
+        $options['tabs'] = ['upload' => 'active', 'browser' => '', 'crawler' => ''];
     }
     if (!empty($options['global'])) {
         $options['global'] = true;
@@ -365,7 +365,7 @@ function tpl_form_field_image($name, $value = '', $default = '', $options = arra
  * @return string
  */
 if (!function_exists('tpl_form_field_multi_image')) {
-    function tpl_form_field_multi_image($name, $value = array(), $options = array())
+    function tpl_form_field_multi_image($name, $value = [], $options = [])
     {
         $options['multiple'] = true;
         $options['direct'] = false;
@@ -481,7 +481,7 @@ function tpl_form_field_date($name, $value = '', $withtime = false, $disabled = 
     return $s;
 }
 
-function tpl_ueditor($id, $value = '', $options = array())
+function tpl_ueditor($id, $value = '', $options = [])
 {
     $s = '';
     $options['height'] = empty($options['height']) ? 200 : $options['height'];
@@ -512,7 +512,7 @@ function tpl_ueditor($id, $value = '', $options = array())
     return $s;
 }
 
-function tpl_tinymce($name, $value = '', $options = array())
+function tpl_tinymce($name, $value = '', $options = [])
 {
     $s = '';
     $options['height'] = empty($options['height']) ? 200 : $options['height'];
@@ -572,7 +572,7 @@ function tpl_form_field_color($name, $value = '')
 }
 
 
-function tpl_form_field_location_category($name, $values = array(), $del = false)
+function tpl_form_field_location_category($name, $values = [], $del = false)
 {
     $html = '';
     if (!defined('TPL_INIT_LOCATION_CATEGORY')) {
@@ -596,7 +596,7 @@ function tpl_form_field_location_category($name, $values = array(), $del = false
         define('TPL_INIT_LOCATION_CATEGORY', true);
     }
     if (empty($values) || !is_array($values)) {
-        $values = array('cate' => '', 'sub' => '', 'clas' => '');
+        $values = ['cate' => '', 'sub' => '', 'clas' => ''];
     }
     if (empty($values['cate'])) {
         $values['cate'] = '';
@@ -641,7 +641,7 @@ function tpl_form_field_location_category($name, $values = array(), $del = false
  * @param string $time
  * @return string
  */
-function tpl_form_field_daterange($name, $value = array(), $time = false)
+function tpl_form_field_daterange($name, $value = [], $time = false)
 {
     $s = '';
 
@@ -726,7 +726,7 @@ function tpl_form_field_daterange($name, $value = array(), $time = false)
     return $s;
 }
 
-function tpl_form_field_district($name, $values = array())
+function tpl_form_field_district($name, $values = [])
 {
     $html = '';
     if (!defined('TPL_INIT_DISTRICT')) {
@@ -749,7 +749,7 @@ function tpl_form_field_district($name, $values = array())
         define('TPL_INIT_DISTRICT', true);
     }
     if (empty($values) || !is_array($values)) {
-        $values = array('province' => '', 'city' => '', 'district' => '');
+        $values = ['province' => '', 'city' => '', 'district' => ''];
     }
     if (empty($values['province'])) {
         $values['province'] = '';
@@ -810,7 +810,7 @@ function tpl_form_field_clock($name, $value = '')
     return $s;
 }
 
-function tpl_form_field_calendar($name, $values = array())
+function tpl_form_field_calendar($name, $values = [])
 {
     $html = '';
     if (!defined('TPL_INIT_CALENDAR')) {
@@ -848,7 +848,7 @@ function tpl_form_field_calendar($name, $values = array())
     }
 
     if (empty($values) || !is_array($values)) {
-        $values = array(0, 0, 0);
+        $values = [0, 0, 0];
     }
     $values['year'] = intval($values['year']);
     $values['month'] = intval($values['month']);
@@ -857,7 +857,7 @@ function tpl_form_field_calendar($name, $values = array())
     if (empty($values['year'])) {
         $values['year'] = '1980';
     }
-    $year = array(date('Y'), '1914');
+    $year = [date('Y'), '1914'];
     $html .= '<div class="row row-fix tpl-calendar">
 		<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
 			<select name="' . $name . '[year]" onchange="handlerCalendar(this)" class="form-control tpl-year">
@@ -885,7 +885,7 @@ function tpl_form_field_calendar($name, $values = array())
 }
 
 if (!function_exists('tpl_form_field_video2')) {
-    function tpl_form_field_video2($name, $value = '', $options = array())
+    function tpl_form_field_video2($name, $value = '', $options = [])
     {
         $options['btntext'] = !empty($options['btntext']) ? $options['btntext'] : '选择视频';
 
@@ -925,13 +925,13 @@ if (!function_exists('tpl_form_field_video2')) {
 }
 
 if (!function_exists('tpl_form_field_video')) {
-    function tpl_form_field_video($name, $value = '', $options = array())
+    function tpl_form_field_video($name, $value = '', $options = [])
     {
         if (!is_array($options)) {
-            $options = array();
+            $options = [];
         }
         if (!is_array($options)) {
-            $options = array();
+            $options = [];
         }
         $options['direct'] = true;
         $options['multi'] = false;
@@ -976,10 +976,10 @@ if (!function_exists('tpl_form_field_video')) {
     }
 }
 
-function tpl_form_field_audio($name, $value = '', $options = array())
+function tpl_form_field_audio($name, $value = '', $options = [])
 {
     if (!is_array($options)) {
-        $options = array();
+        $options = [];
     }
     $options['direct'] = true;
     $options['multiple'] = false;
@@ -1063,7 +1063,7 @@ function tpl_form_field_audio($name, $value = '', $options = array())
 }
 
 
-function tpl_form_field_multi_audio($name, $value = array(), $options = array())
+function tpl_form_field_multi_audio($name, $value = [], $options = [])
 {
     $s = '';
     $options['direct'] = false;
@@ -1128,7 +1128,7 @@ function tpl_form_field_multi_audio($name, $value = array(), $options = array())
 </div>
 <div class="input-group multi-audio-details clear-fix" style="margin-top:.5em;">';
     if (!empty($value) && !is_array($value)) {
-        $value = array($value);
+        $value = [$value];
     }
     if (is_array($value) && count($value) > 0) {
         $n = 0;
@@ -1154,4 +1154,49 @@ function tpl_form_field_multi_audio($name, $value = array(), $options = array())
 </div>';
 
     return $s;
+}
+
+if (!function_exists('tpl_form_field_position')) {
+    function tpl_form_field_position($field, $value = [])
+    {
+        $s = '';
+
+        if (!defined('TPL_INIT_COORDINATE')) {
+            $s .= '<script type="text/javascript">
+                    function showCoordinate(elm) {
+                        
+                            var val = {};
+                            val.lng = parseFloat($(elm).parent().prev().prev().find(":text").val());
+                            val.lat = parseFloat($(elm).parent().prev().find(":text").val());
+                            val = biz.BdMapToTxMap(val.lat,val.lng);
+                            biz.map(val, function(r){
+                                var address_label = $("#address_label");
+                                if (address_label.length>0)
+                                {
+                                    address_label.val(r.label);
+                                }
+                                r = biz.TxMapToBdMap(r.lat,r.lng);
+                                $(elm).parent().prev().prev().find(":text").val(r.lng);
+                                $(elm).parent().prev().find(":text").val(r.lat);
+                            },"' . '/admin/util/map.html' . '");
+    }
+    
+                </script>';
+            define('TPL_INIT_COORDINATE', true);
+        }
+
+        $s .= '
+            <div class="row row-fix">
+                <div class="col-xs-4 col-sm-4">
+                    <input type="text" name="' . $field . '[lng]" value="' . $value['lng'] . '" placeholder="地理经度"  class="form-control" />
+                </div>
+                <div class="col-xs-4 col-sm-4">
+                    <input type="text" name="' . $field . '[lat]" value="' . $value['lat'] . '" placeholder="地理纬度"  class="form-control" />
+                </div>
+                <div class="col-xs-4 col-sm-4">
+                    <button onclick="showCoordinate(this);" class="btn btn-default" type="button">选择坐标</button>
+                </div>
+            </div>';
+        return $s;
+    }
 }
