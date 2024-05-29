@@ -12,6 +12,8 @@
 
 namespace xsframe\util;
 
+use think\Exception;
+use xsframe\exception\ApiException;
 
 class RandomUtil
 {
@@ -19,11 +21,11 @@ class RandomUtil
     /**
      * 生成随机订单号
      * @param $prefix
-     * @param $length
-     * @param $numeric
+     * @param int $length
+     * @param bool $numeric
      * @return string
      */
-    public static function createOrderNum($prefix, $length = 18, $numeric = true): string
+    public static function createOrderNum($prefix, int $length = 18, bool $numeric = true): string
     {
         return $prefix . self::random($length, $numeric);
     }
@@ -34,7 +36,7 @@ class RandomUtil
      * @param bool $numeric 1是数字
      * @return string
      */
-    public static function random($length, $numeric = false): string
+    public static function random($length, bool $numeric = false): string
     {
         $seed = base_convert(md5(microtime() . $_SERVER['DOCUMENT_ROOT']), 16, $numeric ? 10 : 35);
         $seed = $numeric ? (str_replace('0', '', $seed) . '012340567890') : ($seed . 'zZ' . strtoupper($seed));
@@ -68,7 +70,7 @@ class RandomUtil
      * @param int $convert 转换大小写
      * @return string
      */
-    public static function randomAll($length = 6, $type = 'all', $convert = 0): string
+    public static function randomAll(int $length = 6, string $type = 'all', int $convert = 0): string
     {
         $config = [
             'number' => '1234567890',
@@ -98,26 +100,31 @@ class RandomUtil
     }
 
     /**
-     * @param $key string 用户ID或唯一值
+     * 生成AppID
+     * @param $key int|string 用户ID或唯一值
      * @param int $length
      * @return string
      */
     public static function generateAppId(string $key, int $length = 18): string
     {
+        $key = (string)$key;
         // 字符集：小写字母和数字
         $characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
         $charactersLength = strlen($characters);
 
         // 使用用户ID作为秘钥的一部分
         $appId = '';
-        $userIdHex = dechex($key); // 将用户ID转换为十六进制
-        // 确保用户ID部分至少占一定长度（这里假设至少4位）
-        $appId .= str_pad(strtoupper($userIdHex), 4, '0', STR_PAD_LEFT)[0] . substr(strtoupper($userIdHex), 1); // 取首字母大写，其余小写
 
         // 生成剩余的随机部分
         $remainingLength = $length - strlen($appId);
+
+        if ($remainingLength < 0) {
+            // 如果用户ID太长，则无法生成指定长度的秘钥
+            $appId = self::random($length);
+        }
+
         for ($i = 0; $i < $remainingLength; $i++) {
-            $index = @random_int(0, $charactersLength - 1);
+            $index = mt_rand(0, $charactersLength - 1);
             $appId .= $characters[$index];
         }
 
