@@ -138,6 +138,9 @@ class Frames extends AdminBaseController
                 $id = FrameVersionServiceFacade::insertInfo($data);
             }
 
+            # 创建版本文件（md5_file对比有格式不一致问题）
+            // $this->createVersionFile($data['version']);
+
             # 创建框架版本文件夹 是否存在最新版本 如果存在不允许再次发布到旧版本中
             $upgradeInfo = FrameVersionServiceFacade::getInfo(['status' => 1, 'deleted' => 0], "version,title,updatetime", "id desc");
             if (!version_compare($upgradeInfo['version'], $data['version'], '>')) {
@@ -156,13 +159,38 @@ class Frames extends AdminBaseController
         return $this->template('post', ['item' => $item]);
     }
 
+    // 创建版本文件
+    private function createVersionFile($version): void
+    {
+        $versionFile = IA_ROOT . "/public/version.php";
+        $content = <<<EOF
+<?php
+// +----------------------------------------------------------------------
+// | 星数 [ WE CAN DO IT JUST THINK ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2023~{date} http://xsframe.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+// +----------------------------------------------------------------------
+// | Author: guiHai <786824455@qq.com>
+// +----------------------------------------------------------------------
+define('IMS_VERSION', '{version}');
+define('IMS_VERSION_TIME', '{time}');
+EOF;
+        $content = str_replace(["{date}", "{version}", "{time}"], [date('Y'), $version, time()], $content);
+        file_put_contents($versionFile, $content);
+        @chmod($versionFile, 0777);
+    }
+
     // 创建软件包
     private function createFramePackage($version): bool
     {
         # 更新系统代码不必考虑是否成功
-        $command = "cd " . IA_ROOT . " && chown www:www * && chmod -R 777 * && git checkout . && git pull && git fetch origin && git reset --hard origin/master && git pull ";
+        $command = "cd " . IA_ROOT . " && git pull ";
         $resultMsg = @shell_exec($command);
         if (!empty($resultMsg) && !StringUtil::strexists($resultMsg, 'Already up-to-date')) {
+            $command = "cd " . IA_ROOT . " && chown www:www * && chmod -R 777 * && git reset --hard origin/master && git pull ";
+            @shell_exec($command);
             LoggerUtil::error($resultMsg);
         }
 
@@ -179,6 +207,7 @@ class Frames extends AdminBaseController
             IA_ROOT . '/vendor',
             IA_ROOT . '/public/index.php',
             IA_ROOT . '/public/router.php',
+            IA_ROOT . '/public/version.php',
         ];
 
         # 2-2.非同步文件
