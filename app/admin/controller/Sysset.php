@@ -301,7 +301,7 @@ class Sysset extends Base
         $result = [
             'isUpgrade' => $isUpgrade
         ];
-        return $this->success($result);
+        $this->success($result);
     }
 
     // 系统升级
