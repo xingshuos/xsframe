@@ -160,7 +160,7 @@ class Frames extends AdminBaseController
     private function createFramePackage($version): bool
     {
         # 更新系统代码不必考虑是否成功
-        $command = "cd " . IA_ROOT . " && chown www:www * && chmod -R 777 * && git checkout . && git pull && git fetch origin && git reset --hard origin/master ";
+        $command = "cd " . IA_ROOT . " && chown www:www * && chmod -R 777 * && git checkout . && git pull && git fetch origin && git reset --hard origin/master && git pull ";
         $resultMsg = @shell_exec($command);
         if (!empty($resultMsg) && !StringUtil::strexists($resultMsg, 'Already up-to-date')) {
             LoggerUtil::error($resultMsg);
