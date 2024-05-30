@@ -398,7 +398,8 @@ EOF;
                     }
 
                     try {
-                        file_put_contents(IA_ROOT . $filePath, $fileData);
+                        $fileData = str_replace(["\r\n", "\r"], "\n", $fileData);
+                        file_put_contents(IA_ROOT . $filePath, $fileData, FILE_BINARY);
                     } catch (Exception $exception) {
                         $isSuccess = false;
                     }
