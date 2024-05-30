@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns="https://www.xsframe.cn" versionCode="1.0">
+    <application setting="true">
+        <name><![CDATA[云更新]]></name>
+        <identifie><![CDATA[xs_cloud]]></identifie>
+        <version><![CDATA[1.0.1]]></version>
+        <type><![CDATA[business]]></type>
+        <ability><![CDATA[云更新（官网）]]></ability>
+        <description><![CDATA[云更新（官网）]]></description>
+        <author><![CDATA[GuiHai]]></author>
+        <url><![CDATA[https://www.xsframe.cn]]></url>
+    </application>
+    <platform>
+        <supports>
+            <item type="pc" />
+        </supports>
+    </platform>
+    <install><![CDATA[install.php]]></install>
+    <uninstall><![CDATA[uninstall.php]]></uninstall>
+    <upgrade><![CDATA[upgrade.php]]></upgrade>
+</manifest>

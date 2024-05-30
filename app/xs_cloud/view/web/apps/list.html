@@ -1,0 +1,171 @@
+{extend name="../../admin/view/public/admin"}
+
+{block name='content'}
+
+<div class="page-header">当前位置：<span class="text-primary">应用管理</span></div>
+
+<div class="page-content">
+
+    <form action="" method="get" class="form-horizontal form-search" role="form">
+
+        <div class="page-toolbar">
+            <div class="pull-left">
+                <a class='btn btn-primary btn-sm' href="{:webUrl('apps/add')}"><i class='fa fa-plus'></i> 添加应用</a>
+            </div>
+            <div class="pull-right col-md-8">
+                <div class="input-group">
+                    <span class="input-group-select">
+                        <select name='searchtime' class='form-control' style="width:100px;padding:0 5px;" id="searchtime">
+                            <option value=''>不按时间</option>
+                            <option value='create' {if $_GET['searchtime']=='create'}selected{/if}>添加时间</option>
+                            <option value='update' {if $_GET['searchtime']=='update'}selected{/if}>更新时间</option>
+                        </select>
+                    </span>
+                    <span class="input-group-btn">
+                        {:tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
+                    </span>
+                    <div class="input-group-select">
+                        <select name="status" class='form-control'>
+                            <option value="" {if $_GET['status'] == ''} selected{/if}>状态</option>
+                            <option value="1" {if $_GET['status']== '1'} selected{/if}>上架</option>
+                            <option value="0" {if $_GET['status'] == '0'} selected{/if}>下架</option>
+                        </select>
+                    </div>
+                    <input type="text" class="form-control" name='keyword' value="{$_GET['keyword']}" placeholder="请输入关键词、应用号"/>
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit"> 搜索</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    {if empty($list)}
+    <div class="panel panel-default">
+        <div class="panel-body empty-data">未查询到相关数据</div>
+    </div>
+    {else}
+    <form action="" method="post">
+        <table class="table table-responsive table-hover">
+            <thead class="navbar-inner">
+            <tr>
+                <th style="width:40px;"></th>
+                <th style='width:60px;'>应用标识</th>
+                <th style='width:260px;'>应用名称</th>
+                <th style='width:60px'>最新版本</th>
+                <th style='width:60px'>更新次数</th>
+                <th style="width: 80px;">添加时间</th>
+                <th style="width: 80px;">更新时间</th>
+                <th style='width:80px'>状态</th>
+                <th style="width: 100px;">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {foreach $list as $key => $row}
+            <tr>
+                <td>
+                    <input type='checkbox' value="{$row['id']}"/>
+                </td>
+                <td>
+                    {$row['identifier']}
+                </td>
+                <td style="overflow: visible;white-space:normal;">
+                    <div rel="pop" style="display: flex" data-content="">
+                        <img class="img-40" src="{$row['logo']}" style='border-radius:50%;border:1px solid #efefef;' onerror="this.src='__ADMIN_IMG__/nopic.png'"/>
+                        <span style="display: flex;flex-direction: column;justify-content: center;align-items: flex-start;padding-left: 5px">
+                            <span class="nickname">{$row['name']}</span>
+
+                            <span>
+                                {if $row['wechat_support'] == 1}
+                                <label class="label label-success">公众号</label>
+                                {/if}
+                                {if $row['wxapp_support'] == 1}
+                                <label class="label label-wxapp">微信小程序</label>
+                                {/if}
+                                {if $row['pc_support'] == 1}
+                                <label class="label label-primary">PC</label>
+                                {/if}
+                                {if $row['app_support'] == 1}
+                                <label class="label label-info">APP</label>
+                                {/if}
+                                {if $row['h5_support'] == 1}
+                                <label class="label label-warning">H5</label>
+                                {/if}
+                                {if $row['aliapp_support'] == 1}
+                                <label class="label label-aliapp">支付宝小程序</label>
+                                {/if}
+                                {if $row['bdapp_support'] == 1}
+                                <label class="label label-bdapp">百度小程序</label>
+                                {/if}
+                                {if $row['uniapp_support'] == 1}
+                                <label class="label label-uniapp">UinApp</label>
+                                {/if}
+                            </span>
+
+                        </span>
+                    </div>
+                </td>
+                <td class='full'>
+                    <a href='javascript:;' data-toggle="ajaxEdit" data-href="{:webUrl('apps/change',array('type'=>'version','id'=>$row['id']))}">{$row['version']}</a>
+                    <i class="icow icow-weibiaoti-- " data-toggle="ajaxEdit2"></i>
+                </td>
+                <td class='full'>
+                    {$row['updateTotal']}
+                </td>
+                <td>
+                    {:date('Y-m-d',$row['create_time'])}<br>
+                    {:date('H:i:s',$row['create_time'])}
+                </td>
+                <td>
+                    {:date('Y-m-d',$row['update_time'])}<br>
+                    {:date('H:i:s',$row['update_time'])}
+                </td>
+                <td>
+                    <span class='label {if $row['status']==1}label-primary{else}label-default{/if}'
+                    data-toggle='ajaxSwitch'
+                    data-switch-value='{$row['status']}'
+                    data-switch-value0='0|下架|label label-default|{:webUrl('apps/change',array('type' => 'status','value'=>1,'id'=>$row['id']))}'
+                    data-switch-value1='1|上架|label label-primary|{:webUrl('apps/change',array('type' => 'status','value'=>0,'id'=>$row['id']))}'
+                    >
+                    {if $row['status']==1}上架{else}下架{/if}
+                    </span>
+                </td>
+                <td style="text-align:left;">
+                    <a href="{:webUrl('apps/edit', array('id' => $row['id']))}" class="btn btn-op btn-operation">
+                        <span data-toggle="tooltip" data-placement="top" data-original-title="修改">
+                            <i class='icow icow-bianji2'></i>
+                        </span>
+                    </a>
+                    <a data-toggle='ajaxRemove' href="{:webUrl('apps/delete', array('id' => $row['id']))}" class="btn btn-op btn-operation" data-confirm='确认要删除此应用吗?'>
+                        <span data-toggle="tooltip" data-placement="top" data-original-title="删除">
+                            <i class='icow icow-shanchu1'></i>
+                        </span>
+                    </a>
+                </td>
+            </tr>
+            {/foreach}
+            </tbody>
+            <tfoot>
+            <tr>
+                <td><input type="checkbox"></td>
+                <td colspan="3">
+                    <div class="btn-group">
+                        <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('apps/change',array('type' => 'status','value'=>1))}"><i class='icow icow-xianshi'></i> 上架</button>
+                        <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('apps/change',array('type' => 'status','value'=>0))}"><i class='icow icow-yincang'></i> 下架</button>
+                        <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('apps/change',array('type' => 'deleted','value'=>1))}">
+                            <i class='icow icow-shanchu1'></i> 删除
+                        </button>
+                    </div>
+                </td>
+                <td colspan="5" style="text-align: right">
+                    {$pager | raw}
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </form>
+    {/if}
+
+</div>
+
+{/block}
