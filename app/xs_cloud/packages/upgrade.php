@@ -1,7 +1,0 @@
-<?php
-
-$sql = "
-   
-";
-
-return $sql;
