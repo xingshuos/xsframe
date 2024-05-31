@@ -101,35 +101,17 @@ class RandomUtil
 
     /**
      * 生成AppID
-     * @param $key int|string 用户ID或唯一值
-     * @param int $length
+     * @param string $prefix 前缀
+     * @param string $key 唯一值
+     * @param int $length 长度
+     * @param bool $numeric 是否为数字
      * @return string
      */
-    public static function generateAppId(string $key, int $length = 18): string
+    public static function generateAppId(string $prefix, string $key, int $length = 18, bool $numeric = false): string
     {
-        $key = (string)$key;
-        // 字符集：小写字母和数字
-        $characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-        $charactersLength = strlen($characters);
-
-        // 使用用户ID作为秘钥的一部分
-        $appId = '';
-
-        // 生成剩余的随机部分
-        $remainingLength = $length - strlen($appId);
-
-        if ($remainingLength < 0) {
-            // 如果用户ID太长，则无法生成指定长度的秘钥
-            $appId = self::random($length);
-        }
-
-        for ($i = 0; $i < $remainingLength; $i++) {
-            $index = mt_rand(0, $charactersLength - 1);
-            $appId .= $characters[$index];
-        }
-
-        // 打乱字符串以增加随机性（可选）
-        return str_shuffle($appId);
+        $appId = self::random($length - strlen($key), $numeric) . $key;
+        return $prefix . strtolower(str_shuffle($appId));
     }
+
 
 }
