@@ -22,6 +22,10 @@ use think\Facade;
  * @method static customSendSMS(string $mobile, string $tplId, array $data = null, array $smsSet = null, bool $replace = true)
  * @method static send($accessKeyId, $accessKeySecret, $signName, $mobile, string $tplId, array $array)
  * @method static sendLoginCode(string $mobile, string $tplId = null, array $smsSet = null)
+ * @method static sendRegisterCode(string $mobile, string $tplId = null, array $smsSet = null)
+ * @method static sendUpdateCode(string $mobile, string $tplId = null, array $smsSet = null)
+ * @method static sendChangeCode(string $mobile, string $tplId = null, array $smsSet = null)
+ * @method static sendAuthCode(string $mobile, string $tplId = null, array $smsSet = null)
  * @method static sendEmail(string $email, string $subject = null, string $body = null, array $smsSet = null)
  */
 class SmsServiceFacade extends Facade

@@ -127,13 +127,43 @@ class SmsService extends BaseService
     // 发送登录注册验证码
     public function sendLoginCode($mobile, $tplId = null, $smsSet = null): bool
     {
+        return $this->sendCodeByType($mobile, "login_code", $tplId, $smsSet);
+    }
+
+    // 发送登录注册验证码
+    public function sendRegisterCode($mobile, $tplId = null, $smsSet = null): bool
+    {
+        return $this->sendCodeByType($mobile, "register_code", $tplId, $smsSet);
+    }
+
+    // 发送登录注册验证码
+    public function sendUpdateCode($mobile, $tplId = null, $smsSet = null): bool
+    {
+        return $this->sendCodeByType($mobile, "update_code", $tplId, $smsSet);
+    }
+
+    // 发送登录注册验证码
+    public function sendChangeCode($mobile, $tplId = null, $smsSet = null): bool
+    {
+        return $this->sendCodeByType($mobile, "change_code", $tplId, $smsSet);
+    }
+
+    // 发送登录注册验证码
+    public function sendAuthCode($mobile, $tplId = null, $smsSet = null): bool
+    {
+        return $this->sendCodeByType($mobile, "auth_code", $tplId, $smsSet);
+    }
+
+    // 通过类型发送验证码
+    public function sendCodeByType($mobile, $type = "", $tplId = null, $smsSet = null): bool
+    {
         if (!empty($smsSet)) {
             $this->smsSet = ArrayUtil::customMergeArrays($this->smsSet, $smsSet);
         }
 
         if (!empty($this->smsSet)) {
-            if (empty($tplId)) {
-                $tplId = $this->smsSet['login_code'];
+            if (empty($tplId) && !empty($type)) {
+                $tplId = $this->smsSet[$type];
             }
         }
 
