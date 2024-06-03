@@ -1,4 +1,8 @@
 
+:root {
+    --primary-color: #0062ff; /*主题 根据后台可更改*/
+}
+
 ::-webkit-scrollbar {
     width: 4px;
     height: 4px;
@@ -38,7 +42,7 @@ img {
 }
 
 p {
-    
+
 }
 
 ul, li, dl, dd, dt, p, ol, h1, h2, h3, h4, h5, img {
@@ -106,7 +110,7 @@ a.full {
 }
 
 a.js-clip {
-    color: #44abf7;
+    color: var(--primary-color);
 }
 
 select, input:focus, input {
@@ -363,7 +367,7 @@ select, input:focus, input {
     -webkit-background-clip: padding-box;
     background-clip: padding-box;
     border: none;
-    border-radius: 0px;
+    border-radius: 0;
     -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .1);
     box-shadow: 0 6px 12px rgba(0, 0, 0, .1);
     text-align: center;
@@ -623,7 +627,7 @@ select, input:focus, input {
     height: 258px;
     background: #fff;
     -webkit-box-shadow: 0 0px 12px rgba(0, 0, 0, .1);
-    box-shadow: 0px 0px 12px rgba(0, 0, 0, .1);
+    box-shadow: 0 0px 12px rgba(0, 0, 0, .1);
     -webkit-transition: all 0.3s;
     transition: all 0.3s;
 
@@ -797,12 +801,12 @@ select, input:focus, input {
 }
 
 .wb-nav ul li.active {
-    background: #2d8cf0;
+    background: var(--primary-color);
     position: relative;
     z-index: 1;
 }
 
-.wb-nav ul li.active ::after{
+.wb-nav ul li.active ::after {
     display: block;
     content: "";
     position: absolute;
@@ -922,7 +926,7 @@ select, input:focus, input {
 }
 
 .wb-subnav ul li.active a {
-    color: #00aeff;
+    color: var(--primary-color);
 }
 
 .wb-subnav ul li.active:after {
@@ -934,7 +938,7 @@ select, input:focus, input {
     top: 0;
     bottom: 0;
     right: 0;
-    background: #2d8cf0;
+    background: var(--primary-color);
 }
 
 .wb-subnav .wb-subnav-fold {
@@ -1004,7 +1008,7 @@ select, input:focus, input {
 }
 
 .wb-panel .panel-group .panel + .panel {
-    margin-top: 0px;
+    margin-top: 0;
 }
 
 .wb-panel .panel-group .panel + .panel:last-child {
@@ -1075,7 +1079,7 @@ select, input:focus, input {
     display: block;
     position: absolute;
     top: 50%;
-    left: 0px;
+    left: 0;
     width: 0;
     height: 0;
     border: 3px solid;
@@ -1089,7 +1093,7 @@ select, input:focus, input {
     display: block;
     position: absolute;
     top: 50%;
-    left: 0px;
+    left: 0;
     width: 0;
     height: 0;
     border: 3px solid;
@@ -1172,7 +1176,7 @@ select, input:focus, input {
 }
 
 .wb-container.right-panel {
-    margin-right: 0px;
+    margin-right: 0;
 }
 
 .wb-footer {
@@ -1246,8 +1250,8 @@ select, input:focus, input {
 /*图片上传*/
 #select-year .btn-info, #select-month .btn-info {
     color: #fff !important;
-    background: #44abf7 !important;
-    border-color: #44abf7 !important;
+    background: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
 }
 
 .multi-img-details .multi-item {
@@ -1294,12 +1298,12 @@ select, input:focus, input {
 }
 
 .nav-pills > li.active > a, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover {
-    background: #44abf7;
+    background: var(--primary-color);
 }
 
 .uploader .placeholder .webuploader-pick {
     font-size: 18px;
-    background: #44abf7 !important;
+    background: var(--primary-color) !important;
     border-radius: 3px;
     line-height: 44px;
     padding: 0 30px;
@@ -1350,7 +1354,7 @@ select, input:focus, input {
     display: block;
     clear: both;
     list-style: outside none none;
-    padding: 0px;
+    padding: 0;
 }
 
 .history .img-list .img-item {
@@ -1558,7 +1562,7 @@ label > .fa {
     position: relative;
     overflow: hidden;
     border: 1px solid #efefef;
-    margin: 0px;
+    margin: 0;
 }
 
 .order-container .status {
@@ -1606,7 +1610,7 @@ label > .fa {
     padding-right: 0;
     padding: 30px !important;
     padding-left: 15px !important;
-    padding-bottom: 0px !important;
+    padding-bottom: 0 !important;
 }
 
 .order-container .distribution {
@@ -1675,13 +1679,13 @@ label > .fa {
 }
 
 .form-horizontal .form-group.has-error .help-block-validate {
-    color: #eb6060;
+    color: #ff2b1f;
 }
 
 /*问号*/
 .ques-mark {
     position: absolute;
-    right: 0px;
+    right: 0;
     top: 10px;
 }
 
@@ -1723,7 +1727,7 @@ label > .fa {
 .wb-panel-fold {
     height: 34px;
     width: 120px;
-    background: #44abf7;
+    background: var(--primary-color);
     position: fixed;
     right: 15px;
     bottom: 0;
@@ -1767,39 +1771,39 @@ label > .fa {
 }
 
 .form-control.select2-container.select2-dropdown-open {
-    border-color: #44abf7 !important;
+    border-color: var(--primary-color) !important;
 }
 
 .select2-drop-active {
-    border-color: #44abf7 !important;
+    border-color: var(--primary-color) !important;
     border-top: none;
 }
 
 .select2-drop.select2-drop-above.select2-drop-active {
-    border-top-color: #44abf7 !important;
+    border-top-color: var(--primary-color) !important;
 }
 
 .select2-container-active .select2-choice,
 .select2-container-active .select2-choices {
-    border-color: #44abf7 !important;
+    border-color: var(--primary-color) !important;
     outline: none;
 
 }
 
 .select2-dropdown-open.select2-drop-above .select2-choice,
 .select2-dropdown-open.select2-drop-above .select2-choices {
-    border-color: #44abf7 !important;
+    border-color: var(--primary-color) !important;
     border-top-color: transparent;
 
 }
 
 .select2-results .select2-highlighted {
-    background: #44abf7 !important;
+    background: var(--primary-color) !important;
     color: #fff;
 }
 
 .select2-container-multi.select2-container-active .select2-choices {
-    border-color: #44abf7 !important;
+    border-color: var(--primary-color) !important;
     outline: none;
 }
 
@@ -1894,8 +1898,8 @@ label > .fa {
 }
 
 .daterangepicker td.active, .daterangepicker td.active:hover {
-    background-color: #44abf7 !important;
-    border-color: #44abf7 !important;
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
     color: #fff !important;
 }
 
@@ -2098,7 +2102,7 @@ keygen, select, select[size="0"], select[size="1"] {
 }
 
 .form-editor-group .help-block-validate {
-    color: #eb6060;
+    color: #ff2b1f;
 }
 
 /* 时间选择器*/
@@ -2493,7 +2497,7 @@ a.form-control-static {
     top: -70px;
     right: 50px;
     z-index: 999;
-    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
 }
 
 .qrcode-info .qrcode {
@@ -2502,11 +2506,11 @@ a.form-control-static {
     height: 170px;
     padding: 15px;
     background: #fff;
-    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
     margin: 0 auto;
 }
 
-.qrcode .arrow,.qrcode .arrow:after {
+.qrcode .arrow, .qrcode .arrow:after {
     position: absolute;
     display: block;
     width: 0;
@@ -2524,16 +2528,16 @@ a.form-control-static {
     border-width: 10px
 }
 
-.qrcode.top>.arrow {
+.qrcode.top > .arrow {
     bottom: -11px;
     left: 50%;
     margin-left: -11px;
     border-top-color: #999;
-    border-top-color: rgba(0,0,0,.25);
+    border-top-color: rgba(0, 0, 0, .25);
     border-bottom-width: 0
 }
 
-.qrcode.top>.arrow:after {
+.qrcode.top > .arrow:after {
     bottom: 1px;
     margin-left: -10px;
     content: " ";
@@ -2541,16 +2545,16 @@ a.form-control-static {
     border-bottom-width: 0
 }
 
-.qrcode.right>.arrow {
+.qrcode.right > .arrow {
     top: 50%;
     left: -11px;
     margin-top: -11px;
     border-right-color: #999;
-    border-right-color: rgba(0,0,0,.25);
+    border-right-color: rgba(0, 0, 0, .25);
     border-left-width: 0
 }
 
-.qrcode.right>.arrow:after {
+.qrcode.right > .arrow:after {
     bottom: -10px;
     left: 1px;
     content: " ";
@@ -2558,16 +2562,16 @@ a.form-control-static {
     border-left-width: 0
 }
 
-.qrcode.bottom>.arrow {
+.qrcode.bottom > .arrow {
     top: -11px;
     left: 50%;
     margin-left: -11px;
     border-top-width: 0;
     border-bottom-color: #999;
-    border-bottom-color: rgba(0,0,0,.25)
+    border-bottom-color: rgba(0, 0, 0, .25)
 }
 
-.qrcode.bottom>.arrow:after {
+.qrcode.bottom > .arrow:after {
     top: 1px;
     margin-left: -10px;
     content: " ";
@@ -2575,16 +2579,16 @@ a.form-control-static {
     border-bottom-color: #fff
 }
 
-.qrcode.left>.arrow {
+.qrcode.left > .arrow {
     top: 50%;
     right: -11px;
     margin-top: -11px;
     border-right-width: 0;
     border-left-color: #999;
-    border-left-color: rgba(0,0,0,.25)
+    border-left-color: rgba(0, 0, 0, .25)
 }
 
-.qrcode.left>.arrow:after {
+.qrcode.left > .arrow:after {
     right: 1px;
     bottom: -10px;
     content: " ";
@@ -2692,7 +2696,7 @@ a.form-control-static {
 
 /*#modal-fileUploader .browser .img-item .img-container:hover .img-meta{display:none; }*/
 #modal-fileUploader .browser .img-item .img-container:hover {
-    border: 2px solid #2d8cf0;
+    border: 2px solid var(--primary-color);
     box-sizing: border-box;
 }
 
