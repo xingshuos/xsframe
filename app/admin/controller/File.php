@@ -254,7 +254,7 @@ class File extends AdminBaseController
             }
         }
 
-        $pager = pagination($total, $page, $pageSize, '', $context = ['before' => 5, 'after' => 4, 'isajax' => $this->request->isAjax()]);
+        $pager = pagination2($total, $page, $pageSize, '', $context = ['before' => 5, 'after' => 4, 'isajax' => $this->request->isAjax()]);
 
         $result = [
             'items' => $list,
