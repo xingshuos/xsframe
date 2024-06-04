@@ -141,4 +141,34 @@ class JingTanService extends BaseService
         ];
         return $this->client->execute($request);
     }
+
+    // 按SkuId发放藏品资产
+    public function getNftInfoByTenantId($idNo = null, $idType = 'PHONE_NO', $page = 1, $pageSize = 10)
+    {
+        $request = [
+            "method"   => "antchain.nftc.nft.customer.pagequery",
+            "page"     => "{$page}", // ⻚码
+            "pageSize" => "{$pageSize}", // 分⻚⼤⼩-上限10
+            "idNo"     => "{$idNo}", // ⽤户标识
+            "idType"   => "{$idType}", // ⽤户id类型
+            "version"  => "1.0",
+        ];
+        return $this->client->execute($request);
+    }
+
+    // 租户根据sku给⽤户发放藏品
+    public function applyNftBySkuId($skuId, $idNo = null, $orderNo = null, $tenantId = null, $idType = 'PHONE_NO')
+    {
+        $request = [
+            "method"        => "antchain.nftc.nft.transfer.apply",
+            "skuId"         => "{$skuId}", // 藏品标识sku
+            "toIdNo"        => "{$idNo}", // 被转⼊⽤户的⽀付宝uid和⼿机号
+            "toIdType"      => "{$idType}", // 参照idType枚举
+            "priceCent"     => "0", // ⽤户购买价格，可以为0，单位分
+            "orderNo"       => $orderNo, // ⽤户id类型
+            "channelTenant" => $tenantId ?? ($this->config['tenant_id'] ?? ''), // 调⽤⽅渠道租户 必填
+            "version"       => "1.0",
+        ];
+        return $this->client->execute($request);
+    }
 }
