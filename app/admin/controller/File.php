@@ -32,14 +32,14 @@ class File extends AdminBaseController
         parent::_admin_initialize();
 
         $this->curUniacid = $this->params['uniacid'] ?? $this->uniacid;
-        $this->curModule  = $this->params['module'] ?? $this->module;
+        $this->curModule = $this->params['module'] ?? $this->module;
     }
 
     // 上传
     public function upload()
     {
         $type = $this->params['upload_type'];
-        $type = in_array($type, array('image', 'audio', 'video')) ? $type : 'image';
+        $type = in_array($type, ['image', 'audio', 'video']) ? $type : 'image';
 
         $attachmentPath = IA_ROOT . "/public/attachment/";
 
@@ -50,9 +50,9 @@ class File extends AdminBaseController
             die(json_encode($result));
         }
 
-        $folder     = $this->getFolder($type);
+        $folder = $this->getFolder($type);
         $originName = $file->getOriginalName();
-        $ext        = strtolower($file->extension());
+        $ext = strtolower($file->extension());
 
         if (($type == 'image' && !in_array($ext, ['jpg', 'jpeg', 'png', 'gif'])) || ($type == 'audio' && !in_array($ext, ['mp3'])) || ($type == 'video' && !in_array($ext, ['mp4']))) {
             $result['message'] = '文件格式错误' . $ext;
@@ -83,43 +83,43 @@ class File extends AdminBaseController
     public function group_list()
     {
         $uniacid = $this->curUniacid;
-        $type    = $this->params['type'] ?? 0;
+        $type = $this->params['type'] ?? 0;
 
         $list = Db::name('sys_attachment_group')->where(['uniacid' => $uniacid, 'type' => $type])->order("displayorder desc,id desc")->select();
         $list = $list->toArray();
 
-        return $this->returnData($list);
+        $this->returnData($list);
     }
 
     // 添加分组
     public function add_group()
     {
         $uniacid = $this->curUniacid;
-        $type    = $this->params['type'] ?? 0;
+        $type = $this->params['type'] ?? 0;
 
-        $data = (array(
+        $data = ([
             'uid'     => $this->userId,
             'uniacid' => $uniacid,
             'name'    => trim($this->params['name'] ?? ''),
             'type'    => $type,
-        ));
+        ]);
 
         $groupId = Db::name('sys_attachment_group')->insertGetId($data);
 
-        return $this->returnData(['id' => $groupId]);
+        $this->returnData(['id' => $groupId]);
     }
 
     // 更新分组
     public function change_group()
     {
         $name = trim($this->params['name'] ?? '');
-        $id   = intval($this->params['id'] ?? 0);
+        $id = intval($this->params['id'] ?? 0);
 
         if (!empty($name)) {
             Db::name('sys_attachment_group')->where(['id' => $id, 'uniacid' => $this->curUniacid])->update(['name' => $name]);
         }
 
-        return $this->returnData("更新成功");
+        $this->returnData("更新成功");
     }
 
     // 删除分组
@@ -131,33 +131,33 @@ class File extends AdminBaseController
             Db::name('sys_attachment_group')->where(['id' => $id, 'uniacid' => $this->curUniacid])->delete();
         }
 
-        return $this->returnData("删除成功");
+        $this->returnData("删除成功");
     }
 
     // 更新文件分组
     public function move_to_group()
     {
         $group_id = intval($this->params['id'] ?? 0);
-        $ids      = $this->params['keys'] ?? '';
-        $ids      = safe_gpc_array($ids);
+        $ids = $this->params['keys'] ?? '';
+        $ids = safe_gpc_array($ids);
 
         Db::name('sys_attachment')->where(['id' => $ids])->update(['group_id' => $group_id]);
-        return $this->returnData("更新成功");
+        $this->returnData("更新成功");
     }
 
     // 获取音频列表
     public function voice()
     {
-        $uniacid   = $this->curUniacid;
+        $uniacid = $this->curUniacid;
         $condition = ['uniacid' => $uniacid, 'type' => 3];
 
-        $page     = intval($this->params['page'] ?? 1);
-        $page     = max(1, $page);
+        $page = intval($this->params['page'] ?? 1);
+        $page = max(1, $page);
         $pageSize = 20;
 
         $fields = "s.*,s.fileurl attachment";
-        $list   = Db::name('sys_attachment')->alias("s")->field($fields)->where($condition)->order("id desc")->page($this->pIndex, $pageSize)->select();
-        $list   = $list->toArray();
+        $list = Db::name('sys_attachment')->alias("s")->field($fields)->where($condition)->order("id desc")->page($this->pIndex, $pageSize)->select();
+        $list = $list->toArray();
 
         foreach ($list as &$item) {
             $item['url'] = tomedia($item['attachment']);
@@ -165,25 +165,25 @@ class File extends AdminBaseController
 
         $total = Db::name('sys_attachment')->where($condition)->count();
 
-        $pager = pagination2($total, $page, $pageSize, '', $context = array('before' => 5, 'after' => 4, 'isajax' => $this->request->isAjax()));
+        $pager = pagination2($total, $page, $pageSize, '', $context = ['before' => 5, 'after' => 4, 'isajax' => $this->request->isAjax()]);
 
-        $result = array('items' => $list, 'pager' => $pager);
-        return $this->returnData($result);
+        $result = ['items' => $list, 'pager' => $pager];
+        $this->returnData($result);
     }
 
     // 获取视频列表
     public function video()
     {
-        $uniacid   = $this->curUniacid;
+        $uniacid = $this->curUniacid;
         $condition = ['uniacid' => $uniacid, 'type' => 2];
 
-        $page     = intval($this->params['page'] ?? 1);
-        $page     = max(1, $page);
+        $page = intval($this->params['page'] ?? 1);
+        $page = max(1, $page);
         $pageSize = 20;
 
         $fields = "s.*,s.fileurl attachment";
-        $list   = Db::name('sys_attachment')->alias("s")->field($fields)->where($condition)->order("id desc")->page($this->pIndex, $pageSize)->select();
-        $list   = $list->toArray();
+        $list = Db::name('sys_attachment')->alias("s")->field($fields)->where($condition)->order("id desc")->page($this->pIndex, $pageSize)->select();
+        $list = $list->toArray();
 
         foreach ($list as &$item) {
             $item['url'] = tomedia($item['attachment']);
@@ -191,10 +191,10 @@ class File extends AdminBaseController
 
         $total = Db::name('sys_attachment')->where($condition)->count();
 
-        $pager = pagination2($total, $page, $pageSize, '', $context = array('before' => 5, 'after' => 4, 'isajax' => $this->request->isAjax()));
+        $pager = pagination2($total, $page, $pageSize, '', $context = ['before' => 5, 'after' => 4, 'isajax' => $this->request->isAjax()]);
 
-        $result = array('items' => $list, 'pager' => $pager);
-        return $this->returnData($result);
+        $result = ['items' => $list, 'pager' => $pager];
+        $this->returnData($result);
     }
 
 
@@ -204,13 +204,13 @@ class File extends AdminBaseController
         $uniacid = $this->curUniacid;
         $isLocal = $this->params['local'] == 'local';
 
-        $year    = $this->params['year'] ?? '';
-        $month   = $this->params['month'] ?? '';
-        $page    = intval($this->params['page'] ?? 1);
+        $year = $this->params['year'] ?? '';
+        $month = $this->params['month'] ?? '';
+        $page = intval($this->params['page'] ?? 1);
         $groupId = intval($this->params['groupid'] ?? 0);
 
-        $pageSize = 24;
-        $page     = max(1, $page);
+        $pageSize = 20;
+        $page = max(1, $page);
 
         $condition = ['uniacid' => $uniacid, 'type' => 1];
 
@@ -224,14 +224,14 @@ class File extends AdminBaseController
 
         if ($year || $month) {
             $start_time = strtotime("{$year}-{$month}-01");
-            $end_time   = strtotime('+1 month', $start_time);
+            $end_time = strtotime('+1 month', $start_time);
 
             $condition['createtime'] = Db::raw("between {$start_time} and {$end_time} ");
         }
 
         $fields = "s.*,s.fileurl attachment";
-        $list   = Db::name('sys_attachment')->alias("s")->field($fields)->where($condition)->order("id desc")->page($this->pIndex, $pageSize)->select();
-        $list   = $list->toArray();
+        $list = Db::name('sys_attachment')->alias("s")->field($fields)->where($condition)->order("id desc")->page($this->pIndex, $pageSize)->select();
+        $list = $list->toArray();
 
         foreach ($list as &$item) {
             $item['url'] = tomedia($item['attachment']);
@@ -249,21 +249,24 @@ class File extends AdminBaseController
                     unset($meterial['uid']);
                 } else {
                     $meterial['attach'] = tomedia($meterial['fileurl'], null, $uniacid);
-                    $meterial['url']    = $meterial['attach'];
+                    $meterial['url'] = $meterial['attach'];
                 }
             }
         }
 
-        $pager = pagination2($total, $page, $pageSize, '', $context = array('before' => 5, 'after' => 4, 'isajax' => $this->request->isAjax()));
+        $pager = pagination($total, $page, $pageSize, '', $context = ['before' => 5, 'after' => 4, 'isajax' => $this->request->isAjax()]);
 
-        $result = array('items' => $list, 'pager' => $pager);
-        return $this->returnData($result);
+        $result = [
+            'items' => $list,
+            'pager' => $pager,
+        ];
+        $this->returnData($result);
     }
 
     // 提取 目前仅支持图片
     public function fetch()
     {
-        $url  = trim($this->params['url']);
+        $url = trim($this->params['url']);
         $resp = RequestUtil::httpGet($url);
 
         $type = 'image';
@@ -275,9 +278,9 @@ class File extends AdminBaseController
             die(json_encode($result));
         }
 
-        $folder         = $this->getFolder($type);
+        $folder = $this->getFolder($type);
         $attachmentPath = IA_ROOT . "/public/attachment/";
-        $originName     = pathinfo($url, PATHINFO_BASENAME);
+        $originName = pathinfo($url, PATHINFO_BASENAME);
 
         $filename = FileUtil::fileRandomName($attachmentPath . $folder, $ext);
         $fullName = $attachmentPath . $folder . $filename;
@@ -301,8 +304,8 @@ class File extends AdminBaseController
     public function browser()
     {
         $uniacid = $this->curUniacid;
-        $type    = strval($this->params['type']);
-        $path    = strval($this->params['path']);
+        $type = strval($this->params['type']);
+        $path = strval($this->params['path']);
 
         switch ($type) {
             case 'image':
@@ -328,10 +331,10 @@ class File extends AdminBaseController
             $row['url'] = tomedia($row['fileurl']);
         }
 
-        $result = array(
+        $result = [
             'list'      => $list,
             'canDelete' => true, // 是否可以删除 0否 1是
-        );
+        ];
         die(json_encode($result));
     }
 
@@ -345,13 +348,13 @@ class File extends AdminBaseController
         }
 
         if (!is_array($id)) {
-            $id = array(intval($id));
+            $id = [intval($id)];
         }
         $id = safe_gpc_array($id);
 
         $role = $this->adminSession['role'] ?? '';
         if ($role != UserRoleKeyEnum::OWNER_KEY && $role != UserRoleKeyEnum::MANAGER_KEY) {
-            return $this->returnData("您没有权限删除文件", 1);
+            $this->returnData("您没有权限删除文件", 1);
         }
 
         $list = Db::name('sys_attachment')->where(['id' => $id, 'uniacid' => $this->curUniacid])->select()->toArray();
@@ -362,21 +365,21 @@ class File extends AdminBaseController
             $this->fileController->fileDelete($this->curUniacid, $this->curModule, $this->userId, $file);
         }
 
-        return $this->returnData("删除成功");
+        $this->returnData("删除成功");
     }
 
     // 提取网络图片
     public function networktowechat()
     {
-        $url  = $this->params['url'];
+        $url = $this->params['url'];
         $type = $this->params['type'];
 
-        if (!in_array($type, array('image', 'video'))) {
+        if (!in_array($type, ['image', 'video'])) {
             $type = 'image';
         }
 
         $url_host = parse_url($url, PHP_URL_HOST);
-        $is_ip    = preg_match('/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/', $url_host);
+        $is_ip = preg_match('/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/', $url_host);
         if ($is_ip) {
             $this->returnData('网络链接不支持IP地址！', 1);
         }
@@ -387,9 +390,9 @@ class File extends AdminBaseController
             $this->returnData('提取资源失败, 仅支持图片提取（检查地址后缀是否正确）！', 1);
         }
 
-        $folder         = $this->getFolder($type);
+        $folder = $this->getFolder($type);
         $attachmentPath = IA_ROOT . "/public/attachment/";
-        $originName     = pathinfo($url, PATHINFO_BASENAME);
+        $originName = pathinfo($url, PATHINFO_BASENAME);
 
         $filename = FileUtil::fileRandomName($attachmentPath . $folder, $ext);
         $fullName = $attachmentPath . $folder . $filename;
@@ -405,7 +408,7 @@ class File extends AdminBaseController
         if (ErrorUtil::isError($result)) {
             $this->returnData($result['msg'], 1);
         }
-        return $this->returnData($result);
+        $this->returnData($result);
     }
 
     // 获取目录
@@ -427,14 +430,14 @@ class File extends AdminBaseController
     // 数据返回
     private function returnData($data = [], $errno = 0)
     {
-        $vars = array();
+        $vars = [];
 
-        $vars['message']  = [
+        $vars['message'] = [
             'errno'   => $errno,
             'message' => $data,
         ];
         $vars['redirect'] = "";
-        $vars['type']     = 'ajax';
+        $vars['type'] = 'ajax';
 
         exit(json_encode($vars));
     }
