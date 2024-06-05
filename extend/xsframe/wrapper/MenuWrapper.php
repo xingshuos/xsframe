@@ -34,14 +34,20 @@ class MenuWrapper
             if (!empty($menuInfo['items'])) {
                 $route = $key;
                 foreach ($menuInfo['items'] as &$itemInfo) {
-                    if (!empty($itemInfo['url']) && strexists($url, $itemInfo['url'])) {
-                        $menuInfo['active'] = 1;
-                        $currentRouteIsChange = true;
-                        if (!strexists($route, 'web.') && $module != 'admin') {
-                            $route = "web." . $route;
+                    if (!empty($itemInfo['url'])) {
+
+                        $urlArr = explode("/", $url);
+                        $itemUrlArr = explode("/", $itemInfo['url']);
+
+                        if (strexists($urlArr[0], $itemUrlArr[0])) {
+                            $menuInfo['active'] = 1;
+                            $currentRouteIsChange = true;
+                            if (!strexists($route, 'web.') && $module != 'admin') {
+                                $route = "web." . $route;
+                            }
+                            $parentMenuRoute = $route;
+                            $itemInfo['active'] = 1;
                         }
-                        $parentMenuRoute = $route;
-                        $itemInfo['active'] = 1;
                     }
                 }
             }
@@ -85,6 +91,8 @@ class MenuWrapper
                     $menu_item['route'] = "web." . $menu_item['route'];
                 }
 
+                // dump($menu_item);
+
                 if (!empty($val['icon'])) {
                     $menu_item['icon'] = $val['icon'];
                 }
@@ -117,7 +125,15 @@ class MenuWrapper
 
                 # 设置一级目录路由 start
                 if (!empty($val['items'])) {
-                    $itemsOneRoute = $val['items'][0]['route'];
+                    $itemsOneRoute = $val['items'][0]['route'] ?? null;
+
+                    $itemsOneRouteIsChange = false; // 解决一级菜单默认访问url
+                    if (empty($val['items'][0]['route'])) {
+                        $itemsOneRoute = $val['items'][0]['url'] ?? null;
+                        if ($itemsOneRoute) {
+                            $itemsOneRouteIsChange = true;
+                        }
+                    }
 
                     // 操作员权限验证 start
                     if (!in_array($role, ['founder', 'manager', 'owner'])) {
@@ -136,12 +152,18 @@ class MenuWrapper
                     }
                     // 操作员权限验证 end
 
-                    if (strexists($itemsOneRoute, '/')) {
-                        $menu_item['route'] = $module . "/" . $menu_item['route'] . "." . $itemsOneRoute;
+                    if ($itemsOneRouteIsChange) {
+                        if (!strexists($itemsOneRoute, 'web.') && $module != 'admin') {
+                            $itemsOneRoute = "web." . $itemsOneRoute;
+                        }
+                        $menu_item['route'] = $module . "/" . $itemsOneRoute;
                     } else {
-                        $menu_item['route'] = $module . "/" . $menu_item['route'] . "/" . $itemsOneRoute;
+                        if (strexists($itemsOneRoute, '/')) {
+                            $menu_item['route'] = $module . "/" . $menu_item['route'] . "." . $itemsOneRoute;
+                        } else {
+                            $menu_item['route'] = $module . "/" . $menu_item['route'] . "/" . $itemsOneRoute;
+                        }
                     }
-
                 } else {
                     $menu_item['route'] = $module . "/" . $menu_item['route'] . "/index";
                 }
@@ -223,14 +245,11 @@ class MenuWrapper
                             $actionTmpArr = explode("/", $actionTmp);
 
                             if (!$submenuIsActive && strexists($return_menu_child['route'], $actionTmpArr[0]) || (strexists($return_menu_child['route'], 'main') && in_array($actionTmp, ['add', 'edit', 'post']))) {
-                                if ($return_menu_child['route'] != $actionTmp && !in_array($actionTmp, ['add', 'edit', 'post'])) {
+                                if ($return_menu_child['route'] != $actionTmp && !in_array($actionTmp, ['add', 'edit', 'post']) && !strexists($actionTmp, '/add') && !strexists($actionTmp, '/edit') && !strexists($actionTmp, '/post')) {
                                     $return_menu_child['active'] = 0;
-
-                                    // dump($actionTmp);
-
                                 } else {
                                     $pageTitle = $return_menu_child['title'];
-                                    $return_menu_child['active'] = 1;
+                                    $return_menu_child['active'] = $parentMenuIsChange ? 0 : 1;
                                 }
                             }
 
