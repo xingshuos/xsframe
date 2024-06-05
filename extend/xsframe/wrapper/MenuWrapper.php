@@ -234,7 +234,7 @@ class MenuWrapper
                             if ($isMoreDir || $parentMenuIsChange) {
                                 $routeLen = 0;
                                 if (!empty($return_menu_child['route'])) {
-                                    $routeLen = count(explode($return_menu_child['route'], "/"));
+                                    $routeLen = count(explode("/", $return_menu_child['route']));
                                 }
 
                                 if ($routeLen == 1) {
