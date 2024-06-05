@@ -165,7 +165,9 @@
                         </ul>
                     {else}
                         <ul class="single">
-                            <li {if $submenu['active']}class="active"{/if} style=" position: relative"><a href="{:url($submenu['route'])}" style="cursor: pointer;" data-route="{:url($submenu['route'])}">{$submenu['title']}</a></li>
+                            <li {if $submenu['active']}class="active"{/if} style=" position: relative">
+                                <a href="{:url($submenu['url']?:$submenu['route'])}" style="cursor: pointer;" data-route="{:url($submenu['url']?:$submenu['route'])}">{$submenu['title']}</a>
+                            </li>
                         </ul>
                     {/if}
                 {/foreach}

@@ -23,6 +23,36 @@ class MenuWrapper
         return self::buildMenu($role, $allMenus, $module, $controller, $action, $full);
     }
 
+    private static function getChangeParentInfo($allMenus, $module, $controller, $action): array
+    {
+        $url = $controller . "/" . $action;
+
+        $parentMenuRoute = $controller;
+        $currentRouteIsChange = false;
+
+        foreach ($allMenus as $key => &$menuInfo) {
+            if (!empty($menuInfo['items'])) {
+                $route = $key;
+                foreach ($menuInfo['items'] as &$itemInfo) {
+                    if (!empty($itemInfo['url']) && strexists($url, $itemInfo['url'])) {
+                        $menuInfo['active'] = 1;
+                        $currentRouteIsChange = true;
+                        if (!strexists($route, 'web.') && $module != 'admin') {
+                            $route = "web." . $route;
+                        }
+                        $parentMenuRoute = $route;
+                        $itemInfo['active'] = 1;
+                    }
+                }
+            }
+        }
+        return [
+            'allMenus'    => $allMenus,
+            'parentRoute' => $parentMenuRoute,
+            'isChange'    => $currentRouteIsChange,
+        ];
+    }
+
     // 定义菜单结构
     private static function buildMenu($role, $allMenus, $module, $controller, $action, $full)
     {
@@ -30,8 +60,16 @@ class MenuWrapper
         $return_submenu = [];
         $submenu = [];
         $pageTitle = "";
-
         $module = realModuleName($module);
+
+        # 验证当前路由是否调换（子路由调换到其他父级路由中）
+        $getChangeParentInfo = self::getChangeParentInfo($allMenus, $module, $controller, $action);
+
+        $parentMenuRoute = $getChangeParentInfo['parentRoute'] ?? $controller; // 当前路由是否调换
+        $parentMenuIsChange = $getChangeParentInfo['isChange'] ?? false; // 是否已经有选中的菜单
+        $allMenus = $getChangeParentInfo['allMenus'] ?? $allMenus;
+
+        $parentMenuActive = false;// 是否已经有选中的菜单
 
         if ($controller != 'login') {
             foreach ($allMenus as $key => $val) {
@@ -50,8 +88,10 @@ class MenuWrapper
                     $menu_item['icon'] = $val['icon'];
                 }
 
-                if (strexists($controller, $menu_item['route'])) {
+                if (!$parentMenuActive && (strexists($controller, $menu_item['route']) || ($parentMenuIsChange && $menu_item['route'] == $parentMenuRoute))) {
+                    $parentMenuActive = true;
                     $menu_item['active'] = 1;
+
                     $submenu = $val;
                     $return_submenu['subtitle'] = $submenu['subtitle'];
 
@@ -107,21 +147,24 @@ class MenuWrapper
             if (!empty($submenu)) {
                 $menuRoute = $controller;
 
+                if ($parentMenuIsChange) {
+                    $menuRoute = $parentMenuRoute;
+                }
+
                 # 是否存在多级目录
                 $isMoreDir = false;
-                if (count(explode(".", $controller)) == 3) {
+                if (count(explode(".", $controller)) == 3 && !$parentMenuIsChange) {
                     $index = strripos($menuRoute, ".", 0);
                     $menuRoute = substr($menuRoute, 0, $index);
                     $isMoreDir = true;
                 }
 
-                // dump($controller);
-                // dump($submenu['items']);
-                // die;
-
                 if (!empty($submenu['items'])) {
-
+                    $submenuIsActive = false;
                     foreach ($submenu['items'] as $i => $child) {
+                        if (!empty($child['active'])) {
+                            $submenuIsActive = true;
+                        }
 
                         // 操作员权限验证 start
                         if (!in_array($role, ['founder', 'manager', 'owner'])) {
@@ -157,15 +200,15 @@ class MenuWrapper
                         # 二级目录
                         if (empty($child['items'])) {
                             $return_menu_child = [
-                                'title' => $child['title'],
-                                'route' => $child['route'],
+                                'title'  => $child['title'],
+                                'route'  => $child['route'],
+                                'active' => $child['active'] ?? 0,
+                                'url'    => $child['url'] ?? null,
                             ];
-
-                            $return_menu_child['active'] = 0;
 
                             $actionTmpArr = explode("/", $actionTmp);
 
-                            if (strexists($return_menu_child['route'], $actionTmpArr[0]) || (strexists($return_menu_child['route'], 'main') && in_array($actionTmp, ['add', 'edit', 'post']))) {
+                            if (!$submenuIsActive && strexists($return_menu_child['route'], $actionTmpArr[0]) || (strexists($return_menu_child['route'], 'main') && in_array($actionTmp, ['add', 'edit', 'post']))) {
                                 if ($return_menu_child['route'] != $actionTmp && !in_array($actionTmp, ['add', 'edit', 'post'])) {
                                     $return_menu_child['active'] = 0;
                                 } else {
@@ -174,14 +217,21 @@ class MenuWrapper
                                 }
                             }
 
-                            if ($isMoreDir) {
+                            if ($isMoreDir || $parentMenuIsChange) {
                                 $return_menu_child['route'] = $module . "/" . $menuRoute . "." . $return_menu_child['route'];
                             } else {
                                 $return_menu_child['route'] = $module . "/" . $menuRoute . "/" . $return_menu_child['route'];
                             }
 
                             if ($full) {
-                                $return_menu_child['url'] = getSiteRoot() . $return_menu_child['route'];
+                                if ($return_menu_child['url']) {
+                                    if (!strexists($return_menu_child['url'], 'web.') && $module != 'admin') {
+                                        $return_menu_child['url'] = "web." . $return_menu_child['url'];
+                                    }
+                                    $return_menu_child['url'] = getSiteRoot() . $module . "/" . $return_menu_child['url'];
+                                } else {
+                                    $return_menu_child['url'] = getSiteRoot() . $return_menu_child['route'];
+                                }
                             }
 
                             // 子菜单权限验证
@@ -199,6 +249,7 @@ class MenuWrapper
                             foreach ($child['items'] as $ii => $three) {
                                 $return_submenu_three = [
                                     'title'  => $three['title'],
+                                    'url'    => $three['url'] ?? null,
                                     'active' => 0,
                                 ];
 
@@ -221,7 +272,14 @@ class MenuWrapper
                                 }
 
                                 if ($full) {
-                                    $return_submenu_three['url'] = getSiteRoot() . $return_submenu_three['route'];
+                                    if ($return_submenu_three['url']) {
+                                        if (!strexists($return_submenu_three['url'], 'web.') && $module != 'admin') {
+                                            $return_submenu_three['url'] = "web." . $return_submenu_three['url'];
+                                        }
+                                        $return_submenu_three['url'] = getSiteRoot() . $module . "/" . $return_submenu_three['url'];
+                                    } else {
+                                        $return_submenu_three['url'] = getSiteRoot() . $return_submenu_three['route'];
+                                    }
                                 }
 
                                 if (cs($return_submenu_three['route'])) {
