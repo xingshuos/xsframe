@@ -19,7 +19,7 @@ class Base extends AdminBaseController
     // 防止普通用户进入超级管理后台
     public function checkRouter()
     {
-        if ($this->module == 'admin') {
+        if ($this->module == 'admin' && $this->controller != 'util' && $this->action != 'map') {
             $adminSession = $this->adminSession;
 
             if (!empty($adminSession)) {

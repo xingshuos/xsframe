@@ -225,6 +225,9 @@ class MenuWrapper
                             if (!$submenuIsActive && strexists($return_menu_child['route'], $actionTmpArr[0]) || (strexists($return_menu_child['route'], 'main') && in_array($actionTmp, ['add', 'edit', 'post']))) {
                                 if ($return_menu_child['route'] != $actionTmp && !in_array($actionTmp, ['add', 'edit', 'post'])) {
                                     $return_menu_child['active'] = 0;
+
+                                    // dump($actionTmp);
+
                                 } else {
                                     $pageTitle = $return_menu_child['title'];
                                     $return_menu_child['active'] = 1;
