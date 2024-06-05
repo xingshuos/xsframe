@@ -46,6 +46,7 @@ class MenuWrapper
                 }
             }
         }
+
         return [
             'allMenus'    => $allMenus,
             'parentRoute' => $parentMenuRoute,
@@ -77,7 +78,7 @@ class MenuWrapper
                     'route'    => empty($val['route']) ? $key : $val['route'],
                     'text'     => $val['title'],
                     'subtitle' => $val['subtitle'],
-                    'active'   => 0,
+                    'active'   => $val['active'] ?? 0,
                 ];
 
                 if (!strexists($menu_item['route'], 'web.') && $module != 'admin') {
@@ -88,16 +89,29 @@ class MenuWrapper
                     $menu_item['icon'] = $val['icon'];
                 }
 
-                if (!$parentMenuActive && (strexists($controller, $menu_item['route']) || ($parentMenuIsChange && $menu_item['route'] == $parentMenuRoute))) {
-                    $parentMenuActive = true;
-                    $menu_item['active'] = 1;
+                if (!$parentMenuActive) {
+                    $runIn = false;
+                    if ($parentMenuIsChange) {
+                        if ($menu_item['route'] == $parentMenuRoute) {
+                            $runIn = true;
+                        }
+                    } else {
+                        if (strexists($controller, $menu_item['route'])) {
+                            $runIn = true;
+                        }
+                    }
 
-                    $submenu = $val;
-                    $return_submenu['subtitle'] = $submenu['subtitle'];
+                    if ($runIn) {
+                        $parentMenuActive = true;
+                        $menu_item['active'] = 1;
 
-                    $pageTitle = $submenu['subtitle'];
-                    if (empty($pageTitle)) {
-                        $pageTitle = $submenu['title'];
+                        $submenu = $val;
+                        $return_submenu['subtitle'] = $submenu['subtitle'];
+
+                        $pageTitle = $submenu['subtitle'];
+                        if (empty($pageTitle)) {
+                            $pageTitle = $submenu['title'];
+                        }
                     }
                 }
 
