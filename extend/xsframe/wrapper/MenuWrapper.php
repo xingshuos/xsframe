@@ -232,7 +232,16 @@ class MenuWrapper
                             }
 
                             if ($isMoreDir || $parentMenuIsChange) {
-                                $return_menu_child['route'] = $module . "/" . $menuRoute . "." . $return_menu_child['route'];
+                                $routeLen = 0;
+                                if (!empty($return_menu_child['route'])) {
+                                    $routeLen = count(explode($return_menu_child['route'], "/"));
+                                }
+
+                                if ($routeLen == 1) {
+                                    $return_menu_child['route'] = $module . "/" . $menuRoute . "/" . $return_menu_child['route'];
+                                } else {
+                                    $return_menu_child['route'] = $module . "/" . $menuRoute . "." . $return_menu_child['route'];
+                                }
                             } else {
                                 $return_menu_child['route'] = $module . "/" . $menuRoute . "/" . $return_menu_child['route'];
                             }
