@@ -28,16 +28,18 @@
                 <a href="{:url('home/welcome')}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="系统概况"><i class="icon icon-home"></i></a>
             </li>
         {else}
-            <li>
-                <a href="{:url($module.'/web.sets/account')}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="系统概况"><i class="icon icon-home"></i></a>
-            </li>
+            {if in_array($userInfo['role'],['operator','owner','manager']) }
+                <li class="sysset wb-nav-system" data-module="{$module}" style="padding: 0;width: 60px;">
+                    <a href="" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="系统概况"><i class="icon icon-home" style="font-size: 16px;"></i></a>
+                </li>
+            {/if}
         {/if}
     </ul>
 
     <div class="wb-header-flex"></div>
 
     <ul>
-        <li class="dropdown  ellipsis">
+        <li class="dropdown ellipsis">
             <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                 {if $isSystem}
                     {$userInfo['username']}
