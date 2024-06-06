@@ -3,6 +3,7 @@
 namespace xsframe\traits;
 
 use think\facade\Db;
+use xsframe\util\ExcelUtil;
 
 trait AdminTraits
 {
@@ -25,6 +26,11 @@ trait AdminTraits
             $status = $this->params['status'] ?? '';
             $enabled = $this->params['enabled'] ?? '';
             $searchTime = trim($this->params["searchtime"] ?? 0);
+
+            $export = $this->params['export'];
+            $exportTitle = $this->params['export_title'];
+            $exportColumns = $this->params['export_columns'];
+            $exportKeys = $this->params['export_keys'];
 
             $startTime = strtotime("-1 month");
             $endTime = time();
@@ -67,7 +73,45 @@ trait AdminTraits
             }
 
             $field = "*";
-            $list = Db::name($this->tableName)->field($field)->where($condition)->order($this->orderBy)->page($this->pIndex, $this->pSize)->select()->toArray();
+
+            if ($export) {
+                $list = Db::name($this->tableName)->field($field)->where($condition)->order($this->orderBy)->select()->toArray();
+            } else {
+                $list = Db::name($this->tableName)->field($field)->where($condition)->order($this->orderBy)->page($this->pIndex, $this->pSize)->select()->toArray();
+            }
+
+            if ($export) {
+                // 导出支持简单导出列表功能，复杂导出可以自行实现 exportExcelData
+                foreach ($list as &$item) {
+                    if (array_key_exists('createtime', $item)) {
+                        $item['createtime'] = date('Y-m-d H:i:s', $item['createtime']);
+                    }
+                    if (array_key_exists('create_time', $item)) {
+                        $item['create_time'] = date('Y-m-d H:i:s', $item['create_time']);
+                    }
+                    if (array_key_exists('updatetime', $item)) {
+                        $item['updatetime'] = date('Y-m-d H:i:s', $item['updatetime']);
+                    }
+                    if (array_key_exists('update_time', $item)) {
+                        $item['update_time'] = date('Y-m-d H:i:s', $item['update_time']);
+                    }
+                    if (array_key_exists('finishtime', $item)) {
+                        $item['finishtime'] = date('Y-m-d H:i:s', $item['finishtime']);
+                    }
+                    if (array_key_exists('finish_time', $item)) {
+                        $item['finish_time'] = date('Y-m-d H:i:s', $item['finish_time']);
+                    }
+                    if (array_key_exists('canceltime', $item)) {
+                        $item['canceltime'] = date('Y-m-d H:i:s', $item['canceltime']);
+                    }
+                    if (array_key_exists('cancel_time', $item)) {
+                        $item['cancel_time'] = date('Y-m-d H:i:s', $item['cancel_time']);
+                    }
+                }
+                unset($item);
+                $this->exportExcelData($list, $exportColumns, $exportKeys, $exportTitle);
+            }
+
             $total = Db::name($this->tableName)->where($condition)->count();
             $pager = pagination2($total, $this->pIndex, $this->pSize);
 
@@ -82,6 +126,25 @@ trait AdminTraits
         }
 
         return $this->template('list', $result);
+    }
+
+    // 导出列表
+    public function exportExcelData($list, $column = null, $keys = null, $title = null, $last = null)
+    {
+        if (!empty($column) && !empty($keys)) {
+            $title = ($title ?? "数据列表") . "_" . date('YmdHi');
+            $column = explode(",", $column);
+            $keys = explode(",", $keys);
+            $last = explode(",", $last);
+
+            $setWidth = [];
+            for ($i = 0; $i < count($column); $i++) {
+                $setWidth[$i] = 30;
+            }
+
+            $filename = $title;
+            ExcelUtil::export($title, $column, $setWidth, $list, $keys, $last, $filename);
+        }
     }
 
     public function edit()
