@@ -231,7 +231,8 @@ class Account extends Base
                     Db::name('sys_account_modules')->insert($updateData);
                 }
             }
-            if (!empty($modulesIds)) {
+            $isDefaultModule = Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'is_default' => 1])->count();
+            if (empty($isDefaultModule)) {
                 Db::name('sys_account_modules')->where(['uniacid' => $uniacid])->update(['is_default' => 0]);
                 Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'module' => $modulesIds[0]])->update(['is_default' => 1]);
             }

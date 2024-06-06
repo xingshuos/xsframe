@@ -224,4 +224,18 @@ class System extends AdminBaseController
         $this->success(["url" => webUrl("account", ['tab' => str_replace("#tab_", "", $this->params['tab'])])]);
     }
 
+    // 设置默认应用
+    public function setAccountDefaultModule()
+    {
+        $uniacid = $this->params['uniacid'] ?? '';
+        $module = $this->params['module'] ?? '';
+
+        if (!empty($uniacid) && !empty($module)) {
+            Db::name('sys_account_modules')->where(['uniacid' => $uniacid])->update(['is_default' => 0]);
+            Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'module' => $module])->update(['is_default' => 1]);
+        }
+
+        show_json(1);
+    }
+
 }
