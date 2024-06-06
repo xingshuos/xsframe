@@ -415,6 +415,19 @@
         });
 
         require(['bootstrap'], function ($) {
+
+            /*添加拖拽功能 start*/
+            $(document).on("show.bs.modal", ".modal", function () {
+                require(['jquery.ui'],() => {
+                    $(this).draggable({
+                        handle: ".modal-header",   // 只能点击头部拖动
+                        cursor: 'move',
+                    });
+                    $(this).css("overflow", "hidden"); // 防止出现滚动条，出现的话，你会把滚动条一起拖着走的
+                })
+            });
+            /*添加拖拽功能 end*/
+
             // 鼠标选中弹出信息框
             $("[rel=pop]").popover({
                 trigger: 'manual',
@@ -446,17 +459,7 @@
             $(this).tab('show');
         });
 
-        /*添加拖拽功能 start*/
-        $(document).on("show.bs.modal", ".modal", function () {
-            require(['jquery.ui'],() => {
-                $(this).draggable({
-                    handle: ".modal-header",   // 只能点击头部拖动
-                    cursor: 'move',
-                });
-                $(this).css("overflow", "hidden"); // 防止出现滚动条，出现的话，你会把滚动条一起拖着走的
-            })
-        });
-        /*添加拖拽功能 end*/
+
 
         require(['jquery.qrcode'], function () {
             $(".qrcode-box").hover(function () {
