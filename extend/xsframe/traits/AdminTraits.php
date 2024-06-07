@@ -8,7 +8,9 @@ use xsframe\util\ExcelUtil;
 trait AdminTraits
 {
     protected $tableName = '';
-    protected $orderBy = "id desc";
+    protected $condition = [];
+    protected $orderBy = "";
+    protected $result = [];
 
     public function index()
     {
@@ -17,8 +19,6 @@ trait AdminTraits
 
     public function main()
     {
-        $result = [];
-
         if (!empty($this->tableName)) {
             $keyword = $this->params['keyword'] ?? '';
             $kwFields = $this->params['kwFields'] ?? '';
@@ -35,9 +35,8 @@ trait AdminTraits
             $startTime = strtotime("-1 month");
             $endTime = time();
 
-            $condition = [
-                'uniacid' => $this->uniacid,
-            ];
+            $condition = (array)$this->condition;
+            $condition['uniacid'] = $this->uniacid;
 
             $fieldList = Db::name($this->tableName)->getFields();
             if (isset($fieldList['deleted'])) {
@@ -73,6 +72,15 @@ trait AdminTraits
             }
 
             $field = "*";
+
+            if (empty($this->orderBy)) {
+                $isDisplayOrder = $this->checkTableFiledIsExist('displayorder');
+                if ($isDisplayOrder) {
+                    $this->orderBy = "displayorder desc, id desc";
+                } else {
+                    $this->orderBy = "id desc";
+                }
+            }
 
             if ($export) {
                 $list = Db::name($this->tableName)->field($field)->where($condition)->order($this->orderBy)->select()->toArray();
@@ -115,17 +123,14 @@ trait AdminTraits
             $total = Db::name($this->tableName)->where($condition)->count();
             $pager = pagination2($total, $this->pIndex, $this->pSize);
 
-            $result = [
-                'list'  => $list,
-                'pager' => $pager,
-                'total' => $total,
-
-                'starttime' => $startTime,
-                'endtime'   => $endTime,
-            ];
+            $this->result['list'] = $list;
+            $this->result['pager'] = $pager;
+            $this->result['total'] = $total;
+            $this->result['starttime'] = $startTime;
+            $this->result['endtime'] = $endTime;
         }
 
-        return $this->template('list', $result);
+        return $this->template('list', $this->result);
     }
 
     // 导出列表
@@ -159,10 +164,9 @@ trait AdminTraits
 
     public function post()
     {
-        $result = [];
-
         if (!empty($this->tableName)) {
             $id = intval($this->params["id"] ?? 0);
+            $backUrl = trim($this->params['backUrl'] ?? '');
 
             if ($this->request->isPost()) {
                 $fieldList = Db::name($this->tableName)->getFields();
@@ -208,7 +212,11 @@ trait AdminTraits
                 if ($this->params['isModel']) {
                     $this->success();
                 } else {
-                    $this->success(["url" => url("", ['id' => $id, 'tab' => str_replace("#tab_", "", $this->params['tab'])])]);
+                    if (!empty($backUrl)) {
+                        $this->success(["url" => url(rtrim($backUrl, ".html"))]);
+                    } else {
+                        $this->success(["url" => url("", ['id' => $id, 'tab' => str_replace("#tab_", "", $this->params['tab'])])]);
+                    }
                 }
             }
 
@@ -216,12 +224,10 @@ trait AdminTraits
             $condition = ['id' => $id];
             $item = Db::name($this->tableName)->field($field)->where($condition)->find();
 
-            $result = [
-                'item' => $item
-            ];
+            $this->result['item'] = $item;
         }
 
-        return $this->template('post', $result);
+        return $this->template('post', $this->result);
     }
 
     public function change()
@@ -344,8 +350,6 @@ trait AdminTraits
     // 回收站
     public function recycle()
     {
-        $result = [];
-
         if (!empty($this->tableName)) {
             $condition = [
                 'uniacid' => $this->uniacid,
@@ -358,14 +362,12 @@ trait AdminTraits
             $total = Db::name($this->tableName)->where($condition)->count();
             $pager = pagination2($total, $this->pIndex, $this->pSize);
 
-            $result = [
-                'list'  => $list,
-                'pager' => $pager,
-                'total' => $total,
-            ];
+            $this->result['list'] = $list;
+            $this->result['pager'] = $pager;
+            $this->result['total'] = $total;
         }
 
-        return $this->template('recycle', $result);
+        return $this->template('recycle', $this->result);
     }
 
     // 访问入口
@@ -416,5 +418,16 @@ trait AdminTraits
             'moduleSettings' => $moduleSettings
         ];
         return $this->template('module', $var);
+    }
+
+    // 是否存在该字段
+    private function checkTableFiledIsExist($field): bool
+    {
+        $isFiled = false;
+        if (!empty($this->tableName)) {
+            $fieldList = Db::name($this->tableName)->getFields();
+            $isFiled = array_key_exists($field, $fieldList);
+        }
+        return $isFiled;
     }
 }
