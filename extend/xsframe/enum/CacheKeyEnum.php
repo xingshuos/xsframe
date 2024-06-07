@@ -1,7 +1,7 @@
 <?php
 
 
-namespace app\admin\enum;
+namespace xsframe\enum;
 
 use xsframe\base\BaseEnum;
 
@@ -15,6 +15,9 @@ class CacheKeyEnum extends BaseEnum
 
     # 获取全部的商户列表(防止不存在的uniacid被记录)
     const SYSTEM_UNIACID_LIST_KEY = 'system_uniacid_list';
+
+    # 获取全部被禁用的商户列表
+    const SYSTEM_UNIACID_DISABLE_LIST_KEY = 'system_uniacid_disable_list';
 
     # 获取全部的商户应用列表(防止无权限的应用被访问)
     const UNIACID_MODULE_LIST_KEY = 'uniacid_module_list';

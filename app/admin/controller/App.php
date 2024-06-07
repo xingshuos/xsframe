@@ -12,12 +12,12 @@
 
 namespace app\admin\controller;
 
-use app\admin\enum\CacheKeyEnum;
 use think\facade\Cache;
-use xsframe\util\FileUtil;
-use xsframe\wrapper\ModulesWrapper;
-use xsframe\util\PinYinUtil;
 use think\facade\Db;
+use xsframe\enum\CacheKeyEnum;
+use xsframe\util\FileUtil;
+use xsframe\util\PinYinUtil;
+use xsframe\wrapper\ModulesWrapper;
 
 class App extends Base
 {

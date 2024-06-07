@@ -12,10 +12,10 @@
 
 namespace app\admin\controller;
 
-use app\admin\enum\CacheKeyEnum;
 use think\facade\Cache;
-use xsframe\wrapper\AccountHostWrapper;
 use think\facade\Db;
+use xsframe\enum\CacheKeyEnum;
+use xsframe\wrapper\AccountHostWrapper;
 use xsframe\wrapper\UserWrapper;
 
 class Account extends Base
@@ -43,7 +43,7 @@ class Account extends Base
         }
 
         // 更新uniacid列表
-        Cache::set(CacheKeyEnum::SYSTEM_UNIACID_LIST_KEY, Db::name('sys_account')->where(['status' => 1, 'deleted' => 0])->column('uniacid'));
+        $this->reloadUniacidList();
 
         $vars = [
             'hostUrl' => $this->request->host(),
@@ -117,7 +117,7 @@ class Account extends Base
         }
 
         // 更新uniacid列表
-        Cache::set(CacheKeyEnum::SYSTEM_UNIACID_LIST_KEY, Db::name('sys_account')->where(['status' => 1, 'deleted' => 0])->column('uniacid'));
+        $this->reloadUniacidList();
 
         $result = [
             'item'            => $item,
@@ -151,7 +151,7 @@ class Account extends Base
             $uniacid = $item['uniacid'];
             Db::name('sys_account')->where(['uniacid' => $item['uniacid']])->update([$type => $value]);
             // 更新uniacid列表
-            Cache::set(CacheKeyEnum::SYSTEM_UNIACID_LIST_KEY, Db::name('sys_account')->where(['status' => 1, 'deleted' => 0])->column('uniacid'));
+            $this->reloadUniacidList();
             // 更新uniacid的应用列表
             Cache::set(CacheKeyEnum::UNIACID_MODULE_LIST_KEY . "_{$uniacid}", Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'deleted' => 0])->column('module'));
         }
@@ -272,5 +272,14 @@ class Account extends Base
             }
         }
         return true;
+    }
+
+    // 加载uniacid列表
+    private function reloadUniacidList()
+    {
+        # 更新现有uniacid列表
+        Cache::set(CacheKeyEnum::SYSTEM_UNIACID_LIST_KEY, Db::name('sys_account')->where(['status' => 1, 'deleted' => 0])->column('uniacid'));
+        # 更新禁用的uniacid列表
+        Cache::set(CacheKeyEnum::SYSTEM_UNIACID_DISABLE_LIST_KEY, Db::name('sys_account')->whereOr(['status' => 0, 'deleted' => 1])->column('uniacid'));
     }
 }
