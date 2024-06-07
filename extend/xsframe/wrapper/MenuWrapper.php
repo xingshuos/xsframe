@@ -237,13 +237,13 @@ class MenuWrapper
                         if (empty($child['items'])) {
                             $return_menu_child = [
                                 'title'  => $child['title'],
-                                'route'  => strtolower(str_replace("_", "", $child['route'])),
+                                'route'  => $child['route'],
                                 'active' => $child['active'] ?? 0,
                                 'url'    => $child['url'] ?? null,
                             ];
 
                             $actionTmpArr = explode("/", $actionTmp);
-                            if (!$submenuIsActive && strexists($return_menu_child['route'], $actionTmpArr[0]) || (strexists($return_menu_child['route'], 'main') && in_array($actionTmp, ['add', 'edit', 'post']))) {
+                            if (!$submenuIsActive && strexists(strtolower(str_replace("_", "", $child['route'])), $actionTmpArr[0]) || (strexists($return_menu_child['route'], 'main') && in_array($actionTmp, ['add', 'edit', 'post']))) {
                                 if ($return_menu_child['route'] != $actionTmp && !in_array($actionTmp, ['add', 'edit', 'post']) && !strexists($actionTmp, '/add') && !strexists($actionTmp, '/edit') && !strexists($actionTmp, '/post')) {
                                     $return_menu_child['active'] = 0;
                                 } else {
@@ -298,7 +298,7 @@ class MenuWrapper
                                 ];
 
                                 if (!empty($three['route'])) {
-                                    $return_submenu_three['route'] = strtolower(str_replace("_", "", $three['route']));
+                                    $return_submenu_three['route'] = $three['route'];
                                 } else {
                                     $return_submenu_three['route'] = $child['route'];
                                 }
@@ -310,7 +310,7 @@ class MenuWrapper
                                 }
 
                                 if (strexists($return_submenu_three['route'], $action)) {
-                                    if (strexists($return_submenu_three['route'], $controller)) {
+                                    if (strexists(strtolower(str_replace("_", "", $return_submenu_three['route'])), $controller)) {
                                         $return_submenu_three['active'] = 1; // 是否选中
                                     }
                                 }
