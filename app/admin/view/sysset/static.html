@@ -5,8 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <title>星数为来</title>
-    <meta name="keywords" content="星数为来">
+    <title>系统设置-星数引擎</title>
+    <meta name="keywords" content="星数引擎">
     <meta name="description" content="星数为来数字化引擎框架">
     <link rel="shortcut icon" href="http://www.xsframe.com/attachment/images/global/2023/11/WVZETlzf9x9jXxz7.png">
 
@@ -219,7 +219,7 @@
 <div class="wb-header" style="position: fixed;">
     <div class="logo ">
                     <img class="logo-img" src="http://www.xsframe.com/attachment/images/global/2023/11/WVZETlzf9x9jXxz7.png" onerror="this.src='/app/admin/static/images/nopic.png'" data-url="http://www.xsframe.com/attachment/images/global/2023/11/WVZETlzf9x9jXxz7.png">
-            <div class="title">星数为来</div>
+            <div class="title">星数引擎</div>
             </div>
 
     <ul>
@@ -231,7 +231,7 @@
     <div class="wb-header-flex"></div>
 
     <ul>
-        <li class="dropdown  ellipsis">
+        <li class="dropdown ellipsis">
             <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                     admin                <span></span>
             </a>
@@ -310,16 +310,24 @@
                 系统设置            </div>
 
                                     <ul class="single">
-                            <li  style=" position: relative"><a href="/admin/sysset/site.html" style="cursor: pointer;" data-route="/admin/sysset/site.html">站点设置</a></li>
+                            <li  style=" position: relative">
+                                <a href="/admin/sysset/site.html" style="cursor: pointer;" data-route="/admin/sysset/site.html">站点设置</a>
+                            </li>
                         </ul>
                                                             <ul class="single">
-                            <li  style=" position: relative"><a href="/admin/sysset/host.html" style="cursor: pointer;" data-route="/admin/sysset/host.html">域名设置</a></li>
+                            <li  style=" position: relative">
+                                <a href="/admin/sysset/host.html" style="cursor: pointer;" data-route="/admin/sysset/host.html">域名设置</a>
+                            </li>
                         </ul>
                                                             <ul class="single">
-                            <li  style=" position: relative"><a href="/admin/sysset/attachment.html" style="cursor: pointer;" data-route="/admin/sysset/attachment.html">附件设置</a></li>
+                            <li  style=" position: relative">
+                                <a href="/admin/sysset/attachment.html" style="cursor: pointer;" data-route="/admin/sysset/attachment.html">附件设置</a>
+                            </li>
                         </ul>
                                                             <ul class="single">
-                            <li  style=" position: relative"><a href="/admin/sysset/upgrade.html" style="cursor: pointer;" data-route="/admin/sysset/upgrade.html">系统升级</a></li>
+                            <li  style=" position: relative">
+                                <a href="/admin/sysset/upgrade.html" style="cursor: pointer;" data-route="/admin/sysset/upgrade.html">系统升级</a>
+                            </li>
                         </ul>
                                                             <div class='menu-header active data-active'><div class="menu-icon icon icon-caret-down"></div>常用工具</div>
                         <ul style="display: block">
@@ -524,9 +532,52 @@
 <script>
     // 二维码
     $(() => {
+
         // 鼠标移入弹出信息框
+        $('[data-toggle="tooltip"]').tooltip("destroy").tooltip({
+            container: $(document.body)
+        });
+
         $('[data-toggle="popover"]').popover("destroy").popover({
             container: $(document.body)
+        });
+
+        require(['bootstrap'], function ($) {
+
+            /*添加拖拽功能 start*/
+            $(document).on("show.bs.modal", ".modal", function () {
+                require(['jquery.ui'],() => {
+                    $(this).draggable({
+                        handle: ".modal-header",   // 只能点击头部拖动
+                        cursor: 'move',
+                    });
+                    $(this).css("overflow", "hidden"); // 防止出现滚动条，出现的话，你会把滚动条一起拖着走的
+                })
+            });
+            /*添加拖拽功能 end*/
+
+            // 鼠标选中弹出信息框
+            $("[rel=pop]").popover({
+                trigger: 'manual',
+                placement: 'right',
+                title: $(this).data('title'),
+                html: true,
+                content: $(this).data('content'),
+                animation: false
+            }).on("mouseenter", function () {
+                let _this = this;
+                $(this).popover("show");
+                $(this).siblings(".popover").on("mouseleave", function () {
+                    $(_this).popover('hide');
+                });
+            }).on("mouseleave", function () {
+                let _this = this;
+                setTimeout(function () {
+                    if (!$(".popover:hover").length) {
+                        $(_this).popover("hide")
+                    }
+                }, 100);
+            });
         });
 
         // tab切换
@@ -536,40 +587,7 @@
             $(this).tab('show');
         });
 
-        // 鼠标选中弹出信息框
-        $("[rel=pop]").popover({
-            trigger: 'manual',
-            placement: 'right',
-            title: $(this).data('title'),
-            html: 'true',
-            content: $(this).data('content'),
-            animation: false
-        }).on("mouseenter", function () {
-            var _this = this;
-            $(this).popover("show");
-            $(this).siblings(".popover").on("mouseleave", function () {
-                $(_this).popover('hide');
-            });
-        }).on("mouseleave", function () {
-            var _this = this;
-            setTimeout(function () {
-                if (!$(".popover:hover").length) {
-                    $(_this).popover("hide")
-                }
-            }, 100);
-        });
 
-        /*添加拖拽功能 start*/
-        $(document).on("show.bs.modal", ".modal", function () {
-            require(['jquery.ui'],() => {
-                $(this).draggable({
-                    handle: ".modal-header",   // 只能点击头部拖动
-                    cursor: 'move',
-                });
-                $(this).css("overflow", "hidden"); // 防止出现滚动条，出现的话，你会把滚动条一起拖着走的
-            })
-        });
-        /*添加拖拽功能 end*/
 
         require(['jquery.qrcode'], function () {
             $(".qrcode-box").hover(function () {

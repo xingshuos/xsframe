@@ -129,9 +129,9 @@ trait AdminTraits
     }
 
     // 导出列表
-    public function exportExcelData($list, $column = null, $keys = null, $title = null, $last = null)
+    private function exportExcelData($list = [], $column = null, $keys = null, $title = null, $last = null)
     {
-        if (!empty($column) && !empty($keys)) {
+        if (!empty($list) && !empty($column) && !empty($keys)) {
             $title = ($title ?? "数据列表") . "_" . date('YmdHi');
             $column = explode(",", $column);
             $keys = explode(",", $keys);
