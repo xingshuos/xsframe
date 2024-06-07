@@ -11,6 +11,7 @@ trait AdminTraits
     protected $condition = [];
     protected $orderBy = "";
     protected $result = [];
+    private $fieldList = [];
 
     public function index()
     {
@@ -20,6 +21,8 @@ trait AdminTraits
     public function main()
     {
         if (!empty($this->tableName)) {
+            $fieldList = $this->getFiledList();
+
             $keyword = $this->params['keyword'] ?? '';
             $kwFields = $this->params['kwFields'] ?? '';
             $field = $this->params['field'] ?? '';
@@ -38,11 +41,11 @@ trait AdminTraits
             $condition = (array)$this->condition;
             $condition['uniacid'] = $this->uniacid;
 
-            $fieldList = Db::name($this->tableName)->getFields();
-            if (isset($fieldList['deleted'])) {
+            if (array_key_exists('deleted', $fieldList)) {
                 $condition['deleted'] = 0;
             }
-            if (isset($fieldList['is_deleted'])) {
+
+            if (array_key_exists('is_deleted', $fieldList)) {
                 $condition['is_deleted'] = 0;
             }
 
@@ -74,8 +77,7 @@ trait AdminTraits
             $field = "*";
 
             if (empty($this->orderBy)) {
-                $isDisplayOrder = $this->checkTableFiledIsExist('displayorder');
-                if ($isDisplayOrder) {
+                if (array_key_exists('displayorder', $fieldList)) {
                     $this->orderBy = "displayorder desc, id desc";
                 } else {
                     $this->orderBy = "id desc";
@@ -169,7 +171,7 @@ trait AdminTraits
             $backUrl = trim($this->params['backUrl'] ?? '');
 
             if ($this->request->isPost()) {
-                $fieldList = Db::name($this->tableName)->getFields();
+                $fieldList = $this->getFiledList();
                 $updateData = [];
                 foreach ($fieldList as $filed => $fieldItem) {
                     $updateData[$filed] = $this->params[$filed] ?? '';
@@ -269,7 +271,7 @@ trait AdminTraits
             }
 
             $updateData = [];
-            $fieldList = Db::name($this->tableName)->getFields();
+            $fieldList = $this->getFiledList();
             if (array_key_exists('deleted', $fieldList)) {
                 $updateData['deleted'] = 1;
             }
@@ -331,7 +333,7 @@ trait AdminTraits
             }
 
             $updateData = [];
-            $fieldList = Db::name($this->tableName)->getFields();
+            $fieldList = $this->getFiledList();
             if (array_key_exists('deleted', $fieldList)) {
                 $updateData['deleted'] = 0;
             }
@@ -420,14 +422,14 @@ trait AdminTraits
         return $this->template('module', $var);
     }
 
-    // 是否存在该字段
-    private function checkTableFiledIsExist($field): bool
+    // 获取字段列表
+    private function getFiledList(): array
     {
-        $isFiled = false;
-        if (!empty($this->tableName)) {
-            $fieldList = Db::name($this->tableName)->getFields();
-            $isFiled = array_key_exists($field, $fieldList);
+        if (!empty($this->tableName) && empty($this->fieldList)) {
+            $this->fieldList = Db::name($this->tableName)->getFields();
+        } else {
+            $this->fieldList = [];
         }
-        return $isFiled;
+        return $this->fieldList;
     }
 }
