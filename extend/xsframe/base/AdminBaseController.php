@@ -32,6 +32,12 @@ abstract class AdminBaseController extends BaseController
     {
         parent::__construct($request, $app);
         if (method_exists($this, '_admin_initialize')) {
+
+            $this->checkAuth();
+            if ($this->module == 'admin') {
+                $this->isSystem = true;
+            }
+
             $this->_admin_initialize();
         }
     }
@@ -44,10 +50,7 @@ abstract class AdminBaseController extends BaseController
     // 初始化
     public function _admin_initialize()
     {
-        $this->checkAuth();
-        if ($this->module == 'admin') {
-            $this->isSystem = true;
-        }
+
     }
 
     // 校验用户登录
