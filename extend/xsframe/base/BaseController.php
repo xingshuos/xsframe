@@ -245,7 +245,7 @@ abstract class BaseController extends Controller
 
                 // 判断是否被禁用或删除 start
                 $disableUniacidList = Cache::get(CacheKeyEnum::SYSTEM_UNIACID_DISABLE_LIST_KEY);
-                if ($disableUniacidList && in_array($uniacid, $disableUniacidList)) {
+                if ($this->module != 'admin' && $disableUniacidList && in_array($uniacid, $disableUniacidList)) {
                     if ($this->request->isAjax()) {
                         throw new ApiException("抱歉！该站点已经被管理员停止运行，请联系管理员了解详情!", 403);
                     } else {
