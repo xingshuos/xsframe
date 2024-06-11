@@ -65,11 +65,15 @@ trait AdminTraits
             }
 
             if (!empty($keyword) && !empty($kwFields)) {
+                $kwFields = str_replace(" ", "|", $kwFields);
+                $kwFields = str_replace("，", "|", $kwFields);
                 $kwFields = str_replace(",", "|", $kwFields);
                 $condition[] = [$kwFields, 'like', "%" . trim($keyword) . "%"];
             }
 
             if (!empty($keyword) && !empty($field)) {
+                $field = str_replace(" ", "|", $field);
+                $field = str_replace("，", "|", $field);
                 $field = str_replace(",", "|", $field);
                 $condition[] = [$field, 'like', "%" . trim($keyword) . "%"];
             }
