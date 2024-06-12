@@ -406,13 +406,16 @@
     $(() => {
 
         // 鼠标移入弹出信息框
-        $('[data-toggle="tooltip"]').tooltip("destroy").tooltip({
-            container: $(document.body)
-        });
+        let timer = setTimeout(() => {
+            $('[data-toggle="tooltip"]').tooltip("destroy").tooltip({
+                container: $(document.body)
+            });
 
-        $('[data-toggle="popover"]').popover("destroy").popover({
-            container: $(document.body)
-        });
+            $('[data-toggle="popover"]').popover("destroy").popover({
+                container: $(document.body)
+            });
+            clearTimeout(timer);
+        },200);
 
         require(['bootstrap'], function ($) {
 

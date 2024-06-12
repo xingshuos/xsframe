@@ -352,7 +352,7 @@ define(['jquery', 'bootstrap'], function ($, bs) {
             return
         }
         let merch = $(".diy-phone").data("merch");
-        let url = biz.url('util/selecturl', null, merch);
+        let url = biz.url('selecturl', null, merch);
         let store = $(".diy-phone").data("store");
         if (store) {
             url = biz.url('store/diypage/selecturl')

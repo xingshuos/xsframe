@@ -235,7 +235,7 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 					pause: function (event) {
 						$(this).data('control').find("i").removeClass("fa-stop").addClass("fa-play");
 					},
-					swfPath: "resource/components/jplayer",
+					swfPath: "/app/admin/static/components/jplayer",
 					supplied: "mp3,wma,wav,amr",
 					solution: "html, flash"
 				});
@@ -611,7 +611,7 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 				pause: function (event) {
 					$(this).prev().find("i").removeClass("fa-stop").addClass("fa-play");
 				},
-				swfPath: "resource/components/jplayer",
+				swfPath: "/app/admin/static/components/jplayer",
 				supplied: "mp3"
 			});
 			$(".audio-player-media").each(function(){
