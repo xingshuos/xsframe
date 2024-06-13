@@ -28,7 +28,7 @@ class ModulesWrapper
             $this->extModuleRunScript($manifest, 'install');
         } else {
             $cloudWrapper = new CloudWrapper();
-            $ret          = $cloudWrapper->downloadCloudApp($moduleName, $key, $token);
+            $ret = $cloudWrapper->downloadCloudApp($moduleName, $key, $token);
             if ($ret) {
                 $this->runInstalledModule($moduleName, $key, $token);
             }
@@ -50,7 +50,7 @@ class ModulesWrapper
         $ret = true;
         if ($isCloud) {
             $cloudWrapper = new CloudWrapper();
-            $ret          = $cloudWrapper->downloadCloudApp($moduleName, $key, $token);
+            $ret = $cloudWrapper->downloadCloudApp($moduleName, $key, $token);
         }
 
         if ($ret) {
@@ -64,9 +64,9 @@ class ModulesWrapper
     // 移动客户端文件
     public function moveDirToPublic($moduleName)
     {
-        $modulePath         = IA_ROOT . '/app/' . $moduleName;
+        $modulePath = IA_ROOT . '/app/' . $moduleName;
         $modulePackagesPath = $modulePath . '/packages/';
-        $moduleDirList      = glob($modulePackagesPath . '*');
+        $moduleDirList = glob($modulePackagesPath . '*');
         if (empty($moduleDirList)) {
             return true;
         }
@@ -90,7 +90,7 @@ class ModulesWrapper
         $moduleList = Db::name('sys_modules')->column('*', 'identifie');
         // dump($moduleList);
 
-        $module_root      = IA_ROOT . '/app';
+        $module_root = IA_ROOT . '/app';
         $module_path_list = glob($module_root . '/*');
         if (empty($module_path_list)) {
             return true;
@@ -110,7 +110,7 @@ class ModulesWrapper
 
             $manifest = $this->extModuleManifest($moduleName);
 
-            $moduleUpgradeData = array(
+            $moduleUpgradeData = [
                 'type'         => $manifest['application']['type'],
                 'name'         => $manifest['application']['name'],
                 'identifie'    => $manifest['application']['identifie'],
@@ -122,10 +122,10 @@ class ModulesWrapper
                 'create_time'  => time(),
                 'update_time'  => time(),
                 'name_initial' => PinYinUtil::getFirstPinyin($manifest['application']['name']),
-            );
+            ];
 
             if (!empty($manifest['platform']['supports'])) {
-                foreach (array('wechat', 'wxapp', 'pc', 'app', 'h5', 'aliapp', 'bdapp', 'uniapp') as $support) {
+                foreach (['wechat', 'wxapp', 'pc', 'app', 'h5', 'aliapp', 'bdapp', 'uniapp'] as $support) {
                     if (in_array($support, $manifest['platform']['supports'])) {
                         $moduleUpgradeData["{$support}_support"] = 1;
                     }
@@ -160,9 +160,8 @@ class ModulesWrapper
         if ($key && $token) {
             $moduleList = Db::name('sys_modules')->column('*', 'identifie');
 
-            $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/app/list", array('key' => $key, 'token' => $token));
-            $result   = json_decode($response, true);
-
+            $result = RequestUtil::cloudHttpPost("app/list", ['key' => $key, 'token' => $token]);
+            
             if (!empty($result) && intval($result['code']) == 200) {
                 $appList = $result['data']['appList'];
 
@@ -172,7 +171,7 @@ class ModulesWrapper
                         continue;
                     }
 
-                    $moduleUpgradeData = array(
+                    $moduleUpgradeData = [
                         'type'         => $appInfo['type'],
                         'name'         => $appInfo['name'],
                         'identifie'    => $appInfo['identifier'],
@@ -185,7 +184,7 @@ class ModulesWrapper
                         'update_time'  => time(),
                         'name_initial' => PinYinUtil::getFirstPinyin($appInfo['name']),
                         'is_cloud'     => 1,
-                    );
+                    ];
 
                     if (empty($moduleUpgradeData['name'])) {
                         continue;
@@ -210,10 +209,10 @@ class ModulesWrapper
 
     public function extModuleManifest($moduleName)
     {
-        $root     = IA_ROOT . '/app/' . $moduleName . "/packages";
+        $root = IA_ROOT . '/app/' . $moduleName . "/packages";
         $filename = $root . '/manifest.xml';
         if (!file_exists($filename)) {
-            return array();
+            return [];
         }
 
         $xml = file_get_contents($filename);
@@ -225,7 +224,7 @@ class ModulesWrapper
             $appLogoPath = $root . '/icon.png';
 
             if (is_file($appLogoPath)) {
-                $publicAppPath     = IA_ROOT . "/public/app/{$moduleName}";
+                $publicAppPath = IA_ROOT . "/public/app/{$moduleName}";
                 $publicAppLogoPath = IA_ROOT . "/public/app/{$moduleName}" . '/icon.png';
 
                 if (!is_dir($publicAppPath)) {
@@ -245,7 +244,7 @@ class ModulesWrapper
     // 安装应用
     private function extModuleRunScript($manifest, $scriptType)
     {
-        if (!in_array($scriptType, array('install', 'uninstall', 'upgrade'))) {
+        if (!in_array($scriptType, ['install', 'uninstall', 'upgrade'])) {
             return false;
         }
         $moduleName = $manifest['application']['identifie'];
@@ -254,7 +253,7 @@ class ModulesWrapper
         if (!empty($manifest[$scriptType])) {
             if (strexists($manifest[$scriptType], '.php')) {
                 if (file_exists($modulePath . $manifest[$scriptType])) {
-                    $sql             = include_once $modulePath . $manifest[$scriptType];
+                    $sql = include_once $modulePath . $manifest[$scriptType];
                     $installSqlArray = $this->sqlParse($sql);
                     foreach ($installSqlArray as $sql) {
                         try {
@@ -288,10 +287,10 @@ class ModulesWrapper
     // 删除安装文件
     private function extModuleScriptClean($moduleName, $manifest)
     {
-        $moduleDir             = IA_ROOT . '/app/' . $moduleName . '/packages/';
-        $manifest['install']   = trim($manifest['install']);
+        $moduleDir = IA_ROOT . '/app/' . $moduleName . '/packages/';
+        $manifest['install'] = trim($manifest['install']);
         $manifest['uninstall'] = trim($manifest['uninstall']);
-        $manifest['upgrade']   = trim($manifest['upgrade']);
+        $manifest['upgrade'] = trim($manifest['upgrade']);
         if (strexists($manifest['install'], '.php')) {
             if (file_exists($moduleDir . $manifest['install'])) {
                 unlink($moduleDir . $manifest['install']);
@@ -319,17 +318,17 @@ class ModulesWrapper
             $xml = base64_decode($xml);
         }
         if (empty($xml)) {
-            return array();
+            return [];
         }
         $dom = new DOMDocument();
         $dom->loadXML($xml);
         $root = $dom->getElementsByTagName('manifest')->item(0);
         if (empty($root)) {
-            return array();
+            return [];
         }
 
-        $vcode                = explode(',', $root->getAttribute('versionCode'));
-        $manifest['versions'] = array();
+        $vcode = explode(',', $root->getAttribute('versionCode'));
+        $manifest['versions'] = [];
         if (is_array($vcode)) {
             foreach ($vcode as $v) {
                 $v = trim($v);
@@ -342,16 +341,16 @@ class ModulesWrapper
         }
 
 
-        $manifest['install']   = $root->getElementsByTagName('install')->item(0)->textContent;
+        $manifest['install'] = $root->getElementsByTagName('install')->item(0)->textContent;
         $manifest['uninstall'] = $root->getElementsByTagName('uninstall')->item(0)->textContent;
-        $manifest['upgrade']   = $root->getElementsByTagName('upgrade')->item(0)->textContent;
-        $application           = $root->getElementsByTagName('application')->item(0);
+        $manifest['upgrade'] = $root->getElementsByTagName('upgrade')->item(0)->textContent;
+        $application = $root->getElementsByTagName('application')->item(0);
 
 
         if (empty($application)) {
-            return array();
+            return [];
         }
-        $manifest['application'] = array(
+        $manifest['application'] = [
             'name'        => trim($application->getElementsByTagName('name')->item(0)->textContent),
             'identifie'   => trim($application->getElementsByTagName('identifie')->item(0)->textContent),
             'version'     => trim($application->getElementsByTagName('version')->item(0)->textContent),
@@ -361,14 +360,14 @@ class ModulesWrapper
             'author'      => trim($application->getElementsByTagName('author')->item(0)->textContent),
             'url'         => trim($application->getElementsByTagName('url')->item(0)->textContent),
             'setting'     => trim($application->getAttribute('setting')) == 'true',
-        );
+        ];
 
         $platform = $root->getElementsByTagName('platform')->item(0);
 
         if (!empty($platform)) {
-            $manifest['platform'] = array(
-                'supports' => array(),
-            );
+            $manifest['platform'] = [
+                'supports' => [],
+            ];
 
             $supports = $platform->getElementsByTagName('supports')->item(0);
             if (!empty($supports)) {
@@ -400,7 +399,7 @@ class ModulesWrapper
 
         // 替换表前缀
         if (!empty($replace)) {
-            $to   = current($replace);
+            $to = current($replace);
             $from = current(array_flip($replace));
         }
 

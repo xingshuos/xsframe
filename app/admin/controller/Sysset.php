@@ -295,7 +295,7 @@ class Sysset extends Base
         $key = $this->websiteSets['key'] ?? '';
         $token = $this->websiteSets['token'] ?? '';
 
-        $result = $this->httpPost("frame/checkVersion", ['key' => $key, 'token' => $token]);
+        $result = RequestUtil::cloudHttpPost("frame/checkVersion", ['key' => $key, 'token' => $token]);
         $isUpgrade = $result['data']['isUpgrade'];
 
         $result = [
@@ -383,7 +383,7 @@ EOF;
                     @mkdir($file_dir, 0777, true);
                 }
 
-                $result = $this->httpPost("frame/upgradeFileData", ['key' => $key, 'token' => $token, 'file_path' => $filePath]);
+                $result = RequestUtil::cloudHttpPost("frame/upgradeFileData", ['key' => $key, 'token' => $token, 'file_path' => $filePath]);
 
                 if (empty($result) || $result['code'] != 200) {
                     continue;
@@ -426,7 +426,7 @@ EOF;
         if (empty($upgradeList) || !empty($isCheckUpdate)) {
             $key = $this->websiteSets['key'] ?? '';
             $token = $this->websiteSets['token'] ?? '';
-            $result = $this->httpPost("frame/upgrade", ['key' => $key, 'token' => $token]);
+            $result = RequestUtil::cloudHttpPost("frame/upgrade", ['key' => $key, 'token' => $token]);
             if (empty($result) || $result['code'] != 200) {
                 if ($this->request->isPost()) {
                     $this->error($result['msg']);
@@ -451,7 +451,7 @@ EOF;
 
             $key = $this->websiteSets['key'] ?? '';
             $token = $this->websiteSets['token'] ?? '';
-            $result = $this->httpPost("frame/upgradeFiles", ['key' => $key, 'token' => $token]);
+            $result = RequestUtil::cloudHttpPost("frame/upgradeFiles", ['key' => $key, 'token' => $token]);
 
             if (empty($result) || $result['code'] != 200) {
                 $this->error($result['msg']);
@@ -478,16 +478,4 @@ EOF;
         return $updateFiles;
     }
 
-    private function httpPost($url, $postData = [])
-    {
-        if (is_array($postData)) {
-            $postData['host_ip'] = $_SERVER['REMOTE_ADDR'];
-            $postData['host_url'] = $_SERVER['HTTP_HOST'];
-            $postData['version'] = IMS_VERSION;
-            $postData['php_version'] = PHP_VERSION;
-        }
-
-        $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/" . $url, $postData);
-        return json_decode($response, true);
-    }
 }
