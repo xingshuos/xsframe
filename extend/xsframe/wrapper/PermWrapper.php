@@ -160,23 +160,26 @@ class PermWrapper
 
                 // 子菜单权限
                 $itemModuleMenus = [];
-                foreach ($menu['items'] as $item) {
-                    $perm = [];
-                    if (is_array($item['perm']) && !empty($item['perm'])) {
-                        $perm = $permDefault;
-                    }
 
-                    $routers = explode("/", $item['route']);
-                    $c = count($routers) > 1 ? "." . $routers[0] : '';
+                if( !empty($menu['items']) ){
+                    foreach ((array)$menu['items'] as $item) {
+                        $perm = [];
+                        if (is_array($item['perm']) && !empty($item['perm'])) {
+                            $perm = $permDefault;
+                        }
 
-                    $newModuleMenusItemText = ['text' => !empty($item['subtitle']) ? $item['subtitle'] : $item['title']];
-                    $newModuleMenusItem = array_merge($newModuleMenusItemText, $perm);
+                        $routers = explode("/", $item['route']);
+                        $c = count($routers) > 1 ? "." . $routers[0] : '';
 
-                    if (empty($c)) {
-                        $itemModuleMenus[$item['route']] = $newModuleMenusItem;
-                    } else {
-                        $itemRoute = ltrim($c, "web.");
-                        $itemModuleMenus[$itemRoute] = $newModuleMenusItem;
+                        $newModuleMenusItemText = ['text' => !empty($item['subtitle']) ? $item['subtitle'] : $item['title']];
+                        $newModuleMenusItem = array_merge($newModuleMenusItemText, $perm);
+
+                        if (empty($c)) {
+                            $itemModuleMenus[$item['route']] = $newModuleMenusItem;
+                        } else {
+                            $itemRoute = ltrim($c, "web.");
+                            $itemModuleMenus[$itemRoute] = $newModuleMenusItem;
+                        }
                     }
                 }
 

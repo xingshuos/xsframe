@@ -47,6 +47,8 @@
                                 <br>
                             {/if}
 
+                            {if !empty($perms['son'][$key])}
+
                             {foreach $perms['son'][$key] as $ke => $val}
                                 <div class="menu-group">
                                     {if !empty($val)}
@@ -107,7 +109,7 @@
                                     </div>
                                 </div>
                             {/foreach}
-
+                        {/if}
                         </div>
                     </div>
 
