@@ -153,7 +153,7 @@ class Account extends Base
             // 更新uniacid列表
             $this->reloadUniacidList();
             // 更新uniacid的应用列表
-            Cache::set(CacheKeyEnum::UNIACID_MODULE_LIST_KEY . "_{$uniacid}", Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'deleted' => 0])->column('module'));
+            Cache::set(CacheKeyEnum::UNIACID_MODULE_LIST_KEY . "_{$item['uniacid']}", Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'deleted' => 0])->column('module'));
         }
 
         $this->success();

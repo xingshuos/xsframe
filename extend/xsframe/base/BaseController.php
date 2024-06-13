@@ -260,7 +260,7 @@ abstract class BaseController extends Controller
                     $uniacid = 0;
                 }
             } else {
-                // 还需要判定商户是否有应用权限
+                // 还需要判定商户是否有应用权限 TODO 应用权限应验证实时性 也就是缓存不存在的时候应该去数据库中查询
                 if ($this->module && $this->module != 'admin') {
                     $uniacidModuleList = Cache::get(CacheKeyEnum::UNIACID_MODULE_LIST_KEY . "_{$uniacid}");
                     $systemModuleList = Cache::get(CacheKeyEnum::SYSTEM_MODULE_LIST_KEY);
