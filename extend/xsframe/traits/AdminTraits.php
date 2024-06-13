@@ -23,17 +23,17 @@ trait AdminTraits
         if (!empty($this->tableName)) {
             $fieldList = $this->getFiledList();
 
-            $keyword = $this->params['keyword'] ?? '';
-            $kwFields = $this->params['kwFields'] ?? '';
-            $field = $this->params['field'] ?? '';
-            $status = $this->params['status'] ?? '';
-            $enabled = $this->params['enabled'] ?? '';
-            $searchTime = trim($this->params["searchtime"] ?? 0);
+            $keyword = trim($this->params['keyword']) ?? '';
+            $kwFields = trim($this->params['kwFields']) ?? '';
+            $field = trim($this->params['field']) ?? '';
+            $status = trim($this->params['status']) ?? '';
+            $enabled = trim($this->params['enabled']) ?? 0;
+            $searchTime = trim($this->params["searchtime"]) ?? '';
 
-            $export = $this->params['export'];
-            $exportTitle = $this->params['export_title'];
-            $exportColumns = $this->params['export_columns'];
-            $exportKeys = $this->params['export_keys'];
+            $export = trim($this->params['export']);
+            $exportTitle = trim($this->params['export_title']);
+            $exportColumns = trim($this->params['export_columns']);
+            $exportKeys = trim($this->params['export_keys']);
 
             $startTime = strtotime("-1 month");
             $endTime = time();
