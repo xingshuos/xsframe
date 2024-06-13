@@ -337,15 +337,21 @@ abstract class BaseController extends Controller
     }
 
     // 自动执行客户端页面
+    protected function runPc($filename = 'index', $version = null)
+    {
+        $this->baseRun('pc', $filename, $version);
+    }
+
+    // 自动执行客户端页面
     protected function runWeb($filename = 'index', $version = null)
     {
-        $this->baseRun('pc', $filename = 'index', $version = null);
+        $this->baseRun('pc', $filename, $version);
     }
 
     // 自动执行客户端页面
     protected function runMobile($filename = 'index', $version = null)
     {
-        $this->baseRun('mobile', $filename = 'index', $version = null);
+        $this->baseRun('mobile', $filename, $version);
     }
 
     // 自动访问资源模版
