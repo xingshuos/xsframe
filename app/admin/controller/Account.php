@@ -174,7 +174,7 @@ class Account extends Base
         $uniacid = intval($this->params["id"]);
 
         # 进入当前商户默认应用
-        $defaultModuleInfo = Db::name("sys_account_modules")->where(['uniacid' => $uniacid])->order("is_default desc")->find();
+        $defaultModuleInfo = Db::name("sys_account_modules")->where(['uniacid' => $uniacid, 'deleted' => 0])->order("is_default desc")->find();
         if (empty($defaultModuleInfo)) {
             $this->error(["message" => "该商户没有分配应用"]);
         }
