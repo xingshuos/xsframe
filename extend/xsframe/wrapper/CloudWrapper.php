@@ -11,7 +11,14 @@ class CloudWrapper
     // 下载云应用
     public function downloadCloudApp($moduleName, $key = null, $token = null): bool
     {
-        $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/app/download", array('key' => $key, 'token' => $token, 'identifier' => $moduleName));
+        $postData = ['key' => $key, 'token' => $token, 'identifier' => $moduleName];
+
+        $postData['host_ip'] = $_SERVER['REMOTE_ADDR'];
+        $postData['host_url'] = $_SERVER['HTTP_HOST'];
+        $postData['version'] = IMS_VERSION;
+        $postData['php_version'] = PHP_VERSION;
+
+        $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/app/download", $postData);
 
         if (!empty($response)) {
             $result = @json_decode($response, true);
@@ -25,7 +32,7 @@ class CloudWrapper
                 FileUtil::mkDirs($appPath);
 
                 $zip = new \ZipArchive();
-                if ($zip->open($tmpFile) === TRUE) {
+                if ($zip->open($tmpFile) === true) {
                     $zip->extractTo($appPath);
                     $zip->close();
                 }
