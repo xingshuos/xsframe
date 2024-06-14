@@ -12,9 +12,8 @@
 
 namespace app\admin\controller;
 
-use think\facade\Cache;
 use think\facade\Db;
-use xsframe\enum\CacheKeyEnum;
+use xsframe\facade\wrapper\SystemWrapperFacade;
 use xsframe\util\FileUtil;
 use xsframe\util\PinYinUtil;
 use xsframe\wrapper\ModulesWrapper;
@@ -268,8 +267,8 @@ class App extends Base
     }
 
     // 更新系统的应用列表
-    private function updateSystemModuleList(): bool
+    private function updateSystemModuleList()
     {
-        return Cache::set(CacheKeyEnum::SYSTEM_MODULE_LIST_KEY, Db::name('sys_modules')->where(['status' => 1, 'is_install' => 1, 'is_deleted' => 0])->column('identifie'));
+        return SystemWrapperFacade::reloadAllModuleList();
     }
 }

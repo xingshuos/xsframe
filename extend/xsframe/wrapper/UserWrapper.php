@@ -161,7 +161,6 @@ class UserWrapper
     public static function logout($url = null)
     {
         isetcookie(self::$session_key, false, -100);
-        isetcookie('uniacid', false, -100);
         Cache::delete(self::$session_key);
 
         if (empty($url)) {

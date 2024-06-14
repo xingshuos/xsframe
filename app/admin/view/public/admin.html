@@ -123,7 +123,7 @@
 
         {foreach $menusList['menu'] as $key => $sysmenu}
             <li {if $sysmenu['active'] && !$selSystemNav}class="active"{/if}>
-                <a data-href="{:url($sysmenu['route'])}" class="wb-nav-item" data-module="{$module}">
+                <a data-href="{:webUrl($sysmenu['route'])}" class="wb-nav-item" data-module="{$module}">
                     {if !empty($sysmenu['icon'])}
                     <i class="icon {$sysmenu['icon']}"></i>
                     {/if}
@@ -162,13 +162,13 @@
                         <div class='menu-header {if $submenu['active']}active data-active{/if}'><div class="menu-icon icon icon-caret-{if $submenu['active']}down{else}right{/if}"></div>{$submenu['title']}</div>
                         <ul {if $submenu['active']}style="display: block"{/if}>
                             {foreach $submenu['items'] as $threeKey => $threemenu}
-                            <li {if $threemenu['active']}class="active"{/if}><a href="{:url($threemenu['route'])}" style="cursor: pointer;" data-route="{:url($threemenu['route'])}">{$threemenu['title']}</a>
+                            <li {if $threemenu['active']}class="active"{/if}><a href="{:webUrl($threemenu['route'])}" style="cursor: pointer;" data-route="{:url($threemenu['route'])}">{$threemenu['title']}</a>
                             {/foreach}
                         </ul>
                     {else}
                         <ul class="single">
                             <li {if $submenu['active']}class="active"{/if} style=" position: relative">
-                                <a href="{:url($submenu['url']?:$submenu['route'])}" style="cursor: pointer;" data-route="{:url($submenu['url']?:$submenu['route'])}">{$submenu['title']}</a>
+                                <a href="{:webUrl($submenu['url']?:$submenu['route'])}" style="cursor: pointer;" data-route="{:url($submenu['url']?:$submenu['route'])}">{$submenu['title']}</a>
                             </li>
                         </ul>
                     {/if}

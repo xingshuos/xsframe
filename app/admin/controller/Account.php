@@ -12,9 +12,8 @@
 
 namespace app\admin\controller;
 
-use think\facade\Cache;
 use think\facade\Db;
-use xsframe\enum\CacheKeyEnum;
+use xsframe\facade\wrapper\SystemWrapperFacade;
 use xsframe\wrapper\AccountHostWrapper;
 use xsframe\wrapper\UserWrapper;
 
@@ -153,7 +152,7 @@ class Account extends Base
             // 更新uniacid列表
             $this->reloadUniacidList();
             // 更新uniacid的应用列表
-            Cache::set(CacheKeyEnum::UNIACID_MODULE_LIST_KEY . "_{$item['uniacid']}", Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'deleted' => 0])->column('module'));
+            SystemWrapperFacade::reloadAccountModuleList($item['uniacid']);
         }
 
         $this->success();
@@ -241,7 +240,7 @@ class Account extends Base
         }
 
         // 更新uniacid的应用列表
-        Cache::set(CacheKeyEnum::UNIACID_MODULE_LIST_KEY . "_{$uniacid}", Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'deleted' => 0])->column('module'));
+        SystemWrapperFacade::reloadAccountModuleList($uniacid);
 
         return true;
     }
@@ -278,8 +277,8 @@ class Account extends Base
     private function reloadUniacidList()
     {
         # 更新现有uniacid列表
-        Cache::set(CacheKeyEnum::SYSTEM_UNIACID_LIST_KEY, Db::name('sys_account')->where(['status' => 1, 'deleted' => 0])->column('uniacid'));
+        SystemWrapperFacade::reloadUniacidList();
         # 更新禁用的uniacid列表
-        Cache::set(CacheKeyEnum::SYSTEM_UNIACID_DISABLE_LIST_KEY, Db::name('sys_account')->whereOr(['status' => 0, 'deleted' => 1])->column('uniacid'));
+        SystemWrapperFacade::reloadDisabledUniacidList();
     }
 }
