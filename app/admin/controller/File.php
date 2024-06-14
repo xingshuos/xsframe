@@ -208,6 +208,7 @@ class File extends AdminBaseController
         $month = $this->params['month'] ?? '';
         $page = intval($this->params['page'] ?? 1);
         $groupId = intval($this->params['groupid'] ?? 0);
+        $module = $this->params['module'] ?? '';
 
         $pageSize = 20;
         $page = max(1, $page);
@@ -220,6 +221,10 @@ class File extends AdminBaseController
 
         if ($groupId >= 0) {
             $condition['group_id'] = $groupId;
+        }
+
+        if (!empty($module)) {
+            $condition['module'] = $module;
         }
 
         if ($year || $month) {

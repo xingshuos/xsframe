@@ -34,6 +34,7 @@ abstract class AdminBaseController extends BaseController
         if (method_exists($this, '_admin_initialize')) {
 
             $this->checkAuth();
+
             if ($this->module == 'admin') {
                 $this->isSystem = true;
             }
@@ -56,30 +57,37 @@ abstract class AdminBaseController extends BaseController
     // 校验用户登录
     protected function checkAuth()
     {
-        if ($this->controller != 'login') {
-            $loginResult = UserWrapper::checkUser();
+        $isFileUpload = $this->controller == 'file';
 
-            if (!$loginResult['isLogin']) {
-                header('location: ' . url('/admin/login'));
-                exit();
-            }
-
-            $this->adminSession = $loginResult['adminSession'];
-            $this->userId = $this->adminSession['uid'];
-            $uniacid = $this->adminSession['uniacid'];
-
-            if (!empty($uniacid)) {
-                $this->uniacid = $uniacid;
-                $_COOKIE['uniacid'] = $uniacid;
-            }
+        if ($isFileUpload && $this->params['uid'] && $this->params['module'] != 'admin') {
+            $this->userId = intval($this->params['uid']);
         } else {
-            $loginResult = UserWrapper::checkUser();
-            if ($loginResult['isLogin'] && (!in_array($this->action, ['logout', 'verify']))) {
-                $url = UserWrapper::getLoginReturnUrl($loginResult['adminSession']['role'], $loginResult['adminSession']['uid']);
-                header('location: ' . $url);
-                exit();
+            if ($this->controller != 'login') {
+                $loginResult = UserWrapper::checkUser();
+
+                if (!$loginResult['isLogin']) {
+                    header('location: ' . url('/admin/login'));
+                    exit();
+                }
+
+                $this->adminSession = $loginResult['adminSession'];
+                $this->userId = $this->adminSession['uid'];
+                $uniacid = $this->adminSession['uniacid'];
+
+                if (!empty($uniacid)) {
+                    $this->uniacid = $uniacid;
+                    $_COOKIE['uniacid'] = $uniacid;
+                }
+            } else {
+                $loginResult = UserWrapper::checkUser();
+                if ($loginResult['isLogin'] && (!in_array($this->action, ['logout', 'verify']))) {
+                    $url = UserWrapper::getLoginReturnUrl($loginResult['adminSession']['role'], $loginResult['adminSession']['uid']);
+                    header('location: ' . $url);
+                    exit();
+                }
             }
         }
+
     }
 
     // 引入后端模板

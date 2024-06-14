@@ -19,9 +19,9 @@ class Base extends AdminBaseController
     // 防止普通用户进入超级管理后台
     public function checkRouter()
     {
-        $isAdmin = $this->module == 'admin';
-        $notMap = $this->controller != 'util' && $this->action != 'map';
-        $notSetDefaultModule = $this->controller != 'system' && $this->action != 'setAccountDefaultModule';
+        $isAdmin = $this->module == 'admin'; // 是否超级管理后台
+        $notMap = $this->controller != 'util' && $this->action != 'map'; // 是否地图页面
+        $notSetDefaultModule = $this->controller != 'system' && $this->action != 'setAccountDefaultModule'; // 是否设置默认模块
 
         if ($isAdmin && $notMap && $notSetDefaultModule) {
             $adminSession = $this->adminSession;
