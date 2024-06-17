@@ -1,6 +1,6 @@
 {extend name="../../admin/view/public/admin_base"}
 
-{block name='title'}{$pageTitle}-{$moduleInfo['name'] ? $moduleInfo['name'] : $websiteSets['name']}{/block}
+{block name='title'}{$pageTitle?:'后台管理'}-{$moduleInfo['name'] ? $moduleInfo['name'] : ($websiteSets['name']?:'星数引擎')}{/block}
 
 {block name='style'}
 
