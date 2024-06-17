@@ -341,10 +341,9 @@ class Sysset extends Base
     }
 
     // 更新完毕
-    private function upgradeSuccess($version, $updateTime = null): bool
+    private function upgradeSuccess($version, $updateTime = null): void
     {
         isetcookie('isUpgradeSystemNotice', 0);
-        return true;
     }
 
     // 执行文件升级
