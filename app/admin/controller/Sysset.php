@@ -343,25 +343,7 @@ class Sysset extends Base
     // 更新完毕
     private function upgradeSuccess($version, $updateTime = null): bool
     {
-        $tpl = <<<EOF
-<?php
-
-// +----------------------------------------------------------------------
-// | 星数 [ WE CAN DO IT JUST THINK ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2023~2024 http://xsframe.cn All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
-// +----------------------------------------------------------------------
-// | Author: guiHai <786824455@qq.com>
-// +----------------------------------------------------------------------
-
-define('IMS_VERSION', '{$version}');
-define('IMS_VERSION_TIME', '{$updateTime}');
-
-EOF;
         isetcookie('isUpgradeSystemNotice', 0);
-        file_put_contents(IA_ROOT . "/public/version.php", $tpl);
         return true;
     }
 
@@ -421,7 +403,7 @@ EOF;
             Cache::delete(CacheKeyEnum::CLOUD_FRAME_UPGRADE_FILES_KEY);
         }
 
-        // $this->upgradeSuccess($version, $versionTime);
+        $this->upgradeSuccess($version, $versionTime);
     }
 
     // 获取升级日志列表
