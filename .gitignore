@@ -47,7 +47,6 @@ public/*
 !public/install/isntall.php
 !public/install/isntall.sql
 !public/version.php
-!public/attachment
 
 app/*
 !app/admin
