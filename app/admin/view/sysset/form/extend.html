@@ -1,0 +1,201 @@
+<div class="panel-body">
+
+    <div class="form-group-title">表格扩展组件</div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">选择日期</label>
+        <div class="col-sm-9 col-xs-12">
+            {:tpl_form_field_date('time','')}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">选择日期时间段</label>
+        <div class="col-sm-9 col-xs-12">
+            {:tpl_form_field_daterange('time', array('sm'=>true, 'placeholder'=>'购买时间'),true)}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">选择年月日</label>
+        <div class="col-sm-9 col-xs-12">
+            {:tpl_form_field_calendar('clock','')}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">选择时钟</label>
+        <div class="col-sm-9 col-xs-12">
+            {:tpl_form_field_clock('clock','')}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">选择地址</label>
+        <div class="col-sm-9 col-xs-12">
+            {:tpl_form_field_district('address', '')}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">选择颜色</label>
+        <div class="col-sm-9 col-xs-12">
+            {:tpl_form_field_color('time','')}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">轮播图片(单图)</label>
+        <div class="col-sm-9 col-xs-12">
+            {:tpl_form_field_image('thumb', $item['thumb'])}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">轮播图片(多图)</label>
+        <div class="col-sm-9 col-xs-12">
+            {:tpl_form_field_multi_image('thumb', $item['thumb'])}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">选择视频</label>
+        <div class="col-sm-9 col-xs-12">
+            {:tpl_form_field_video2('video', $item['thumb'])}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">选择音频</label>
+        <div class="col-sm-9 col-xs-12">
+            {:tpl_form_field_audio('audio_url', $item['audio_url'])}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">单数据选择器</label>
+        <div class="col-sm-9 col-xs-12">
+            {:tpl_selector('uniacid',array('text'=>'name','preview'=>true,'type'=>'image', 'required'=>false,  'thumb'=>'logo','placeholder'=>'商户名称','buttontext'=>'选择商户 ', 'items'=>$accountInfo,'url'=>webUrl('account/query')))}
+            <span class="help-block">模拟数据请输入商户名称</span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">多数据选择器</label>
+        <div class="col-sm-9">
+            <div class="form-group" style="height: auto; display: block;">
+                <div class="col-sm-12 col-xs-12">
+                    <div class="input-group">
+                        <input type="text" id="goodsid_text" name="goodsid_text" value="" class="form-control text" readonly="">
+                        <div class="input-group-btn">
+                            <button class="btn btn-primary select_modules" type="button">选择应用</button>
+                        </div>
+                    </div>
+                    <div class="input-group multi-img-details container ui-sortable goods_show">
+                        {if !empty($modules)}
+                        {foreach $modules as $k => $g}
+                        <div class="multi-item" data-id="{$g['id']}" data-name="goodsid" id="{$g['id']}">
+                            <img class="img-responsive img-thumbnail" src="{$g['logo']}" onerror="this.src='/app/admin/static/images/nopic.png'" style="width:100px;height:100px;">
+                            <div class="img-nickname">{$g['name']}</div>
+                            <input type="hidden" value="{$g['identifie']}" name="modulesids[]">
+                            <em onclick="remove({$g['id']})" class="close">×</em>
+                            <div style="clear:both;"></div>
+                        </div>
+                        {/foreach}
+                        {/if}
+                    </div>
+
+                    <script>
+                        // 多图片排序问题
+                        require(['jquery.ui'],function(){
+                            $('.multi-img-details').sortable({scroll:'false'});
+                            $('.multi-img-details').sortable('option', 'scroll', false);
+                        })
+                        $(function(){
+                            var title = '';
+                            $('.img-nickname').each(function(){
+                                title += $(this).html()+';';
+                            });
+                            $('#goodsid_text').val(title);
+                        });
+                        require(['js/web/module_selector'],function (Gselector) {
+                            $('.select_modules').click(function () {
+                                let ids = select_modules_ids();
+                                Gselector.open('modules_show','',0,true,'',ids);
+                            });
+                        });
+                        function modules_show(data) {
+                            // console.log('data',data);
+                            if(data.act == 1){
+                                var html = '<div class="multi-item" data-id="'+data.id+'" data-name="goodsid" id="'+data.id+'">'
+                                    +'<img class="img-responsive img-thumbnail" src="'+data.logo+'" onerror="this.src=\'/app/admin/static/images/nopic.png\'" style="width:100px;height:100px;">'
+                                    +'<div class="img-nickname">'+data.name+'</div>'
+                                    +'<input type="hidden" value="'+data.identifie+'" name="modulesids[]">'
+                                    +'<em onclick="removeHtml('+data.id+')" class="close">×</em>'
+                                    +'</div>';
+
+                                $('.goods_show').append(html);
+                                var title = '';
+                                $('.img-nickname').each(function(){
+                                    title += $(this).html()+';';
+                                });
+                                $('#goodsid_text').val(title);
+                            }else if(data.act == 0){
+                                remove(data.id);
+                            }
+                        }
+                        function removeHtml(id){
+                            $("[id='"+id+"']").remove();
+                            var title = '';
+                            $('.img-nickname').each(function(){
+                                title += $(this).html()+';';
+                            });
+                            $('#goodsid_text').val(title);
+                        }
+                        function remove(id){
+                            $("[id='"+id+"']").remove();
+                            var title = '';
+                            $('.img-nickname').each(function(){
+                                title += $(this).html()+';';
+                            });
+                            $('#goodsid_text').val(title);
+                        }
+                        function select_modules_ids(){
+                            var goodsids = [];
+                            $(".multi-item").each(function(){
+                                goodsids.push($(this).attr('data-id'));
+                            });
+                            return goodsids;
+                        }
+                    </script>
+                    <span class="help-block">第一个应用是默认访问应用</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">富文本编辑器</label>
+        <div class="col-sm-9 col-xs-12">
+            {:tpl_ueditor('content',$item['content'],array('height'=>'300'))}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">坐标选择器</label>
+        <div class="col-sm-9 col-xs-12">
+            {:tpl_form_field_position('map',array('lng'=>$item['lng'],'lat'=>$item['lat']))}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">自定义模态框</label>
+        <div class="col-sm-9 col-xs-12">
+            <div class="input-group">
+                <input type="text" name="" class="form-control" value=""/>
+                <span class="input-group-addon btn-default" data-href="{:webUrl('sysset/model')}" data-toggle="ajaxModal">打开模态框</span>
+            </div>
+        </div>
+    </div>
+
+</div>

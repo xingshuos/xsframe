@@ -1,0 +1,44 @@
+<style>
+    .wb-container {
+        margin: 0 0 0 150px;
+        padding-top: 0;
+    }
+
+    .wb-subnav {
+        top: 0;
+        left: 0;
+    }
+
+    .wb-subnav .single li {
+        position: relative
+    }
+
+    .wb-subnav .single li a {
+        cursor: pointer;
+    }
+</style>
+
+<div class="wb-subnav">
+    <div style="width: 100%;height: 100%;overflow-y: auto">
+        <div class="subnav-scene">系统管理</div>
+
+        <ul class="single">
+            <li {if $action == 'index'}class="active"{/if}>
+                <a href="{:url('admin/system/index')}">应用管理</a>
+            </li>
+            <li {if $action == 'profile'}class="active"{/if}>
+                <a href="{:url('admin/system/profile')}">修改密码</a>
+            </li>
+            {if in_array($userInfo['role'],['owner','manager'])}
+                <li {if $controller == 'perm'}class="active"{/if}>
+                    <a href="{:url('admin/perm/user')}">权限管理</a>
+                </li>
+                <li {if $action == 'account'}class="active"{/if}>
+                    <a href="{:url('admin/system/account')}">系统设置</a>
+                </li>
+            {/if}
+        </ul>
+
+        <div class="wb-subnav-fold icow"></div>
+    </div>
+</div>

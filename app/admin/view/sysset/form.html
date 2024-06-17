@@ -1,0 +1,48 @@
+{extend name="../../admin/view/public/admin"}
+
+
+{block name='style'}
+
+{/block}
+
+{block name='content'}
+<div class="page-header">当前位置：<span class="text-primary">系统表单</span></div>
+<div class="page-content">
+
+    <form action="" method="post" class="form-validate form-horizontal ">
+
+        <ul class="nav nav-tabs" id="myTab">
+            <li class="active"><a href="#tab_basic">基本组件</a></li>
+            <li class=""><a href="#tab_other">扩展表单组件</a></li>
+            <li><a href="#tab_table">表格组件</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <!-- 基础表单组件-->
+            <div class="tab-pane active" id="tab_basic">
+                {include file='sysset/form/basic'}
+            </div>
+
+            <!-- 扩展表单组件-->
+            <div class="tab-pane" id="tab_other">
+                {include file='sysset/form/extend'}
+            </div>
+
+            <!-- 表格扩展组件-->
+            <div class="tab-pane" id="tab_table">
+                {include file='sysset/form/table'}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-lg control-label"></label>
+            <div class="col-sm-9">
+                <input type="submit" class="btn btn-primary" value="保存">
+                <a class="btn btn-default" href="{:webUrl('sysset/form')}">返回列表</a>
+            </div>
+        </div>
+
+    </form>
+
+</div>
+{/block}

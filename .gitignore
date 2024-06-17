@@ -29,3 +29,27 @@ bh_unicode_properties.cache
 # Sublime-github package stores a github token in this file
 # https://packagecontrol.io/packages/sublime-github
 GitHub.sublime-settings
+
+# phpstome
+/.idea
+/.vscode
+/runtime
+/storage
+/public/install/install.lock
+*.log
+.env
+.DS_Store
+composer.lock
+
+# sxframe
+public/*
+!public/app/admin
+!public/install/isntall.php
+!public/install/isntall.sql
+!public/version.php
+
+app/*
+!app/admin
+config/appMap.php
+config/workerMap.php
+.gitmodules

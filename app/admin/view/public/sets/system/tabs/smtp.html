@@ -1,0 +1,86 @@
+<div class="form-group">
+    <label class="control-label col-sm-2">SMTP服务器</label>
+    <div class="form-controls col-sm-8">
+        <label class="radio-inline">
+            <input type="radio" class="smtp_type" name="data[smtp][type]" value="163" {if $accountSettings['smtp']['type']=='163'}checked="checked"{/if}> 网易邮箱服务器（建议使用）
+        </label>
+        <label class="radio-inline">
+            <input type="radio" class="smtp_type" name="data[smtp][type]" value="qq" {if $accountSettings['smtp']['type']=='qq'}checked="checked"{/if}> qq邮箱服务器
+        </label>
+        <label class="radio-inline">
+            <input type="radio" class="smtp_type" name="data[smtp][type]" value="custom" {if $accountSettings['smtp']['type']=='custom'}checked="checked"{/if}> 自定义
+        </label>
+        <span class="help-block">SMTP服务器为发送邮件的服务器，系统内置了网易和qq的邮件服务器的信息，可直接使用。如果有特殊需要请自定义SMTP服务器</span>
+    </div>
+</div>
+
+<div class="form-group custom-box" {if $accountSettings['smtp']['type']=='custom'}style="display:block;"{else}style="display:none;"{/if}>
+    <label class="control-label col-sm-2">SMTP服务器地址</label>
+    <div class="form-controls col-sm-8">
+        <input type="text" name="data[smtp][server]" value="{$accountSettings['smtp']['server']}" style="width: 600px" class="form-control" placeholder="">
+        <span class="help-block">指定SMTP服务器的地址 </span>
+    </div>
+</div>
+<div class="form-group custom-box" {if $accountSettings['smtp']['type']=='custom'}style="display:block;"{else}style="display:none;"{/if}>
+    <label class="control-label col-sm-2">SMTP服务器端口</label>
+    <div class="form-controls col-sm-8">
+        <input type="text" name="data[smtp][port]" value="{$accountSettings['smtp']['port']}" style="width: 600px" class="form-control" placeholder="">
+        <span class="help-block">指定SMTP服务器的端口 </span>
+    </div>
+</div>
+<div class="form-group custom-box" {if $accountSettings['smtp']['type']=='custom'}style="display:block;"{else}style="display:none;"{/if}>
+    <label class="control-label col-sm-2">使用SSL加密</label>
+    <div class="form-controls col-sm-8">
+        <label class="radio-inline">
+            <input type="radio" name="data[smtp][authmode]" value="1" {if $accountSettings['smtp']['authmode']==1}checked="checked"{/if}> 是
+        </label>
+        <label class="radio-inline">
+            <input type="radio" name="data[smtp][authmode]" value="0" {if $accountSettings['smtp']['authmode']==0}checked="checked"{/if}> 否
+        </label>
+        <span class="help-block">开启此项后，连接将用SSL的形式，此项需要SMTP服务器支持(QQ,企业微信都需要开启)</span>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="control-label col-sm-2 must">发送帐号用户名</label>
+    <div class="form-controls col-sm-8">
+        <input type="text" name="data[smtp][username]" value="{$accountSettings['smtp']['username']}" style="width: 600px" class="form-control" data-rule-required="true">
+        <span class="help-block">指定发送邮件的用户名，例如：test@163.com </span>
+    </div>
+</div>
+<div class="form-group">
+    <label class="control-label col-sm-2 must">smtp客户端授权密码</label>
+    <div class="form-controls col-sm-8">
+        <input type="text" name="data[smtp][password]" value="{$accountSettings['smtp']['password']}" style="width: 600px" class="form-control" autocomplete="off" data-rule-required="true">
+        <span class="help-block">指定发送邮件的密码，QQ邮箱此处为授权码，
+            <a href="http://service.mail.qq.com/cgi-bin/help?subtype=1&amp;&amp;id=28&amp;&amp;no=1001256" target="_Blank" id="code">查看授权码获取方法</a>
+        </span>
+    </div>
+</div>
+<div class="form-group">
+    <label class="control-label col-sm-2 must">发件人名称</label>
+    <div class="form-controls col-sm-8">
+        <input type="text" name="data[smtp][sender]" value="{$accountSettings['smtp']['sender']}" style="width: 600px" class="form-control" data-rule-required="true">
+        <span class="help-block">指定发送邮件发信人名称 </span>
+    </div>
+</div>
+<div class="form-group">
+    <label class="control-label col-sm-2">邮件签名（选填）</label>
+    <div class="form-controls col-sm-8">
+        <textarea rows="5" name="data[smtp][signature]" style="width: 600px" class="form-control" placeholder="">{$accountSettings['smtp']['signature']}</textarea>
+        <span class="help-block">指定邮件末尾添加的签名信息 </span>
+    </div>
+</div>
+
+<script>
+    $(function(){
+        $(".smtp_type").click(function () {
+            let type = $(this).val();
+            if( type === 'custom' ){
+                $(".custom-box").show();
+            }else{
+                $(".custom-box").hide();
+            }
+        })
+    })
+</script>

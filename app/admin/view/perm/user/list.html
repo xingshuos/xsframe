@@ -1,0 +1,169 @@
+{extend name="../../admin/view/public/admin_base"}
+
+{block name='content'}
+
+{include file="../app/admin/view/system/menu.html" /}
+
+<style>
+    .popover{
+        width:170px;
+        font-size:12px;
+        line-height: 21px;
+        color: #0d0706;
+    }
+    .popover span{
+        color: #b9b9b9;
+    }
+    .nickname{
+        display: inline-block;
+        max-width:200px;
+        overflow: hidden;
+        text-overflow:ellipsis;
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+    .tooltip-inner{
+        border:none;
+    }
+</style>
+
+<div class="page-header">
+    <span>
+        当前位置：<span class="text-primary">操作员管理</span>
+    </span>
+    <span>
+        全操作员数:  <span class='text-danger'>{$total}</span>
+    </span>
+</div>
+<div class="page-content">
+
+    <form action="" method="get" class="form-horizontal table-search" role="form">
+        <div class="page-toolbar">
+            <div class="col-sm-6">
+                <span class="">
+                    <a class='btn btn-primary btn-sm' href="{:webUrl('perm/userPost')}"><i class="icon icon-plus"></i> 添加新操作员</a>
+                    <a class="btn btn-default btn-sm" href="{:webUrl('perm/role')}">&nbsp;&nbsp;角色管理&nbsp;&nbsp;</a>
+                </span>
+            </div>
+            <div class="col-sm-6 pull-right">
+                <div class="input-group">
+                    <span class="input-group-selectn">
+                        <select name="roleid" class='form-control'>
+                            <option value="" {if $_GPC['roleid']==''} selected{/if}>选择角色</option>
+                            {foreach $roles as $key => $role}
+                            <option value="{$role['id']}" {if $_GPC['roleid']== $role['id']} selected{/if}>{$role['rolename']}</option>
+                            {/foreach}
+                        </select>
+                    </span>
+                    <span class="input-group-select">
+                        <select name="status" class='form-control '>
+                            <option value="" {if $_GPC['status'] == ''} selected{/if}>启用状态</option>
+                            <option value="1" {if $_GPC['status']== '1'} selected{/if}>启用</option>
+                            <option value="0" {if $_GPC['status'] == '0'} selected{/if}>禁用</option>
+                        </select>
+                    </span>
+                    <input type="text" class="form-control " name="keyword" value="{$_GPC['keyword']}" placeholder="可搜索操作员关键词">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit"> 搜索</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    {if count($list)>0}
+        <div class="page-table-header">
+            <div class="btn-group">
+                <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('perm/userChange',array('type' => 'status','value'=>1))}">
+                    <i class='icon icon-eye-open'></i> 启用</button>
+                </button>
+                <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch'  data-href="{:webUrl('perm/userChange',array('type' => 'status','value'=>0))}">
+                    <i class='icon icon-eye-close'></i> 禁用</button>
+                </button>
+                <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('perm/userDelete')}">
+                    <i class='icon icon-trash'></i> 删除</button>
+                </button>
+            </div>
+        </div>
+        <table class="table table-hover table-responsive">
+            <thead>
+            <tr>
+                <th style="width:100px;">
+                    <label class='checkbox-inline'>
+                        <input type="checkbox"> 全选
+                    </label>
+                </th>
+                <th style=''>登录账号</th>
+                <th style=''>角色</th>
+                <th style=''>姓名</th>
+                <th style=''>手机</th>
+                <th>状态</th>
+                <th style="width: 100px">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {foreach $list as $key => $row}
+            <tr>
+                <td><input type='checkbox'   value="{$row['id']}"/></td>
+                <td>{$row['username']}</td>
+                <td>{$row['rolename'] ? $row['rolename'] : '无'}</td>
+                <td>{$row['realname']}</td>
+                <td>{$row['mobile']}</td>
+                <td>
+                    <span class='label {if $row['status']==1}label-primary{else}label-default{/if}'
+                    data-toggle='ajaxSwitch'
+                    data-switch-value='{$row['status']}'
+                    data-switch-value0='0|禁用|label label-default|{:webUrl('perm/userChange',array('type' => 'status','value'=>1,'id'=>$row['id']))}'
+                    data-switch-value1='1|启用|label label-primary|{:webUrl('perm/userChange',array('type' => 'status','value'=>0,'id'=>$row['id']))}'
+                    >
+                    {if $row['status']==1}启用{else}禁用{/if}</span>
+                </td>
+                <td>
+                    <a class='btn btn-default btn-sm  btn-op btn-operation' href="{:webUrl('perm/userPost', array('id' => $row['id']))}">
+                        <span data-toggle="tooltip" data-placement="top" title="" data-original-title="编辑">
+                            <i class="icon icon-pencil"></i>
+                        </span>
+                    </a>
+                    <a class='btn btn-default btn-sm btn-op btn-operation' data-toggle='ajaxRemove'  href="{:webUrl('perm/userDelete', array('id' => $row['id']))}" data-confirm="确认删除此操作员吗？">
+                        <span data-toggle="tooltip" data-placement="top" title="" data-original-title="删除">
+                            <i class='icon icon-trash'></i>
+                       </span>
+                    </a>
+                </td>
+            </tr>
+            {/foreach}
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="3">
+                    <div class="btn-group">
+                        <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('perm/userChange',array('type' => 'status','value'=>1))}">
+                            <i class='icon icon-eye-open'></i> 启用</button>
+                        </button>
+                        <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch'  data-href="{:webUrl('perm/userChange',array('type' => 'status','value'=>0))}">
+                            <i class='icon icon-eye-close'></i> 禁用</button>
+                        </button>
+                        <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('perm/userDelete')}">
+                            <i class='icon icon-trash'></i> 删除</button>
+                        </button>
+                    </div>
+                </td>
+                <td colspan="4" style="text-align: right"> {$pager | raw}</td>
+            </tr>
+            </tfoot>
+            </tbody>
+        </table>
+    {else}
+        <div class='panel panel-default'>
+            <div class='panel-body' style='text-align: center;padding:30px;'>
+                暂时没有任何操作员!
+            </div>
+        </div>
+    {/if}
+
+</div>
+
+<script language="javascript">
+
+</script>
+{/block}

@@ -1,0 +1,62 @@
+.msgbox {
+    position: fixed;
+    margin: auto;
+    height: 32px;
+    line-height: 32px;
+    width: 100%;
+    text-align: center;
+    z-index: 99999;
+    -moz-transition-duration: 300ms;
+    -webkit-transition-duration: 300ms;
+    transition-duration: 300ms;
+    top: -32px;
+    opacity: 0;
+}
+
+.msgbox.in {
+
+    top: -1px;
+    opacity: 1;
+}
+
+.msgbox .msg {
+    display: inline-block;
+    white-space: nowrap;
+    height: 32px;
+    line-height: 30px;
+    color: #fff;
+    font-size: 14px;
+    min-width: 550px;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+
+}
+
+.msgbox .msg.msg-success {
+    background: #54c952
+}
+
+.msgbox .msg.msg-warning {
+    background: #ffc000
+}
+
+.msgbox .msg.msg-error {
+    background: #eb6060
+}
+
+.msgbox.loading {
+    top: 10px;
+    opacity: 1;
+}
+
+.msgbox.loading .msg {
+    min-width: 150px;
+    background: #f8f8f8;
+    border: 1px solid #f2f2f2;
+    border-radius: 3px;
+    color: #666;
+}
+
+.msgbox.loading i {
+    color: #09c;
+}

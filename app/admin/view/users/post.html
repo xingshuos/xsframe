@@ -1,0 +1,101 @@
+{extend name="../../admin/view/public/admin"}
+
+{block name='content'}
+
+<div class="page-header">当前位置：<span class="text-primary">{if $item}编辑{else/}添加{/if}用户</span></div>
+
+<style>
+    .tabs-container .form-group {overflow: hidden;}
+    .tabs-container .tabs-left > .nav-tabs {}
+    .tab-goods .nav li {float:left;}
+</style>
+
+<div class="page-content">
+
+    <form action="" method="post" class="form-horizontal form-validate" enctype="multipart/form-data">
+        <input type="hidden" id="tab" name="tab" value="{if empty($_GPC['tab'])}#tab_basic{else}#tab_{$_GPC['tab']}{/if}" />
+
+        <div class="tabs-container tab-goods">
+            <div class="tabs-left">
+                <ul class="nav nav-tabs" id="myTab" style="display: none;">
+                    <li  {if empty($_GPC['tab']) || $_GPC['tab']=='basic'}class="active"{/if}><a href="#tab_basic">账号设置</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-content">
+
+                        <div class="tab-pane {if empty($_GPC['tab']) || $_GPC['tab']=='basic'}active{/if}" id="tab_basic">
+                            <div class="panel-body">
+
+                                <div class="form-group">
+                                    <label class="col-lg control-label must">账号</label>
+                                    <div class="col-sm-9 col-xs-12">
+                                        <input type="text" name="username" class="form-control" value="{$item['username']}" data-rule-required='true'/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-lg control-label">密码</label>
+                                    <div class="col-sm-9 col-xs-12">
+                                        <input type="text" name="password" class="form-control" value=""/>
+                                        <span class="help-block">不填写则为不修改密码</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-lg control-label">角色</label>
+                                    <div class="col-sm-9 col-xs-12">
+                                        <label class="radio-inline">
+                                            <input type="radio" name="role" value="manager" {if $item['role']=='manager'}checked="checked"{/if}> 商户管理员
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="role" value="operator" {if $item['role']=='operator'}checked="checked"{/if}> 普通管理员
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="role" value="owner" {if $item['role']=='owner'}checked="checked"{/if}> 超级管理员
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-lg control-label must">管理商户</label>
+                                    <div class="col-sm-9 col-xs-12">
+                                        {:tpl_selector('uniacid',array('text'=>'name','value'=>$item['name'],'preview'=>true,'readonly'=>true,'multi'=>0,'type'=>'image', 'required'=>false,  'thumb'=>'logo','placeholder'=>'商户名称','buttontext'=>'选择商户 ', 'items'=>$accountInfo,'url'=>webUrl('account/query')))}
+                                        <span class='help-block'>当前管理员所管理的商户，一个商户管理员只能管理一个商户</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-lg control-label">是否启用</label>
+                                    <div class="col-sm-9 col-xs-12">
+                                        <label class="radio-inline">
+                                            <input type="radio" name="status" value="1" {if $item['status']==1}checked="checked"{/if}> 启用
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="status" value="0" {if $item['status']==0 || empty($item)}checked="checked"{/if}> 关闭
+                                        </label>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-lg control-label"></label>
+            <div class="col-sm-9 col-xs-12">
+                <input type="submit" value="提交" class="btn btn-primary"/>
+                <a class="btn btn-default" href="{:webUrl('users/list')}">返回列表</a>
+            </div>
+        </div>
+
+    </form>
+
+
+
+</div>
+
+{/block}

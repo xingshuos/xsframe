@@ -1,0 +1,209 @@
+{extend name="../../admin/view/public/admin_base"}
+
+{block name='title'}{$pageTitle}-{$moduleInfo['name'] ? $moduleInfo['name'] : $websiteSets['name']}{/block}
+
+{block name='style'}
+
+{/block}
+
+{block name='header'}
+<div class="wb-header" style="position: fixed;">
+    <div class="logo {if !empty($foldNav)}small{/if}">
+        {if $isSystem}
+            <img class="logo-img" src="{:tomedia($websiteSets['logo'])}" onerror="this.src='__ADMIN_IMG__/nopic.png'" data-url="{:tomedia($websiteSets['logo'])}">
+            <div class="title">{$websiteSets['name']}</div>
+        {else/}
+            {if !empty($moduleInfo['logo'])}
+                <img class="logo-img" src="{:tomedia($moduleInfo['logo'])}" onerror="this.src='__ADMIN_IMG__/nopic.png'">
+            {else}
+                <img class="logo-img" src="{$siteRoot}/app/{$module}/icon.png" onerror="this.src='__ADMIN_IMG__/nopic.png'">
+            {/if}
+            <div class="title">{$moduleInfo['name']}</div>
+        {/if}
+    </div>
+
+    <ul>
+        {if $isSystem}
+            <li>
+                <a href="{:url('home/welcome')}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="系统概况"><i class="icon icon-home"></i></a>
+            </li>
+        {else}
+            {if in_array($userInfo['role'],['operator','owner','manager']) }
+                <li class="sysset wb-nav-system" data-module="{$module}" style="padding: 0;width: 60px;">
+                    <a href="" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="系统概况"><i class="icon icon-home" style="font-size: 16px;"></i></a>
+                </li>
+            {/if}
+        {/if}
+    </ul>
+
+    <div class="wb-header-flex"></div>
+
+    <ul>
+        <li class="dropdown ellipsis">
+            <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                {if $isSystem}
+                    {$userInfo['username']}
+                {else}
+                    {$account['name']}
+                {/if}
+                <span></span>
+            </a>
+
+            <ul class="dropdown-menu">
+
+                {if $isSystem}
+                    <li>
+                        <a href="{:url('admin/sysset/upgrade')}">
+                            <i class="icon icon-cloud-upload" style="font-size: 22px;"></i>
+                            <span style="display: block">系统升级</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{:url('admin/users/profile')}" target="_blank">
+                            <i class="icon icon-lock " style="font-size: 22px;"></i>
+                            <span style="display: block">修改密码</span>
+                        </a>
+                    </li>
+                {else}
+                    <li class="wb-nav-system" data-href="{:url('admin/system/index')}" data-module="{$module}">
+                        <a href="">
+                            <i class="icon icon-exchange" style="font-size: 22px;"></i>
+                            <span style="display: block">切换应用</span>
+                        </a>
+                    </li>
+
+                    {if in_array($userInfo['role'],['operator','owner','manager']) && !$isSystem}
+                        <li class="wb-nav-system" data-href="{:url('admin/system/account')}" data-module="{$module}">
+                            <a href="">
+                                <i class="icon icon-cog" style="font-size: 22px;"></i>
+                                <span style="display: block">系统设置</span>
+                            </a>
+                        </li>
+                        <li class="wb-nav-system" data-href="{:url('admin/perm/user')}" data-module="{$module}">
+                            <a href="">
+                                <i class="icon icon-tasks" style="font-size: 22px;"></i>
+                                <span style="display: block">权限管理</span>
+                            </a>
+                        </li>
+                    {/if}
+
+                    <li class="wb-nav-system" data-href="{:url('admin/system/profile')}" data-module="{$module}">
+                        <a href="">
+                            <i class="icon icon-lock " style="font-size: 22px;"></i>
+                            <span style="display: block">修改密码</span>
+                        </a>
+                    </li>
+                {/if}
+
+                {if $userInfo['role'] == 'owner' && $module != 'admin'}
+                    <li>
+                        <a href="{:url('admin/home/welcome')}"><i class="icon icon-cog"></i> 返回系统 </a>
+                    </li>
+                {else}
+                    <li data-href="{:url('admin/login/logout')}" class="wb-header-logout">
+                        <a><i class="icon icon-off"></i> 退出系统</a>
+                    </li>
+                {/if}
+
+            </ul>
+        </li>
+        <li data-toggle="tooltip" data-placement="bottom" title="" data-href="{:url('admin/login/logout')}" data-original-title="退出" class="wb-header-logout">
+            <a><i class="icon icon-off"></i></a>
+        </li>
+    </ul>
+</div>
+{/block}
+
+{block name='menus'}
+
+<!-- 一级导航 -->
+<div class="wb-nav {if !empty($foldNav)}fold{/if}">
+    <p class="wb-nav-fold"><i class="icon icon-indent-left"></i></p>
+    <ul id="navheight">
+
+        {foreach $menusList['menu'] as $key => $sysmenu}
+            <li {if $sysmenu['active'] && !$selSystemNav}class="active"{/if}>
+                <a data-href="{:webUrl($sysmenu['route'])}" class="wb-nav-item" data-module="{$module}">
+                    {if !empty($sysmenu['icon'])}
+                    <i class="icon {$sysmenu['icon']}"></i>
+                    {/if}
+                    <span class="wb-nav-title">{$sysmenu['text']}</span>
+                </a>
+                <span class="wb-nav-tip">{$sysmenu['subtitle']}</span>
+            </li>
+        {/foreach}
+
+        {if in_array($userInfo['role'],['operator','owner','manager']) && !$isSystem}
+        <li class="sysset wb-nav-system" data-module="{$module}" {if $selSystemNav}style="background-color:#161f29;"{/if}>
+            <a href="">
+                <i class="icon icon-cog"></i>
+                <span class="wb-nav-title" data-href="">系统管理</span>
+            </a>
+        </li>
+        {/if}
+
+    </ul>
+</div>
+
+{if empty($selSystemNav)}
+
+    <!-- 二级导航 -->
+    {if !empty($menusList['submenu']['items'])}
+    <div class="wb-subnav">
+        <div style="width: 100%;height: 100%;overflow-y: auto">
+
+            <div class="subnav-scene">
+                {$menusList['submenu']['subtitle']}
+            </div>
+
+            {if !empty($menusList['submenu']['items'])}
+                {foreach $menusList['submenu']['items'] as $subKey => $submenu}
+                    {if !empty($submenu['items'])}
+                        <div class='menu-header {if $submenu['active']}active data-active{/if}'><div class="menu-icon icon icon-caret-{if $submenu['active']}down{else}right{/if}"></div>{$submenu['title']}</div>
+                        <ul {if $submenu['active']}style="display: block"{/if}>
+                            {foreach $submenu['items'] as $threeKey => $threemenu}
+                            <li {if $threemenu['active']}class="active"{/if}><a href="{:webUrl($threemenu['route'])}" style="cursor: pointer;" data-route="{:url($threemenu['route'])}">{$threemenu['title']}</a>
+                            {/foreach}
+                        </ul>
+                    {else}
+                        <ul class="single">
+                            <li {if $submenu['active']}class="active"{/if} style=" position: relative">
+                                <a href="{:webUrl($submenu['url']?:$submenu['route'])}" style="cursor: pointer;" data-route="{:url($submenu['url']?:$submenu['route'])}">{$submenu['title']}</a>
+                            </li>
+                        </ul>
+                    {/if}
+                {/foreach}
+            {/if}
+
+            <div class="wb-subnav-fold icow"></div>
+        </div>
+    </div>
+    {/if}
+
+{/if}
+
+{/block}
+
+{block name='copyright'}
+
+    {if !empty($moduleInfo['copyright'])}
+        <div class="container-fluid footer text-center copyright-footer">
+            <div class="copyright">{$moduleInfo['copyright'] | raw}</div>
+        </div>
+    {else}
+        {if !empty($websiteSets['copyright'])}
+            <div class="container-fluid footer text-center copyright-footer">
+                <div class="copyright">{$websiteSets['copyright'] | raw}</div>
+            </div>
+        {/if}
+    {/if}
+
+{/block}
+
+{block name='script'}
+
+{/block}
+
+</body>
+
+</html>

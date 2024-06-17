@@ -1,0 +1,84 @@
+{extend name="../../admin/view/public/admin"}
+
+{block name='content'}
+
+<div class="page-content transparent">
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="ibox h300">
+                <div class="ibox-title">
+                    <h5><i class="icon icon-home"></i>系统信息</h5>
+                    <ul>
+                        <a href="{:webUrl('sysset/site')}" class="text-primary">修改</a>
+                    </ul>
+                </div>
+                <div class="ibox-content">
+                    <ul class="fui-cell-group">
+                        <li class="fui-cell">系统名称：<span class="text">{$websiteSets['title']}</span></li>
+                        <li class="fui-cell">系统关键词：<span class="text">{$websiteSets['keywords']}</span></li>
+                        <li class="fui-cell">系统介绍：<span class="text">{$websiteSets['description']}</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="ibox h300">
+                <div class="ibox-content  no-border">
+                    <ul class="fui-list-group">
+                        <li class="fui-list">
+                            <a href="{:webUrl('account/list')}">
+                                <div class="fui-list-media">
+                                    <span class="icon icon-th-large text-info"></span>
+                                </div>
+                                <div class="fui-list-inner">
+                                    <h5 class="goods_totals">{$accountTotal}</h5>
+                                    <p>商户数量</p>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="fui-list">
+                            <a href="{:webUrl('app/list')}">
+                                <div class="fui-list-media">
+                                    <span class="icon icon-apple text-green"></span>
+                                </div>
+                                <div class="fui-list-inner">
+                                    <h5 class="order_status1">{$moduleTotal}</h5>
+                                    <p>应用数量</p>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="fui-list-group">
+                        <li class="fui-list">
+                            <a href="{:webUrl('users/list',['role' => 'owner'])}">
+                                <div class="fui-list-media">
+                                    <span class="icon icon-user text-primary"></span>
+                                </div>
+                                <div class="fui-list-inner">
+                                    <h5 class="goods_totals">{$userTotal}</h5>
+                                    <p>超级管理员</p>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="fui-list">
+                            <a href="{:webUrl('users/list',['role' => 'manager'])}">
+                                <div class="fui-list-media">
+                                    <span class="icon icon-user text-warning"></span>
+                                </div>
+                                <div class="fui-list-inner">
+                                    <h5 class="order_status1">{$userModuleTotal}</h5>
+                                    <p>商户管理员</p>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{/block}
+

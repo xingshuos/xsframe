@@ -1,0 +1,74 @@
+<table class="table" cellspacing="0" width="100%">
+    <thead>
+    <tr>
+        <td>应用名称</td>
+        <td>作者</td>
+        <td>版本</td>
+        <td>操作</td>
+    </tr>
+    </thead>
+    <tbody class="ui-sortable container">
+    {if empty($list)}
+        <tr>
+            <td colspan="4" style="text-align: center">
+                查不到任何应用
+            </td>
+        </tr>
+    {else}
+        {foreach $list as $key => $row}
+            <tr>
+                <td>
+                    <img src="{$row['logo']}" style="width:30px;height:30px;float:left;margin-right:12px;border-radius: 50%;">
+                    {$row['name']}
+                </td>
+                <td>
+                    {$row['author']}
+                </td>
+                <td>
+                    {$row['version']}
+                </td>
+                <td>
+                    <a href="javascript:void(0);" class="label label-primary selectit" data-id="{$row['id']}" data-json='{:json_encode($row);}'>
+                        选择
+                    </a>
+                </td>
+            </tr>
+        {/foreach}
+    {/if}
+    </tbody>
+</table>
+<div style="text-align:right;width:100%;position: absolute;bottom: 0;right:30px;">
+    <div>
+        <ul class="pagination pagination-centered">
+            {if !empty($page_num_arr)}
+                {foreach $page_num_arr as $k => $num}
+                    <li {if $num== $page}class="active"{/if}>
+                    <a href="javascript:;" page="{$num}" class="pager-nav">
+                        {$num}
+                    </a>
+                    </li>
+                {/foreach}
+            {/if}
+            <li>
+                <a href="javascript:;" page="{$page+1}" class="pager-nav">
+                    下一页»
+                </a>
+            </li>
+            <li>
+                <a href="javascript:;" page="{$total}" class="pager-nav" class="page-raduis">
+                    尾页
+                </a>
+            </li>
+            <li>
+                <input type="text" class="page-raduis" value="{$page}">
+            </li>
+            <li>
+                <a href="javascript:;" page="{$page}" class="pager-nav">
+                    跳转
+                </a>
+            </li>
+        </ul>
+        <span class="record">共{$count}条记录</span>
+    </div>
+</div>
+

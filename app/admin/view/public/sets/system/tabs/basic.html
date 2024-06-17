@@ -1,0 +1,151 @@
+<div class="form-group" style="display: none;">
+    <label class="col-lg control-label">排序</label>
+    <div class="col-sm-9 col-xs-12">
+        <input type="text" name="displayorder" class="form-control" value="{$item['displayorder']}"/>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-lg control-label">启用状态</label>
+    <div class="col-sm-9 col-xs-12">
+        <label class="radio-inline">
+            <input type="radio" name="status" value="1" {if $item['status']==1}checked="checked"{/if}> 启用
+        </label>
+        <label class="radio-inline">
+            <input type="radio" name="status" value="0" {if $item['status']==0}checked="checked"{/if}> 禁用
+        </label>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-lg control-label">LOGO</label>
+    <div class="col-sm-9 col-xs-12">
+        {:tpl_form_field_image('logo', $item['logo'])}
+        <span class="help-block">可以代表该商户的logo图片,展示使用(建议尺寸:300px * 300px)</span>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-lg control-label must">商户名称</label>
+    <div class="col-sm-9 col-xs-12">
+        <input type="text" name="name" class="form-control" value="{$item['name']}" data-rule-required='true'/>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-lg control-label">关键词</label>
+    <div class="col-sm-9 col-xs-12">
+        <input type="text" name="keywords" class="form-control" value="{$item['keywords']}" placeholder="XX登录,XX后台,XXXX后台"/>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-lg control-label">商户简介</label>
+    <div class="col-sm-9 col-xs-12">
+        <textarea name="description" rows="5" placeholder="请输入商户简介" class="form-control">{$item['description']}</textarea>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-lg control-label">底部版权</label>
+    <div class="col-sm-9">
+        {:tpl_ueditor('copyright',$item['copyright'])}
+        <span class="help-block">例如:X ICP备2021010088号-1丨Copyright © 2020 {$_SERVER['HTTP_HOST']}.All Rights Reserved.丨X 公网安备 31010902003223号丨XX科技有限公司</span>
+    </div>
+</div>
+
+{if $userInfo['role'] == 'owner'}
+<div class="form-group">
+    <label class="col-lg control-label">选择应用</label>
+    <div class="col-sm-9">
+        <div class="form-group" style="height: auto; display: block;">
+            <div class="col-sm-12 col-xs-12">
+                <div class="input-group">
+                    <input type="text" id="goodsid_text" name="goodsid_text" value="" class="form-control text" readonly="">
+                    <div class="input-group-btn">
+                        <button class="btn btn-primary select_modules" type="button">选择应用</button>
+                    </div>
+                </div>
+                <div class="input-group multi-img-details container ui-sortable goods_show">
+                    {if !empty($modules)}
+                    {foreach $modules as $k => $g}
+                    <div class="multi-item" data-id="{$g['id']}" data-name="goodsid" id="{$g['id']}">
+                        <img class="img-responsive img-thumbnail" src="{$g['logo']}" onerror="this.src='/app/admin/static/images/nopic.png'" style="width:100px;height:100px;">
+                        <div class="img-nickname">{$g['name']}</div>
+                        <input type="hidden" value="{$g['identifie']}" name="modulesids[]">
+                        <em onclick="remove({$g['id']})" class="close">×</em>
+                        <div style="clear:both;"></div>
+                    </div>
+                    {/foreach}
+                    {/if}
+                </div>
+
+                <script>
+                    // 多图片排序问题
+                    require(['jquery.ui'],function(){
+                        $('.multi-img-details').sortable({scroll:'false'});
+                        $('.multi-img-details').sortable('option', 'scroll', false);
+                    })
+                    $(function(){
+                        var title = '';
+                        $('.img-nickname').each(function(){
+                            title += $(this).html()+';';
+                        });
+                        $('#goodsid_text').val(title);
+                    });
+                    require(['js/web/module_selector'],function (Gselector) {
+                        $('.select_modules').click(function () {
+                            let ids = select_modules_ids();
+                            Gselector.open('modules_show','',0,true,'',ids);
+                        });
+                    });
+                    function modules_show(data) {
+                        // console.log('data',data);
+                        if(data.act == 1){
+                            var html = '<div class="multi-item" data-id="'+data.id+'" data-name="goodsid" id="'+data.id+'">'
+                                +'<img class="img-responsive img-thumbnail" src="'+data.logo+'" onerror="this.src=\'/app/admin/static/images/nopic.png\'" style="width:100px;height:100px;">'
+                                +'<div class="img-nickname">'+data.name+'</div>'
+                                +'<input type="hidden" value="'+data.identifie+'" name="modulesids[]">'
+                                +'<em onclick="removeHtml('+data.id+')" class="close">×</em>'
+                                +'</div>';
+
+                            $('.goods_show').append(html);
+                            var title = '';
+                            $('.img-nickname').each(function(){
+                                title += $(this).html()+';';
+                            });
+                            $('#goodsid_text').val(title);
+                        }else if(data.act == 0){
+                            remove(data.id);
+                        }
+                    }
+                    function removeHtml(id){
+                        $("[id='"+id+"']").remove();
+                        var title = '';
+                        $('.img-nickname').each(function(){
+                            title += $(this).html()+';';
+                        });
+                        $('#goodsid_text').val(title);
+                    }
+                    function remove(id){
+                        $("[id='"+id+"']").remove();
+                        var title = '';
+                        $('.img-nickname').each(function(){
+                            title += $(this).html()+';';
+                        });
+                        $('#goodsid_text').val(title);
+                    }
+                    function select_modules_ids(){
+                        var goodsids = [];
+                        $(".multi-item").each(function(){
+                            goodsids.push($(this).attr('data-id'));
+                        });
+                        return goodsids;
+                    }
+                </script>
+                <span class="help-block">第一个应用是默认访问应用</span>
+            </div>
+        </div>
+    </div>
+</div>
+{/if}

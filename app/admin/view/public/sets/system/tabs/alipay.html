@@ -1,0 +1,32 @@
+<div class="form-group">
+    <label class="col-lg control-label must">AppID</label>
+    <div class="col-sm-9 col-xs-12">
+        <input type='text' value="{$accountSettings['alipay']['appid']}" name='data[alipay][appid]' class="form-control" data-rule-required='true' {if !empty($accountSettings['alipay']['appid'])}readonly ondblclick="this.readOnly=false" οnchange="this.readOnly=true" data-toggle="tooltip" data-placement="top" data-original-title="双击修改"{/if}/>
+        <span class="help-block">开放平台应用id</span>
+    </div>
+</div>
+
+<div class="form-group" >
+    <label class="col-lg control-label must">支付宝公钥</label>
+    <div class="col-sm-9">
+        <textarea name="data[alipay][public_key]" {if !empty($accountSettings['alipay']['public_key'])}style="display: none;"{/if} rows="4" data-rule-required='true' class="form-control">{if !empty($accountSettings['alipay']['public_key'])}{$accountSettings['alipay']['public_key']}{/if}</textarea>
+        <a href="javascript:void(0);" class="text text-edit" {if empty($accountSettings['alipay']['public_key'])}style="display: none;"{/if}>修改</a>
+        <div class="help-block">支付宝公钥(PUBLIC_KEY) 一行且不能有空格</div>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-lg control-label must">应用公钥</label>
+    <div class="col-sm-9 col-xs-12">
+        <input type='text' value="{$accountSettings['alipay']['encrypt_key']}" name='data[alipay][encrypt_key]' class="form-control" data-rule-required='true' {if !empty($accountSettings['alipay']['encrypt_key'])}readonly ondblclick="this.readOnly=false" οnchange="this.readOnly=true" data-toggle="tooltip" data-placement="top" data-original-title="双击修改"{/if}/>
+    </div>
+</div>
+
+<div class="form-group" >
+    <label class="col-lg control-label must">应用私钥</label>
+    <div class="col-sm-9">
+        <textarea name="data[alipay][private_key]" {if !empty($accountSettings['alipay']['private_key'])}style="display: none;"{/if} data-rule-required='true' rows="12" class="form-control">{$accountSettings['alipay']['private_key']}</textarea>
+        <a href="javascript:void(0);" class="text text-edit" {if empty($accountSettings['alipay']['private_key'])}style="display: none;"{/if}>修改</a>
+        <div class="help-block">应用私钥(PRIVATE_KEY) 一行且不能有空格</div>
+    </div>
+</div>

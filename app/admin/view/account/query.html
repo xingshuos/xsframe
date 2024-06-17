@@ -1,0 +1,18 @@
+<div style='max-height:500px;overflow:auto;min-width:850px;'>
+    <table class="table table-hover" style="min-width:850px;">
+        <tbody>
+        {foreach $list as $key=>$row }
+        <tr>
+            <td>{$row['name']}</td>
+            <td style="width:80px;"><a href="javascript:;" onclick='biz.selector.set(this, {:json_encode($row)})'>选择</a></td>
+        </tr>
+        {/foreach}
+        {if count($list)<=0}
+        <tr>
+            <td colspan='2' align='center'>未找到商户, 点击<a href="{:webUrl('admin/account/add')}" target='_blank'>【创建商户】</a></td>
+        </tr>
+        {/if}
+
+        </tbody>
+    </table>
+</div>

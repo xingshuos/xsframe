@@ -1,0 +1,27 @@
+{extend name="../../admin/view/public/admin"}
+
+{block name='content'}
+
+<!--<link rel="stylesheet" href="__ADMIN_CSS__/other/error.css"/>-->
+<style>
+    .error-content{
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+<div class="page-content">
+
+    <div class="error-content">
+        <img src="__ADMIN_IMG__/403.svg" alt="">
+        <div class="content-r">
+            <h1>403</h1>
+            <p style="text-align: center;">抱歉，你无权访问该页面</p>
+        </div>
+    </div>
+
+</div>
+
+{/block}

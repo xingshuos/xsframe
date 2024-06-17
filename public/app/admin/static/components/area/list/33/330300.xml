@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<address>
+<city name="温州市" code="330300">
+<county name="龙港市" code="330301">
+    <street name="金钗河社区" code="330301000" />
+    <street name="龙城社区" code="330301001" />
+    <street name="朝西屋社区" code="330301002" />
+    <street name="江口社区" code="330301003" />
+    <street name="下埠社区" code="330301004" />
+    <street name="池浦社区" code="330301005" />
+    <street name="江浦社区" code="330301006" />
+    <street name="流浦社区" code="330301007" />
+    <street name="河底高社区" code="330301008" />
+    <street name="方岩社区" code="330301009" />
+    <street name="新渡社区" code="3303010010" />
+    <street name="泰安社区" code="3303010011" />
+    <street name="瓯南社区" code="3303010012" />
+    <street name="东排社区" code="3303010013" />
+    <street name="西排社区" code="3303010014" />
+    <street name="柳江社区" code="3303010015" />
+    <street name="咸园社区" code="3303010016" />
+    <street name="砖瓦村" code="3303010017" />
+    <street name="新陡门村" code="3303010018" />
+    <street name="新兰村" code="3303010019" />
+    <street name="李家垟社区" code="3303010020" />
+    <street name="东城社区" code="3303010021" />
+    <street name="龙虹社区" code="3303010022" />
+    <street name="下涝社区" code="3303010023" />
+    <street name="洪宫社区" code="3303010024" />
+    <street name="涂厂村" code="3303010025" />
+    <street name="新美洲村" code="3303010026" />
+    <street name="象岗社区" code="3303010027" />
+    <street name="刘店社区" code="3303010028" />
+    <street name="方良社区" code="3303010029" />
+    <street name="黄中村" code="3303010030" />
+    <street name="七河村" code="3303010031" />
+    <street name="海近村" code="3303010032" />
+    <street name="海平村" code="3303010033" />
+    <street name="章良村" code="3303010034" />
+    <street name="河东村" code="3303010035" />
+    <street name="双桂里社区" code="3303010036" />
+    <street name="杨家宅社区" code="3303010037" />
+    <street name="下垟郑社区" code="3303010038" />
+    <street name="城西社区" code="3303010039" />
+    <street name="凤翔村" code="3303010040" />
+    <street name="东河村" code="3303010041" />
+    <street name="西桥村" code="3303010042" />
+    <street name="朱家站村" code="3303010043" />
+    <street name="三垟村" code="3303010044" />
+    <street name="龙浦社区" code="3303010045" />
+    <street name="凰浦村" code="3303010046" />
+    <street name="胜利村" code="3303010047" />
+    <street name="凤灵村" code="3303010048" />
+    <street name="凤江村" code="3303010049" />
+    <street name="富民村" code="3303010050" />
+    <street name="薛家桥村" code="3303010051" />
+    <street name="永平村" code="3303010052" />
+    <street name="龙都村" code="3303010053" />
+    <street name="龙源村" code="3303010054" />
+    <street name="双河村" code="3303010055" />
+    <street name="龙和村" code="3303010056" />
+    <street name="月星村" code="3303010057" />
+    <street name="文楼村" code="3303010058" />
+    <street name="龙南村" code="3303010059" />
+    <street name="余家慕村" code="3303010060" />
+    <street name="龙南村" code="3303010061" />
+    <street name="张家堡村" code="3303010062" />
+    <street name="龙平村" code="3303010063" />
+    <street name="利民村" code="3303010064" />
+    <street name="高龙村" code="3303010065" />
+    <street name="环浦村" code="3303010066" />
+    <street name="金山港村" code="3303010067" />
+    <street name="中山村" code="3303010068" />
+    <street name="瑞联村" code="3303010069" />
+    <street name="滨江村" code="3303010070" />
+    <street name="鲸头村" code="3303010071" />
+    <street name="中对口村" code="3303010072" />
+    <street name="云岩村" code="3303010073" />
+    <street name="泮河平安村" code="3303010074" />
+    <street name="永安村" code="3303010075" />
+    <street name="七姓底村" code="3303010076" />
+    <street name="三园村" code="3303010077" />
+    <street name="方城浦村" code="3303010078" />
+    <street name="友谊村" code="3303010079" />
+    <street name="舥艚村" code="3303010080" />
+    <street name="老陡门村" code="3303010081" />
+    <street name="中段村" code="3303010082" />
+    <street name="炉头村" code="3303010083" />
+    <street name="浃底村" code="3303010084" />
+    <street name="林家庄村" code="3303010085" />
+    <street name="芦浦村" code="3303010086" />
+    <street name="监后垟村" code="3303010087" />
+    <street name="华中村" code="3303010088" />
+    <street name="儒桥头村" code="3303010089" />
+    <street name="高星村" code="3303010090" />
+    <street name="石路村" code="3303010091" />
+    <street name="林家院村" code="3303010092" />
+    <street name="东门洋村" code="3303010093" />
+    <street name="龙华村" code="3303010094" />
+    <street name="九龙河村" code="3303010095" />
+    <street name="马北村" code="3303010096" />
+    <street name="马鞍徐东村" code="3303010097" />
+    <street name="倪家堡村" code="3303010098" />
+    <street name="新桥村" code="3303010099" />
+    <street name="金家沿村" code="33030100100" />
+    <street name="黄库村" code="33030100101" />
+    <street name="陈处村" code="33030100102" />
+</county>
+<county name="鹿城区" code="330302">
+    <street name="五马街道" code="330302006" />
+    <street name="七都街道" code="330302023" />
+    <street name="滨江街道" code="330302024" />
+    <street name="南汇街道" code="330302025" />
+    <street name="松台街道" code="330302026" />
+    <street name="双屿街道" code="330302027" />
+    <street name="仰义街道" code="330302028" />
+    <street name="藤桥镇" code="330302102" />
+</county>
+<county name="龙湾区" code="330303">
+    <street name="永中街道" code="330303001" />
+    <street name="蒲州街道" code="330303002" />
+    <street name="海滨街道" code="330303003" />
+    <street name="永兴街道" code="330303004" />
+    <street name="海城街道" code="330303005" />
+    <street name="状元街道" code="330303006" />
+    <street name="瑶溪街道" code="330303007" />
+    <street name="沙城街道" code="330303008" />
+    <street name="天河街道" code="330303009" />
+    <street name="灵昆街道" code="330303010" />
+    <street name="星海街道" code="330303011" />
+</county>
+<county name="瓯海区" code="330304">
+    <street name="景山街道" code="330304001" />
+    <street name="梧田街道" code="330304002" />
+    <street name="南白象街道" code="330304003" />
+    <street name="茶山街道" code="330304004" />
+    <street name="娄桥街道" code="330304005" />
+    <street name="新桥街道" code="330304006" />
+    <street name="三垟街道" code="330304007" />
+    <street name="瞿溪街道" code="330304008" />
+    <street name="郭溪街道" code="330304009" />
+    <street name="潘桥街道" code="330304010" />
+    <street name="丽岙街道" code="330304011" />
+    <street name="仙岩街道" code="330304012" />
+    <street name="泽雅镇" code="330304108" />
+</county>
+<county name="洞头县" code="330322">
+    <street name="北岙街道" code="330322001" />
+    <street name="东屏街道" code="330322002" />
+    <street name="元觉街道" code="330322003" />
+    <street name="霓屿街道" code="330322004" />
+    <street name="大门镇" code="330322101" />
+    <street name="鹿西乡" code="330322202" />
+</county>
+<county name="永嘉县" code="330324">
+    <street name="东城街道" code="330324001" />
+    <street name="北城街道" code="330324002" />
+    <street name="南城街道" code="330324003" />
+    <street name="江北街道" code="330324004" />
+    <street name="东瓯街道" code="330324005" />
+    <street name="三江街道" code="330324006" />
+    <street name="黄田街道" code="330324007" />
+    <street name="乌牛街道" code="330324008" />
+    <street name="桥头镇" code="330324102" />
+    <street name="桥下镇" code="330324104" />
+    <street name="大若岩镇" code="330324105" />
+    <street name="碧莲镇" code="330324106" />
+    <street name="巽宅镇" code="330324107" />
+    <street name="岩头镇" code="330324108" />
+    <street name="枫林镇" code="330324109" />
+    <street name="岩坦镇" code="330324110" />
+    <street name="沙头镇" code="330324111" />
+    <street name="鹤盛镇" code="330324112" />
+    <street name="县特产场场区" code="330324400" />
+    <street name="四海山林场" code="330324401" />
+    <street name="正江山林场" code="330324402" />
+</county>
+<county name="平阳县" code="330326">
+    <street name="昆阳镇" code="330326100" />
+    <street name="鳌江镇" code="330326101" />
+    <street name="水头镇" code="330326102" />
+    <street name="萧江镇" code="330326103" />
+    <street name="腾蛟镇" code="330326105" />
+    <street name="山门镇" code="330326107" />
+    <street name="顺溪镇" code="330326108" />
+    <street name="南雁镇" code="330326109" />
+    <street name="万全镇" code="330326117" />
+    <street name="青街畲族乡" code="330326214" />
+</county>
+<county name="苍南县" code="330327">
+    <street name="灵溪镇" code="330327100" />
+    <street name="宜山镇" code="330327103" />
+    <street name="钱库镇" code="330327104" />
+    <street name="金乡镇" code="330327107" />
+    <street name="藻溪镇" code="330327112" />
+    <street name="桥墩镇" code="330327113" />
+    <street name="矾山镇" code="330327116" />
+    <street name="赤溪镇" code="330327117" />
+    <street name="马站镇" code="330327118" />
+    <street name="凤阳畲族乡" code="330327216" />
+    <street name="岱岭畲族乡" code="330327218" />
+</county>
+<county name="文成县" code="330328">
+    <street name="大峃镇" code="330328100" />
+    <street name="百丈漈镇" code="330328101" />
+    <street name="南田镇" code="330328102" />
+    <street name="西坑畲族镇" code="330328103" />
+    <street name="黄坦镇" code="330328104" />
+    <street name="珊溪镇" code="330328105" />
+    <street name="巨屿镇" code="330328106" />
+    <street name="玉壶镇" code="330328107" />
+    <street name="峃口镇" code="330328108" />
+    <street name="周山畲族乡" code="330328217" />
+</county>
+<county name="泰顺县" code="330329">
+    <street name="罗阳镇" code="330329100" />
+    <street name="司前畲族镇" code="330329101" />
+    <street name="百丈镇" code="330329102" />
+    <street name="筱村镇" code="330329103" />
+    <street name="泗溪镇" code="330329104" />
+    <street name="彭溪镇" code="330329105" />
+    <street name="雅阳镇" code="330329106" />
+    <street name="仕阳镇" code="330329107" />
+    <street name="三魁镇" code="330329109" />
+    <street name="竹里畲族乡" code="330329204" />
+    <street name="乌岩岭自然保护区" code="330329400" />
+</county>
+<county name="瑞安市" code="330381">
+    <street name="安阳街道" code="330381001" />
+    <street name="玉海街道" code="330381002" />
+    <street name="锦湖街道" code="330381003" />
+    <street name="东山街道" code="330381004" />
+    <street name="上望街道" code="330381005" />
+    <street name="莘塍街道" code="330381007" />
+    <street name="汀田街道" code="330381008" />
+    <street name="飞云街道" code="330381009" />
+    <street name="仙降街道" code="330381010" />
+    <street name="南滨街道" code="330381011" />
+    <street name="塘下镇" code="330381101" />
+    <street name="马屿镇" code="330381116" />
+    <street name="陶山镇" code="330381120" />
+    <street name="湖岭镇" code="330381122" />
+    <street name="高楼镇" code="330381125" />
+</county>
+<county name="乐清市" code="330382">
+    <street name="城东街道" code="330382001" />
+    <street name="乐成街道" code="330382002" />
+    <street name="城南街道" code="330382003" />
+    <street name="盐盆街道" code="330382004" />
+    <street name="翁垟街道" code="330382005" />
+    <street name="白石街道" code="330382006" />
+    <street name="石帆街道" code="330382007" />
+    <street name="天成街道" code="330382008" />
+    <street name="大荆镇" code="330382101" />
+    <street name="仙溪镇" code="330382102" />
+    <street name="雁荡镇" code="330382104" />
+    <street name="芙蓉镇" code="330382105" />
+    <street name="清江镇" code="330382106" />
+    <street name="虹桥镇" code="330382108" />
+    <street name="淡溪镇" code="330382111" />
+    <street name="柳市镇" code="330382114" />
+    <street name="北白象镇" code="330382115" />
+</county>
+</city>
+</address>
