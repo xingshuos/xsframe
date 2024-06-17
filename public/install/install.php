@@ -218,7 +218,7 @@ if ($action == 'env') {
         $ret['write']['root']['failed'] = true;
         $ret['write']['root']['remark'] = 'public/attachment无法写入, 将无法使用自动更新功能, 系统无法正常运行.  ';
     }
-    $ret['write']['data']['ok'] = local_writeable(PATH_ROOT . '/../runtime');
+    $ret['write']['data']['ok'] = local_writeable(PATH_ROOT . '/runtime');
     if ($ret['write']['data']['ok']) {
         $ret['write']['data']['value'] = '<span class="icon icon-ok text-success"></span>';
         $ret['write']['data']['class'] = 'success';

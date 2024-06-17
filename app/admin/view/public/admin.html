@@ -10,8 +10,8 @@
 <div class="wb-header" style="position: fixed;">
     <div class="logo {if !empty($foldNav)}small{/if}">
         {if $isSystem}
-            <img class="logo-img" src="{:tomedia($websiteSets['logo'])}" onerror="this.src='__ADMIN_IMG__/nopic.png'" data-url="{:tomedia($websiteSets['logo'])}">
-            <div class="title">{$websiteSets['name']}</div>
+            <img class="logo-img" src="{:tomedia($websiteSets['logo']?:'images/global/logo.png')}" data-url="{:tomedia($websiteSets['logo'])}">
+            <div class="title">{$websiteSets['name']?:'星数引擎'}</div>
         {else/}
             {if !empty($moduleInfo['logo'])}
                 <img class="logo-img" src="{:tomedia($moduleInfo['logo'])}" onerror="this.src='__ADMIN_IMG__/nopic.png'">

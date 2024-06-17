@@ -104,10 +104,8 @@
 <div class="header-wrap">
     <div class="header-left">
         <div class="header-logo">
-            {if !empty($websiteSets['logo'])}
-            <img src="{:tomedia($websiteSets['logo'])}" alt="{$websiteSets['name']}-logo" class="header-logo-img">
-            {/if}
-            <span class="title">{$websiteSets['name']}</span>
+            <img src="{:tomedia($websiteSets['logo']?:'images/global/logo.png')}" alt="{$websiteSets['name']}-logo" class="header-logo-img">
+            <span class="title">{$websiteSets['name']?:'星数引擎'}</span>
         </div>
     </div>
     <div class="header-right">
