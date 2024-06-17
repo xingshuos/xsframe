@@ -270,28 +270,28 @@
     <ul id="navheight">
 
                     <li >
-                <a data-href="/admin/account/index.html" class="wb-nav-item" data-module="admin">
+                <a data-href="http://www.xsframe.com/admin/account/index.html" class="wb-nav-item" data-module="admin">
                                         <i class="icon icon-archive"></i>
                                         <span class="wb-nav-title">商户</span>
                 </a>
                 <span class="wb-nav-tip">商户管理</span>
             </li>
                     <li >
-                <a data-href="/admin/app/index.html" class="wb-nav-item" data-module="admin">
+                <a data-href="http://www.xsframe.com/admin/app/index.html" class="wb-nav-item" data-module="admin">
                                         <i class="icon icon-th-large"></i>
                                         <span class="wb-nav-title">应用</span>
                 </a>
                 <span class="wb-nav-tip">应用管理</span>
             </li>
                     <li >
-                <a data-href="/admin/users/profile.html" class="wb-nav-item" data-module="admin">
+                <a data-href="http://www.xsframe.com/admin/users/profile.html" class="wb-nav-item" data-module="admin">
                                         <i class="icon icon-user"></i>
                                         <span class="wb-nav-title">用户</span>
                 </a>
                 <span class="wb-nav-tip">用户管理</span>
             </li>
                     <li class="active">
-                <a data-href="/admin/sysset/site.html" class="wb-nav-item" data-module="admin">
+                <a data-href="http://www.xsframe.com/admin/sysset/site.html" class="wb-nav-item" data-module="admin">
                                         <i class="icon icon-desktop"></i>
                                         <span class="wb-nav-title">系统</span>
                 </a>
@@ -311,30 +311,30 @@
 
                                     <ul class="single">
                             <li  style=" position: relative">
-                                <a href="/admin/sysset/site.html" style="cursor: pointer;" data-route="/admin/sysset/site.html">站点设置</a>
+                                <a href="http://www.xsframe.com/admin/sysset/site.html" style="cursor: pointer;" data-route="/admin/sysset/site.html">站点设置</a>
                             </li>
                         </ul>
                                                             <ul class="single">
                             <li  style=" position: relative">
-                                <a href="/admin/sysset/host.html" style="cursor: pointer;" data-route="/admin/sysset/host.html">域名设置</a>
+                                <a href="http://www.xsframe.com/admin/sysset/host.html" style="cursor: pointer;" data-route="/admin/sysset/host.html">域名设置</a>
                             </li>
                         </ul>
                                                             <ul class="single">
                             <li  style=" position: relative">
-                                <a href="/admin/sysset/attachment.html" style="cursor: pointer;" data-route="/admin/sysset/attachment.html">附件设置</a>
+                                <a href="http://www.xsframe.com/admin/sysset/attachment.html" style="cursor: pointer;" data-route="/admin/sysset/attachment.html">附件设置</a>
                             </li>
                         </ul>
                                                             <ul class="single">
                             <li  style=" position: relative">
-                                <a href="/admin/sysset/upgrade.html" style="cursor: pointer;" data-route="/admin/sysset/upgrade.html">系统升级</a>
+                                <a href="http://www.xsframe.com/admin/sysset/upgrade.html" style="cursor: pointer;" data-route="/admin/sysset/upgrade.html">系统升级</a>
                             </li>
                         </ul>
                                                             <div class='menu-header active data-active'><div class="menu-icon icon icon-caret-down"></div>常用工具</div>
                         <ul style="display: block">
-                                                        <li ><a href="/admin/sysset/form.html" style="cursor: pointer;" data-route="/admin/sysset/form.html">系统表单</a>
-                                                        <li ><a href="/admin/sysset/icon.html" style="cursor: pointer;" data-route="/admin/sysset/icon.html">系统图标</a>
-                                                        <li class="active"><a href="/admin/sysset/static.html" style="cursor: pointer;" data-route="/admin/sysset/static.html">静态页面</a>
-                                                        <li ><a href="/admin/sysset/bom.html" style="cursor: pointer;" data-route="/admin/sysset/bom.html">检测BOM</a>
+                                                        <li ><a href="http://www.xsframe.com/admin/sysset/form.html" style="cursor: pointer;" data-route="/admin/sysset/form.html">系统表单</a>
+                                                        <li ><a href="http://www.xsframe.com/admin/sysset/icon.html" style="cursor: pointer;" data-route="/admin/sysset/icon.html">系统图标</a>
+                                                        <li class="active"><a href="http://www.xsframe.com/admin/sysset/static.html" style="cursor: pointer;" data-route="/admin/sysset/static.html">静态页面</a>
+                                                        <li ><a href="http://www.xsframe.com/admin/sysset/bom.html" style="cursor: pointer;" data-route="/admin/sysset/bom.html">检测BOM</a>
                                                     </ul>
                                                 
             <div class="wb-subnav-fold icow"></div>
@@ -534,13 +534,16 @@
     $(() => {
 
         // 鼠标移入弹出信息框
-        $('[data-toggle="tooltip"]').tooltip("destroy").tooltip({
-            container: $(document.body)
-        });
+        let timer = setTimeout(() => {
+            $('[data-toggle="tooltip"]').tooltip("destroy").tooltip({
+                container: $(document.body)
+            });
 
-        $('[data-toggle="popover"]').popover("destroy").popover({
-            container: $(document.body)
-        });
+            $('[data-toggle="popover"]').popover("destroy").popover({
+                container: $(document.body)
+            });
+            clearTimeout(timer);
+        },200);
 
         require(['bootstrap'], function ($) {
 

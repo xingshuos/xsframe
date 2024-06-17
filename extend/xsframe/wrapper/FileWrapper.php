@@ -25,19 +25,24 @@ class FileWrapper
     {
         $groupId = 0;
         $attachmentPath = IA_ROOT . "/public/attachment/";
-        $harmType = array('asp', 'php', 'jsp', 'js', 'css', 'php3', 'php4', 'php5', 'ashx', 'aspx', 'exe', 'cgi');
+        $harmType = ['asp', 'php', 'jsp', 'js', 'css', 'php3', 'php4', 'php5', 'ashx', 'aspx', 'exe', 'cgi'];
 
         if (empty($folder)) {
             return ErrorUtil::error(0, "没有上传内容");
         }
 
-        if (!in_array($type, array('image', 'thumb', 'voice', 'video', 'audio'))) {
+        if (!in_array($type, ['image', 'thumb', 'voice', 'video', 'audio'])) {
             return ErrorUtil::error(0, "未知的上传类型");
         }
 
         $ext = strtolower($ext);
         if (in_array(strtolower($ext), $harmType)) {
             return ErrorUtil::error(0, "不允许上传此类文件");
+        }
+
+        # 图片压缩/上传处理
+        if ($type == 'image') {
+            $filename = $this->fileRemoteUpload($uniacid, $attachmentPath . $folder, $filename, $ext);
         }
 
         $result = [
@@ -52,11 +57,6 @@ class FileWrapper
             'group_id'   => $groupId
         ];
         $this->addFileLog($uniacid, $userId, $result['name'], $result['fileurl'], $result['type'], $module, $groupId);
-
-        # 图片压缩设置
-        if ($type == 'image') {
-            $filename = $this->fileRemoteUpload($uniacid, $attachmentPath . $folder, $filename, $ext);
-        }
 
         return $result;
     }
@@ -118,14 +118,25 @@ class FileWrapper
 
             // 图片处理
             if (!empty($setting['image'])) {
+                $ext = strtolower($ext);
+
                 // 启用压缩
-                if ($setting['image']['is_reduce'] == 1 && $setting['image']['width'] > 0) {
-                    $newFileName = FileUtil::fileRandomName($filePath, $ext);
-                    $maxWidth = $setting['image']['width'];
-                    $image = Image::open($filePath . $fileName);
-                    $image->thumb($maxWidth, $maxWidth)->save($filePath . $newFileName);
-                    // 删除源图
-                    unlink($filePath . $fileName);
+                if ($setting['image']['is_reduce'] == 1) {
+
+                    $extentions = explode("|", $setting['image']['extentions']);
+                    if (!in_array($ext, $extentions)) {
+                        return ErrorUtil::error(0, "不支持此文件类型");
+                    }
+
+                    if ($setting['image']['width'] > 0) {
+                        $newFileName = FileUtil::fileRandomName($filePath, $ext);
+                        $maxWidth = $setting['image']['width'];
+                        $image = Image::open($filePath . $fileName);
+                        $image->thumb($maxWidth, $maxWidth)->save($filePath . $newFileName);
+                        // 删除源图
+                        @unlink($filePath . $fileName);
+                    }
+
                 }
             }
 

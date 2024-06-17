@@ -190,6 +190,12 @@ class RequestUtil
         }
 
         $response = self::httpPost("https://www.xsframe.cn/cloud/api/" . $url, $postData);
-        return json_decode($response, true);
+        $result = @json_decode($response, true);
+
+        if (!empty($result)) {
+            return false;
+        } else {
+            return $response;
+        }
     }
 }
