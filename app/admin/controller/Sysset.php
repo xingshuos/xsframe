@@ -421,7 +421,7 @@ EOF;
             Cache::delete(CacheKeyEnum::CLOUD_FRAME_UPGRADE_FILES_KEY);
         }
 
-        $this->upgradeSuccess($version, $versionTime);
+        // $this->upgradeSuccess($version, $versionTime);
     }
 
     // 获取升级日志列表
