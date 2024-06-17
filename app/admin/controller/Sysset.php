@@ -375,7 +375,7 @@ EOF;
         $versionTime = IMS_VERSION_TIME;
 
         $isSuccess = true;
-
+        $unSuccessFiles = [];
         if (!empty($updateFiles)) {
             foreach ($updateFiles as $filePath) {
                 $file_dir = dirname(IA_ROOT . $filePath);
@@ -398,9 +398,9 @@ EOF;
                     }
 
                     try {
-                        $fileData = str_replace(["\r\n", "\r"], "\n", $fileData);
                         file_put_contents(IA_ROOT . $filePath, $fileData, FILE_BINARY);
                     } catch (Exception $exception) {
+                        $unSuccessFiles[] = $filePath;
                         $isSuccess = false;
                     }
 
@@ -409,7 +409,14 @@ EOF;
         }
 
         if (!$isSuccess) {
-            show_json(0, "有部分文件更新失败，请设置根目录权限为777");
+            $msg = "";
+            foreach ($unSuccessFiles as $filePath) {
+                $msg .= $filePath . "<br>";
+            }
+
+            Cache::set(CacheKeyEnum::CLOUD_FRAME_UPGRADE_FILES_KEY, $unSuccessFiles, 7200);
+
+            show_json(1, "部分文件更新失败<br>{$msg}请设置根目录权限为777");
         } else {
             Cache::delete(CacheKeyEnum::CLOUD_FRAME_UPGRADE_FILES_KEY);
         }
