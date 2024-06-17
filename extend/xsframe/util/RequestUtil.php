@@ -193,7 +193,7 @@ class RequestUtil
         $result = @json_decode($response, true);
 
         if (!empty($result)) {
-            return false;
+            return $result;
         } else {
             return $response;
         }
