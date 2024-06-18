@@ -322,7 +322,7 @@ class Sysset extends Base
             'upgradeList' => $upgradeList,
             'updateFiles' => $updateFiles,
             'version'     => IMS_VERSION,
-            'versionTime' => IMS_VERSION_TIME,
+            'versionTime' => date('Y-m-d H:i:s', IMS_VERSION_TIME),
         ];
         return $this->template('upgrade', $result);
     }
