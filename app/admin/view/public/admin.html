@@ -157,9 +157,10 @@
             </div>
 
             {if !empty($menusList['submenu']['items'])}
+                {php}$isActive = true;{/php}
                 {foreach $menusList['submenu']['items'] as $subKey => $submenu}
                     {if !empty($submenu['items'])}
-                        <div class='menu-header {if $submenu['active']}active data-active{/if}'><div class="menu-icon icon icon-caret-{if $submenu['active']}down{else}right{/if}"></div>{$submenu['title']}</div>
+                        <div class='menu-header {if $submenu['active'] && $isActive}active data-active{/if}'><div class="menu-icon icon icon-caret-{if $submenu['active']}down{else}right{/if}"></div>{$submenu['title']}</div>
                         <ul {if $submenu['active']}style="display: block"{/if}>
                             {foreach $submenu['items'] as $threeKey => $threemenu}
                             <li {if $threemenu['active']}class="active"{/if}><a href="{:webUrl($threemenu['route'])}" style="cursor: pointer;" data-route="{:url($threemenu['route'])}">{$threemenu['title']}</a>
@@ -167,10 +168,13 @@
                         </ul>
                     {else}
                         <ul class="single">
-                            <li {if $submenu['active']}class="active"{/if} style=" position: relative">
+                            <li {if $submenu['active'] && $isActive}class="active"{/if} style=" position: relative">
                                 <a href="{:webUrl($submenu['url']?:$submenu['route'])}" style="cursor: pointer;" data-route="{:url($submenu['url']?:$submenu['route'])}">{$submenu['title']}</a>
                             </li>
                         </ul>
+                        {if $submenu['active'] && $isActive}
+                            {php}$isActive = false;{/php}
+                        {/if}
                     {/if}
                 {/foreach}
             {/if}
