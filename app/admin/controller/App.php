@@ -12,6 +12,7 @@
 
 namespace app\admin\controller;
 
+use think\Exception;
 use think\facade\Db;
 use xsframe\facade\wrapper\SystemWrapperFacade;
 use xsframe\util\FileUtil;
@@ -183,21 +184,21 @@ class App extends Base
         $id = intval($this->params["id"]);
         $identifie = trim($this->params["identifie"]);
 
-        Db::name('sys_modules')->where(['id' => $id])->update(['is_install' => 1, 'status' => 1]);
-        Db::name('sys_account_modules')->where(['module' => $identifie])->update(['deleted' => 0]);
+        try {
+            $modulesController = new ModulesWrapper();
+            $modulesController->runInstalledModule($identifie, $key, $token);
 
-        $modulesController = new ModulesWrapper();
-        $isTrue = $modulesController->runInstalledModule($identifie, $key, $token);
+            Db::name('sys_modules')->where(['id' => $id])->update(['is_install' => 1, 'status' => 1]);
+            Db::name('sys_account_modules')->where(['module' => $identifie])->update(['deleted' => 0]);
 
-        if (!$isTrue) {
-            $this->success('安装失败');
+            $modulesController->moveDirToPublic($identifie);
+            $this->removePackages($identifie);
+
+            $this->updateSystemModuleList();
+            $this->success('安装成功');
+        }catch (Exception $e){
+            $this->error($e->getMessage());
         }
-
-        $modulesController->moveDirToPublic($identifie);
-        $this->removePackages($identifie);
-
-        $this->updateSystemModuleList();
-        $this->success('安装成功');
     }
 
     // 应用卸载

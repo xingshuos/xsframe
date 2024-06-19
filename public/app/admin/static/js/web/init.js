@@ -215,8 +215,18 @@ define(['jquery', 'bootstrap'], function ($, bs) {
                     } else {
                         tip.msgbox.err(ret.result.message || tip.lang.error, ret.result.url), obj.removeAttr('submitting').html(html)
                     }
-                }).fail(function () {
-                    obj.removeAttr('submitting').html(html), tip.msgbox.err(tip.lang.exception)
+                }).fail(function (fail) {
+                    obj.removeAttr('submitting').html(html)
+                    try {
+                        if( fail.status == '404' ){
+                            tip.msgbox.err(fail.responseJSON.msg)
+                        }else{
+                            tip.msgbox.err(tip.lang.exception)
+                        }
+                    } catch (e) {
+                        tip.msgbox.err(tip.lang.exception)
+                    }
+                    obj.removeClass('disabled')
                 })
             };
             confirm && tip.confirm(confirm, handler);
@@ -255,8 +265,19 @@ define(['jquery', 'bootstrap'], function ($, bs) {
                             tip.msgbox.err(ret.result.message, ret.result.url)
                         }
                         input.remove()
-                    }).fail(function () {
-                        input.remove(), tip.msgbox.err(tip.lang.exception)
+                    }).fail(function (fail) {
+                        input.remove()
+
+                        try {
+                            if( fail.status == '404' ){
+                                tip.msgbox.err(fail.responseJSON.msg)
+                            }else{
+                                tip.msgbox.err(tip.lang.exception)
+                            }
+                        } catch (e) {
+                            tip.msgbox.err(tip.lang.exception)
+                        }
+
                     })
                 } else {
                     input.remove();
@@ -325,10 +346,20 @@ define(['jquery', 'bootstrap'], function ($, bs) {
                             obj.html(html), tip.msgbox.err(data.result.message || tip.lang.error, data.result.url)
                         }
                         obj.removeAttr('submitting')
-                    }).fail(function () {
+                    }).fail(function (fail) {
                         obj.removeAttr('submitting');
                         obj.button('reset');
-                        tip.msgbox.err(tip.lang.exception)
+
+                        try {
+                            if( fail.status == '404' ){
+                                tip.msgbox.err(fail.responseJSON.msg)
+                            }else{
+                                tip.msgbox.err(tip.lang.exception)
+                            }
+                        } catch (e) {
+                            tip.msgbox.err(tip.lang.exception)
+                        }
+
                     })
                 },
                 a;

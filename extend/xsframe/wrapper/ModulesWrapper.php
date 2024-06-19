@@ -21,7 +21,7 @@ use xsframe\util\RequestUtil;
 class ModulesWrapper
 {
     // 执行安装应用
-    public function runInstalledModule($moduleName, $key = null, $token = null)
+    public function runInstalledModule($moduleName, $key = null, $token = null): bool
     {
         if (is_dir(IA_ROOT . '/app/' . $moduleName)) {
             $manifest = $this->extModuleManifest($moduleName);
@@ -31,6 +31,8 @@ class ModulesWrapper
             $ret = $cloudWrapper->downloadCloudApp($moduleName, $key, $token);
             if ($ret) {
                 $this->runInstalledModule($moduleName, $key, $token);
+            } else {
+                return false;
             }
         }
         return true;
@@ -161,7 +163,7 @@ class ModulesWrapper
             $moduleList = Db::name('sys_modules')->column('*', 'identifie');
 
             $result = RequestUtil::cloudHttpPost("app/list", ['key' => $key, 'token' => $token]);
-            
+
             if (!empty($result) && intval($result['code']) == 200) {
                 $appList = $result['data']['appList'];
 

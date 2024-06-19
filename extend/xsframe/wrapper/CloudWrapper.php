@@ -3,6 +3,7 @@
 
 namespace xsframe\wrapper;
 
+use xsframe\exception\ApiException;
 use xsframe\util\FileUtil;
 use xsframe\util\RequestUtil;
 
@@ -12,18 +13,10 @@ class CloudWrapper
     public function downloadCloudApp($moduleName, $key = null, $token = null): bool
     {
         $postData = ['key' => $key, 'token' => $token, 'identifier' => $moduleName];
-
-        $postData['host_ip'] = $_SERVER['REMOTE_ADDR'];
-        $postData['host_url'] = $_SERVER['HTTP_HOST'];
-        $postData['version'] = IMS_VERSION;
-        $postData['php_version'] = PHP_VERSION;
-
-        $response = RequestUtil::httpPost("https://www.xsframe.cn/cloud/api/app/download", $postData);
-
+        $response = RequestUtil::cloudHttpPost("app/download", $postData);
         if (!empty($response)) {
-            $result = @json_decode($response, true);
-            if (!empty($result) && $result['code'] != 200) {
-                return false;
+            if (is_array($response)) {
+                throw new ApiException($response['msg'] ?? "通信失败");
             } else {
                 $tmpFile = tempnam(sys_get_temp_dir(), 'zip_');
                 @file_put_contents($tmpFile, $response);
