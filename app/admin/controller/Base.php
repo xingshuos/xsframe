@@ -20,8 +20,8 @@ class Base extends AdminBaseController
     public function checkRouter()
     {
         $isAdmin = $this->module == 'admin'; // 是否超级管理后台
-        $notMap = $this->controller != 'util' && $this->action != 'map'; // 是否地图页面
-        $notSetDefaultModule = $this->controller != 'system' && $this->action != 'setAccountDefaultModule'; // 是否设置默认模块
+        $notMap = strtolower($this->controller) != 'util' && $this->action != 'map'; // 是否地图页面
+        $notSetDefaultModule = strtolower($this->controller) != 'system' && $this->action != 'setAccountDefaultModule'; // 是否设置默认模块
 
         if ($isAdmin && $notMap && $notSetDefaultModule) {
             $adminSession = $this->adminSession;

@@ -66,9 +66,9 @@ abstract class BaseController extends Controller
     public function __construct(Request $request, App $app)
     {
         $this->request = $request;
-        $this->header = $request->header();
-        $this->app = $app;
-        $this->params = $this->request->param();
+        $this->header  = $request->header();
+        $this->app     = $app;
+        $this->params  = $this->request->param();
 
         if (!$this->settingsController instanceof SettingsWrapper) {
             $this->settingsController = new SettingsWrapper();
@@ -89,12 +89,12 @@ abstract class BaseController extends Controller
     protected function _initialize()
     {
         $this->authkey = "xsframe_";
-        $this->expire = 3600 * 24 * 10; // 10天有效期
+        $this->expire  = 3600 * 24 * 10; // 10天有效期
 
         $this->view = $this->app['view'];
 
         $this->pIndex = $this->request->param('page') ?? 1;
-        $this->pSize = $this->request->param('size') ?? 10;
+        $this->pSize  = $this->request->param('size') ?? 10;
 
         $this->siteRoot = request()->domain();
         if (StringUtil::strexists($this->request->server('HTTP_REFERER'), 'https')) {
@@ -113,14 +113,14 @@ abstract class BaseController extends Controller
 
         $this->ip = $this->request->ip();
 
-        $this->moduleSiteRoot = $this->siteRoot . "/" . $this->module;
+        $this->moduleSiteRoot  = $this->siteRoot . "/" . $this->module;
         $this->moduleAttachUrl = $this->siteRoot . "/app/" . $this->module;
-        $this->moduleIaRoot = $this->iaRoot . "/app/" . $this->module;
+        $this->moduleIaRoot    = $this->iaRoot . "/app/" . $this->module;
 
-        $this->controller = trim($this->request->controller());
-        $this->action = trim($this->request->action());
-        $this->url = $this->request->url();
-
+        $this->controller = strtolower($this->request->controller());
+        $this->action     = strtolower($this->request->action());
+        $this->url        = $this->request->url();
+        
         $this->checkCors();
         $this->autoLoad();
 
@@ -147,7 +147,7 @@ abstract class BaseController extends Controller
 
     protected function autoLoad()
     {
-        $path = $this->iaRoot . '/extend/xsframe/function';
+        $path  = $this->iaRoot . '/extend/xsframe/function';
         $files = FileUtil::getDir($path);
 
         if (!empty($files)) {
@@ -186,11 +186,11 @@ abstract class BaseController extends Controller
         $attachmentSets = $this->settingsController->getSysSettings(SysSettingsKeyEnum::ATTACHMENT_KEY);
 
         # 项目信息
-        $this->account = $this->settingsController->getAccountSettings($uniacid);
+        $this->account        = $this->settingsController->getAccountSettings($uniacid);
         $this->accountSetting = $this->settingsController->getAccountSettings($uniacid, SysSettingsKeyEnum::SETTING_KEY);
 
         # 模块信息
-        $this->moduleInfo = $this->settingsController->getModuleInfo($this->module);
+        $this->moduleInfo    = $this->settingsController->getModuleInfo($this->module);
         $this->moduleSetting = $this->getModuleSettings($uniacid);
 
         if ($uniacid > 0) {
@@ -213,9 +213,9 @@ abstract class BaseController extends Controller
             if (!empty($moduleSetting['share']))
                 $moduleSetting['share']['imageUrl'] = tomedia($moduleSetting['share']['imageUrl']);
             if (!empty($moduleSetting['website'])) {
-                $moduleSetting['website']['logo'] = tomedia($moduleSetting['website']['logo']);
+                $moduleSetting['website']['logo']    = tomedia($moduleSetting['website']['logo']);
                 $moduleSetting['website']['favicon'] = tomedia($moduleSetting['website']['favicon']);
-                $this->websiteSets = $moduleSetting['website'];
+                $this->websiteSets                   = $moduleSetting['website'];
             }
         }
         return $moduleSetting;
@@ -224,7 +224,7 @@ abstract class BaseController extends Controller
     // 获取项目uniacid
     protected function getUniacid($checkUrl = false)
     {
-        $uniacid = $this->params['uniacid'] ?? ($_GET['i'] ?? ($_COOKIE['uniacid'] ?? 0));
+        $uniacid      = $this->params['uniacid'] ?? ($_GET['i'] ?? ($_COOKIE['uniacid'] ?? 0));
         $this->module = empty($this->module) ? app('http')->getName() : $this->module;
 
         # 校验域名路由 start
@@ -264,7 +264,7 @@ abstract class BaseController extends Controller
             } else {
                 // 2、判定商户是否有应用权限
                 if ($this->module && $this->module != 'admin') {
-                    $systemModuleList = SystemWrapperFacade::getAllModuleList();
+                    $systemModuleList  = SystemWrapperFacade::getAllModuleList();
                     $accountModuleList = SystemWrapperFacade::getAccountModuleList($uniacid);
 
                     if (empty($accountModuleList) || empty($systemModuleList) || !in_array($this->module, $accountModuleList) || !in_array($this->module, $systemModuleList)) {
@@ -292,7 +292,7 @@ abstract class BaseController extends Controller
         if (!empty($this->params['attach']) || !empty($this->params['body'])) {
             $attachArr = $this->params['attach'] ?? $this->params['body'];
             $attachArr = explode(":", $attachArr);
-            $uniacid = $attachArr[1] ?? 0;
+            $uniacid   = $attachArr[1] ?? 0;
         }
         # end
 
@@ -371,7 +371,7 @@ abstract class BaseController extends Controller
             $versionPath = IA_ROOT . "/public/app/" . $addonsName . "/{$entry}/version";
 
             if (empty($version)) {
-                $trees = FileUtil::dirsOnes($versionPath);
+                $trees   = FileUtil::dirsOnes($versionPath);
                 $version = end($trees);
                 if (!empty($version)) {
                     $template = "{$addonsName}/{$entry}/version/{$version}/{$filename}.html";
