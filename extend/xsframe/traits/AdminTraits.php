@@ -4,6 +4,7 @@ namespace xsframe\traits;
 
 use think\facade\Db;
 use xsframe\util\ExcelUtil;
+use xsframe\util\StringUtil;
 
 trait AdminTraits
 {
@@ -12,6 +13,9 @@ trait AdminTraits
     protected $orderBy = "";
     protected $result = [];
     private $fieldList = [];
+
+    protected $backUrl = null; // post提交后返回的url
+    protected $isBackMain = true; // post提交后是否返回到列表页 默认返回到列表页
 
     public function index()
     {
@@ -218,11 +222,25 @@ trait AdminTraits
                 if ($this->params['isModel']) {
                     $this->success();
                 } else {
+                    if (empty($backUrl)) {
+                        if (!empty($this->backUrl)) {
+                            $backUrl = $this->backUrl;
+                        } else {
+                            if ($this->isBackMain) {
+                                $backUrl = $this->controller . "/main";
+                            }
+                        }
+                        if (!StringUtil::strexists($backUrl, "web.")) {
+                            $backUrl = "web." . $backUrl;
+                        }
+                    }
+
                     if (!empty($backUrl)) {
                         $this->success(["url" => url(rtrim($backUrl, ".html"))]);
                     } else {
                         $this->success(["url" => url("", ['id' => $id, 'tab' => str_replace("#tab_", "", $this->params['tab'])])]);
                     }
+
                 }
             }
 
