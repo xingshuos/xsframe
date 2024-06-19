@@ -20,7 +20,7 @@ class MenuWrapper
     public static function getMenusList($role, $module, $controller, $action, $full = true, $configKey = 'menu'): ?array
     {
         $allMenus = Config::get($configKey);
-        return self::buildMenu($role, $allMenus, $module, $controller, $action, $full);
+        return self::buildMenu($role, $allMenus, $module, strtolower($controller), $action, $full);
     }
 
     private static function getChangeParentInfo($allMenus, $module, $controller, $action): array

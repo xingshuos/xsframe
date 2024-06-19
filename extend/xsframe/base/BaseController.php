@@ -117,8 +117,8 @@ abstract class BaseController extends Controller
         $this->moduleAttachUrl = $this->siteRoot . "/app/" . $this->module;
         $this->moduleIaRoot = $this->iaRoot . "/app/" . $this->module;
 
-        $this->controller = strtolower($this->request->controller());
-        $this->action = strtolower($this->request->action());
+        $this->controller = trim($this->request->controller());
+        $this->action = trim($this->request->action());
         $this->url = $this->request->url();
 
         $this->checkCors();

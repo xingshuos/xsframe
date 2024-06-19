@@ -83,8 +83,7 @@ class App extends Base
         $list = $list->toArray();
 
         foreach ($list as &$item) {
-            $item['logo'] = tomedia($item['logo']);
-
+            $item['logo'] = !empty($item['logo']) ? tomedia($item['logo']) : $this->siteRoot . "/app/{$item['identifie']}/icon.png";
             $manifest = $modulesController->extModuleManifest($item['identifie']);
             if (!empty($manifest) && version_compare($manifest['application']['version'], $item['version'], '>')) {
                 $item['new_version'] = 1;

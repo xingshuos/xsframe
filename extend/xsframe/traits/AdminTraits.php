@@ -235,9 +235,9 @@ trait AdminTraits
                     }
 
                     if (!empty($backUrl)) {
-                        $this->success(["url" => url(rtrim($backUrl, ".html"))]);
+                        $this->success(["url" => webUrl(rtrim($backUrl, ".html"))]);
                     } else {
-                        $this->success(["url" => url("", ['id' => $id, 'tab' => str_replace("#tab_", "", $this->params['tab'])])]);
+                        $this->success(["url" => webUrl("", ['id' => $id, 'tab' => str_replace("#tab_", "", $this->params['tab'])])]);
                     }
 
                 }
@@ -398,7 +398,9 @@ trait AdminTraits
     {
         $moduleName = realModuleName($this->module);
         $coverUrl = $this->siteRoot . "/{$moduleName}.html?i=" . $this->uniacid;
-        return $this->template('cover', ['coverUrl' => $coverUrl]);
+        $mobileUrl = $this->siteRoot . "/{$moduleName}/mobile.html?i=" . $this->uniacid;
+        $pcUrl = $this->siteRoot . "/{$moduleName}/pc.html?i=" . $this->uniacid;
+        return $this->template('cover', ['coverUrl' => $coverUrl, 'mobileUrl' => $mobileUrl, 'pcUrl' => $pcUrl]);
     }
 
     // 设置项目应用配置信息
