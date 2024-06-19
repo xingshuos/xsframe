@@ -13,6 +13,7 @@
 namespace xsframe\wrapper;
 
 use think\facade\Config;
+use xsframe\util\StringUtil;
 
 class MenuWrapper
 {
@@ -247,8 +248,14 @@ class MenuWrapper
                                 if (strtolower(str_replace("_", "", $return_menu_child['route'])) != $actionTmp && !in_array($actionTmp, ['add', 'edit', 'post']) && !strexists($actionTmp, '/add') && !strexists($actionTmp, '/edit') && !strexists($actionTmp, '/post')) {
                                     $return_menu_child['active'] = 0;
                                 } else {
-                                    $pageTitle = $return_menu_child['title'];
-                                    $return_menu_child['active'] = $parentMenuIsChange ? 0 : 1;
+                                    $menuRouteTmp = ltrim($return_menu_child['route'], "web.");
+                                    $menuRouteTmpArray = explode("/", $menuRouteTmp);
+                                    $controllerNameTmp = StringUtil::camelize($menuRouteTmpArray[0]);
+
+                                    if (strtolower($controllerNameTmp) == $actionTmpArr[0]) {
+                                        $pageTitle = $return_menu_child['title'];
+                                        $return_menu_child['active'] = $parentMenuIsChange ? 0 : 1;
+                                    }
                                 }
                             }
 
