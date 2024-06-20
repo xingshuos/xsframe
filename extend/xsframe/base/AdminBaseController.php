@@ -57,12 +57,12 @@ abstract class AdminBaseController extends BaseController
     // 校验用户登录
     protected function checkAuth()
     {
-        $isFileUpload = $this->controller == 'file';
+        $isFileUpload = strtolower($this->controller) == 'file';
 
         if ($isFileUpload && $this->params['uid'] && $this->params['module'] != 'admin') {
             $this->userId = intval($this->params['uid']);
         } else {
-            if ($this->controller != 'login') {
+            if (strtolower($this->controller) != 'login') {
                 $loginResult = UserWrapper::checkUser();
 
                 if (!$loginResult['isLogin']) {

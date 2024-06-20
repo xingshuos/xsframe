@@ -28,7 +28,7 @@ class MenuWrapper
     {
         $url = $controller . "/" . $action;
 
-        $parentMenuRoute = $controller;
+        $parentMenuRoute      = $controller;
         $currentRouteIsChange = false;
 
         foreach ($allMenus as $key => &$menuInfo) {
@@ -37,16 +37,16 @@ class MenuWrapper
                 foreach ($menuInfo['items'] as &$itemInfo) {
                     if (!empty($itemInfo['url'])) {
 
-                        $urlArr = explode("/", $url);
+                        $urlArr     = explode("/", $url);
                         $itemUrlArr = explode("/", $itemInfo['url']);
 
                         if (strexists($urlArr[0], $itemUrlArr[0])) {
-                            $menuInfo['active'] = 1;
+                            $menuInfo['active']   = 1;
                             $currentRouteIsChange = true;
                             if (!strexists($route, 'web.') && $module != 'admin') {
                                 $route = "web." . $route;
                             }
-                            $parentMenuRoute = $route;
+                            $parentMenuRoute    = $route;
                             $itemInfo['active'] = 1;
                         }
                     }
@@ -64,18 +64,18 @@ class MenuWrapper
     // 定义菜单结构
     private static function buildMenu($role, $allMenus, $module, $controller, $action, $full)
     {
-        $return_menu = [];
+        $return_menu    = [];
         $return_submenu = [];
-        $submenu = [];
-        $pageTitle = "";
-        $module = realModuleName($module);
+        $submenu        = [];
+        $pageTitle      = "";
+        $module         = realModuleName($module);
 
         # 验证当前路由是否调换（子路由调换到其他父级路由中）
         $getChangeParentInfo = self::getChangeParentInfo($allMenus, $module, $controller, $action);
 
-        $parentMenuRoute = $getChangeParentInfo['parentRoute'] ?? $controller; // 当前路由是否调换
+        $parentMenuRoute    = $getChangeParentInfo['parentRoute'] ?? $controller; // 当前路由是否调换
         $parentMenuIsChange = $getChangeParentInfo['isChange'] ?? false; // 是否已经有选中的菜单
-        $allMenus = $getChangeParentInfo['allMenus'] ?? $allMenus;
+        $allMenus           = $getChangeParentInfo['allMenus'] ?? $allMenus;
 
         $parentMenuActive = false;// 是否已经有选中的菜单
 
@@ -111,10 +111,10 @@ class MenuWrapper
                     }
 
                     if ($runIn) {
-                        $parentMenuActive = true;
+                        $parentMenuActive    = true;
                         $menu_item['active'] = 1;
 
-                        $submenu = $val;
+                        $submenu                    = $val;
                         $return_submenu['subtitle'] = $submenu['subtitle'];
 
                         $pageTitle = $submenu['subtitle'];
@@ -141,7 +141,7 @@ class MenuWrapper
                         if ($val['items'][0]['perm']) {
                             foreach ($val['items'] as $itemsKey => $itemInfo) {
                                 if ($itemInfo['perm']) {
-                                    $permUrl = $module . "/" . $menu_item['route'] . "." . $itemInfo['route'];
+                                    $permUrl    = $module . "/" . $menu_item['route'] . "." . $itemInfo['route'];
                                     $isAuthPerm = cs($permUrl);
 
                                     if ($isAuthPerm) {
@@ -191,7 +191,7 @@ class MenuWrapper
                 # 是否存在多级目录
                 $isMoreDir = false;
                 if (count(explode(".", $controller)) == 3 && !$parentMenuIsChange) {
-                    $index = strripos($menuRoute, ".", 0);
+                    $index     = strripos($menuRoute, ".", 0);
                     $menuRoute = substr($menuRoute, 0, $index);
                     $isMoreDir = true;
                 }
@@ -207,9 +207,9 @@ class MenuWrapper
                         if (!in_array($role, ['founder', 'manager', 'owner'])) {
                             if ($child['perm']) {
                                 $controllerArr = explode(".", $controller);
-                                $permUrl = $module . "/" . $controllerArr[0] . "." . $controllerArr[1] . "." . $child['route'];
-                                $currentUrl = $module . "/" . $controller . "/" . $action;
-                                $isAuthPerm = cs($permUrl);
+                                $permUrl       = $module . "/" . $controllerArr[0] . "." . $controllerArr[1] . "." . $child['route'];
+                                $currentUrl    = $module . "/" . $controller . "/" . $action;
+                                $isAuthPerm    = cs($permUrl);
 
                                 // 权限不足提示 start
                                 if ($permUrl == $currentUrl && !$isAuthPerm) {
@@ -230,7 +230,7 @@ class MenuWrapper
                         # 如果是二级目录补全路径 start
                         if ($isMoreDir) {
                             $controllerName = explode('.', $controller)[2];
-                            $actionTmp = $controllerName . "/" . $actionTmp;
+                            $actionTmp      = $controllerName . "/" . $actionTmp;
                         }
                         # 如果是二级目录补全路径 end
 
@@ -248,12 +248,12 @@ class MenuWrapper
                                 if (strtolower(str_replace("_", "", $return_menu_child['route'])) != $actionTmp && !in_array($actionTmp, ['add', 'edit', 'post']) && !strexists($actionTmp, '/add') && !strexists($actionTmp, '/edit') && !strexists($actionTmp, '/post')) {
                                     $return_menu_child['active'] = 0;
                                 } else {
-                                    $menuRouteTmp = ltrim($return_menu_child['route'], "web.");
+                                    $menuRouteTmp      = str_replace("web.", "", $return_menu_child['route']);
                                     $menuRouteTmpArray = explode("/", $menuRouteTmp);
                                     $controllerNameTmp = StringUtil::camelize($menuRouteTmpArray[0]);
 
+                                    $pageTitle = $return_menu_child['title'];
                                     if (strtolower($controllerNameTmp) == $actionTmpArr[0]) {
-                                        $pageTitle = $return_menu_child['title'];
                                         $return_menu_child['active'] = $parentMenuIsChange ? 0 : 1;
                                     }
                                 }
