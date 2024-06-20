@@ -226,7 +226,7 @@ trait AdminTraits
                             $backUrl = $this->backUrl;
                         } else {
                             if ($this->isBackMain) {
-                                $backUrl = $this->controller . "/main";
+                                $backUrl = $this->request->controller() . "/main";
                             }
                         }
                         if (!StringUtil::strexists($backUrl, "web.")) {
