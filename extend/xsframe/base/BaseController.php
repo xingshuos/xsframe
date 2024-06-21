@@ -225,6 +225,7 @@ abstract class BaseController extends Controller
     protected function getUniacid($checkUrl = false)
     {
         $uniacid      = $this->params['uniacid'] ?? ($_GET['i'] ?? ($_COOKIE['uniacid'] ?? 0));
+
         $this->module = empty($this->module) ? app('http')->getName() : $this->module;
 
         # 校验域名路由 start
@@ -242,6 +243,7 @@ abstract class BaseController extends Controller
 
             // 1、判定是否存在uniacid，如果不存在就按照域名获取uniacid
             $uniacidList = SystemWrapperFacade::getUniacidList();
+
             if ($uniacidList && !in_array($uniacid, $uniacidList)) {
                 // 1）判断是否被禁用或删除 start
                 $disabledUniacidList = SystemWrapperFacade::getDisabledUniacidList();
@@ -262,6 +264,7 @@ abstract class BaseController extends Controller
                 }
                 // end
             } else {
+
                 // 2、判定商户是否有应用权限
                 if ($this->module && $this->module != 'admin') {
                     $systemModuleList  = SystemWrapperFacade::getAllModuleList();
@@ -276,6 +279,7 @@ abstract class BaseController extends Controller
                         if (env('DEFAULT_APP') == $this->module) {
                             $uniacid = 0; // 当访问域名且没有访问权限时，默认跳转到系统默认应用
                         } else {
+
                             if ($this->request->isAjax()) {
                                 throw new ApiException("当前商户暂无应用（{$this->module}）的访问权限，请联系管理员!", 403);
                             } else {

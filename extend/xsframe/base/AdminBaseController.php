@@ -58,7 +58,6 @@ abstract class AdminBaseController extends BaseController
     protected function checkAuth()
     {
         $isFileUpload = strtolower($this->controller) == 'file';
-
         if ($isFileUpload && $this->params['uid'] && $this->params['module'] != 'admin') {
             $this->userId = intval($this->params['uid']);
         } else {
@@ -161,14 +160,42 @@ abstract class AdminBaseController extends BaseController
 
         # 选中系统菜单
         $var['selSystemNav'] = intval($_COOKIE[$this->module . "_systemnav"]);
-        $selSystemNavUrl = strval(empty($_COOKIE[$this->module . "_systemnavurl"]) ? url('admin/system/index') : $_COOKIE[$this->module . "_systemnavurl"]);
-        $selSystemNavUrl = url(str_replace('.html', "", $selSystemNavUrl), ['i' => $this->uniacid]);
-        $var['selSystemNavUrl'] = $selSystemNavUrl;
+        $var['selSystemNavUrl'] = $this->getSelSystemNavUrl();
 
         if (!empty($params)) {
             $var = array_merge($var, $params);
         }
 
         return $var;
+    }
+
+    private function getSelSystemNavUrl()
+    {
+        $uniacid = $this->uniacid;
+        $selSystemNavUrl = $_COOKIE[$this->module . "_systemnavurl"] ?? null;
+
+        if (empty($selSystemNavUrl)) {
+            $selSystemNavUrl = url('admin/system/index', ['i' => $uniacid, 'module' => $this->module]);
+        } else {
+            $urlParts = parse_url($selSystemNavUrl);
+
+            // 解析查询字符串为数组
+            parse_str($urlParts['query'], $queryParams);
+
+            // 检查i参数是否存在，并且是否和uniacid不同
+            if (isset($queryParams['i']) && $queryParams['i'] != $uniacid) {
+                // 替换i参数的值
+                $queryParams['i'] = $uniacid;
+
+                // 重新构建查询字符串
+                $newQuery = http_build_query($queryParams);
+
+                // 重新组合URL
+                $selSystemNavUrl = $urlParts['path'] . '?' . $newQuery;
+            }
+
+        }
+
+        return strval($selSystemNavUrl);
     }
 }

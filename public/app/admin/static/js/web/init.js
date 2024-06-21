@@ -645,15 +645,15 @@ define(['jquery', 'bootstrap'], function ($, bs) {
         util.cookie.set(module + '_systemnav', 0);
         location.href = url;
     });
-    $('.wb-nav-system').click(function () {
+    $('.wb-nav-system,.wb-nav-system-li').click(function () {
         let url = $(this).data('href');
         let module = $(this).data('module');
         util.cookie.set(module + '_systemnav', 1);
-        if( url ){
-            util.cookie.set(module + '_systemnavurl', url);
+        if( url && module ){
+            util.cookie.set(`${module}_systemnavurl`, url);
+            location.href = url;
         }
     });
-
     $('.wb-subnav-fold').click(function () {
         let subnav = $(this).closest(".wb-subnav");
         if (subnav.hasClass('fold')) {

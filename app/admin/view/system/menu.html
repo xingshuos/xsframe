@@ -23,18 +23,18 @@
         <div class="subnav-scene">系统管理</div>
 
         <ul class="single">
-            <li {if $action == 'index'}class="active"{/if}>
-                <a href="{:url('admin/system/index',['i' => $uniacid])}">应用管理</a>
+            <li class="wb-nav-system-li {if $action == 'index'}active{/if}" data-module="{$_GET['module']}" data-href="{:url('admin/system/index',['i' => $uniacid,'module' => $_GET['module']])}">
+                <a href="javascript:">应用管理</a>
             </li>
-            <li {if $action == 'profile'}class="active"{/if}>
-                <a href="{:url('admin/system/profile',['i' => $uniacid])}">修改密码</a>
+            <li class="wb-nav-system-li {if $action == 'profile'}active{/if}" data-module="{$_GET['module']}" data-href="{:url('admin/system/profile',['i' => $uniacid,'module' => $_GET['module']])}">
+                <a href="javascript:">修改密码</a>
             </li>
             {if in_array($userInfo['role'],['owner','manager'])}
-                <li {if $controller == 'perm'}class="active"{/if}>
-                    <a href="{:url('admin/perm/user',['i' => $uniacid])}">权限管理</a>
+                <li class="wb-nav-system-li {if $action == 'user'}active{/if}" data-module="{$_GET['module']}" data-href="{:url('admin/perm/user',['i' => $uniacid,'module' => $_GET['module']])}">
+                    <a href="javascript:">权限管理</a>
                 </li>
-                <li {if $action == 'account'}class="active"{/if}>
-                    <a href="{:url('admin/system/account',['i' => $uniacid])}">系统设置</a>
+                <li class="wb-nav-system-li {if $action == 'account'}active{/if}" data-module="{$_GET['module']}" data-href="{:url('admin/system/account',['i' => $uniacid,'module' => $_GET['module']])}">
+                    <a href="javascript:">系统设置</a>
                 </li>
             {/if}
         </ul>

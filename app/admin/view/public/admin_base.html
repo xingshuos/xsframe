@@ -404,20 +404,7 @@
 <script>
     // 二维码
     $(() => {
-
-        // 鼠标移入弹出信息框
-        let timer = setTimeout(() => {
-            $('[data-toggle="tooltip"]').tooltip("destroy").tooltip({
-                container: $(document.body)
-            });
-
-            $('[data-toggle="popover"]').popover("destroy").popover({
-                container: $(document.body)
-            });
-            clearTimeout(timer);
-        },200);
-
-        require(['bootstrap'], function ($) {
+        // require(['bootstrap'], function ($) {
 
             /*添加拖拽功能 start*/
             $(document).on("show.bs.modal", ".modal", function () {
@@ -453,7 +440,15 @@
                     }
                 }, 100);
             });
-        });
+
+            $('[data-toggle="tooltip"]').tooltip("destroy").tooltip({
+                container: $(document.body)
+            });
+
+            $('[data-toggle="popover"]').popover("destroy").popover({
+                container: $(document.body)
+            });
+        // });
 
         // tab切换
         $('#myTab a').click(function (e) {
