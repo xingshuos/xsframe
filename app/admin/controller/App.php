@@ -156,21 +156,40 @@ class App extends Base
     public function change()
     {
         $id = intval($this->params["id"]);
+
         if (empty($id)) {
             $id = $this->params["ids"];
         }
         if (empty($id)) {
             $this->error(["message" => "参数错误"]);
         }
+
         $type = trim($this->params["type"]);
         $value = trim($this->params["value"]);
 
-        $items = Db::name('sys_modules')->field("id")->where(['id' => $id])->select()->toArray();
-        foreach ($items as $item) {
-            Db::name('sys_modules')->where(['id' => $item['id']])->update([$type => $value]);
-        }
+        Db::name('sys_modules')->where(['id' => $id])->update([$type => $value]);
 
         $this->updateSystemModuleList();
+
+        $this->success();
+    }
+
+    public function destroy()
+    {
+        $id = intval($this->params["id"]);
+
+        if (empty($id)) {
+            $id = $this->params["ids"];
+        }
+
+        if (empty($id)) {
+            $this->error(["message" => "参数错误"]);
+        }
+
+        Db::name('sys_modules')->where(["id" => $id])->delete();
+
+        $this->updateSystemModuleList();
+
         $this->success();
     }
 

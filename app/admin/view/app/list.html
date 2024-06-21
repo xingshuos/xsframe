@@ -96,6 +96,9 @@
                         <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要恢复?" data-href="{:webUrl('admin/app/change',['type' => 'is_deleted','value' => 0])}">
                             <i class='icon icon-reply'></i> 恢复
                         </button>
+                        <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要恢复?" data-href="{:webUrl('admin/app/change',['type' => 'is_deleted','value' => 0])}">
+                            <i class='icon icon-reply'></i> 彻底删除
+                        </button>
                     {/if}
                 </div>
             </div>
@@ -204,6 +207,7 @@
                             <a href="{:webUrl('admin/app/install', array('identifie' => $row['identifie'],'id' => $row['id']))}" data-toggle="ajaxPost" data-confirm="确认要安装 “{$row['name']}” 么 ?" class="btn btn-primary btn-op btn-operation">安装</a>
                         {elseif $do == 'delete'}
                             <a href="{:webUrl('admin/app/change', array('type' => 'is_deleted','value' => 0,'id' => $row['id']))}" data-toggle="ajaxPost" data-confirm="确认要恢复 “{$row['name']}” 么 ?" class="btn btn-default btn-op btn-operation">恢复</a>
+                            <a href="{:webUrl('admin/app/destroy', array('id' => $row['id']))}" data-toggle="ajaxPost" data-confirm="确认要彻底删除 “{$row['name']}” 么 ?" class="btn btn-default btn-op btn-operation">彻底删除</a>
                         {else}
                             {if $do == 'installed' || empty($do)}
                                 <a href="{:webUrl('admin/app/uninstall', array('identifie' => $row['identifie'],'id' => $row['id']))}" data-toggle="ajaxPost" data-confirm="卸载后将同时删除该应用所有数据,确认要卸载 “{$row['name']}” 么 ?" class="btn btn-danger btn-op btn-operation">卸载</a>
