@@ -53,19 +53,19 @@
 
                 {if $isSystem}
                     <li>
-                        <a href="{:url('admin/sysset/upgrade')}">
+                        <a href="{:url('admin/sysset/upgrade',['i' => $uniacid])}">
                             <i class="icon icon-cloud-upload" style="font-size: 22px;"></i>
                             <span style="display: block">系统升级</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{:url('admin/users/profile')}" target="_blank">
+                        <a href="{:url('admin/users/profile',['i' => $uniacid])}" target="_blank">
                             <i class="icon icon-lock " style="font-size: 22px;"></i>
                             <span style="display: block">修改密码</span>
                         </a>
                     </li>
                 {else}
-                    <li class="wb-nav-system" data-href="{:url('admin/system/index')}" data-module="{$module}">
+                    <li class="wb-nav-system" data-href="{:url('admin/system/index',['i' => $uniacid])}" data-module="{$module}">
                         <a href="">
                             <i class="icon icon-exchange" style="font-size: 22px;"></i>
                             <span style="display: block">切换应用</span>
@@ -73,13 +73,13 @@
                     </li>
 
                     {if in_array($userInfo['role'],['operator','owner','manager']) && !$isSystem}
-                        <li class="wb-nav-system" data-href="{:url('admin/system/account')}" data-module="{$module}">
+                        <li class="wb-nav-system" data-href="{:url('admin/system/account',['i' => $uniacid])}" data-module="{$module}">
                             <a href="">
                                 <i class="icon icon-cog" style="font-size: 22px;"></i>
                                 <span style="display: block">系统设置</span>
                             </a>
                         </li>
-                        <li class="wb-nav-system" data-href="{:url('admin/perm/user')}" data-module="{$module}">
+                        <li class="wb-nav-system" data-href="{:url('admin/perm/user',['i' => $uniacid])}" data-module="{$module}">
                             <a href="">
                                 <i class="icon icon-tasks" style="font-size: 22px;"></i>
                                 <span style="display: block">权限管理</span>
@@ -87,7 +87,7 @@
                         </li>
                     {/if}
 
-                    <li class="wb-nav-system" data-href="{:url('admin/system/profile')}" data-module="{$module}">
+                    <li class="wb-nav-system" data-href="{:url('admin/system/profile',['i' => $uniacid])}" data-module="{$module}">
                         <a href="">
                             <i class="icon icon-lock " style="font-size: 22px;"></i>
                             <span style="display: block">修改密码</span>
