@@ -96,7 +96,7 @@
                         <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要恢复?" data-href="{:webUrl('admin/app/change',['type' => 'is_deleted','value' => 0])}">
                             <i class='icon icon-reply'></i> 恢复
                         </button>
-                        <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要恢复?" data-href="{:webUrl('admin/app/change',['type' => 'is_deleted','value' => 0])}">
+                        <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要彻底删除已选应用么?" data-href="{:webUrl('admin/app/destroy')}">
                             <i class='icon icon-reply'></i> 彻底删除
                         </button>
                     {/if}
@@ -251,6 +251,9 @@
                             {if $do == 'delete'}
                             <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要恢复?" data-href="{:webUrl('admin/app/change',['type' => 'is_deleted','value' => 0])}">
                                 <i class='icon icon-reply'></i> 恢复
+                            </button>
+                            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要彻底删除已选应用么?" data-href="{:webUrl('admin/app/destroy')}">
+                                <i class='icon icon-reply'></i> 彻底删除
                             </button>
                             {/if}
                         </div>
