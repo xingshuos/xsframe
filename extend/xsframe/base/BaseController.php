@@ -277,7 +277,7 @@ abstract class BaseController extends Controller
                         // }
 
                         if (env('DEFAULT_APP') == $this->module) {
-                            $uniacid = 0; // 当访问域名且没有访问权限时，默认跳转到系统默认应用
+                            $uniacid = $this->websiteSets['uniacid'] ?? 0; // 当访问系统默认应用且没有访问权限时，默认跳转到系统默认商户
                         } else {
 
                             if ($this->request->isAjax()) {
