@@ -252,7 +252,7 @@ class App extends Base
     }
 
     // 删除多余资源包
-    private function removePackages($identifie)
+    private function removePackages($identifie): bool
     {
         $packagesPath = IA_ROOT . "/app/{$identifie}/packages";
         $unFiles = [
