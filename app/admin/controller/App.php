@@ -94,7 +94,7 @@ class App extends Base
         $total2 = Db::name("sys_modules")->where($condition2)->count();
         $total3 = Db::name("sys_modules")->where($condition3)->count();
         $total4 = Db::name("sys_modules")->where($condition4)->count();
-        $letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'W', 'T', 'D', 'T', 'U', 'V', 'E', 'C', 'Y', 'X'];
+        $letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 
         $vars = [
             'list'  => $list,
@@ -195,7 +195,7 @@ class App extends Base
 
             $this->updateSystemModuleList();
             $this->success('安装成功');
-        }catch (Exception $e){
+        } catch (Exception $e) {
             $this->error($e->getMessage());
         }
     }
