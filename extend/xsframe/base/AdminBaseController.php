@@ -154,14 +154,16 @@ abstract class AdminBaseController extends BaseController
         # 收缩菜单
         $var['foldNav'] = intval($_COOKIE["foldnav"] ?? 0);
 
-        # 选中系统菜单
-        $var['selSystemNav'] = intval($_COOKIE[$this->module . "_systemnav"]);
-        $var['selSystemNavUrl'] = strval(empty($_COOKIE[$this->module . "_systemnavurl"]) ? url('admin/system/index') : $_COOKIE[$this->module . "_systemnavurl"]);
-
         $var['account'] = $this->account;
         $var['moduleInfo'] = $this->moduleInfo;
         $var['attachUrl'] = getAttachmentUrl() . "/";
         $var['isLogin'] = $this->isLogin;
+
+        # 选中系统菜单
+        $var['selSystemNav'] = intval($_COOKIE[$this->module . "_systemnav"]);
+        $selSystemNavUrl = strval(empty($_COOKIE[$this->module . "_systemnavurl"]) ? url('admin/system/index') : $_COOKIE[$this->module . "_systemnavurl"]);
+        $selSystemNavUrl = url(str_replace('.html', "", $selSystemNavUrl), ['i' => $this->uniacid]);
+        $var['selSystemNavUrl'] = $selSystemNavUrl;
 
         if (!empty($params)) {
             $var = array_merge($var, $params);
