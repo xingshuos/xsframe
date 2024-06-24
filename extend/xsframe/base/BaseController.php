@@ -19,7 +19,6 @@ use xsframe\enum\SysSettingsKeyEnum;
 use xsframe\exception\ApiException;
 use xsframe\facade\wrapper\SystemWrapperFacade;
 use xsframe\util\FileUtil;
-use xsframe\util\LoggerUtil;
 use xsframe\util\StringUtil;
 use xsframe\wrapper\AccountHostWrapper;
 use xsframe\wrapper\SettingsWrapper;
@@ -237,7 +236,7 @@ abstract class BaseController extends Controller
             $uniacid = $attachArr[1] ?? 0;
         }
         # end
-        
+
         if (!$isWechatPay && !$isAliPay) {
             # 校验域名路由 start
             if (empty($uniacid) && $this->module != 'admin' && !empty($_SERVER['HTTP_HOST'])) {
