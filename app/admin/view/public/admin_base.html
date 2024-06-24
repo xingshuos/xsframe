@@ -404,7 +404,7 @@
 <script>
     // 二维码
     $(() => {
-        // require(['bootstrap'], function ($) {
+        require(['bootstrap'], function ($) {
 
             /*添加拖拽功能 start*/
             $(document).on("show.bs.modal", ".modal", function () {
@@ -440,15 +440,7 @@
                     }
                 }, 100);
             });
-
-            $('[data-toggle="tooltip"]').tooltip("destroy").tooltip({
-                container: $(document.body)
-            });
-
-            $('[data-toggle="popover"]').popover("destroy").popover({
-                container: $(document.body)
-            });
-        // });
+        });
 
         // tab切换
         $('#myTab a').click(function (e) {
@@ -456,8 +448,6 @@
             e.preventDefault();
             $(this).tab('show');
         });
-
-
 
         require(['jquery.qrcode'], function () {
             $(".qrcode-box").hover(function () {
@@ -484,7 +474,7 @@
     })
 </script>
 
-<script language="javascript">
+<script>
     if ($('form.form-validate').length <= 0) {
         window.formInited = true;
     }
@@ -523,11 +513,19 @@
     // 模态框
     function ajaxModel(obj) {
         let url = $(obj).data('url');
-        // console.log(url);
         $.get(url, {}, function (html) {
             $("#public_modal").html(html).modal('show');
         });
     }
+
+    // 防止bootstrap自带的tooltip和popover在模态框中失效
+    $('[data-toggle="tooltip"]').tooltip("destroy").tooltip({
+        container: $(document.body)
+    });
+    $('[data-toggle="popover"]').popover("destroy").popover({
+        container: $(document.body)
+    });
+
 </script>
 {block name='script'}{/block}
 
