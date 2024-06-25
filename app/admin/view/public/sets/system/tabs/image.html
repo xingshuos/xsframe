@@ -1,0 +1,55 @@
+<div class="form-group-title">图片上传设置</div>
+
+<div class="form-group">
+    <label class="col-lg control-label">缩略设置</label>
+    <div class="col-sm-10">
+        <label class="radio-inline">
+            <input type="radio" name="data[image][is_reduce]" value="0" id="radio_image_thumb_0" {if empty($accountSettings['image']['is_reduce'])} checked{/if}> 不启用缩略
+        </label>
+        <label class="radio-inline">
+            <input type="radio" name="data[image][is_reduce]" value="1" id="radio_image_thumb_1" {if !empty($accountSettings['image']['is_reduce'])} checked{/if}> 启用缩略
+        </label>
+        <div class="help-block">限制图片上传大小，图片上传后，会自动生成缩略图</div>
+    </div>
+</div>
+
+<div class="form-group upload-image-thumb-width-height" {if empty($accountSettings['image']['is_reduce'])} style="display:none;"{/if}>
+    <label class="col-lg control-label"></label>
+    <div class="col-sm-3">
+        <div class="input-group">
+            <span class="input-group-addon">宽</span>
+            <input name="data[image][width]" value="{$accountSettings['image']['width']}" type="text" class="form-control">
+            <span class="input-group-addon">px</span>
+        </div>
+        <span class="help-block">缩略后图片 <b>最大宽度</b></span>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-lg control-label">支持文件后缀</label>
+    <div class="col-sm-10">
+        <input type="text" name="data[image][extentions]" value="{$accountSettings['image']['extentions']}" class="form-control"/>
+        <span class="help-block">限制图片上传后缀, 如: jpg|jpeg|png|gif 等后缀.“|”分割（默认不限制）</span>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-lg control-label">支持文件大小</label>
+    <div class="col-sm-10">
+        <div class="input-group">
+            <input type="text" name="data[image][limit]" value="{$accountSettings['image']['limit']}" class="form-control"/>
+            <span class="input-group-addon">KB</span>
+        </div>
+        <span class="help-block">限制图片上传大小（默认不限制）</span>
+    </div>
+</div>
+
+<script>
+    $('input[name="data[image][is_reduce]"]').click(function () {
+        if (parseInt($(this).val()) === 1) {
+            $('.upload-image-thumb-width-height').css('display', '');
+        } else {
+            $('.upload-image-thumb-width-height').css('display', 'none');
+        }
+    });
+</script>

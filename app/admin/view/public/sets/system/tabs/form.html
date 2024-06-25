@@ -49,10 +49,7 @@
         </div>
 
         <div class="tab-pane {if $_GET['tab'] == 'attachment'}active{/if}" id="tab_attachment">
-            <div class="alert alert-primary">
-                <p>1.商户自定义存储设置</p>
-                <p>2.默认是系统配置存储服务器</p>
-            </div>
+            {include file="../app/admin/view/public/sets/system/tabs/image.html" /}
             {include file="../app/admin/view/public/sets/system/tabs/attachment.html" /}
         </div>
 

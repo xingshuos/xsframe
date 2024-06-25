@@ -43,6 +43,9 @@ class FileWrapper
         # 图片压缩/上传处理
         if ($type == 'image') {
             $filename = $this->fileRemoteUpload($uniacid, $attachmentPath . $folder, $filename, $ext);
+            if (ErrorUtil::isError($filename)) {
+                return ErrorUtil::error(0, $filename['msg']);
+            }
         }
 
         $result = [
@@ -123,9 +126,19 @@ class FileWrapper
                 // 启用压缩
                 if ($setting['image']['is_reduce'] == 1) {
 
-                    $extentions = explode("|", $setting['image']['extentions']);
-                    if (!in_array($ext, $extentions)) {
-                        return ErrorUtil::error(0, "不支持此文件类型");
+                    if (!empty($setting['image']['extentions'])) {
+                        $extentions = explode("|", $setting['image']['extentions']);
+                        if (!empty($extentions) && !in_array($ext, $extentions)) {
+                            @unlink($filePath . $fileName);// 删除源图
+                            return ErrorUtil::error(0, "不支持此文件类型（" . $ext . "）");
+                        }
+                    }
+
+                    if ($setting['image']['limit'] > 0) {
+                        if (@filesize($filePath . $fileName) > $setting['image']['limit'] * 1024) {
+                            @unlink($filePath . $fileName);// 删除源图
+                            return ErrorUtil::error(0, "文件大小超过限制（" . $setting['image']['limit'] . "KB" . "）");
+                        }
                     }
 
                     if ($setting['image']['width'] > 0) {
@@ -133,8 +146,7 @@ class FileWrapper
                         $maxWidth = $setting['image']['width'];
                         $image = Image::open($filePath . $fileName);
                         $image->thumb($maxWidth, $maxWidth)->save($filePath . $newFileName);
-                        // 删除源图
-                        @unlink($filePath . $fileName);
+                        @unlink($filePath . $fileName);// 删除源图
                     }
 
                 }

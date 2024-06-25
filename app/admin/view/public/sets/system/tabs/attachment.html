@@ -1,3 +1,5 @@
+<div class="form-group-title">图片存储设置</div>
+
 <div class="form-group">
     <label class="col-lg control-label">远程附件</label>
     <div class="col-sm-9 col-xs-12">
@@ -231,14 +233,6 @@
 </div>
 
 <script type="text/javascript">
-    $('input[name="data[image][is_reduce]"]').click(function () {
-        if (parseInt($(this).val()) === 1) {
-            $('.upload-image-thumb-width-height').css('display', '');
-        } else {
-            $('.upload-image-thumb-width-height').css('display', 'none');
-        }
-    });
-
     /*附件存储设置*/
     $('.js-checkremoteoss').on('click', function () {
         var bucket = $.trim($('select[name="data[remote][alioss][bucket]"]').val());

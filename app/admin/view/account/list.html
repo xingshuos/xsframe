@@ -72,19 +72,19 @@
                 <td style="overflow: visible">
                     <a data-toggle='ajaxHref' href="{:webUrl('account/manager', array('id' => $row['uniacid']))}" target="_blank" rel="pop" style="display: flex" data-content="">
                         <img class="img-40" src="{:tomedia($row['logo'])}" style='border-radius:50%;border:1px solid #efefef;' onerror="this.src='__ADMIN_IMG__/noface.png'"/>
-                        <span style="display: flex;flex-direction: column;justify-content: center;align-items: flex-start;padding-left: 5px">
+                        <span data-toggle="tooltip" data-placement="top" data-original-title="{$row['name']}" style="display: flex;flex-direction: column;justify-content: center;align-items: flex-start;padding-left: 5px">
                             <span class="nickname">[{$row['uniacid']}] {$row['name']}</span>
                         </span>
                     </a>
                 </td>
                 <td>
-                    {$row['hostTotal']}
+                    {$row['hostTotal']}个
                 </td>
                 <td>
-                    {$row['total']}
+                    {$row['total']}个
                 </td>
                 <td style="overflow: visible;white-space:normal;">
-                    {$row['description']}
+                    {$row['description']?:'无'}
                 </td>
                 <td>
                     <span class='label {if $row['status']==1}label-primary{else}label-default{/if}'
