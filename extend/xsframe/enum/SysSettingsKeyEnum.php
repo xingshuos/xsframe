@@ -41,4 +41,10 @@ class SysSettingsKeyEnum extends BaseEnum
 
     # 模块信息
     const MODULE_INFO_KEY = 'module_info_';
+
+    # 一级菜单通知
+    const ADMIN_ONE_MENU_NOTICE_POINT = 'web_one_menu_notice_point';
+    # 二级菜单通知
+    const ADMIN_TWO_MENU_NOTICE_POINT = 'web_two_menu_notice_point';
+
 }

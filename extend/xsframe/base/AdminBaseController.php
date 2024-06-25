@@ -12,6 +12,7 @@
 
 namespace xsframe\base;
 
+use think\facade\Cache;
 use xsframe\wrapper\MenuWrapper;
 use xsframe\wrapper\UserWrapper;
 use xsframe\enum\SysSettingsKeyEnum;
@@ -161,6 +162,10 @@ abstract class AdminBaseController extends BaseController
         # 选中系统菜单
         $var['selSystemNav'] = intval($_COOKIE[$this->module . "_systemnav"]);
         $var['selSystemNavUrl'] = $this->getSelSystemNavUrl();
+
+        # 菜单通知点
+        $var['oneMenuNoticePoint'] = Cache::get($this->module . "_" . SysSettingsKeyEnum::ADMIN_ONE_MENU_NOTICE_POINT) ?? [];
+        $var['twoMenuNoticePoint'] = Cache::get($this->module . "_" . SysSettingsKeyEnum::ADMIN_TWO_MENU_NOTICE_POINT) ?? [];
 
         if (!empty($params)) {
             $var = array_merge($var, $params);

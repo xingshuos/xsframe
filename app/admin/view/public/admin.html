@@ -123,11 +123,11 @@
 
         {foreach $menusList['menu'] as $key => $sysmenu}
             <li {if $sysmenu['active'] && !$selSystemNav}class="active"{/if}>
-                <a data-href="{:webUrl($sysmenu['route'])}" class="wb-nav-item" data-module="{$module}">
+                <a data-href="{:webUrl($sysmenu['route'])}" class="wb-nav-item" data-module="{$module}" data-route="{$sysmenu['route']}">
                     {if !empty($sysmenu['icon'])}
                     <i class="icon {$sysmenu['icon']}"></i>
                     {/if}
-                    <span class="wb-nav-title">{$sysmenu['text']}</span>
+                    <span class="wb-nav-title {if in_array($sysmenu['route'],$oneMenuNoticePoint??[])}point{/if}">{$sysmenu['text']}</span>
                 </a>
                 <span class="wb-nav-tip">{$sysmenu['subtitle']}</span>
             </li>
@@ -160,16 +160,16 @@
                 {php}$isActive = true;{/php}
                 {foreach $menusList['submenu']['items'] as $subKey => $submenu}
                     {if !empty($submenu['items'])}
-                        <div class='menu-header {if $submenu['active'] && $isActive}active data-active{/if}'><div class="menu-icon icon icon-caret-{if $submenu['active']}down{else}right{/if}"></div>{$submenu['title']}</div>
+                        <div class="menu-header {if $submenu['active'] && $isActive}active data-active{/if}"><div class="menu-icon icon icon-caret-{if $submenu['active']}down{else}right{/if}"></div><span class="wb-nav-title {if in_array($submenu['route'],$twoMenuNoticePoint??[])}point{/if}">{$submenu['title']}</span></div>
                         <ul {if $submenu['active']}style="display: block"{/if}>
                             {foreach $submenu['items'] as $threeKey => $threemenu}
-                            <li {if $threemenu['active']}class="active"{/if}><a href="{:webUrl($threemenu['route'])}" style="cursor: pointer;" data-route="{:url($threemenu['route'])}">{$threemenu['title']}</a>
+                            <li class="{if $threemenu['active']}active{/if}" data-route="{$threemenu['route']}"><a href="{:webUrl($threemenu['route'])}" style="cursor: pointer;" data-route="{:url($threemenu['route'])}"><span class="wb-nav-title {if in_array($threemenu['route'],$twoMenuNoticePoint??[])}point{/if}">{$threemenu['title']}</span></a>
                             {/foreach}
                         </ul>
                     {else}
                         <ul class="single">
-                            <li {if $submenu['active'] && $isActive}class="active"{/if} style=" position: relative">
-                                <a href="{:webUrl($submenu['url']?:$submenu['route'])}" style="cursor: pointer;" data-route="{:url($submenu['url']?:$submenu['route'])}">{$submenu['title']}</a>
+                            <li class="{if $submenu['active'] && $isActive}active{/if}" style="position: relative" data-route="{$submenu['route']}">
+                                <a href="{:webUrl($submenu['url']?:$submenu['route'])}" style="cursor: pointer;" data-route="{:url($submenu['url']?:$submenu['route'])}"><span class="wb-nav-title {if in_array($submenu['route'],$twoMenuNoticePoint??[])}point{/if}">{$submenu['title']}</span></a>
                             </li>
                         </ul>
                         {if $submenu['active'] && $isActive}
