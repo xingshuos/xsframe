@@ -17,8 +17,8 @@ use xsframe\base\BaseFacade;
 use xsframe\service\SysMenuService;
 
 /**
- * @method static setMenuNoticePointRoute(string $type = 'one', string $route = '')
- * @method static clearMenuNoticePointRoute(string $type = 'one', string $route = '')
+ * @method static addMenuNoticePointRoute(string $type = 'one', string $route = '', string $module = null)
+ * @method static clearMenuNoticePointRoute(string $type = 'one', string $route = '', string $module = null)
  */
 class SysMenuServiceFacade extends BaseFacade
 {

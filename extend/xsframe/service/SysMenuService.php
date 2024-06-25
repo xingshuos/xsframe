@@ -8,24 +8,26 @@ use xsframe\enum\SysSettingsKeyEnum;
 
 class SysMenuService extends BaseService
 {
-    // 设置后台菜单通知点
-    public function setMenuNoticePointRoute(string $type = 'one', string $route = '')
+    // 添加后台菜单通知点
+    public function addMenuNoticePointRoute(string $type = 'one', string $route = '', string $module = null)
     {
-        return $this->setCacheMenuNoticePointRoute($type, $route, false);
+        return $this->setMenuNoticePointRoute($type, $route, $module, false);
     }
 
     // 清除后台菜单通知点
-    public function clearMenuNoticePointRoute(string $type = 'one', string $route = '')
+    public function clearMenuNoticePointRoute(string $type = 'one', string $route = '', string $module = null)
     {
-        return $this->setCacheMenuNoticePointRoute($type, $route, true);
+        return $this->setMenuNoticePointRoute($type, $route, $module, true);
     }
 
-    private function setCacheMenuNoticePointRoute(string $type = 'one', string $route = '', $isClear = false)
+    // 设置缓存菜单通知点
+    private function setMenuNoticePointRoute(string $type = 'one', string $route = '', string $module = null, $isClear = false)
     {
         $route = strval($route);
-        $key = $this->module . "_" . SysSettingsKeyEnum::ADMIN_ONE_MENU_NOTICE_POINT;
+        $moduleName = $module ?? $this->module;
+        $key = $moduleName . "_" . SysSettingsKeyEnum::ADMIN_ONE_MENU_NOTICE_POINT;
         if ($type == 'two') {
-            $key = $this->module . "_" . SysSettingsKeyEnum::ADMIN_TWO_MENU_NOTICE_POINT;
+            $key = $moduleName . "_" . SysSettingsKeyEnum::ADMIN_TWO_MENU_NOTICE_POINT;
         }
 
         $routeArr = Cache::get($key) ?? [];
