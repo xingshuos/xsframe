@@ -66,7 +66,7 @@
                     </li>
                 {else}
                     <li class="wb-nav-system" data-href="{:url('admin/system/index')}" data-module="{$module}">
-                        <a>
+                        <a href="">
                             <i class="icon icon-exchange" style="font-size: 22px;"></i>
                             <span style="display: block">切换应用</span>
                         </a>
@@ -74,13 +74,13 @@
 
                     {if in_array($userInfo['role'],['operator','owner','manager']) && !$isSystem}
                         <li class="wb-nav-system" data-href="{:url('admin/system/account')}" data-module="{$module}">
-                            <a>
+                            <a href="">
                                 <i class="icon icon-cog" style="font-size: 22px;"></i>
                                 <span style="display: block">系统设置</span>
                             </a>
                         </li>
                         <li class="wb-nav-system" data-href="{:url('admin/perm/user')}" data-module="{$module}">
-                            <a>
+                            <a href="">
                                 <i class="icon icon-tasks" style="font-size: 22px;"></i>
                                 <span style="display: block">权限管理</span>
                             </a>
@@ -88,7 +88,7 @@
                     {/if}
 
                     <li class="wb-nav-system" data-href="{:url('admin/system/profile')}" data-module="{$module}">
-                        <a>
+                        <a href="">
                             <i class="icon icon-lock " style="font-size: 22px;"></i>
                             <span style="display: block">修改密码</span>
                         </a>

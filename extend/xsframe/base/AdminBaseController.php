@@ -71,11 +71,11 @@ abstract class AdminBaseController extends BaseController
                 }
 
                 $this->adminSession = $loginResult['adminSession'];
-                $this->userId = $this->adminSession['uid'];
-                $uniacid = $this->adminSession['uniacid'];
+                $this->userId       = $this->adminSession['uid'];
+                $uniacid            = $this->adminSession['uniacid'];
 
                 if (!empty($uniacid)) {
-                    $this->uniacid = $uniacid;
+                    $this->uniacid      = $uniacid;
                     $_COOKIE['uniacid'] = $uniacid;
                 }
             } else {
@@ -107,10 +107,10 @@ abstract class AdminBaseController extends BaseController
     {
         $templateVars = $this->getDefaultVars($templateVars);
 
-        $content = View::fetch($templateFile, $templateVars);
+        $content  = View::fetch($templateFile, $templateVars);
         $htmlPath = !empty($htmlPath) ? $htmlPath : './appTemplate/';
         $htmlFile = $htmlPath . $htmlFile . '.' . config('view.view_suffix');
-        $File = new \think\template\driver\File();
+        $File     = new \think\template\driver\File();
         $File->write($htmlFile, $content);
         return $content;
     }
@@ -133,34 +133,34 @@ abstract class AdminBaseController extends BaseController
 
         $menusList = MenuWrapper::getMenusList($this->adminSession['role'], $this->module, $this->controller, $this->action);
 
-        $var = [];
-        $var['module'] = $this->module;
-        $var['controller'] = $this->controller;
-        $var['action'] = $this->action;
-        $var['uniacid'] = $this->uniacid;
-        $var['_GPC'] = $this->params;
-        $var['uid'] = $this->userId;
-        $var['url'] = $this->url;
-        $var['siteRoot'] = $this->siteRoot;
-        $var['moduleSiteRoot'] = $this->moduleSiteRoot;
+        $var                    = [];
+        $var['module']          = $this->module;
+        $var['controller']      = $this->controller;
+        $var['action']          = $this->action;
+        $var['uniacid']         = $this->uniacid;
+        $var['_GPC']            = $this->params;
+        $var['uid']             = $this->userId;
+        $var['url']             = $this->url;
+        $var['siteRoot']        = $this->siteRoot;
+        $var['moduleSiteRoot']  = $this->moduleSiteRoot;
         $var['moduleAttachUrl'] = $this->moduleAttachUrl;
-        $var['token'] = RandomUtil::random(8);
-        $var['isSystem'] = $this->isSystem;
-        $var['menusList'] = $menusList;
-        $var['pageTitle'] = empty($menusList['pageTitle']) ? $this->websiteSets['name'] : $menusList['pageTitle'];
-        $var['userInfo'] = $this->adminSession;
-        $var['websiteSets'] = $this->websiteSets;
+        $var['token']           = RandomUtil::random(8);
+        $var['isSystem']        = $this->isSystem;
+        $var['menusList']       = $menusList;
+        $var['pageTitle']       = empty($menusList['pageTitle']) ? $this->websiteSets['name'] : $menusList['pageTitle'];
+        $var['userInfo']        = $this->adminSession;
+        $var['websiteSets']     = $this->websiteSets;
 
         # 收缩菜单
         $var['foldNav'] = intval($_COOKIE["foldnav"] ?? 0);
 
-        $var['account'] = $this->account;
+        $var['account']    = $this->account;
         $var['moduleInfo'] = $this->moduleInfo;
-        $var['attachUrl'] = getAttachmentUrl() . "/";
-        $var['isLogin'] = $this->isLogin;
+        $var['attachUrl']  = getAttachmentUrl() . "/";
+        $var['isLogin']    = $this->isLogin;
 
         # 选中系统菜单
-        $var['selSystemNav'] = intval($_COOKIE[$this->module . "_systemnav"]);
+        $var['selSystemNav']    = intval($_COOKIE[$this->module . "_systemnav"]);
         $var['selSystemNavUrl'] = $this->getSelSystemNavUrl();
 
         # 菜单通知点
@@ -176,7 +176,7 @@ abstract class AdminBaseController extends BaseController
 
     private function getSelSystemNavUrl()
     {
-        $uniacid = $this->uniacid;
+        $uniacid         = $this->uniacid;
         $selSystemNavUrl = $_COOKIE[$this->module . "_systemnavurl"] ?? null;
 
         if (empty($selSystemNavUrl)) {
@@ -188,9 +188,12 @@ abstract class AdminBaseController extends BaseController
             parse_str($urlParts['query'], $queryParams);
 
             // 检查i参数是否存在，并且是否和uniacid不同
-            if (isset($queryParams['i']) && $queryParams['i'] != $uniacid) {
+            if ((isset($queryParams['i']) && $queryParams['i'] != $uniacid) || empty($queryParams['i'])) {
                 // 替换i参数的值
                 $queryParams['i'] = $uniacid;
+
+                // 增加module参数
+                $queryParams['module'] = $queryParams['module'] ?: $this->module;
 
                 // 重新构建查询字符串
                 $newQuery = http_build_query($queryParams);
