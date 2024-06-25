@@ -27,13 +27,16 @@
 
 <div class="form-group upload-image-thumb-width-height" {if empty($accountSettings['image']['is_reduce'])} style="display:none;"{/if}>
 <label class="col-lg control-label"></label>
-<div class="col-sm-3">
+<div class="col-sm-6">
     <div class="input-group">
         <span class="input-group-addon">宽</span>
         <input name="data[image][width]" value="{$accountSettings['image']['width']}" type="text" class="form-control">
         <span class="input-group-addon">px</span>
+        <span class="input-group-addon">清晰度</span>
+        <input name="data[image][quality]" value="{$accountSettings['image']['quality']??100}" type="text" class="form-control">
+        <span class="input-group-addon">%</span>
     </div>
-    <span class="help-block">缩略后图片 <b>最大宽度</b></span>
+    <span class="help-block">缩略后图片 <b>最大宽度</b> 与 <b>清晰度</b>,清晰度越低压缩率越大，图片体积越小，但清晰度越低。 </span>
 </div>
 </div>
 

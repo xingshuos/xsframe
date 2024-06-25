@@ -144,8 +144,9 @@ class FileWrapper
                     if ($setting['image']['width'] > 0) {
                         $newFileName = FileUtil::fileRandomName($filePath, $ext);
                         $maxWidth = $setting['image']['width'];
+                        $maxQuality = min(intval($setting['image']['quality'] ?? 100), 100);
                         $image = Image::open($filePath . $fileName);
-                        $image->thumb($maxWidth, $maxWidth)->save($filePath . $newFileName);
+                        $image->thumb($maxWidth, $maxWidth)->save($filePath . $newFileName, null, $maxQuality); // 清晰度100
                         @unlink($filePath . $fileName);// 删除源图
                     }
 
