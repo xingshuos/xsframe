@@ -117,18 +117,24 @@ class UserWrapper
                 $oneMenusKeys = array_keys($oneMenus);
 
                 $actionUrl = $oneMenus[$oneMenusKeys[0]]['items'][0]['route'];
-
-                if (StringUtil::strexists($actionUrl, "/")) {
-                    $actionUrl = "." . $actionUrl;
+                if (empty($actionUrl) && !empty($oneMenus[$oneMenusKeys[0]]['items'][0]['url'])) {
+                    $actionUrl = $oneMenus[$oneMenusKeys[0]]['items'][0]['url'];
+                    if (!StringUtil::strexists($actionUrl, "web.")) {
+                        $actionUrl = "web." . $actionUrl;
+                    }
+                    $url = url("/" . $moduleName . "/" . $actionUrl);
                 } else {
-                    $actionUrl = "/" . $actionUrl;
+                    if (StringUtil::strexists($actionUrl, "/")) {
+                        $actionUrl = "." . $actionUrl;
+                    } else {
+                        $actionUrl = "/" . $actionUrl;
+                    }
+                    $controllerUrl = $oneMenusKeys[0];
+                    if (!StringUtil::strexists($controllerUrl, "web.")) {
+                        $controllerUrl = "web." . $controllerUrl;
+                    }
+                    $url = url("/" . $moduleName . "/" . $controllerUrl . $actionUrl);
                 }
-
-                if (!StringUtil::strexists($oneMenusKeys[0], "web.")) {
-                    $oneMenusKeys[0] = "web." . $oneMenusKeys[0];
-                }
-
-                $url = url("/" . $moduleName . "/" . $oneMenusKeys[0] . $actionUrl);
             } else {
                 $url = url('/' . $moduleName);
             }
