@@ -169,7 +169,7 @@ class System extends AdminBaseController
                 $this->settingsController->reloadAccountSettings($uniacid);
             }
 
-            $this->success(["url" => webUrl("account", ['tab' => str_replace("#tab_", "", $this->params['tab'])])]);
+            $this->success(["url" => webUrl("account", ['module' => $this->params['module'], 'tab' => str_replace("#tab_", "", $this->params['tab'])])]);
         }
 
         $attachmentPath = IA_ROOT . "/public/attachment/images/{$this->uniacid}";
