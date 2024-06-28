@@ -76,7 +76,6 @@ class UserWrapper
         }
 
         $url = self::getLoginReturnUrl($userInfo['role'], $userInfo['id'], $hostUrl);
-
         if (ErrorUtil::isError($url)) {
             show_json(-1, $url['msg']);
         }
@@ -189,7 +188,7 @@ class UserWrapper
     public static function getLoginReturnUrl($role, $userId, $hostUrl = null)
     {
         if ($role == UserRoleKeyEnum::OWNER_KEY) {
-            $url = url('/admin/home/welcome');
+            $url = '/admin/home/welcome';
         } else {
             $moduleInfo = self::getModuleInfoByUserId($userId);
             $uniacid = $moduleInfo['uniacid'];
@@ -208,7 +207,7 @@ class UserWrapper
                 }
             }*/
 
-            $realUrl = self::getModuleOneUrl($moduleName);
+            $realUrl = self::getModuleOneUrl($moduleName, true);
             $url = webUrl(rtrim($realUrl, '.html'), ['i' => $uniacid]);
         }
         return $url;

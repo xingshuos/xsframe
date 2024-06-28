@@ -371,7 +371,6 @@ abstract class BaseController extends Controller
         $addonsName = $this->module;
 
         $template = "{$addonsName}/{$entry}/{$filename}.html";
-
         $source = IA_ROOT . "/public/app/" . $template;
 
         if (!StringUtil::strexists($filename, 'version')) {

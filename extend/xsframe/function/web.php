@@ -134,8 +134,7 @@ if (!function_exists('webUrl')) {
             $url = str_replace("http:", "https:", $url);
         }
         // end
-
-        return is_object($url) ? strval($url) : $url;
+        return str_replace(".html.html", ".html", is_object($url) ? strval($url) : $url);
     }
 }
 
