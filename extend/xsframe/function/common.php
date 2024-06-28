@@ -276,6 +276,20 @@ if (!function_exists('getAttachmentUrl')) {
     }
 }
 
+// 补搜索路径
+if (!function_exists('searchUrl')) {
+    /**
+     * Url生成 保留其他参数
+     * @param string $src 路由地址
+     * @param array $vars 变量
+     */
+    function searchUrl(string $src = '', array $vars = [])
+    {
+        $params = request()->param();
+        return buildUrl($src, array_filter(array_merge($params, $vars)));
+    }
+}
+
 // 补手机端路径
 if (!function_exists('mobileUrl')) {
     function mobileUrl($src = null, $params = [], $isRewrite = true)
@@ -304,7 +318,7 @@ if (!function_exists('pcUrl')) {
 if (!function_exists('buildUrl')) {
     function buildUrl($src = null, $params = [], $type = null, $isRewrite = true): string
     {
-        if (!empty($_GET['i'])) {
+        if (!empty($_GET['i']) && empty($params['i'])) {
             $params['i'] = $_GET['i'];
         }
 
@@ -734,21 +748,6 @@ if (!function_exists('starts_with')) {
             }
         }
         return false;
-    }
-}
-
-if (!function_exists('searchUrl')) {
-    /**
-     * Url生成 保留其他参数
-     * @param string $url 路由地址
-     * @param array $vars 变量
-     * @param bool|string $suffix 生成的URL后缀
-     * @param bool|string $domain 域名
-     */
-    function searchUrl(string $url = '', array $vars = [], $suffix = true, $domain = false)
-    {
-        $params = request()->param();
-        return Route::buildUrl($url, array_filter(array_merge($params, $vars)))->suffix($suffix)->domain($domain);
     }
 }
 

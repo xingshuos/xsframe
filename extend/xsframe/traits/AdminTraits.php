@@ -229,7 +229,7 @@ trait AdminTraits
                                 $backUrl = $this->request->controller() . "/main";
                             }
                         }
-                        if (!StringUtil::strexists($backUrl, "web.")) {
+                        if (!empty($backUrl) && !StringUtil::strexists($backUrl, "web.")) {
                             $backUrl = "web." . $backUrl;
                         }
                     }
@@ -237,7 +237,21 @@ trait AdminTraits
                     if (!empty($backUrl)) {
                         $this->success(["url" => webUrl(rtrim($backUrl, ".html"))]);
                     } else {
-                        $this->success(["url" => webUrl("", ['id' => $id, 'tab' => str_replace("#tab_", "", $this->params['tab'])])]);
+                        $backUrl = referer();
+                        $params = ['id' => $id, 'tab' => str_replace("#tab_", "", $this->params['tab'])];
+
+                        $parsedUrl = parse_url($backUrl);
+                        $query = $parsedUrl['query'];
+                        parse_str($query, $queryParams);
+                        $queryParams = array_merge($queryParams, $params);
+                        $uniqueQueryParams = [];
+                        foreach ($queryParams as $key => $value) {
+                            $uniqueQueryParams[$key] = $value;
+                        }
+                        $newQuery = http_build_query($uniqueQueryParams);
+
+                        $newUrl = $parsedUrl['scheme'] . '://' . $parsedUrl['host'] . $parsedUrl['path'] . '?' . $newQuery;
+                        $this->success(["url" => $newUrl]);
                     }
 
                 }
