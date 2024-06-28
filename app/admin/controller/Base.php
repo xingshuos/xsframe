@@ -30,10 +30,13 @@ class Base extends AdminBaseController
 
                 # 非管理员用户一律不得进入平台端
                 if ($adminSession['role'] != 'owner') {
-                    $moduleName = UserWrapper::getModuleNameByUserId($this->adminSession['uid']);
+                    $moduleInfo = UserWrapper::getModuleInfoByUserId($this->adminSession['uid']);
+                    $uniacid = $moduleInfo['uniacid'];
+                    $moduleName = $moduleInfo['module'];
 
                     if (!empty($moduleName)) {
-                        $url = UserWrapper::getModuleOneUrl($moduleName, true);
+                        $realUrl = UserWrapper::getModuleOneUrl($moduleName, true);
+                        $url = webUrl(rtrim($realUrl, '.html'), ['i' => $uniacid]);
                         header('location: ' . $url);
                     } else {
                         header('location: ' . url('/admin/error/index', ['type' => 403]));

@@ -471,6 +471,14 @@
                 });
             })
         });
+
+        // 监测搜索表单是否添加了i参数 start
+        let $form = $('.table-search');
+        let inputExists = $form.find('input[type="hidden"][name="i"]').length > 0;
+        if (!inputExists) {
+            $form.prepend('<input type="hidden" name="i" value="' + encodeURIComponent("{$_GET['i']}") + '"/>');
+        }
+        // end
     })
 </script>
 

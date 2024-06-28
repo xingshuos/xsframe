@@ -144,23 +144,27 @@ class UserWrapper
     }
 
     // 通过用户id获取默认插件
-    public static function getModuleNameByUserId($userId)
+    public static function getModuleInfoByUserId($userId)
     {
         $moduleName = null;
+        $uniacid = 0;
         $usersAccountInfo = Db::name('sys_account_users')->field("id,uniacid,module")->where(['user_id' => $userId])->find();
         if (!empty($usersAccountInfo)) {
+            $uniacid = $usersAccountInfo['uniacid'];
             $moduleName = $usersAccountInfo['module'];
             $isInstall = Db::name('sys_account_modules')->where(['uniacid' => $usersAccountInfo['uniacid'], 'module' => $moduleName])->count();
             if (empty($moduleName) || empty($isInstall)) {
                 $defaultModuleInfo = Db::name("sys_account_modules")->field("id,uniacid,module")->where(['uniacid' => $usersAccountInfo['uniacid']])->order("is_default desc")->find();
-
                 if (!empty($defaultModuleInfo)) {
                     $moduleName = $defaultModuleInfo['module'];
                     Db::name('sys_account_users')->where(['id' => $usersAccountInfo['id']])->update(['module' => $moduleName]);
                 }
             }
         }
-        return $moduleName;
+        return [
+            'module'  => $moduleName,
+            'uniacid' => $uniacid
+        ];
     }
 
     // 退出登录
@@ -187,22 +191,25 @@ class UserWrapper
         if ($role == UserRoleKeyEnum::OWNER_KEY) {
             $url = url('/admin/home/welcome');
         } else {
-            $moduleName = self::getModuleNameByUserId($userId);
+            $moduleInfo = self::getModuleInfoByUserId($userId);
+            $uniacid = $moduleInfo['uniacid'];
+            $moduleName = $moduleInfo['module'];
 
             if (empty($moduleName)) {
                 return ErrorUtil::error(-1, "暂无管理功能权限");
             }
 
-            if (!empty($hostUrl)) {
+            /*if (!empty($hostUrl)) { // 访问独立域名设置的默认应用
                 $accountHostWrapper = new AccountHostWrapper();
                 $domainMappingArr = $accountHostWrapper->getAccountHost();
 
                 if (!empty($domainMappingArr) && !empty($domainMappingArr[$hostUrl])) {
                     $moduleName = $domainMappingArr[$hostUrl]['default_module'];
                 }
-            }
+            }*/
 
-            $url = self::getModuleOneUrl($moduleName);
+            $realUrl = self::getModuleOneUrl($moduleName);
+            $url = webUrl(rtrim($realUrl, '.html'), ['i' => $uniacid]);
         }
         return $url;
     }
