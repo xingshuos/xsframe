@@ -460,7 +460,7 @@ trait AdminTraits
     }
 
     // 获取字段列表
-    private function getFiledList(): array
+    public function getFiledList(): array
     {
         if (!empty($this->tableName) && empty($this->fieldList)) {
             $this->fieldList = Db::name($this->tableName)->getFields();
