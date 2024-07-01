@@ -31,7 +31,7 @@ class StringUtil
      */
     public static function strexists($string, $find)
     {
-        return !(strpos($string, $find) === false);
+        return !(strpos((string)$string, (string)$find) === false);
     }
 
     /**
@@ -69,7 +69,7 @@ class StringUtil
         $keyLen = strlen($key);
         $strLen = strlen($string);
         for ($i = 0; $i < $strLen; $i++) {
-            $k = $i % $keyLen;
+            $k    = $i % $keyLen;
             $code .= $string[$i] ^ $key[$k];
         }
         return ($action != 'DECODE' ? base64_encode($code) : $code);
@@ -98,10 +98,10 @@ class StringUtil
     {
         $datetime = new \DateTime();
         $datetime->modify("+$seconds seconds");
-        $time = $datetime->getTimestamp();
-        $rand = 0;
+        $time   = $datetime->getTimestamp();
+        $rand   = 0;
         $string = '/' . $uri . '-' . $time . '-' . 0 . '-' . $uid . '-' . $privateKey;
-        $hash = md5($string);
+        $hash   = md5($string);
         $string = $time . '-' . $rand . '-' . $uid . '-' . $hash;
         return $string;
     }
@@ -137,12 +137,12 @@ class StringUtil
             $channel = substr($channel, 0, 6);
         }
         $us_str = sprintf('%f', microtime(true));
-        $arr = explode('.', $us_str);
-        $sn = sprintf("%d%d%s%s%d", $app_id, $pay_type, $channel, date('ymdHis'), $arr[1]);
-        $l = 32 - strlen($sn);
+        $arr    = explode('.', $us_str);
+        $sn     = sprintf("%d%d%s%s%d", $app_id, $pay_type, $channel, date('ymdHis'), $arr[1]);
+        $l      = 32 - strlen($sn);
         if ($l > 0) {
             $num = rand(pow(10, $l - 1), pow(10, $l) - 1);
-            $sn .= sprintf('%d', $num);
+            $sn  .= sprintf('%d', $num);
         }
         return $sn;
     }
@@ -156,12 +156,12 @@ class StringUtil
     public static function generateBillSN()
     {
         $us_str = sprintf('%f', microtime(true));
-        $arr = explode('.', $us_str);
-        $sn = sprintf("%s%d", date('ymdHis'), $arr[1]);
-        $l = 32 - strlen($sn);
+        $arr    = explode('.', $us_str);
+        $sn     = sprintf("%s%d", date('ymdHis'), $arr[1]);
+        $l      = 32 - strlen($sn);
         if ($l > 0) {
             $num = rand(pow(10, $l - 1), pow(10, $l) - 1);
-            $sn .= sprintf('%d', $num);
+            $sn  .= sprintf('%d', $num);
         }
         return $sn;
     }
@@ -195,16 +195,16 @@ class StringUtil
     {
         if (empty($string))
             return '';
-        $strarr = [];
+        $strarr    = [];
         $mb_strlen = mb_strlen($string);
         while ($mb_strlen) {//循环把字符串变为数组
-            $strarr[] = mb_substr($string, 0, 1, 'utf8');
-            $string = mb_substr($string, 1, $mb_strlen, 'utf8');
+            $strarr[]  = mb_substr($string, 0, 1, 'utf8');
+            $string    = mb_substr($string, 1, $mb_strlen, 'utf8');
             $mb_strlen = mb_strlen($string);
         }
         $strlen = count($strarr);
-        $begin = $start >= 0 ? $start : ($strlen - abs($start));
-        $end = $last = $strlen - 1;
+        $begin  = $start >= 0 ? $start : ($strlen - abs($start));
+        $end    = $last = $strlen - 1;
         if ($length > 0) {
             $end = $begin + $length - 1;
         } else if ($length < 0) {
@@ -296,17 +296,17 @@ class StringUtil
         if (empty($string)) {
             return false;
         }
-        $strarr = [];
+        $strarr    = [];
         $mb_strlen = mb_strlen($string);
         while ($mb_strlen) {//循环把字符串变为数组
-            $strarr[] = mb_substr($string, 0, 1, 'utf8');
-            $string = mb_substr($string, 1, $mb_strlen, 'utf8');
+            $strarr[]  = mb_substr($string, 0, 1, 'utf8');
+            $string    = mb_substr($string, 1, $mb_strlen, 'utf8');
             $mb_strlen = mb_strlen($string);
         }
         $strlen = count($strarr);
 
         $begin = $start >= 0 ? $start : ($strlen - abs($start));
-        $end = $last = $strlen - 1;
+        $end   = $last = $strlen - 1;
         if ($length > 0) {
             $end = $begin + $length - 1;
         } else if ($length < 0) {
@@ -334,9 +334,9 @@ class StringUtil
         if (empty($user_name)) {
             return '***';
         }
-        $length = mb_strlen($user_name, $encode);
+        $length   = mb_strlen($user_name, $encode);
         $firstStr = mb_substr($user_name, 0, 1, $encode);
-        $lastStr = mb_substr($user_name, -1, 1, $encode);
+        $lastStr  = mb_substr($user_name, -1, 1, $encode);
         return $length == 2 ? $firstStr . str_repeat($repeatStr, $length - 1) : $firstStr . str_repeat($repeatStr, $length - 2) . $lastStr;
     }
 
@@ -351,8 +351,8 @@ class StringUtil
             return '***';
         }
         $length = strlen($str);
-        $front = substr($str, 0, 4);
-        $back = substr($str, -4, 4);
+        $front  = substr($str, 0, 4);
+        $back   = substr($str, -4, 4);
         return $length == 16 ? $front . str_repeat('*', $length - 8) . $back : $front . str_repeat('*', $length - 8) . $back;
     }
 
@@ -376,8 +376,8 @@ class StringUtil
             '伟', '刚', '勇', '毅', '俊', '峰', '强', '军', '平', '保', '东', '文', '辉', '力', '明', '永', '健', '世', '广', '志', '义', '兴', '良', '海', '山', '仁', '波', '宁', '贵', '福', '生', '龙', '元', '全', '国', '胜', '学', '祥', '才', '发', '武', '新', '利', '清', '飞', '彬', '富', '顺', '信', '子', '杰', '涛', '昌', '成', '康', '星', '光', '天', '达', '安', '岩', '中', '茂', '进', '林', '有', '坚', '和', '彪', '博', '诚', '先', '敬', '震', '振', '壮', '会', '思', '群', '豪', '心', '邦', '承', '乐', '绍', '功', '松', '善', '厚', '庆', '磊', '民', '友', '裕', '河', '哲', '江', '超', '浩', '亮', '政', '谦', '亨', '奇', '固', '之', '轮', '翰', '朗', '伯', '宏', '言', '若', '鸣', '朋', '斌', '梁', '栋', '维', '启', '克', '伦', '翔', '旭', '鹏', '泽', '晨', '辰', '士', '以', '建', '家', '致', '树', '炎', '德', '行', '时', '泰', '盛', '雄', '琛', '钧', '冠', '策', '腾', '楠', '榕', '风', '航', '弘', '秀', '娟', '英', '华', '慧', '巧', '美', '娜', '静', '淑', '惠', '珠', '翠', '雅', '芝', '玉', '萍', '红', '娥', '玲', '芬', '芳', '燕', '彩', '春', '菊', '兰', '凤', '洁', '梅', '琳', '素', '云', '莲', '真', '环', '雪', '荣', '爱', '妹', '霞', '香', '月', '莺', '媛', '艳', '瑞', '凡', '佳', '嘉', '琼', '勤', '珍', '贞', '莉', '桂', '娣', '叶', '璧', '璐', '娅', '琦', '晶', '妍', '茜', '秋', '珊', '莎', '锦', '黛', '青', '倩', '婷', '姣', '婉', '娴', '瑾', '颖', '露', '瑶', '怡', '婵', '雁', '蓓', '纨', '仪', '荷', '丹', '蓉', '眉', '君', '琴', '蕊', '薇', '菁', '梦', '岚', '苑', '婕', '馨', '瑗', '琰', '韵', '融', '园', '艺', '咏', '卿', '聪', '澜', '纯', '毓', '悦', '昭', '冰', '爽', '琬', '茗', '羽', '希', '欣', '飘', '育', '滢', '馥', '筠', '柔', '竹', '霭', '凝', '晓', '欢', '霄', '枫', '芸', '菲', '寒', '伊', '亚', '宜', '可', '姬', '舒', '影', '荔', '枝', '丽', '阳', '妮', '宝', '贝', '初', '程', '梵', '罡', '恒', '鸿', '桦', '骅', '剑', '娇', '纪', '宽', '苛', '灵', '玛', '媚', '琪', '晴', '容', '睿', '烁', '堂', '唯', '威', '韦', '雯', '苇', '萱', '阅', '彦', '宇', '雨', '洋', '忠', '宗', '曼', '紫', '逸', '贤', '蝶', '菡', '绿', '蓝', '儿', '翠', '烟'
         ];
         $numMing = count($arrMing);
-        $xing = $arrXing[mt_rand(0, $numXing - 1)];
-        $ming = $arrMing[mt_rand(0, $numMing - 1)];
+        $xing    = $arrXing[mt_rand(0, $numXing - 1)];
+        $ming    = $arrMing[mt_rand(0, $numMing - 1)];
         return $xing . $ming;
     }
 
@@ -445,7 +445,7 @@ class StringUtil
         $length = mb_strlen($str, 'UTF-8'); // 使用 mb_strlen 函数并指定字符编码为 UTF-8
 
         for ($i = 0; $i < $length; $i += $groupSize) {
-            $group = mb_substr($str, $i, $groupSize, 'UTF-8'); // 使用 mb_substr 函数并指定字符编码为 UTF-8
+            $group    = mb_substr($str, $i, $groupSize, 'UTF-8'); // 使用 mb_substr 函数并指定字符编码为 UTF-8
             $result[] = $group;
         }
         return $result;
