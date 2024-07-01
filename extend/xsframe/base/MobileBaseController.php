@@ -99,7 +99,6 @@ abstract class MobileBaseController extends BaseController
     {
         $code = $data['code'] ?? $code;
         $message = $data['msg'] ?? $message;
-        $data = $data['data'] ?? $data;
 
         $retData = [
             'code' => (string)$code,
