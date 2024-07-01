@@ -202,7 +202,11 @@ if (!function_exists('getScheme')) {
 if (!function_exists('strexists')) {
     function strexists($string, $find)
     {
-        return !(strpos((string)$string, (string)$find) === false);
+        $isExists = false;
+        if (!empty($string) && !empty($find) && is_string($string) && is_string($find)) {
+            $isExists = !(strpos((string)$string, (string)$find) === false);
+        }
+        return $isExists;
     }
 }
 
