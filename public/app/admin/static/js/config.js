@@ -10,6 +10,7 @@ let myConfig = {
         'jquery.validate': 'components/jquery/jquery.validate.min',
         'jquery.nestable': 'components/jquery/nestable/jquery.nestable',
         'jquery.qrcode': 'components/jquery/jquery.qrcode.min',
+        'jquery.tagsinput': 'components/jquery/tagsinput/jquery.tagsinput',
 
         'bootstrap': 'components/bootstrap/bootstrap.min',
         'bootstrap.suggest': 'components/bootstrap/bootstrap-suggest.min',
@@ -120,6 +121,12 @@ let myConfig = {
         },
         "jquery.nestable": {
             exports: "$"
+        },
+        "jquery.tagsinput": {
+            exports: "$",
+            deps: [
+                "loadcss!components/jquery/tagsinput/jquery.tagsinput.css",
+            ]
         },
         bootstrap: {
             exports: "$"

@@ -3,13 +3,23 @@
 namespace xsframe\traits;
 
 use think\db\exception\DbException;
-use think\Exception;
 use think\facade\Db;
 use think\Model;
 
 trait ServiceTraits
 {
     protected $tableName = "";
+
+    /**
+     * 设置表名
+     * @param $tableName
+     * @return $this
+     */
+    public function name($tableName)
+    {
+        $this->tableName = $tableName;
+        return $this;
+    }
 
     /**
      * 获取数据基本信息
@@ -38,7 +48,7 @@ trait ServiceTraits
      * @param int $pSize
      * @return array
      */
-    public function getList(array $where = array(), string $field = "*", string $order = "", int $pIndex = 1, int $pSize = 10): array
+    public function getList(array $where = [], string $field = "*", string $order = "", int $pIndex = 1, int $pSize = 10): array
     {
         try {
             extract(self::getWhere($where));
@@ -59,7 +69,7 @@ trait ServiceTraits
      * @param string $keyField
      * @return array
      */
-    public function getAll(array $where = array(), string $field = "*", string $order = "", string $keyField = ''): array
+    public function getAll(array $where = [], string $field = "*", string $order = "", string $keyField = ''): array
     {
         try {
             extract(self::getWhere($where));
@@ -67,7 +77,7 @@ trait ServiceTraits
                 $list = Db::name($this->tableName)->field($field)->where($where, $op, $condition)->order($order)->select()->toArray();
             } else {
                 $temp = Db::name($this->tableName)->field($field)->where($where, $op, $condition)->order($order)->select()->toArray();
-                $rs = array();
+                $rs = [];
                 if (!empty($temp)) {
                     foreach ($temp as $key => &$row) {
                         if (isset($row[$keyField])) {

@@ -512,6 +512,51 @@ if (!function_exists('tpl_form_field_multi_image')) {
 }
 
 /**
+ * 标签输入
+ * @param string $name 名称
+ * @param string $value 1,2,3
+ * @param array $options
+ * @return string
+ */
+function tpl_form_field_tags_input($name, $value = '', $options = [])
+{
+    $autocompleteUrl = $options['autocomplete_url'] ?? "";
+    $height = $options['height'] ?? "42px";
+    $total = $options['total'] ?? 5;
+
+    $html = '
+    
+    <input name="'.$name.'" id="'.$name.'" value="' . $value . '" style="width: auto; min-height: ' . $height . '; height: ' . $height . ';" />
+    <script type="text/javascript">
+    
+        require(["jquery.tagsinput"], function () {
+            $("#'.$name.'").tagsInput({
+                width: "auto",
+                defaultText: "输入后回车确认",
+                minInputWidth: 110,
+                height: "' . $height . '",
+                placeholderColor: "#999",
+                onChange: function(e) {
+                    let input = $(this).siblings(".tagsinput");
+                    let maxLen = "'.$total.'"; // e.g.
+                    if (input.children("span.tag").length >= maxLen) {
+                        input.children("div").hide();
+                    } else {
+                        input.children("div").show();
+                    }
+                },
+                onKeyDown: function(e) {
+                },
+                autocomplete_url:"' . $autocompleteUrl . '",
+            });
+        })
+    
+    </script>';
+
+    return $html;
+}
+
+/**
  * 单日历
  * @param $name
  * @param string $value
