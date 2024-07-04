@@ -12,13 +12,14 @@
 
 namespace xsframe\wrapper;
 
+use think\facade\Config;
 use xsframe\util\StringUtil;
 use think\facade\Db;
 
 class PermWrapper
 {
-    public static $allPerms = array();
-    public static $formatPerms = array();
+    public static $allPerms = [];
+    public static $formatPerms = [];
 
     // 验证权限 $permType 1主菜单 2子菜单 3操作
     public function checkPerm($permUrls = '', $permType = 3)
@@ -28,6 +29,7 @@ class PermWrapper
         if (empty($permUrls)) {
             return false;
         }
+
         if (!strexists($permUrls, '&') && !strexists($permUrls, '|')) {
             $check = $this->check($permUrls, $permType);
         } else if (strexists($permUrls, '&')) {
@@ -91,8 +93,12 @@ class PermWrapper
             return false;
         }
 
+        $permUrlArr = explode("/", $permUrl);
+        $module = $permUrlArr[0];
+        $appMaps = Config::get('app.app_map') ?? [];
+        $appModuleName = $appMaps[$module] ?? $module; // 获取应用真实文件夹名称匹配权限
+
         if ($permType == 1) {
-            $permUrlArr = explode("/", $permUrl);
             $permUrlArr = array_splice($permUrlArr, 0, 2);
 
             $controllerUrl = $permUrlArr[1];
@@ -100,7 +106,10 @@ class PermWrapper
             $controllerUrlArr = array_splice($controllerUrlArr, 0, 2);
             $controllerUrl = implode("/", $controllerUrlArr);
 
-            $permUrl = $permUrlArr[0] . "/" . $controllerUrl;
+            $permUrl = $appModuleName . "/" . $controllerUrl;
+        } else {
+            $permUrlArr[0] = $appModuleName;
+            $permUrl = implode("/", $permUrlArr);
         }
 
         $permUrl = str_replace("/", '.', $permUrl);
@@ -124,7 +133,9 @@ class PermWrapper
             // 2.获取所有插件菜单列表
             $perms = [];
             foreach ($modules as &$module) {
-                $perms[$module['module']] = array_merge(['text' => $module['name']], $this->getModuleMenus($module['module']));
+                $perms[$module['module']] = array_merge([
+                    'text' => $module['name']
+                ], $this->getModuleMenus($module['module']));
             }
             self::$allPerms = $perms;
         }
@@ -147,13 +158,13 @@ class PermWrapper
 
             $permDefault = [
                 'main'   => '查看列表',
-                'view'   => '查看内容',
+                'view'   => '查看详情',
                 'add'    => '添加-log',
                 'edit'   => '修改-log',
                 'delete' => '删除-log',
-                'xxx'    => array(
+                'xxx'    => [
                     'status' => 'edit'
-                ),
+                ],
             ];
 
             foreach ($moduleMenus as $key => $menu) {
@@ -161,10 +172,10 @@ class PermWrapper
                 // 子菜单权限
                 $itemModuleMenus = [];
 
-                if( !empty($menu['items']) ){
+                if (!empty($menu['items'])) {
                     foreach ((array)$menu['items'] as $item) {
                         $perm = [];
-                        if (is_array($item['perm']) && !empty($item['perm'])) {
+                        if (is_array($item['perm']) && !empty($item['perm']) || empty($item['perm'])) {
                             $perm = $permDefault;
                         }
 
@@ -210,10 +221,8 @@ class PermWrapper
         if (empty(self::$formatPerms)) {
 
             $perms = $this->allPerms($uniacid);
-//            dump($perms);
-//            die;
 
-            $array = array();
+            $array = [];
 
             foreach ($perms as $key => $value) {
                 if (is_array($value)) {

@@ -19,6 +19,7 @@ use xsframe\util\RandomUtil;
 use xsframe\util\StringUtil;
 use xsframe\wrapper\AttachmentWrapper;
 use think\facade\Db;
+use xsframe\wrapper\UserWrapper;
 
 class System extends AdminBaseController
 {
@@ -99,7 +100,8 @@ class System extends AdminBaseController
 
             $salt = RandomUtil::random(6);
             Db::name('sys_users')->where(['id' => $userInfo['id']])->update(['username' => $username, 'password' => md5($newPassword . $salt), 'salt' => $salt]);
-            show_json(1, ['message' => "密码已修改请重新登录", 'url' => url('/yq_shoot/web.login')]);
+            UserWrapper::logout();
+            show_json(1, ['message' => "密码已修改请重新登录", 'url' => referer()]);
         }
 
         return $this->template('profile');

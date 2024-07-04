@@ -123,6 +123,10 @@ if (!function_exists('webUrl')) {
             $url = "web." . $url;
         }
 
+        if (!empty($_GET['module'])) {
+            $params['module'] = $_GET['module'];
+        }
+
         if (!empty($_GET['i'])) {
             $params['i'] = $_GET['i'];
         }
@@ -526,11 +530,11 @@ function tpl_form_field_tags_input($name, $value = '', $options = [])
 
     $html = '
     
-    <input name="'.$name.'" id="'.$name.'" value="' . $value . '" style="width: auto; min-height: ' . $height . '; height: ' . $height . ';" />
+    <input name="' . $name . '" id="' . $name . '" value="' . $value . '" style="width: auto; min-height: ' . $height . '; height: ' . $height . ';" />
     <script type="text/javascript">
     
         require(["jquery.tagsinput"], function () {
-            $("#'.$name.'").tagsInput({
+            $("#' . $name . '").tagsInput({
                 width: "auto",
                 defaultText: "输入后回车确认",
                 minInputWidth: 110,
@@ -538,7 +542,7 @@ function tpl_form_field_tags_input($name, $value = '', $options = [])
                 placeholderColor: "#999",
                 onChange: function(e) {
                     let input = $(this).siblings(".tagsinput");
-                    let maxLen = "'.$total.'"; // e.g.
+                    let maxLen = "' . $total . '"; // e.g.
                     if (input.children("span.tag").length >= maxLen) {
                         input.children("div").hide();
                     } else {

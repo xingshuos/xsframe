@@ -74,12 +74,12 @@ class Perm extends AdminBaseController
         $role = Db::name("sys_account_perm_role")->where(['id' => $item['roleid']])->find();
 
         if ($this->request->isPost()) {
-            $username = trim($this->params['username']);
-            $password = trim($this->params['password']);
-            $realname = trim($this->params['realname']);
-            $mobile = trim($this->params['mobile']);
-            $status = trim($this->params['status']);
-            $roleId = trim($this->params['roleid']);
+            $username = trim($this->params['username'] ?? '');
+            $password = trim($this->params['password'] ?? '');
+            $realname = trim($this->params['realname'] ?? '');
+            $mobile = trim($this->params['mobile'] ?? '');
+            $status = intval($this->params['status'] ?? 0);
+            $roleId = trim($this->params['roleid'] ?? 0);
 
             if (empty($username)) {
                 $this->error('登录账号不能为空');
@@ -123,8 +123,8 @@ class Perm extends AdminBaseController
                 'realname' => $realname,
                 'mobile'   => $mobile,
                 'roleid'   => $roleId,
+                'status'   => $status,
             ];
-
             $data['perms'] = trim($this->params['permsarray']);
 
             $salt = RandomUtil::random(6);
@@ -132,11 +132,13 @@ class Perm extends AdminBaseController
             if (!empty($item['id'])) {
                 Db::name('sys_account_perm_user')->where(['id' => $item['id']])->update($data);
 
+                $userUpdateData = ['status' => $data['status']];
                 if (!empty($password)) {
                     $password = md5($password . $salt);
-                    Db::name('sys_users')->where(['id' => $item['uid']])->update(['password' => $password, 'salt' => $salt]);
+                    $userUpdateData['password'] = $password;
+                    $userUpdateData['salt'] = $salt;
                 }
-
+                Db::name('sys_users')->where(['id' => $item['uid']])->update($userUpdateData);
             } else {
                 $data['createtime'] = time();
 
@@ -166,12 +168,10 @@ class Perm extends AdminBaseController
 
                 Db::name('sys_account_perm_user')->insert($data);
             }
-            $this->success(array('url' => url('admin/perm/userPost', array('id' => $id))));
+            $this->success(['url' => webUrl('perm/userPost', ['id' => $id])]);
         }
 
         $perms = PermFacade::formatPerms($this->uniacid);
-//        dump($perms);
-//        die;
 
         $operatorPerms = []; // 当前用户权限
         $accountsPerms = []; // 排除系统应用
@@ -181,8 +181,8 @@ class Perm extends AdminBaseController
             $operatorPerms = explode(',', $operator['perms2']);
         }
 
-        $rolePerms = array();
-        $userPerms = array();
+        $rolePerms = [];
+        $userPerms = [];
 
         if (!empty($item)) {
             if (!empty($item['roleid'])) {
@@ -216,7 +216,7 @@ class Perm extends AdminBaseController
         }
 
         if (empty($id)) {
-            show_json(0, array("message" => "参数错误"));
+            show_json(0, ["message" => "参数错误"]);
         }
 
         $items = Db::name("sys_account_perm_user")->where(['id' => $id])->select();
@@ -224,7 +224,7 @@ class Perm extends AdminBaseController
             Db::name("sys_account_perm_user")->where("id", '=', $item['id'])->update(['deleted' => 1]);
             Db::name("sys_users")->where("id", '=', $item['uid'])->update(['status' => 0, 'deleted' => 1]);
         }
-        $this->success(array("url" => referer()));
+        $this->success(["url" => referer()]);
     }
 
     public function userChange()
@@ -236,7 +236,7 @@ class Perm extends AdminBaseController
         }
 
         if (empty($id)) {
-            show_json(0, array("message" => "参数错误"));
+            show_json(0, ["message" => "参数错误"]);
         }
 
         $type = trim($this->params["type"]);
@@ -297,18 +297,18 @@ class Perm extends AdminBaseController
         $item = Db::name('sys_account_perm_role')->where(['id' => $id])->find();
 
         if ($this->request->isPost()) {
-            $data = array(
+            $data = [
                 'uniacid'  => $this->uniacid,
                 'rolename' => trim($this->params['rolename']),
                 'status'   => intval($this->params['status']),
                 'perms'    => trim($this->params['permsarray']),
-            );
+            ];
             if (!empty($id)) {
                 Db::name('sys_account_perm_role')->where(['id' => $item['id']])->update($data);
             } else {
                 $id = Db::name('sys_account_perm_role')->insertGetId($data);
             }
-            $this->success(array('url' => url('admin/perm/rolePost', array('id' => $id))));
+            $this->success(['url' => webUrl('perm/rolePost', ['id' => $id])]);
         }
 
 
@@ -324,8 +324,8 @@ class Perm extends AdminBaseController
             $operatorPerms = explode(',', $operator['perms2']);
         }
 
-        $rolePerms = array();
-        $userPerms = array();
+        $rolePerms = [];
+        $userPerms = [];
 
         if (!empty($item)) {
             $dataPerms = $item['perms'];
@@ -355,14 +355,14 @@ class Perm extends AdminBaseController
         }
 
         if (empty($id)) {
-            show_json(0, array("message" => "参数错误"));
+            show_json(0, ["message" => "参数错误"]);
         }
 
         $items = Db::name("sys_account_perm_role")->where(['id' => $id])->select();
         foreach ($items as $item) {
             Db::name("sys_account_perm_role")->where("id", '=', $item['id'])->update(['deleted' => 1]);
         }
-        $this->success(array("url" => referer()));
+        $this->success(["url" => referer()]);
     }
 
     public function roleChange()
@@ -374,7 +374,7 @@ class Perm extends AdminBaseController
         }
 
         if (empty($id)) {
-            show_json(0, array("message" => "参数错误"));
+            show_json(0, ["message" => "参数错误"]);
         }
 
         $type = trim($this->params["type"]);
@@ -392,7 +392,7 @@ class Perm extends AdminBaseController
     {
         $keyword = trim($this->params['keyword']);
 
-        $condition = array();
+        $condition = [];
         $condition['uniacid'] = $this->uniacid;
 
         if (!empty($kwd)) {

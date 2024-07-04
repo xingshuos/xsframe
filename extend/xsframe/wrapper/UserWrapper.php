@@ -198,15 +198,6 @@ class UserWrapper
                 return ErrorUtil::error(-1, "暂无管理功能权限");
             }
 
-            /*if (!empty($hostUrl)) { // 访问独立域名设置的默认应用
-                $accountHostWrapper = new AccountHostWrapper();
-                $domainMappingArr = $accountHostWrapper->getAccountHost();
-
-                if (!empty($domainMappingArr) && !empty($domainMappingArr[$hostUrl])) {
-                    $moduleName = $domainMappingArr[$hostUrl]['default_module'];
-                }
-            }*/
-
             $realUrl = self::getModuleOneUrl($moduleName, true);
             $url = webUrl(rtrim($realUrl, '.html'), ['i' => $uniacid]);
         }
