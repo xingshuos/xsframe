@@ -181,6 +181,11 @@ trait AdminTraits
                 $fieldList = $this->getFiledList();
                 $updateData = [];
                 foreach ($fieldList as $filed => $fieldItem) {
+
+                    if ($id && empty($this->params[$filed])) {
+                        continue;
+                    }
+
                     $updateData[$filed] = $this->params[$filed] ?? '';
 
                     switch ($fieldItem['type']) {
