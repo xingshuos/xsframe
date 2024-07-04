@@ -182,7 +182,7 @@ trait AdminTraits
                 $updateData = [];
                 foreach ($fieldList as $filed => $fieldItem) {
 
-                    if ($id && empty($this->params[$filed])) {
+                    if ($id && !array_key_exists($filed, $this->params)) {
                         continue;
                     }
 
