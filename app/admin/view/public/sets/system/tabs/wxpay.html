@@ -18,3 +18,33 @@
         <input type='text' value="{$accountSettings['wxpay']['apikey']}" name='data[wxpay][apikey]' class="form-control" {if !empty($accountSettings['wxpay']['apikey'])}readonly ondblclick="this.readOnly=false" οnchange="this.readOnly=true" data-toggle="tooltip" data-placement="top" data-original-title="双击修改"{/if}/>
     </div>
 </div>
+
+<div class="form-group">
+    <label class="col-sm-2 control-label must">CERT证书文件</label>
+    <div class="col-sm-9 col-xs-12">
+        <input type="file" name="wxpay_cert_file" class="form-control" />
+        <span class="help-block">
+            {if !empty($accountSettings['wxpay']['cert_file'])}
+            <span class='label label-success'>已上传</span>
+            {else}
+            <span class='label label-danger'>未上传</span>
+            {/if}
+            下载证书 cert.zip 中的 apiclient_cert.pem 文件
+        </span>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-sm-2 control-label must">KEY密钥文件</label>
+    <div class="col-sm-9 col-xs-12">
+        <input type='file' name='wxpay_key_file' class="form-control" />
+        <span class="help-block">
+            {if !empty($accountSettings['wxpay']['key_file'])}
+            <span class='label label-success'>已上传</span>
+            {else}
+            <span class='label label-danger'>未上传</span>
+            {/if}
+            下载证书 cert.zip 中的 apiclient_key.pem 文件
+        </span>
+    </div>
+</div>

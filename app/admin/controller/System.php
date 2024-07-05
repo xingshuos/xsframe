@@ -145,6 +145,17 @@ class System extends AdminBaseController
 
         if ($this->request->isPost()) {
             $settingsData = $this->params['data'] ?? [];
+
+            if( !empty($_FILES) ){
+                if ($_FILES['wxpay_cert_file']['name']) {
+                    $settingsData['wxpay']['cert_file'] = $this->upload_cert('wxpay_cert_file');
+                }
+
+                if ($_FILES['wxpay_key_file']['name']) {
+                    $settingsData['wxpay']['key_file'] = $this->upload_cert('wxpay_key_file');
+                }
+            }
+
             $settingsData = array_merge($accountSettings, $settingsData);
 
             if (empty($uniacid)) {
@@ -238,6 +249,32 @@ class System extends AdminBaseController
         }
 
         show_json(1);
+    }
+
+    // 解析证书
+    private function upload_cert($fileinput)
+    {
+        $filename = $_FILES[$fileinput]['name'];
+        $tmp_name = $_FILES[$fileinput]['tmp_name'];
+        if (!empty($filename) && !empty($tmp_name)) {
+            $ext = strtolower(substr($filename, strrpos($filename, '.')));
+
+            if ($ext != '.pem') {
+                $errinput = '';
+
+                if ($fileinput == 'cert_file') {
+                    $errinput = 'CERT文件格式错误';
+                } else if ($fileinput == 'key_file') {
+                    $errinput = 'KEY文件格式错误';
+                }
+
+                show_json(0, $errinput . ',请重新上传!');
+            }
+
+            return file_get_contents($tmp_name);
+        }
+
+        return '';
     }
 
 }

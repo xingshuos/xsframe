@@ -13,8 +13,8 @@
 namespace xsframe\service;
 
 use xsframe\exception\ApiException;
+use xsframe\pay\Weixin\Data\WxPayRefund;
 use xsframe\util\ClientUtil;
-use xsframe\util\ErrorUtil;
 use xsframe\util\LoggerUtil;
 use xsframe\pay\Weixin\Base\Config;
 use xsframe\pay\Weixin\Data\WxPayAppPay;
@@ -107,6 +107,16 @@ class WxPayService
         $jsapi->SetTimeStamp($timeStamp);
         $jsapi->SetPaySign($jsapi->MakeSign($this->config, false));
         return $jsapi->GetValues();
+    }
+
+    /**
+     * 退款
+     * @return void
+     */
+    public function WxPayRefund()
+    {
+        $refund = new WxPayRefund();
+
     }
 
 }
