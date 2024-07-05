@@ -14,6 +14,7 @@ namespace app\admin\controller;
 
 use think\facade\Db;
 use xsframe\facade\wrapper\SystemWrapperFacade;
+use xsframe\util\ArrayUtil;
 use xsframe\wrapper\AccountHostWrapper;
 use xsframe\wrapper\UserWrapper;
 
@@ -83,7 +84,7 @@ class Account extends Base
                 }
             }
 
-            $settingsData = array_merge($accountSettings, $settingsData);
+            $settingsData = ArrayUtil::customMergeArrays($accountSettings, $settingsData);
 
             $data = [
                 "name"         => trim($this->params["name"]),

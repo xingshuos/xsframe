@@ -14,6 +14,7 @@ namespace app\admin\controller;
 
 use xsframe\base\AdminBaseController;
 use xsframe\enum\SysSettingsKeyEnum;
+use xsframe\util\ArrayUtil;
 use xsframe\util\FileUtil;
 use xsframe\util\RandomUtil;
 use xsframe\util\StringUtil;
@@ -146,7 +147,7 @@ class System extends AdminBaseController
         if ($this->request->isPost()) {
             $settingsData = $this->params['data'] ?? [];
 
-            if( !empty($_FILES) ){
+            if (!empty($_FILES)) {
                 if ($_FILES['wxpay_cert_file']['name']) {
                     $settingsData['wxpay']['cert_file'] = $this->upload_cert('wxpay_cert_file');
                 }
@@ -156,7 +157,7 @@ class System extends AdminBaseController
                 }
             }
 
-            $settingsData = array_merge($accountSettings, $settingsData);
+            $settingsData = ArrayUtil::customMergeArrays($accountSettings, $settingsData);
 
             if (empty($uniacid)) {
                 show_json(0, "更新失败");
