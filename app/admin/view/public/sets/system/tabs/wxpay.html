@@ -1,26 +1,28 @@
 <div class="form-group">
     <label class="col-sm-2 control-label must">服务商公众号(AppId)</label>
     <div class="col-sm-9 col-xs-12">
-        <input type='text' value="{$accountSettings['wxpay']['appid']}" name='data[wxpay][appid]' class="form-control" {if !empty($accountSettings['wxpay']['appid'])}readonly ondblclick="this.readOnly=false" οnchange="this.readOnly=true" data-toggle="tooltip" data-placement="top" data-original-title="双击修改"{/if}/>
+        <input type='text' value="{$accountSettings['wxpay']['appid']}" name='data[wxpay][appid]' class="form-control" {if !empty($accountSettings['wxpay']['appid'])}readonly ondblclick="this.readOnly=false" οnchange="this.readOnly=true" data-toggle="tooltip" data-placement="top" data-original-title="双击修改"{/if} data-rule-required='true'/>
     </div>
 </div>
 
 <div class="form-group">
     <label class="col-sm-2 control-label must">服务商支付商户号(MchId)</label>
     <div class="col-sm-9 col-xs-12">
-        <input type='text' value="{$accountSettings['wxpay']['mchid']}" name='data[wxpay][mchid]' class="form-control" {if !empty($accountSettings['wxpay']['mchid'])}readonly ondblclick="this.readOnly=false" οnchange="this.readOnly=true" data-toggle="tooltip" data-placement="top" data-original-title="双击修改"{/if}/>
+        <input type='text' value="{$accountSettings['wxpay']['mchid']}" name='data[wxpay][mchid]' class="form-control" {if !empty($accountSettings['wxpay']['mchid'])}readonly ondblclick="this.readOnly=false" οnchange="this.readOnly=true" data-toggle="tooltip" data-placement="top" data-original-title="双击修改"{/if} data-rule-required='true'/>
     </div>
 </div>
 
 <div class="form-group">
     <label class="col-sm-2 control-label must">支付密钥(APIKEY)</label>
     <div class="col-sm-9 col-xs-12">
-        <input type='text' value="{$accountSettings['wxpay']['apikey']}" name='data[wxpay][apikey]' class="form-control" {if !empty($accountSettings['wxpay']['apikey'])}readonly ondblclick="this.readOnly=false" οnchange="this.readOnly=true" data-toggle="tooltip" data-placement="top" data-original-title="双击修改"{/if}/>
+        <input type='text' value="{$accountSettings['wxpay']['apikey']}" name='data[wxpay][apikey]' class="form-control" {if !empty($accountSettings['wxpay']['apikey'])}readonly ondblclick="this.readOnly=false" οnchange="this.readOnly=true" data-toggle="tooltip" data-placement="top" data-original-title="双击修改"{/if} data-rule-required='true'/>
     </div>
 </div>
 
+<hr>
+
 <div class="form-group">
-    <label class="col-sm-2 control-label must">CERT证书文件</label>
+    <label class="col-sm-2 control-label">CERT证书文件</label>
     <div class="col-sm-9 col-xs-12">
         <input type="file" name="wxpay_cert_file" class="form-control" />
         <span class="help-block">
@@ -29,13 +31,13 @@
             {else}
             <span class='label label-danger'>未上传</span>
             {/if}
-            下载证书 cert.zip 中的 apiclient_cert.pem 文件
+            下载证书 cert.zip 中的 apiclient_cert.pem 文件 （退款必传）
         </span>
     </div>
 </div>
 
 <div class="form-group">
-    <label class="col-sm-2 control-label must">KEY密钥文件</label>
+    <label class="col-sm-2 control-label">KEY密钥文件</label>
     <div class="col-sm-9 col-xs-12">
         <input type='file' name='wxpay_key_file' class="form-control" />
         <span class="help-block">
@@ -44,7 +46,7 @@
             {else}
             <span class='label label-danger'>未上传</span>
             {/if}
-            下载证书 cert.zip 中的 apiclient_key.pem 文件
+            下载证书 cert.zip 中的 apiclient_key.pem 文件 （退款必传）
         </span>
     </div>
 </div>
