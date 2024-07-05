@@ -211,6 +211,8 @@ trait AdminTraits
                             case 'createtime':
                                 if (empty($id)) {
                                     $updateData[$filed] = TIMESTAMP;
+                                } else {
+                                    unset($updateData[$filed]);
                                 }
                                 break;
                             case 'update_time':
