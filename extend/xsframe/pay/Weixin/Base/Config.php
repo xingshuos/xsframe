@@ -25,9 +25,9 @@ class Config extends WxPayConfigInterface
     protected $appId;
     protected $merchantId;
     protected $notifyUrl;
-    protected $proxyHost    = '0.0.0.0';
-    protected $signType     = 'MD5';
-    protected $proxyPort    = '0';
+    protected $proxyHost = '0.0.0.0';
+    protected $signType = 'MD5';
+    protected $proxyPort = '0';
     protected $reportLevenl = 1;
     protected $key;
     protected $appSecret;
@@ -35,16 +35,16 @@ class Config extends WxPayConfigInterface
     protected $apiHost;
     protected $sslKeyPath;
 
-    public function __construct($appId, $merchantId, $notifyUrl, $key, $appSecret, $apiHost)
+    public function __construct($appId, $merchantId, $notifyUrl, $key, $appSecret, $apiHost, $sslCertPath = null, $sslKeyPath = null)
     {
-        $this->apiHost     = $apiHost;
-        $this->appSecret   = $appSecret;
-        $this->appId       = $appId;
-        $this->merchantId  = $merchantId;
-        $this->notifyUrl   = $notifyUrl;
-        $this->key         = $key;
-        $this->sslCertPath = dirname(dirname(dirname(dirname(__DIR__)))) . '/public/Certs/Wx/apiclient_cert.pem';
-        $this->sslKeyPath  = dirname(dirname(dirname(dirname(__DIR__)))) . '/public/Certs/Wx/apiclient_key.pem';
+        $this->apiHost = $apiHost;
+        $this->appSecret = $appSecret;
+        $this->appId = $appId;
+        $this->merchantId = $merchantId;
+        $this->notifyUrl = $notifyUrl;
+        $this->key = $key;
+        $this->sslCertPath = $sslCertPath;
+        $this->sslKeyPath = $sslKeyPath;
 
     }
 
@@ -55,7 +55,6 @@ class Config extends WxPayConfigInterface
     {
         return $this->apiHost;
     }
-
 
 
     /**

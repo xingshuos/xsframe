@@ -81,8 +81,8 @@ class WxPayApi
         $xml = $inputObj->ToXml();
 
         $startTimeStamp = self::getMillisecond();//请求开始时间
-        $response       = self::postXmlCurl($config, $xml, $url, false, $timeOut);
-        $result         = WxPayResults::Init($config, $response);
+        $response = self::postXmlCurl($config, $xml, $url, false, $timeOut);
+        $result = WxPayResults::Init($config, $response);
         self::reportCostTime($config, $url, $startTimeStamp, $result);//上报请求花费时间
 
         return $result;
@@ -114,8 +114,8 @@ class WxPayApi
         $xml = $inputObj->ToXml();
 
         $startTimeStamp = self::getMillisecond();//请求开始时间
-        $response       = self::postXmlCurl($config, $xml, $url, false, $timeOut);
-        $result         = WxPayResults::Init($config, $response);
+        $response = self::postXmlCurl($config, $xml, $url, false, $timeOut);
+        $result = WxPayResults::Init($config, $response);
         self::reportCostTime($config, $url, $startTimeStamp, $result);//上报请求花费时间
 
         return $result;
@@ -147,8 +147,8 @@ class WxPayApi
         $xml = $inputObj->ToXml();
 
         $startTimeStamp = self::getMillisecond();//请求开始时间
-        $response       = self::postXmlCurl($config, $xml, $url, false, $timeOut);
-        $result         = WxPayResults::Init($config, $response);
+        $response = self::postXmlCurl($config, $xml, $url, false, $timeOut);
+        $result = WxPayResults::Init($config, $response);
         self::reportCostTime($config, $url, $startTimeStamp, $result);//上报请求花费时间
 
         return $result;
@@ -186,10 +186,10 @@ class WxPayApi
         $inputObj->SetNonce_str(self::getNonceStr());//随机字符串
 
         $inputObj->SetSign($config);//签名
-        $xml            = $inputObj->ToXml();
+        $xml = $inputObj->ToXml();
         $startTimeStamp = self::getMillisecond();//请求开始时间
-        $response       = self::postXmlCurl($config, $xml, $url, true, $timeOut);
-        $result         = WxPayResults::Init($config, $response);
+        $response = self::postXmlCurl($config, $xml, $url, true, $timeOut);
+        $result = WxPayResults::Init($config, $response);
         self::reportCostTime($config, $url, $startTimeStamp, $result);//上报请求花费时间
 
         return $result;
@@ -227,8 +227,8 @@ class WxPayApi
         $xml = $inputObj->ToXml();
 
         $startTimeStamp = self::getMillisecond();//请求开始时间
-        $response       = self::postXmlCurl($config, $xml, $url, false, $timeOut);
-        $result         = WxPayResults::Init($config, $response);
+        $response = self::postXmlCurl($config, $xml, $url, false, $timeOut);
+        $result = WxPayResults::Init($config, $response);
         self::reportCostTime($config, $url, $startTimeStamp, $result);//上报请求花费时间
 
         return $result;
@@ -303,8 +303,8 @@ class WxPayApi
         $xml = $inputObj->ToXml();
 
         $startTimeStamp = self::getMillisecond();//请求开始时间
-        $response       = self::postXmlCurl($config, $xml, $url, false, $timeOut);
-        $result         = WxPayResults::Init($config, $response);
+        $response = self::postXmlCurl($config, $xml, $url, false, $timeOut);
+        $result = WxPayResults::Init($config, $response);
         self::reportCostTime($config, $url, $startTimeStamp, $result);//上报请求花费时间
 
         return $result;
@@ -337,8 +337,8 @@ class WxPayApi
         $xml = $inputObj->ToXml();
 
         $startTimeStamp = self::getMillisecond();//请求开始时间
-        $response       = self::postXmlCurl($config, $xml, $url, true, $timeOut);
-        $result         = WxPayResults::Init($config, $response);
+        $response = self::postXmlCurl($config, $xml, $url, true, $timeOut);
+        $result = WxPayResults::Init($config, $response);
         self::reportCostTime($config, $url, $startTimeStamp, $result);//上报请求花费时间
 
         return $result;
@@ -386,7 +386,7 @@ class WxPayApi
         $xml = $inputObj->ToXml();
 
         $startTimeStamp = self::getMillisecond();//请求开始时间
-        $response       = self::postXmlCurl($config, $xml, $url, false, $timeOut);
+        $response = self::postXmlCurl($config, $xml, $url, false, $timeOut);
         return $response;
     }
 
@@ -445,8 +445,8 @@ class WxPayApi
         $xml = $inputObj->ToXml();
 
         $startTimeStamp = self::getMillisecond();//请求开始时间
-        $response       = self::postXmlCurl($config, $xml, $url, false, $timeOut);
-        $result         = WxPayResults::Init($config, $response);
+        $response = self::postXmlCurl($config, $xml, $url, false, $timeOut);
+        $result = WxPayResults::Init($config, $response);
         self::reportCostTime($config, $url, $startTimeStamp, $result);//上报请求花费时间
 
         return $result;
@@ -474,7 +474,7 @@ class WxPayApi
         //如果返回成功则验证签名
         try {
             //获取通知的数据
-            $xml    = $GLOBALS['HTTP_RAW_POST_DATA'];
+            $xml = $GLOBALS['HTTP_RAW_POST_DATA'];
             $result = WxPayNotifyResults::Init($config, $xml);
         } catch (ApiException $e) {
             $msg = $e->errorMessage();
@@ -494,7 +494,7 @@ class WxPayApi
     public static function getNonceStr($length = 32)
     {
         $chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-        $str   = "";
+        $str = "";
         for ($i = 0; $i < $length; $i++) {
             $str .= substr($chars, mt_rand(0, strlen($chars) - 1), 1);
         }
@@ -537,7 +537,7 @@ class WxPayApi
 
         //上报逻辑
         $endTimeStamp = self::getMillisecond();
-        $objInput     = new WxPayReport();
+        $objInput = new WxPayReport();
         $objInput->SetInterface_url($url);
         $objInput->SetExecute_time_($endTimeStamp - $startTimeStamp);
         //返回状态码
@@ -590,9 +590,9 @@ class WxPayApi
      */
     private static function postXmlCurl($config, $xml, $url, $useCert = false, $second = 30)
     {
-        $ch          = curl_init();
+        $ch = curl_init();
         $curlVersion = curl_version();
-        $ua          = "WXPaySDK/3.0.9 (" . PHP_OS . ") PHP/" . PHP_VERSION . " CURL/" . $curlVersion['version'] . " "
+        $ua = "WXPaySDK/3.0.9 (" . PHP_OS . ") PHP/" . PHP_VERSION . " CURL/" . $curlVersion['version'] . " "
             . $config->GetMerchantId();
 
         //设置超时
@@ -608,35 +608,35 @@ class WxPayApi
         curl_setopt($ch, CURLOPT_URL, $url);
 
 
-        if (stripos($url, "https://") !== FALSE) {
+        if (stripos($url, "https://") !== false) {
             curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         } else {
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, TRUE);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);//严格校验
         }
 
 
         curl_setopt($ch, CURLOPT_USERAGENT, $ua);
         //设置header
-        curl_setopt($ch, CURLOPT_HEADER, FALSE);
+        curl_setopt($ch, CURLOPT_HEADER, false);
         //要求结果为字符串且输出到屏幕上
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         if ($useCert == true) {
             //设置证书
             //使用证书：cert 与 key 分别属于两个.pem文件
             //证书文件请放入服务器的非web目录下
             $sslCertPath = $config->getSslCertPath();
-            $sslKeyPath  = $config->getSslKeyPath();
+            $sslKeyPath = $config->getSslKeyPath();
             curl_setopt($ch, CURLOPT_SSLCERTTYPE, 'PEM');
             curl_setopt($ch, CURLOPT_SSLCERT, $sslCertPath);
             curl_setopt($ch, CURLOPT_SSLKEYTYPE, 'PEM');
             curl_setopt($ch, CURLOPT_SSLKEY, $sslKeyPath);
         }
         //post提交方式
-        curl_setopt($ch, CURLOPT_POST, TRUE);
+        curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
         //运行curl
         $data = curl_exec($ch);
@@ -657,10 +657,10 @@ class WxPayApi
     private static function getMillisecond()
     {
         //获取毫秒的时间戳
-        $time  = explode(" ", microtime());
-        $time  = $time[1] . ($time[0] * 1000);
+        $time = explode(" ", microtime());
+        $time = $time[1] . ($time[0] * 1000);
         $time2 = explode(".", $time);
-        $time  = $time2[0];
+        $time = $time2[0];
         return $time;
     }
 }

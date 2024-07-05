@@ -78,7 +78,7 @@ class PayService extends BaseService
      * @return string|array
      * @throws ApiException
      */
-    public function wxNative($ordersn, $price, $serviceType = 1, string $title = '',string $notifyUrl='')
+    public function wxNative($ordersn, $price, $serviceType = 1, string $title = '', string $notifyUrl = '')
     {
         try {
             $body = $title;
@@ -90,10 +90,9 @@ class PayService extends BaseService
 
             if (!$this->wxPayService instanceof WxPayService) {
                 $paymentSet = $this->account['settings']['wxpay'];
-                if(empty($notifyUrl)){
-                     $notifyUrl = $this->siteRoot . "/" . $this->module . "/wechat/notify";
+                if (empty($notifyUrl)) {
+                    $notifyUrl = $this->siteRoot . "/" . $this->module . "/wechat/notify";
                 }
-              
 
                 if (empty($paymentSet['appid']) || empty($paymentSet['mchid']) || empty($paymentSet['apikey'])) {
                     throw new ApiException("后台微信支付配置信息未配置");
@@ -103,6 +102,36 @@ class PayService extends BaseService
             }
 
             return $this->wxPayService->unifiedOrder($body, $totalFee, $outTradeNo, $attach, $tradeType, $goodsTag);
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage());
+        }
+    }
+
+    /**
+     * 微信退款
+     * @param $outTradeNo -- 订单号
+     * @param $outRefundNo -- 退款单号
+     * @param $totalFee -- 订单金额
+     * @param $refundFee -- 退款就金额 默认值是订单金额
+     * @param $opUserId -- 操作员ID 不填默认是商户iD
+     * @return array|bool
+     * @throws ApiException
+     * 返回值案例 ["appid" => "wx5e088370af731859" "cash_fee" => "1" "cash_refund_fee" => "1" "coupon_refund_count" => "0" "coupon_refund_fee" => "0" "mch_id" => "1606994267" "nonce_str" => "bq9eUP9f5oOBhYv0" "out_refund_no" => "RE20240705542392243824" "out_trade_no" => "GC20240705542392243824" "refund_channel" => [] "refund_fee" => "1" "refund_id" => "50303510002024070538517369371" "result_code" => "SUCCESS" "return_code" => "SUCCESS" "return_msg" => "OK" "sign" => "975BE2C1D195892292F0A535D1075308" "total_fee" => "1" "transaction_id" => "4200002301202407059764410008"]
+     */
+    public function WxPayRefund($outTradeNo, $outRefundNo, $totalFee, $refundFee = null, $opUserId = null)
+    {
+        try {
+            if (!$this->wxPayService instanceof WxPayService) {
+                $paymentSet = $this->account['settings']['wxpay'];
+
+                if (empty($paymentSet['appid']) || empty($paymentSet['mchid']) || empty($paymentSet['apikey']) || empty($paymentSet['cert_file']) || empty($paymentSet['key_file'])) {
+                    throw new ApiException("后台微信支付配置信息未配置");
+                }
+
+                $this->wxPayService = new WxPayService($paymentSet['appid'], $paymentSet['mchid'], $paymentSet['apikey'], null, $paymentSet['cert_file'], $paymentSet['key_file']);
+            }
+
+            return $this->wxPayService->WxPayRefund($outTradeNo, $outRefundNo, $totalFee, $refundFee, $opUserId);
         } catch (ApiException $e) {
             throw new ApiException($e->getMessage());
         }

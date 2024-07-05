@@ -15,31 +15,51 @@ namespace xsframe\service;
 use xsframe\exception\ApiException;
 use xsframe\pay\Weixin\Data\WxPayRefund;
 use xsframe\util\ClientUtil;
+use xsframe\util\FileUtil;
 use xsframe\util\LoggerUtil;
 use xsframe\pay\Weixin\Base\Config;
 use xsframe\pay\Weixin\Data\WxPayAppPay;
 use xsframe\pay\Weixin\Data\WxPayUnifiedOrder;
 use xsframe\pay\Weixin\WxPayApi;
+use xsframe\util\RandomUtil;
 
 class WxPayService
 {
     private $appid;
-    private $appsecret;
+    private $appSecret;
     private $mchid;
     private $apikey;
     private $notifyUrl;
     private $config;
+    private $certFilePath;
+    private $keyFilePath;
 
     private $clientUrl = "https://api.mch.weixin.qq.com";
 
-    public function __construct($appid, $mchid, $apikey, $notifyUrl)
+    public function __construct($appid, $mchid, $apikey, $notifyUrl, $certFileContent = null, $keyFileContent = null)
     {
-        $this->appid     = $appid;
-        $this->mchid     = $mchid;
-        $this->apikey    = $apikey;
+        $this->appid = $appid;
+        $this->mchid = $mchid;
+        $this->apikey = $apikey;
         $this->notifyUrl = $notifyUrl;
+        $this->appSecret = null; // 暂时不支持
+
+        if ($certFileContent || $keyFileContent) {
+            FileUtil::mkDirs(IA_ROOT . '/runtime/cert');
+        }
+
+        if ($certFileContent) {
+            $this->certFilePath = IA_ROOT . '/runtime/cert/' . RandomUtil::random(128);
+            file_put_contents($this->certFilePath, $certFileContent);
+        }
+
+        if ($keyFileContent) {
+            $this->keyFilePath = IA_ROOT . '/runtime/cert/' . RandomUtil::random(128);
+            file_put_contents($this->keyFilePath, $keyFileContent);
+        }
+
         if (!$this->config instanceof Config) {
-            $this->config = new Config($this->appid, $this->mchid, $this->notifyUrl, $this->apikey, $this->appsecret, $this->clientUrl);
+            $this->config = new Config($this->appid, $this->mchid, $this->notifyUrl, $this->apikey, $this->appSecret, $this->clientUrl, $this->certFilePath, $this->keyFilePath);
         }
     }
 
@@ -111,12 +131,38 @@ class WxPayService
 
     /**
      * 退款
-     * @return void
+     * @return array|bool
      */
-    public function WxPayRefund()
+    public function WxPayRefund($outTradeNo, $outRefundNo, $totalFee, $refundFee = null, $userId = null)
     {
-        $refund = new WxPayRefund();
+        $WxPayRefund = new WxPayRefund();
 
+        $WxPayRefund->SetAppid($this->appid);
+        $WxPayRefund->SetMch_id($this->mchid);
+        $WxPayRefund->SetOut_trade_no($outTradeNo);
+        $WxPayRefund->SetOut_refund_no($outRefundNo);
+        $WxPayRefund->SetTotal_fee($totalFee * 100);
+
+        if ($refundFee > 0) {
+            $WxPayRefund->SetRefund_fee($refundFee * 100);
+        } else {
+            $WxPayRefund->SetRefund_fee($totalFee * 100);
+        }
+
+        if ($userId) {
+            $WxPayRefund->SetOp_user_id($userId);
+        } else {
+            $WxPayRefund->SetOp_user_id($this->mchid);
+        }
+
+        $wxpayReturn = WxPayApi::refund($this->config, $WxPayRefund, 6);
+
+        //返回失败
+        if (!($wxpayReturn['return_code'] == 'SUCCESS' && $wxpayReturn['result_code'] == 'SUCCESS')) {
+            throw new ApiException((isset($wxpayReturn['err_code_des']) ? $wxpayReturn['err_code_des'] : '') . $wxpayReturn['return_msg']);
+        }
+
+        return $wxpayReturn;
     }
 
 }
