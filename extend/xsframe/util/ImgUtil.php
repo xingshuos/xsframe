@@ -23,10 +23,10 @@ class ImgUtil
             set_time_limit(50);
             @ini_set('memory_limit', '512M');
 
-            $bg       = self::createImage($bgUrl);
+            $bg = self::createImage($bgUrl);
             $img_info = getimagesize($bgUrl);
 
-            $width  = $img_info[0];
+            $width = $img_info[0];
             $height = $img_info[1];
 
             $target = imagecreatetruecolor($width, $height);
@@ -64,8 +64,8 @@ class ImgUtil
             if (!empty($data)) {
 
                 /*将字体处理逻辑优化 start*/
-                $draw        = new \ImagickDraw();
-                $rootPath    = str_replace("\\", "/", dirname(dirname(dirname(dirname(__file__)))));
+                $draw = new \ImagickDraw();
+                $rootPath = str_replace("\\", "/", dirname(dirname(dirname(dirname(__file__)))));
                 $defaultFont = $d['font'] ?? $rootPath . "/public/app/admin/static/fonts/msyh.ttf";
                 $defaultFontSize = 16; // 假设默认字体大小
                 $textColor = '#000000';
@@ -78,15 +78,15 @@ class ImgUtil
                 foreach ($data as $d) {
                     $d = self::getRealData($d);
                     if ($d['type'] == 'img' && !empty($d['src'])) {
-                        $retPath   = self::getImagePath($d['src']);
+                        $retPath = self::getImagePath($d['src']);
                         $imagePath = $retPath['filePath'];
-                        $tempFile  = $retPath['tempFile'];
+                        $tempFile = $retPath['tempFile'];
                         if ($tempFile) {
                             $tempFileArr[] = $tempFile;
                         }
                         if (is_file($imagePath)) {
                             $mergeImage = new \Imagick($imagePath);
-                            if( $d['rotate'] ){
+                            if ($d['rotate']) {
                                 $mergeImage->rotateImage('none', -($d['rotate']));
                             }
                             $mergeImage->resizeImage($d['width'], $d['height'], \Imagick::FILTER_LANCZOS, 1);
@@ -97,16 +97,16 @@ class ImgUtil
                     } else if ($d['type'] == 'text') {
                         $text = self::emoji($d['text']);
 
-                        if( $d['font'] && is_file($d['font']) ){
+                        if ($d['font'] && is_file($d['font'])) {
                             $draw->setFont($d['font']);
                         }
 
-                        if( $d['size'] ){
+                        if ($d['size']) {
                             $fontSize = $d['size'] * 1.35; // 如果需要根据每个文本项调整大小，在这里临时修改
                             $draw->setFontSize($fontSize); // 可选：只有当每个文本的大小可能不同时才在这里修改
                         }
 
-                        if( $d['color'] && $d['color'] != $textColor ){
+                        if ($d['color'] && $d['color'] != $textColor) {
                             $draw->setFillColor(new \ImagickPixel($d['color']));
                         }
 
@@ -135,7 +135,7 @@ class ImgUtil
         if (!is_file($url) && strexists($url, 'http')) {
             $correctedUrl = self::extractProtocolAndDomain($url);
             $correctedUrl = str_replace($correctedUrl, "", $url);
-            $imagePath    = str_replace("/attachment/", "", $correctedUrl);
+            $imagePath = str_replace("/attachment/", "", $correctedUrl);
 
             if (!is_file($url)) {
                 try {
@@ -167,7 +167,7 @@ class ImgUtil
 
         // 提取出协议（可能为空）和域名
         $protocol = isset($matches[1]) && $matches[1] ? $matches[1] : '';
-        $domain   = $matches[2];
+        $domain = $matches[2];
 
         return $protocol . $domain;
     }
@@ -177,11 +177,11 @@ class ImgUtil
      */
     public static function getRealData($data)
     {
-        $data['left']   = intval(str_replace('px', '', $data['left']));
-        $data['top']    = intval(str_replace('px', '', $data['top']));
-        $data['width']  = intval(str_replace('px', '', $data['width']));
+        $data['left'] = intval(str_replace('px', '', $data['left']));
+        $data['top'] = intval(str_replace('px', '', $data['top']));
+        $data['width'] = intval(str_replace('px', '', $data['width']));
         $data['height'] = intval(str_replace('px', '', $data['height']));
-        $data['size']   = intval(str_replace('px', '', $data['size']));
+        $data['size'] = intval(str_replace('px', '', $data['size']));
         return $data;
     }
 
@@ -212,7 +212,7 @@ class ImgUtil
     {
         if (!empty($rotated)) {
             $image_info = getimagesize($imgUrl);
-            $source     = "";
+            $source = "";
             switch ($image_info['mime']) {
                 case 'image/png':
                     // 处理 PNG 文件
@@ -252,10 +252,10 @@ class ImgUtil
     public static function mergeText($target, $text, $size, $color, $left, $top)
     {
         $rootPath = str_replace("\\", "/", dirname(dirname(dirname(dirname(__file__)))));
-        $font     = $rootPath . "/public/app/admin/static/fonts/msyh.ttf";
+        $font = $rootPath . "/public/app/admin/static/fonts/msyh.ttf";
 
         $colors = self::hex2rgb($color);
-        $color  = imagecolorallocate($target, $colors['red'], $colors['green'], $colors['blue']);
+        $color = imagecolorallocate($target, $colors['red'], $colors['green'], $colors['blue']);
 
         $text = self::emoji($text);
         $text = mb_convert_encoding(strval($text), "html-entities", "utf-8");
@@ -273,26 +273,26 @@ class ImgUtil
 
         // Match Emoticons
         $regexEmoticons = '/[\x{1F600}-\x{1F64F}]/u';
-        $clean_text     = preg_replace($regexEmoticons, '', $text);
+        $clean_text = preg_replace($regexEmoticons, '', $text);
 
         // Match Miscellaneous Symbols and Pictographs
         $regexSymbols = '/[\x{1F300}-\x{1F5FF}]/u';
-        $clean_text   = preg_replace($regexSymbols, '', $clean_text);
+        $clean_text = preg_replace($regexSymbols, '', $clean_text);
 
         // Match Transport And Map Symbols
         $regexTransport = '/[\x{1F680}-\x{1F6FF}]/u';
-        $clean_text     = preg_replace($regexTransport, '', $clean_text);
+        $clean_text = preg_replace($regexTransport, '', $clean_text);
 
         // Match Miscellaneous Symbols
-        $regexMisc  = '/[\x{2600}-\x{26FF}]/u';
+        $regexMisc = '/[\x{2600}-\x{26FF}]/u';
         $clean_text = preg_replace($regexMisc, '', $clean_text);
 
         // Match Dingbats
         $regexDingbats = '/[\x{2700}-\x{27BF}]/u';
-        $clean_text    = preg_replace($regexDingbats, '', $clean_text);
+        $clean_text = preg_replace($regexDingbats, '', $clean_text);
 
         $regexDingbats = '/[\x{231a}-\x{23ab}\x{23e9}-\x{23ec}\x{23f0}-\x{23f3}]/u';
-        $clean_text    = preg_replace($regexDingbats, '', $clean_text);
+        $clean_text = preg_replace($regexDingbats, '', $clean_text);
 
         return $clean_text;
     }
@@ -306,28 +306,28 @@ class ImgUtil
             $colour = substr($colour, 1);
         }
         if (strlen($colour) == 6) {
-            list($r, $g, $b) = array(
+            [$r, $g, $b] = [
                 $colour[0] . $colour[1],
                 $colour[2] . $colour[3],
                 $colour[4] . $colour[5]
-            );
-        } elseif (strlen($colour) == 3) {
-            list($r, $g, $b) = array(
+            ];
+        } else if (strlen($colour) == 3) {
+            [$r, $g, $b] = [
                 $colour[0] . $colour[0],
                 $colour[1] . $colour[1],
                 $colour[2] . $colour[2]
-            );
+            ];
         } else {
             return false;
         }
         $r = hexdec($r);
         $g = hexdec($g);
         $b = hexdec($b);
-        return array(
+        return [
             'red'   => $r,
             'green' => $g,
             'blue'  => $b
-        );
+        ];
     }
 
     // 补全加载图片lazy-load(pc端处理)
@@ -336,21 +336,39 @@ class ImgUtil
         $detail = str_replace($suffix, "", $detail);
         $detail = htmlspecialchars_decode($detail);
 
+        # 补全图片路径
+        if ($detail) {
+            preg_match_all('/<img.*?src=[\\\\\'| \\"](.*?(?:[\\.gif|\\.jpg|\\.png|\\.jpeg]?))[\\\\\'|\\"].*?[\\/]?>/', $detail, $imgs);
+
+            $images = [];
+            if (isset($imgs[1])) {
+                $imgs[1] = array_unique($imgs[1]);
+                foreach ($imgs[1] as $img) {
+                    $images[] = $img;
+                }
+            }
+
+            foreach ($images as $imgUrl) {
+                $detail = str_replace("'" . $imgUrl, "'" . tomedia($imgUrl), $detail);
+                $detail = str_replace('"' . $imgUrl, '"' . tomedia($imgUrl), $detail);
+            }
+        }
+
         # 转换缩略图
         if ($suffix) {
             preg_match_all('/<img.*?src=[\\\\\'| \\"](.*?(?:[\\.gif|\\.jpg|\\.png|\\.jpeg]?))[\\\\\'|\\"].*?[\\/]?>/', $detail, $imgs);
 
-            $images = array();
+            $images = [];
             if (isset($imgs[1])) {
                 $imgs[1] = array_unique($imgs[1]);
                 foreach ($imgs[1] as $img) {
                     if (strpos($img, '?') !== false) {
 
                     } else {
-                        $im       = array(
+                        $im = [
                             'old' => $img,
                             'new' => tomedia($img, $suffix)
-                        );
+                        ];
                         $images[] = $im;
                     }
                 }
@@ -365,18 +383,18 @@ class ImgUtil
         if ($imgLazy) {
             preg_match_all('/<img.*?src=[\\\\\'| \\"](.*?(?:[\\.gif|\\.jpg|\\.png|\\.jpeg]?))[\\\\\'|\\"].*?[\\/]?>/', $detail, $imgs);
 
-            $images = array();
+            $images = [];
             if (isset($imgs[0])) {
                 $imgs[0] = array_unique($imgs[0]);
                 foreach ($imgs[0] as $img) {
 
                     $pattern = "/src=(.*?)/";
-                    $newImg  = preg_replace($pattern, "class=\"lazy-load\" src='/app/gm_arts/static/images/nopic.png' data-original=", $img);
+                    $newImg = preg_replace($pattern, "class=\"lazy-load\" src='/home/static/images/lazy_course.jpg' data-src=", $img);
 
-                    $im       = array(
+                    $im = [
                         'old' => $img,
                         'new' => $newImg
-                    );
+                    ];
                     $images[] = $im;
                 }
             }
@@ -390,21 +408,21 @@ class ImgUtil
         if ($clearVideoHeight) {
 
             preg_match_all('/<video.*?src=[\\\\\'| \\"](.*?(?:[\\.mp4|\\.avi]?))[\\\\\'|\\"].*?[\\/]?>/', $detail, $videos);
-            $videosArr = array();
+            $videosArr = [];
             if (isset($videos[0])) {
                 $videos[0] = array_unique($videos[0]);
                 foreach ($videos[0] as $videoStr) {
 
-                    $pattern     = "/height=[\\\\'| \\\"](.*?)[\\\\'| \\\"]/";
+                    $pattern = "/height=[\\\\'| \\\"](.*?)[\\\\'| \\\"]/";
                     $newVideoStr = preg_replace($pattern, "", $videoStr);
 
-                    $pattern1    = "/style=[\\\\'|\\\"](.*?)[\\\\'|\\\"]/";
+                    $pattern1 = "/style=[\\\\'|\\\"](.*?)[\\\\'|\\\"]/";
                     $newVideoStr = preg_replace($pattern1, " ", $newVideoStr);
 
-                    $im          = array(
+                    $im = [
                         'old' => $videoStr,
                         'new' => $newVideoStr
-                    );
+                    ];
                     $videosArr[] = $im;
                 }
                 unset($videoStr);
