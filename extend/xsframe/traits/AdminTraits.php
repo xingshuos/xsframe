@@ -182,7 +182,7 @@ trait AdminTraits
                 $updateData = [];
                 foreach ($fieldList as $filed => $fieldItem) {
 
-                    if ($filed != 'uniacid' && !array_key_exists($filed, $this->params)) {
+                    if (!in_array($filed, ['uniacid', 'createtime', 'create_time', 'updatetime', 'update_time']) && !array_key_exists($filed, $this->params)) {
                         continue;
                     }
 
