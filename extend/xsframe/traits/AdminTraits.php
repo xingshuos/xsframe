@@ -97,35 +97,13 @@ trait AdminTraits
                 $list = Db::name($this->tableName)->field($field)->where($condition)->order($this->orderBy)->page($this->pIndex, $this->pSize)->select()->toArray();
             }
 
+            // 导出支持简单导出列表功能，复杂导出可以自行实现 exportExcelData
+            foreach ($list as &$item) {
+                $item = $this->listItemFormat($item);
+            }
+            unset($item);
+
             if ($export) {
-                // 导出支持简单导出列表功能，复杂导出可以自行实现 exportExcelData
-                foreach ($list as &$item) {
-                    if (array_key_exists('createtime', $item)) {
-                        $item['createtime'] = date('Y-m-d H:i:s', $item['createtime']);
-                    }
-                    if (array_key_exists('create_time', $item)) {
-                        $item['create_time'] = date('Y-m-d H:i:s', $item['create_time']);
-                    }
-                    if (array_key_exists('updatetime', $item)) {
-                        $item['updatetime'] = date('Y-m-d H:i:s', $item['updatetime']);
-                    }
-                    if (array_key_exists('update_time', $item)) {
-                        $item['update_time'] = date('Y-m-d H:i:s', $item['update_time']);
-                    }
-                    if (array_key_exists('finishtime', $item)) {
-                        $item['finishtime'] = date('Y-m-d H:i:s', $item['finishtime']);
-                    }
-                    if (array_key_exists('finish_time', $item)) {
-                        $item['finish_time'] = date('Y-m-d H:i:s', $item['finish_time']);
-                    }
-                    if (array_key_exists('canceltime', $item)) {
-                        $item['canceltime'] = date('Y-m-d H:i:s', $item['canceltime']);
-                    }
-                    if (array_key_exists('cancel_time', $item)) {
-                        $item['cancel_time'] = date('Y-m-d H:i:s', $item['cancel_time']);
-                    }
-                }
-                unset($item);
                 $this->exportExcelData($list, $exportColumns, $exportKeys, $exportTitle);
             }
 
@@ -481,5 +459,11 @@ trait AdminTraits
             $this->fieldList = [];
         }
         return $this->fieldList;
+    }
+
+    // 自动格式化列表数据
+    public function listItemFormat($item)
+    {
+        return $item;
     }
 }
