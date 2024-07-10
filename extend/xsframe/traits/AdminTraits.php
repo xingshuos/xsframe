@@ -226,7 +226,9 @@ trait AdminTraits
                     }
 
                     if (!empty($backUrl)) {
-                        $this->success(["url" => webUrl(rtrim($backUrl, ".html"))]);
+                        if (!StringUtil::strexists($backUrl, "http")) {
+                            $backUrl = webUrl(rtrim($backUrl, ".html"));
+                        }
                     } else {
                         $backUrl = referer();
                         $params = ['id' => $id, 'tab' => str_replace("#tab_", "", $this->params['tab'])];
@@ -235,16 +237,16 @@ trait AdminTraits
                         $query = $parsedUrl['query'];
                         parse_str($query, $queryParams);
                         $queryParams = array_merge($queryParams, $params);
+
                         $uniqueQueryParams = [];
                         foreach ($queryParams as $key => $value) {
                             $uniqueQueryParams[$key] = $value;
                         }
                         $newQuery = http_build_query($uniqueQueryParams);
 
-                        $newUrl = $parsedUrl['scheme'] . '://' . $parsedUrl['host'] . $parsedUrl['path'] . '?' . $newQuery;
-                        $this->success(["url" => $newUrl]);
+                        $backUrl = $parsedUrl['scheme'] . '://' . $parsedUrl['host'] . $parsedUrl['path'] . '?' . $newQuery;
                     }
-
+                    $this->success(["url" => $backUrl]);
                 }
             }
 
