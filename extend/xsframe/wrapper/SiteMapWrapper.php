@@ -3,6 +3,7 @@
 
 namespace xsframe\wrapper;
 
+use think\facade\Env;
 use xsframe\util\ArrayUtil;
 use xsframe\util\FileUtil;
 use think\facade\Db;
@@ -12,17 +13,18 @@ use XMLWriter;
 class SiteMapWrapper
 {
     private $site;
-    private $get = null;
+    private $get;
     private $request;
     private $settingsController;
-    private $token = "X0D2Wr7U2OLjzHIc";
+    private $token = null;
     private $rootPath = "";
 
     public function __construct(Request $request)
     {
         $this->request = $request;
-        $this->get     = $this->request->param();
-        $this->site    = $request->domain();
+        $this->get = $this->request->param();
+        $this->site = $request->domain();
+        $this->token = Env::get('sitemap.token') ?? '';
 
         if (!$this->settingsController instanceof SettingsWrapper) {
             $this->settingsController = new SettingsWrapper();
@@ -49,7 +51,7 @@ class SiteMapWrapper
         }
 
         $urlsResult = $this->getUrls();
-        $urls       = [];
+        $urls = [];
         foreach ($urlsResult as $urlsItem) {
             $urls[] = $this->completeUrl($urlsItem['url']);
         }
@@ -63,18 +65,20 @@ class SiteMapWrapper
         $urls = ArrayUtil::getDifferent($urls, $urlsLogs);
 
         if (!empty($urls)) {
-            $apiUrl = "http://data.zz.baidu.com/urls?site={$this->site}&token=" . $this->token;
-            $result = $this->httpPost($apiUrl, $urls);
-            $result = json_decode($result, true);
-
-            if ($result['error'] == 401) {
-                echo("Submission failed : " . $result['message'] . PHP_EOL . "<br>");
-            } else {
-                foreach ($urls as $url) {
-                    file_put_contents($urlsPath . "/urls.log", $url . "\n", FILE_APPEND);
+            $result = [];
+            if (!empty($this->token)) {
+                $apiUrl = "http://data.zz.baidu.com/urls?site={$this->site}&token=" . $this->token;
+                $result = $this->httpPost($apiUrl, $urls);
+                $result = json_decode($result, true);
+                if ($result['error'] == 401) {
+                    echo("Submission failed : " . $result['message'] . PHP_EOL . "<br>");
                 }
-                echo("Baidu Included remain:{$result['remain']} success:{$result['success']} " . date('Y-m-d H:i:s') . PHP_EOL . "<br>");
             }
+
+            foreach ($urls as $url) {
+                file_put_contents($urlsPath . "/urls.log", $url . "\n", FILE_APPEND);
+            }
+            echo("Baidu Included remain:" . $result['remain'] ?? '无' . " success:{$result['success']} " . date('Y-m-d H:i:s') . PHP_EOL . "<br>");
         }
 
         echo("暂无任何需要收录的URL地址" . PHP_EOL . "<br>");
@@ -160,14 +164,14 @@ class SiteMapWrapper
 
     private function httpPost($api, $urls)
     {
-        $ch      = curl_init();
-        $options = array(
+        $ch = curl_init();
+        $options = [
             CURLOPT_URL            => $api,
             CURLOPT_POST           => true,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POSTFIELDS     => implode("\n", $urls),
-            CURLOPT_HTTPHEADER     => array('Content-Type: text/plain'),
-        );
+            CURLOPT_HTTPHEADER     => ['Content-Type: text/plain'],
+        ];
         curl_setopt_array($ch, $options);
         $result = curl_exec($ch);
         return $result;
