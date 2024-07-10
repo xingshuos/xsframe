@@ -123,10 +123,6 @@ if (!function_exists('webUrl')) {
             $url = "web." . $url;
         }
 
-        if (!empty($_GET['module'])) {
-            $params['module'] = $_GET['module'];
-        }
-
         if (!empty($_GET['i'])) {
             $params['i'] = $_GET['i'];
         }
