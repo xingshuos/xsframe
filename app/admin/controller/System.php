@@ -98,6 +98,12 @@ class System extends AdminBaseController
             if (empty($username)) {
                 show_json(0, "登录账号不能为空");
             }
+            if ($userInfo['username'] != $username) {
+                show_json(0, "账号暂不允许修改");
+            }
+            if ($userInfo['password'] == md5($newPassword . $userInfo['salt'])) {
+                show_json(0, "新密码与原密码相同无需修改");
+            }
 
             $salt = RandomUtil::random(6);
             Db::name('sys_users')->where(['id' => $userInfo['id']])->update(['username' => $username, 'password' => md5($newPassword . $salt), 'salt' => $salt]);

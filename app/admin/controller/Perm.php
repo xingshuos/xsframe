@@ -168,7 +168,7 @@ class Perm extends AdminBaseController
 
                 Db::name('sys_account_perm_user')->insert($data);
             }
-            $this->success(['url' => webUrl('perm/userPost', ['id' => $id])]);
+            $this->success(['url' => webUrl('perm/userPost', ['id' => $id,'module' => $this->params['module']])]);
         }
 
         $perms = PermFacade::formatPerms($this->uniacid);
@@ -308,7 +308,7 @@ class Perm extends AdminBaseController
             } else {
                 $id = Db::name('sys_account_perm_role')->insertGetId($data);
             }
-            $this->success(['url' => webUrl('perm/rolePost', ['id' => $id])]);
+            $this->success(['url' => webUrl('perm/rolePost', ['id' => $id,'module' => $this->params['module']])]);
         }
 
 

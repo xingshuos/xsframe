@@ -38,11 +38,12 @@
 <div class="page-content">
 
     <form action="" method="get" class="form-horizontal table-search" role="form">
+        <input type="hidden" name="module" value="{$_GET['module']}">
         <div class="page-toolbar">
             <div class="col-sm-6">
                 <span class="">
-                    <a class='btn btn-primary btn-sm' href="{:webUrl('perm/userPost')}"><i class="icon icon-plus"></i> 添加新操作员</a>
-                    <a class="btn btn-default btn-sm" href="{:webUrl('perm/role')}">&nbsp;&nbsp;角色管理&nbsp;&nbsp;</a>
+                    <a class='btn btn-primary btn-sm' href="{:webUrl('perm/userPost',['module' => $_GET['module']])}"><i class="icon icon-plus"></i> 添加新操作员</a>
+                    <a class="btn btn-default btn-sm" href="{:webUrl('perm/role',['module' => $_GET['module']])}">&nbsp;&nbsp;角色管理&nbsp;&nbsp;</a>
                 </span>
             </div>
             <div class="col-sm-6 pull-right">
@@ -74,13 +75,13 @@
     {if count($list)>0}
         <div class="page-table-header">
             <div class="btn-group">
-                <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('perm/userChange',array('type' => 'status','value'=>1))}">
+                <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('perm/userChange',array('type' => 'status','value'=>1,'module' => $_GET['module']))}">
                     <i class='icon icon-eye-open'></i> 启用</button>
                 </button>
-                <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch'  data-href="{:webUrl('perm/userChange',array('type' => 'status','value'=>0))}">
+                <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch'  data-href="{:webUrl('perm/userChange',array('type' => 'status','value'=>0,'module' => $_GET['module']))}">
                     <i class='icon icon-eye-close'></i> 禁用</button>
                 </button>
-                <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('perm/userDelete')}">
+                <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('perm/userDelete',['module' => $_GET['module']])}">
                     <i class='icon icon-trash'></i> 删除</button>
                 </button>
             </div>
@@ -119,12 +120,12 @@
                     {if $row['status']==1}启用{else}禁用{/if}</span>
                 </td>
                 <td>
-                    <a class='btn btn-default btn-sm  btn-op btn-operation' href="{:webUrl('perm/userPost', array('id' => $row['id']))}">
+                    <a class='btn btn-default btn-sm  btn-op btn-operation' href="{:webUrl('perm/userPost', array('id' => $row['id'],'module' => $_GET['module']))}">
                         <span data-toggle="tooltip" data-placement="top" title="" data-original-title="编辑">
                             <i class="icon icon-pencil"></i>
                         </span>
                     </a>
-                    <a class='btn btn-default btn-sm btn-op btn-operation' data-toggle='ajaxRemove'  href="{:webUrl('perm/userDelete', array('id' => $row['id']))}" data-confirm="确认删除此操作员吗？">
+                    <a class='btn btn-default btn-sm btn-op btn-operation' data-toggle='ajaxRemove'  href="{:webUrl('perm/userDelete', array('id' => $row['id'],'module' => $_GET['module']))}" data-confirm="确认删除此操作员吗？">
                         <span data-toggle="tooltip" data-placement="top" title="" data-original-title="删除">
                             <i class='icon icon-trash'></i>
                        </span>
@@ -143,7 +144,7 @@
                         <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch'  data-href="{:webUrl('perm/userChange',array('type' => 'status','value'=>0))}">
                             <i class='icon icon-eye-close'></i> 禁用</button>
                         </button>
-                        <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('perm/userDelete')}">
+                        <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('perm/userDelete',['module' => $_GET['module']])}">
                             <i class='icon icon-trash'></i> 删除</button>
                         </button>
                     </div>
