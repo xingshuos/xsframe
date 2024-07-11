@@ -22,7 +22,7 @@ use think\Facade;
  * @method static aliRsaCheck(array $get, $signType = 'RSA2')
  * @method static wxPay(string $ordersn, float $price, string $title, int $service_type, string $openid = '')
  * @method static wapPay(mixed $ordersn, float $price, int $serviceType = 0, string $title = '', string $returnUrl = '')
- * @method static wxPayRefund(string $outTradeNo, string $outRefundNo, float $totalFee = 0, float $refundFee = '', string $opUserId = '')
+ * @method static wxPayRefund(string $outTradeNo, string $outRefundNo, float $totalFee = 0, float $refundFee = '', string $opUserId = '', string $notifyUrl = null)
  * @method static aliOauthToken(string $authCode)
  * @method static aliUserInfo(mixed $accessToken)
  * @method static aliRefund(string $ordersn, float $price, string $reason)
