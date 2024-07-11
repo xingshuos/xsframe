@@ -117,7 +117,7 @@ class PayService extends BaseService
      * @throws ApiException
      * 返回值案例 ["appid" => "wx5e088370af731859" "cash_fee" => "1" "cash_refund_fee" => "1" "coupon_refund_count" => "0" "coupon_refund_fee" => "0" "mch_id" => "1606994267" "nonce_str" => "bq9eUP9f5oOBhYv0" "out_refund_no" => "RE20240705542392243824" "out_trade_no" => "GC20240705542392243824" "refund_channel" => [] "refund_fee" => "1" "refund_id" => "50303510002024070538517369371" "result_code" => "SUCCESS" "return_code" => "SUCCESS" "return_msg" => "OK" "sign" => "975BE2C1D195892292F0A535D1075308" "total_fee" => "1" "transaction_id" => "4200002301202407059764410008"]
      */
-    public function wxPayRefund($outTradeNo, $outRefundNo, $totalFee, $refundFee = null, $opUserId = null)
+    public function wxPayRefund($outTradeNo, $outRefundNo, $totalFee, $refundFee = null, $opUserId = null,$notifyUrl = null)
     {
         try {
             if (!$this->wxPayService instanceof WxPayService) {

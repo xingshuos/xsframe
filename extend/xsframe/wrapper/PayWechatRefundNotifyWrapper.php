@@ -3,22 +3,24 @@
 
 namespace xsframe\wrapper;
 
-use xsframe\enum\PayTypeEnum;
+use xsframe\util\AesEncoderUtil;
 use xsframe\util\ArrayUtil;
 use xsframe\util\LoggerUtil;
-use xsframe\util\PriceUtil;
 use think\facade\Db;
 use think\Request;
 
 class PayWechatRefundNotifyWrapper
 {
+    const MCH_KEY = 'xxxxxxxxxxxxxxxxxxxxxxxxxxx';
+
     public $get = null;
+    private $module = null;
     private $request;
 
     public function __construct(Request $request)
     {
         $this->request = $request;
-        $this->get     = $this->request->getContent();
+        $this->get = $this->request->getContent();
 
         $this->init();
     }
@@ -28,11 +30,9 @@ class PayWechatRefundNotifyWrapper
         $get = $this->get;
 
         // $get = $this->getTextXml();
-        LoggerUtil::warning('start');
-        LoggerUtil::warning($get);
-        LoggerUtil::warning('end');
-
-        return false;
+        // LoggerUtil::warning('start');
+        // LoggerUtil::warning($get);
+        // LoggerUtil::warning('end');
 
         if (empty($get)) {
             $this->fail("参数错误");
@@ -40,108 +40,76 @@ class PayWechatRefundNotifyWrapper
 
         $get = ArrayUtil::xml2array($get);
 
-        if (empty($get['result_code'])) {
+        if (empty($get['return_code'])) {
             $this->fail();
         }
-        if (empty($get["version"]) && ($get["result_code"] != "SUCCESS" || $get["return_code"] != "SUCCESS")) {
+        if ($get["return_code"] != "SUCCESS") {
             LoggerUtil::error($get);
             $this->fail($get['result_code']);
-        }
-        if (!empty($get["version"]) && ($get["result_code"] != "0" || $get["status"] != "0")) {
-            LoggerUtil::error($get['result_code']);
-            $this->fail();
         }
 
         $this->get = $get;
 
-        /* sign验证 start */
-        $sign = $this->getNotifySign($get);
-        if ($sign != $get['sign']) {
-            $this->fail("签名验证失败");
-        }
-        /* sign验证 end */
-
-        $this->payResult();
+        $this->refundResult();
     }
 
     // 支付类型 pay_type 1微信 2支付宝 3余额 4后台支付
-    private function payResult()
+    private function refundResult()
     {
-        $attachArr = explode(":", $this->get['attach']);
-        $data      = [
-            'module'       => $attachArr[0],
-            'uniacid'      => $attachArr[1],
-            'service_type' => $attachArr[2],
+        $moduleName = app('http')->getName();
+        $data = (array)$this->getReqInfoData($this->get);
+        $data['module'] = $moduleName;
 
-            'pay_type'       => PayTypeEnum::WXPAY_TYPE,
-            'out_trade_no'   => $this->get['out_trade_no'],
-            'total_fee'      => PriceUtil::fen2yuan($this->get['total_fee']),
-            'transaction_id' => $this->get['transaction_id'],
-        ];
-
-        $moduleName = $attachArr[0];
-        $payPath    = strval("\app\\{$moduleName}\\controller\Pay");
-        $order      = new $payPath($data);
-        $ret        = $order->payResult();
+        $payPath = strval("\app\\{$moduleName}\\controller\Refund");
+        $order = new $payPath($data);
+        $ret = $order->refundResult();
 
         if ($ret) {
-            $this->addPayLog($data);
             $this->succ();
         } else {
-            $this->fail("支付失败");
+            $this->fail("退款失败");
         }
     }
 
-    private function addPayLog($data)
+    private function getReqInfoData(array $data): array
     {
-        $payLogData = [
-            'uniacid'    => $data['uniacid'],
-            'type'       => $data['pay_type'],
-            'ordersn'    => $data['out_trade_no'],
-            'fee'        => $data['total_fee'],
-            'module'     => $data['module'],
-            'status'     => 1,
-            'createtime' => time(),
-        ];
-        Db::name('sys_paylog')->insert($payLogData);
-    }
-
-    private function getNotifySign(array $data): string
-    {
-        ksort($data);
-        $string1 = '';
-
-        foreach ($data as $k => $v) {
-            if (($v != '') && ($k != 'sign')) {
-                $string1 .= $k . '=' . $v . '&';
-            }
-        }
-
-        $apikey = $this->getApikey($data['attach']);
-        return strtoupper(md5($string1 . 'key=' . $apikey));
+        $apikey = $this->getApiKeyByAppid($data['appid']);
+        return AesEncoderUtil::decrypt($data['req_info'], $apikey);
     }
 
     private function succ()
     {
-        $result = array("return_code" => "SUCCESS", "return_msg" => "OK");
+        $result = ["return_code" => "SUCCESS", "return_msg" => "OK"];
         echo ArrayUtil::array2xml($result);
         exit();
     }
 
     private function fail($msg = '签名失败')
     {
-        $result = array("return_code" => "FAIL", "return_msg" => $msg);
+        $result = ["return_code" => "FAIL", "return_msg" => $msg];
         echo ArrayUtil::array2xml($result);
         exit();
     }
 
     // 获取微信支付配置
-    private function getApikey($attach)
+    private function getApiKeyByAppid($appid)
     {
-        $attachArr = explode(":", $attach);
-        $uniacid   = $attachArr[1];
-        $settings  = Db::name('sys_account')->where(['uniacid' => $uniacid])->value('settings');
-        $settings  = unserialize($settings);
+        $apikey = "";
+        $accountList = Db::name('sys_account')->field("uniacid,settings")->where(['status' => 1, 'deleted' => 0])->select()->toArray();
+        foreach ($accountList as $item) {
+            $settings = unserialize($item['settings']);
+            if ($settings && $settings['wxpay'] && $settings['wxpay']['appid'] == $appid) {
+                $apikey = $settings['wxpay']['apikey'];
+            }
+        }
+        return $apikey;
+    }
+
+    // 获取微信支付配置
+    private function getApikey($uniacid)
+    {
+        $settings = Db::name('sys_account')->where(['uniacid' => $uniacid])->value('settings');
+        $settings = unserialize($settings);
         return $settings['wxpay']['apikey'];
     }
 
@@ -149,25 +117,16 @@ class PayWechatRefundNotifyWrapper
     private function getTextXml()
     {
         $resultXml = <<<EOF
-            <xml><appid><![CDATA[wx1feae3300acbeeef]]></appid>
-                <attach><![CDATA[gm_arts:8:2]]></attach>
-                <bank_type><![CDATA[OTHERS]]></bank_type>
-                <cash_fee><![CDATA[1]]></cash_fee>
-                <fee_type><![CDATA[CNY]]></fee_type>
-                <is_subscribe><![CDATA[Y]]></is_subscribe>
-                <mch_id><![CDATA[1610991191]]></mch_id>
-                <nonce_str><![CDATA[xhucdv5wnnd9k8in77au48xlchkiyjud]]></nonce_str>
-                <openid><![CDATA[oaafU6J1RNSW-wDUFSOWjndpWDms]]></openid>
-                <out_trade_no><![CDATA[CC20230417667882467862]]></out_trade_no>
-                <result_code><![CDATA[SUCCESS]]></result_code>
-                <return_code><![CDATA[SUCCESS]]></return_code>
-                <sign><![CDATA[8E27CD353C8A8963DC0FCBA304CA333A]]></sign>
-                <time_end><![CDATA[20230417140805]]></time_end>
-                <total_fee>1</total_fee>
-                <trade_type><![CDATA[NATIVE]]></trade_type>
-                <transaction_id><![CDATA[4200001773202304171102841447]]></transaction_id>
+            <xml>
+                <return_code>SUCCESS</return_code>
+                <appid><![CDATA[wx21490d8841df7637]]></appid>
+                <mch_id><![CDATA[1606994267]]></mch_id>
+                <nonce_str><![CDATA[4685a1d8fd42adefde6f46b866c718df]]></nonce_str>
+                <req_info><![CDATA[cnPSF/Aqj5fx7OA8CetNSqKUdS6uTTKVcvogonC9QHiq7xzt+7CEWHCdQ2KS3ou6ejkI1Z3L9Y+46yIBzFOBzuF5QCfg4Q106gMtw2DDsifBDg92gh2pb4zlUvtz08BeYGZoaMNoyCnfMqClWCpsfvhzJ987uPh4iVgj2lm5CBbRkglSlOCM67oW76f7h4dwb8fwHKpr6FdH1vOq8+2L1uHoD1XRlKUzkUWRqCNZPaJaH1urWUwselbKspQld2c//rPiefGRcR2RCriruGydt4k8+4YvsbEJNbhFy/HoYbVmlYgmKYqFrt+yw5vr/9pPMyJSdutN4yMjx0l1n93BRplDphvLJ+5asT1Tae51/2F2JVGYt/Qn4pnG9WFAeM74eNqWA4xlHVmG5CRKtbn8/nZlLtelGLYiuC6FTboDOHT5+I5g7Hi0KP+uwdMx2ixwN07mqIKUnLKiCwPC4/1R8h3u5VTlTl/qqRIRlbFD90UmkwFJDxRcNT/PL+4KzC7RVlksH1fvjSAbsNAHGpzZlO5iN3J8Al9xRWjuCI0NZZQeA9UTOrLSiBnm8gJT+J73ZjU+Nw1LW7K5yVPyyumsOr4dC+CrvxO3JkGN1qyKU+jb+dwwFUQ7w+mvBCUpPn+8z14d5M/98bqIKfzSHNmncRfuo7nbThc4rvloRopIsGS6vvNAXutR8ycx8HPBmWFhBvwb8RoYg5Y9zdeHl/imfXl/P9COjWt/68JcV+Dy6LspJ/Tl20sIwX/bY/0qED9WLW1MRI660cVkvbeKUZevx5nC0lQjGVIeA72K7kDU5BQJZl5yCAfIdoGHf/V9u1cdMvpF2IPYAKobuaGY7NJXO2jxTuIM/WQ9tfXspuLMJ99tH+t+Z5zgBAvL0Cdz7rIyFzmT6O7QuDt7r/6+Kk9yZWhERIGM9H75fkLptiLy1g6kqpl62HuDFNZumMy2fCtyC8Z4HPfC40K02N9W7398s8qzU5RJLWbpo5sE1ZQZ2DGBO08Rl/srQrzIIRuxsgBFMR1WHg51CmJEYFomDkaDdh4APMfkAYcBVGzxzs1bEwOqFAKCtWSFI6FYd+mV4IzyFJ8SJ8e84ZxgEnA+gKoaASAg9QO7e8LaUaxFKip6x+hD7ZZO9Z9kBjlvIau156CL]]></req_info>
             </xml>
 EOF;
         return trim($resultXml);
     }
 }
+
+
