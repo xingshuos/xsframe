@@ -142,6 +142,7 @@ class WxPayService
         $WxPayRefund->SetOut_trade_no($outTradeNo);
         $WxPayRefund->SetOut_refund_no($outRefundNo);
         $WxPayRefund->SetTotal_fee($totalFee * 100);
+        $WxPayRefund->setNotifyUrl($this->notifyUrl);
 
         if ($refundFee > 0) {
             $WxPayRefund->SetRefund_fee($refundFee * 100);
