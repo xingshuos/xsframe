@@ -3,6 +3,7 @@
 
 namespace xsframe\wrapper;
 
+use think\Exception;
 use xsframe\enum\PayTypeEnum;
 use xsframe\util\ArrayUtil;
 use xsframe\util\LoggerUtil;
@@ -18,7 +19,7 @@ class PayWechatNotifyWrapper
     public function __construct(Request $request)
     {
         $this->request = $request;
-        $this->get     = $this->request->getContent();
+        $this->get = $this->request->getContent();
 
         $this->init();
     }
@@ -66,7 +67,7 @@ class PayWechatNotifyWrapper
     private function payResult()
     {
         $attachArr = explode(":", $this->get['attach']);
-        $data      = [
+        $data = [
             'module'       => $attachArr[0],
             'uniacid'      => $attachArr[1],
             'service_type' => $attachArr[2],
@@ -77,31 +78,36 @@ class PayWechatNotifyWrapper
             'transaction_id' => $this->get['transaction_id'],
         ];
 
-        $moduleName = $attachArr[0];
-        $payPath    = strval("\app\\{$moduleName}\\controller\Pay");
-        $order      = new $payPath($data);
-        $ret        = $order->payResult();
-
-        if ($ret) {
-            $this->addPayLog($data);
-            $this->succ();
-        } else {
-            $this->fail("支付失败");
+        try {
+            $moduleName = $attachArr[0];
+            $payPath = strval("\app\\{$moduleName}\\service\PayService");
+            $payService = new $payPath($data);
+            $payService->payResult();
+        } catch (Exception $e) {
+            LoggerUtil::error($e->getMessage());
         }
+
+        $this->addPayLog($data);
+        $this->succ();
     }
 
-    private function addPayLog($data)
+    private function addPayLog($data): bool
     {
-        $payLogData = [
-            'uniacid'    => $data['uniacid'],
-            'type'       => $data['pay_type'],
-            'ordersn'    => $data['out_trade_no'],
-            'fee'        => $data['total_fee'],
-            'module'     => $data['module'],
-            'status'     => 1,
-            'createtime' => time(),
-        ];
-        Db::name('sys_paylog')->insert($payLogData);
+        try {
+            $payLogData = [
+                'uniacid'    => $data['uniacid'],
+                'type'       => $data['pay_type'],
+                'ordersn'    => $data['out_trade_no'],
+                'fee'        => $data['total_fee'],
+                'module'     => $data['module'],
+                'status'     => 1,
+                'createtime' => time(),
+            ];
+            Db::name('sys_paylog')->insert($payLogData);
+        } catch (Exception $e) {
+
+        }
+        return true;
     }
 
     private function getNotifySign(array $data): string
@@ -121,14 +127,14 @@ class PayWechatNotifyWrapper
 
     private function succ()
     {
-        $result = array("return_code" => "SUCCESS", "return_msg" => "OK");
+        $result = ["return_code" => "SUCCESS", "return_msg" => "OK"];
         echo ArrayUtil::array2xml($result);
         exit();
     }
 
     private function fail($msg = '签名失败')
     {
-        $result = array("return_code" => "FAIL", "return_msg" => $msg);
+        $result = ["return_code" => "FAIL", "return_msg" => $msg];
         echo ArrayUtil::array2xml($result);
         exit();
     }
@@ -137,9 +143,9 @@ class PayWechatNotifyWrapper
     private function getApikey($attach)
     {
         $attachArr = explode(":", $attach);
-        $uniacid   = $attachArr[1];
-        $settings  = Db::name('sys_account')->where(['uniacid' => $uniacid])->value('settings');
-        $settings  = unserialize($settings);
+        $uniacid = $attachArr[1];
+        $settings = Db::name('sys_account')->where(['uniacid' => $uniacid])->value('settings');
+        $settings = unserialize($settings);
         return $settings['wxpay']['apikey'];
     }
 

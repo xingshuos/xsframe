@@ -199,7 +199,7 @@ class UserWrapper
             }
 
             $realUrl = self::getModuleOneUrl($moduleName, true);
-            $url = webUrl(rtrim($realUrl, '.html'), ['i' => $uniacid]);
+            $url = webUrl(str_replace('.html', "", $realUrl), ['i' => $uniacid]);
         }
         return $url;
     }

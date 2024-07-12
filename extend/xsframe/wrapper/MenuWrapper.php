@@ -245,15 +245,22 @@ class MenuWrapper
 
                             $actionTmpArr = explode("/", $actionTmp);
                             $isUpdate = strexists($actionTmp, '/add') || strexists($actionTmp, '/edit') || strexists($actionTmp, '/post');
+
                             if (!$submenuIsActive && strexists(strtolower(str_replace("_", "", $return_menu_child['route'])), $actionTmpArr[0]) || (strexists($return_menu_child['route'], 'main') && in_array($actionTmp, ['add', 'edit', 'post']))) {
+
                                 if (strtolower(str_replace("_", "", $return_menu_child['route'])) != $actionTmp && !in_array($actionTmp, ['add', 'edit', 'post']) && !strexists($actionTmp, '/add') && !strexists($actionTmp, '/edit') && !strexists($actionTmp, '/post')) {
                                     $return_menu_child['active'] = 0;
+                                    if ($actionTmp == $return_menu_child['route']) {
+                                        $return_menu_child['active'] = 1;
+                                    }
+
                                 } else {
                                     $menuRouteTmp = str_replace("web.", "", $return_menu_child['route']);
                                     $menuRouteTmpArray = explode("/", $menuRouteTmp);
                                     $controllerNameTmp = StringUtil::camelize($menuRouteTmpArray[0]);
 
                                     $pageTitle = $return_menu_child['title'];
+
                                     if ($isUpdate) {
                                         if (strexists($actionTmp, '/add')) {
                                             $pageTitle = str_replace("列表", "", $pageTitle) . "添加";
@@ -269,6 +276,10 @@ class MenuWrapper
                                     if (strtolower($controllerNameTmp) == $actionTmpArr[0]) {
                                         $return_menu_child['active'] = $parentMenuIsChange ? 0 : 1;
                                     }
+                                }
+                            }else{
+                                if( $return_menu_child['route'] == $actionTmp ){
+                                    $return_menu_child['active'] = 1;
                                 }
                             }
 

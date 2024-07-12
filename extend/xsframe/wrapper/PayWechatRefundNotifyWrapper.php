@@ -3,6 +3,7 @@
 
 namespace xsframe\wrapper;
 
+use think\Exception;
 use xsframe\util\AesEncoderUtil;
 use xsframe\util\ArrayUtil;
 use xsframe\util\LoggerUtil;
@@ -56,19 +57,31 @@ class PayWechatRefundNotifyWrapper
     // 支付类型 pay_type 1微信 2支付宝 3余额 4后台支付
     private function refundResult()
     {
-        $moduleName = app('http')->getName();
-        $data = (array)$this->getReqInfoData($this->get);
-        $data['module'] = $moduleName;
+        try {
+            $moduleName = app('http')->getName();
+            $data = (array)$this->getReqInfoData($this->get);
+            $data['module'] = $moduleName;
 
-        $payPath = strval("\app\\{$moduleName}\\controller\Refund");
-        $order = new $payPath($data);
-        $ret = $order->refundResult();
-
-        if ($ret) {
-            $this->succ();
-        } else {
-            $this->fail("退款失败");
+            $payPath = strval("\app\\{$moduleName}\\service\PayService");
+            $payService = new $payPath($data);
+            $payService->refundResult();
+        } catch (Exception $e) {
+            LoggerUtil::error($e->getMessage());
         }
+
+        $this->refundPayLog($data);
+        $this->succ();
+    }
+
+    // 退款记录修改
+    private function refundPayLog($data): bool
+    {
+        try {
+            $data['out_trade_no'] && Db::name('sys_paylog')->where(['ordersn' => $data['out_trade_no']])->update(['status' => -1]);
+        } catch (Exception $e) {
+
+        }
+        return true;
     }
 
     private function getReqInfoData(array $data): array
