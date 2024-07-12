@@ -74,7 +74,7 @@ class Account extends Base
         if ($this->request->isPost()) {
             $settingsData = $this->params['data'] ?? [];
 
-            if( !empty($_FILES) ){
+            if (!empty($_FILES)) {
                 if ($_FILES['wxpay_cert_file']['name']) {
                     $settingsData['wxpay']['cert_file'] = $this->upload_cert('wxpay_cert_file');
                 }
@@ -192,7 +192,7 @@ class Account extends Base
 
         # 获取后台地址
         $realUrl = UserWrapper::getModuleOneUrl($defaultModuleInfo['module'], true);
-        $url = webUrl(rtrim($realUrl, '.html'), ['i' => $uniacid]);
+        $url = webUrl(str_replace('.html', "", $realUrl), ['i' => $uniacid]);
 
         $this->success(['url' => $url]);
     }
