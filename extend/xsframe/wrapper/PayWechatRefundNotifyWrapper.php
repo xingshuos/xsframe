@@ -12,10 +12,7 @@ use think\Request;
 
 class PayWechatRefundNotifyWrapper
 {
-    const MCH_KEY = 'xxxxxxxxxxxxxxxxxxxxxxxxxxx';
-
     public $get = null;
-    private $module = null;
     private $request;
 
     public function __construct(Request $request)
@@ -57,11 +54,15 @@ class PayWechatRefundNotifyWrapper
     // 支付类型 pay_type 1微信 2支付宝 3余额 4后台支付
     private function refundResult()
     {
-        try {
-            $moduleName = app('http')->getName();
-            $data = (array)$this->getReqInfoData($this->get);
-            $data['module'] = $moduleName;
+        $moduleName = app('http')->getName();
+        $map = config("app.app_map");
+        $realModuleName = array_key_exists($moduleName, $map) ? $map[$moduleName] : $moduleName;
+        $moduleName = $realModuleName ?: $moduleName;
 
+        $data = (array)$this->getReqInfoData($this->get);
+        $data['module'] = $moduleName;
+
+        try {
             $payPath = strval("\app\\{$moduleName}\\service\PayService");
             $payService = new $payPath($data);
             $payService->refundResult();
@@ -77,9 +78,9 @@ class PayWechatRefundNotifyWrapper
     private function refundPayLog($data): bool
     {
         try {
-            $data['out_trade_no'] && Db::name('sys_paylog')->where(['ordersn' => $data['out_trade_no']])->update(['status' => -1]);
+            Db::name('sys_paylog')->where(['ordersn' => $data['out_trade_no']])->update(['status' => -1]);
         } catch (Exception $e) {
-
+            LoggerUtil::error($e->getMessage());
         }
         return true;
     }
@@ -130,13 +131,7 @@ class PayWechatRefundNotifyWrapper
     private function getTextXml()
     {
         $resultXml = <<<EOF
-            <xml>
-                <return_code>SUCCESS</return_code>
-                <appid><![CDATA[wx21490d8841df7637]]></appid>
-                <mch_id><![CDATA[1606994267]]></mch_id>
-                <nonce_str><![CDATA[4685a1d8fd42adefde6f46b866c718df]]></nonce_str>
-                <req_info><![CDATA[cnPSF/Aqj5fx7OA8CetNSqKUdS6uTTKVcvogonC9QHiq7xzt+7CEWHCdQ2KS3ou6ejkI1Z3L9Y+46yIBzFOBzuF5QCfg4Q106gMtw2DDsifBDg92gh2pb4zlUvtz08BeYGZoaMNoyCnfMqClWCpsfvhzJ987uPh4iVgj2lm5CBbRkglSlOCM67oW76f7h4dwb8fwHKpr6FdH1vOq8+2L1uHoD1XRlKUzkUWRqCNZPaJaH1urWUwselbKspQld2c//rPiefGRcR2RCriruGydt4k8+4YvsbEJNbhFy/HoYbVmlYgmKYqFrt+yw5vr/9pPMyJSdutN4yMjx0l1n93BRplDphvLJ+5asT1Tae51/2F2JVGYt/Qn4pnG9WFAeM74eNqWA4xlHVmG5CRKtbn8/nZlLtelGLYiuC6FTboDOHT5+I5g7Hi0KP+uwdMx2ixwN07mqIKUnLKiCwPC4/1R8h3u5VTlTl/qqRIRlbFD90UmkwFJDxRcNT/PL+4KzC7RVlksH1fvjSAbsNAHGpzZlO5iN3J8Al9xRWjuCI0NZZQeA9UTOrLSiBnm8gJT+J73ZjU+Nw1LW7K5yVPyyumsOr4dC+CrvxO3JkGN1qyKU+jb+dwwFUQ7w+mvBCUpPn+8z14d5M/98bqIKfzSHNmncRfuo7nbThc4rvloRopIsGS6vvNAXutR8ycx8HPBmWFhBvwb8RoYg5Y9zdeHl/imfXl/P9COjWt/68JcV+Dy6LspJ/Tl20sIwX/bY/0qED9WLW1MRI660cVkvbeKUZevx5nC0lQjGVIeA72K7kDU5BQJZl5yCAfIdoGHf/V9u1cdMvpF2IPYAKobuaGY7NJXO2jxTuIM/WQ9tfXspuLMJ99tH+t+Z5zgBAvL0Cdz7rIyFzmT6O7QuDt7r/6+Kk9yZWhERIGM9H75fkLptiLy1g6kqpl62HuDFNZumMy2fCtyC8Z4HPfC40K02N9W7398s8qzU5RJLWbpo5sE1ZQZ2DGBO08Rl/srQrzIIRuxsgBFMR1WHg51CmJEYFomDkaDdh4APMfkAYcBVGzxzs1bEwOqFAKCtWSFI6FYd+mV4IzyFJ8SJ8e84ZxgEnA+gKoaASAg9QO7e8LaUaxFKip6x+hD7ZZO9Z9kBjlvIau156CL]]></req_info>
-            </xml>
+            <xml><return_code>SUCCESS</return_code><appid><![CDATA[wx21490d8841df7637]]></appid><mch_id><![CDATA[1606994267]]></mch_id><nonce_str><![CDATA[6e690d882dfc4f50df7cff71c2d0aa84]]></nonce_str><req_info><![CDATA[cnPSF/Aqj5fx7OA8CetNSqKUdS6uTTKVcvogonC9QHiq7xzt+7CEWHCdQ2KS3ou6ejkI1Z3L9Y+46yIBzFOBzuF5QCfg4Q106gMtw2DDsictyrET3MxIsIYciD3VuR/wwOUCGKMr1cPOn8X/wR888fhzJ987uPh4iVgj2lm5CBbRkglSlOCM67oW76f7h4dw/YydkUiKOxSnEvIXMQQjkXml6XYU68w/wbq9ltVazOlaH1urWUwselbKspQld2c//rPiefGRcR2RCriruGydt4k8+4YvsbEJNbhFy/HoYbVmlYgmKYqFrt+yw5vr/9pPMyJSdutN4yMjx0l1n93BRplDphvLJ+5asT1Tae51/2F2JVGYt/Qn4pnG9WFAeM74eNqWA4xlHVmG5CRKtbn8/nZlLtelGLYiuC6FTboDOHSBYcnKOM8Cy29pd79C+JFOwN6shNR6mCOrQLdHEzP6Ch3u5VTlTl/qqRIRlbFD90UmkwFJDxRcNT/PL+4KzC7RVlksH1fvjSAbsNAHGpzZlNGJrg8FyDBdx25bAR4nxoyciIGDs7/aXICgk3vUGKXm/FpLL9umaNxoX5+Gopl5mAVkMq4qV9Z028A8CXCbiZ6STNguxbTuIfJbb/TA65msuXxfr/9J5GYoZqKLmEKaiJa1Jl0XjW6SCZDlknpG3wgeNlFBQEsh215tlSrthyzj79Im5tqRu27eTTK373cN5gN3BnvBSNFarWpf+4ua63Qp5y0LaUS9d9cf3t4N6GOQnjjP4KlNVGnPzGCm+TofwQreDOM4z2RxyKvscnPEhTefNEWMhCtoMR4IA08fyqk8yrNTlEktZumjmwTVlBnYMewEuhOi78cEp2fvheCaN7ZrgXIncMYheWYeLpSFbZirjpruqGJgkvrCsTbUKnhxQdXS2qyVAZzWDMWQEqsX/tn5qj33eSqY31oquJdmQTB2VW8te5yk6veEV7p5JreKKR9HDqm/0JVo5FDy3FIwYTtX5z2FV22UV8M6hVFRLYbIhwyxc3CF9k6hFXndDu48xaCZMLlGbK2Cm+dnob7fV3qJ5w5nHqa1lDCiYJBBnu4rMVCRpU0XyPmbK+ULhNMoSSX6Y6jLCTGTRPrBFBgeZJYlRyhn4CkFkTCX24Hf9R08]]></req_info></xml>
 EOF;
         return trim($resultXml);
     }
