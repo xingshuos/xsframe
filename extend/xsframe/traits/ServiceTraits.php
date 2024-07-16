@@ -52,8 +52,10 @@ trait ServiceTraits
     {
         try {
             extract(self::getWhere($where));
-            if ($pIndex == 1 && !empty($this->params['page']) && $this->params['page'] > 1) $pIndex = $this->params['page'];
-            if ($pSize == 10 && !empty($this->params['size']) && $this->params['size'] != 10) $pSize = $this->params['size'];
+            if ($pIndex == 1 && !empty($this->params['page']) && $this->params['page'] > 1)
+                $pIndex = $this->params['page'];
+            if ($pSize == 10 && !empty($this->params['size']) && $this->params['size'] != 10)
+                $pSize = $this->params['size'];
             $list = Db::name($this->tableName)->field($field)->where($where, $op, $condition)->order($order)->page($pIndex, $pSize)->select()->toArray();
         } catch (\Exception $exception) {
             $list = [];
@@ -77,7 +79,7 @@ trait ServiceTraits
                 $list = Db::name($this->tableName)->field($field)->where($where, $op, $condition)->order($order)->select()->toArray();
             } else {
                 $temp = Db::name($this->tableName)->field($field)->where($where, $op, $condition)->order($order)->select()->toArray();
-                $rs = [];
+                $rs   = [];
                 if (!empty($temp)) {
                     foreach ($temp as $key => &$row) {
                         if (isset($row[$keyField])) {
@@ -97,15 +99,20 @@ trait ServiceTraits
 
     /**
      * 获取数据数量
-     * @param $condition
+     * @param $where
      * @param string $field
      * @return int
-     * @throws DbException
      */
     public function getTotal($where, string $field = "*"): int
     {
         extract(self::getWhere($where));
-        $total = Db::name($this->tableName)->where($where, $op, $condition)->count($field);
+
+        try {
+            $total = Db::name($this->tableName)->where($where, $op, $condition)->count($field);
+        } catch (\Exception $exception) {
+            $total = 0;
+        }
+
         return intval($total);
     }
 
@@ -173,10 +180,10 @@ trait ServiceTraits
     // 获取查询条件
     private function getWhere($where = null): array
     {
-        $op = null;
+        $op        = null;
         $condition = null;
         if (is_array($where) && is_string($where[0]) && is_array($where[1])) {
-            $op = $where[1];
+            $op    = $where[1];
             $where = $where[0];
         }
         return ['where' => $where, 'op' => $op, 'condition' => $condition];
