@@ -60,11 +60,13 @@ trait AdminTraits
                 $condition['enabled'] = $enabled;
             }
 
-            if (!empty($searchTime) && is_array($this->params["time"]) && in_array($searchTime, ["create"])) {
+            if (is_array($this->params["time"])) {
                 $startTime = strtotime($this->params["time"]["start"]);
                 $endTime = strtotime($this->params["time"]["end"]);
 
-                $condition[$searchTime . "time"] = Db::raw("between {$startTime} and {$endTime} ");
+                if (!empty($searchTime) && in_array($searchTime, ["create"])) {
+                    $condition[$searchTime . "time"] = Db::raw("between {$startTime} and {$endTime} ");
+                }
             }
 
             if (!empty($keyword) && !empty($kwFields)) {
