@@ -412,7 +412,30 @@ function tpl_form_field_image($name, $value = '', $default = '', $options = [])
 	<span class="input-group-btn">
 		<button class="btn btn-primary" type="button" onclick="showImageDialog(this, \'' . base64_encode(iserializer($options)) . '\', ' . str_replace('"', '\'', json_encode($options)) . ');">选择图片</button>
 	</span>
-</div>';
+';
+
+    if (!empty($options['isShowRandomlogoBtn'])) {
+        $qqLen = $options['qq_length'] ?? 9;
+        $s .= '
+            <span class="input-group-btn">
+                <div class="btn btn-default" onclick="getQQAavatar(this)">自动获取头像</div>
+            </span>
+            <script>
+                function getQQAavatar(This){
+                    let qq = Math.random().toString().slice(-'.$qqLen.')
+                    let logo = "http://q1.qlogo.cn/g?b=qq&nk="+qq+"&s=100"
+                    
+                    require(["jquery"], function($){
+                        $(This).parent().parent().children("input[name=' . $name . ']").val(logo)
+                        $(This).parent().parent().parent().children().eq(2).children("img").attr("src",logo)
+                    });
+                }
+            </script>
+        ';
+    }
+
+    $s .= '</div>';
+
     if (!empty($options['tabs']['browser']) || !empty($options['tabs']['upload'])) {
         $s .=
             '<div class="input-group ' . $options['class_extra'] . '" style="margin-top:.5em;">

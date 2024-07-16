@@ -134,6 +134,19 @@ class PayWechatNotifyWrapper
 
     private function fail($msg = '签名失败')
     {
+        try {
+            $moduleName = app('http')->getName();
+            $map = config("app.app_map");
+            $realModuleName = array_key_exists($moduleName, $map) ? $map[$moduleName] : $moduleName;
+            $moduleName = $realModuleName ?: $moduleName;
+
+            $this->get['module'] = $moduleName;
+            $payPath = strval("\app\\{$moduleName}\\service\PayService");
+            $payService = new $payPath($this->get);
+            $payService->payResultError();
+        } catch (Exception $e) {
+        }
+
         $result = ["return_code" => "FAIL", "return_msg" => $msg];
         echo ArrayUtil::array2xml($result);
         exit();
