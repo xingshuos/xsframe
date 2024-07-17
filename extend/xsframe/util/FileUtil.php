@@ -110,8 +110,17 @@ class FileUtil
         return $newFiles;
     }
 
-    // 指定文件夹移动到新文件夹
-    public static function oldDirToNewDir($path, $newPath, $oldPath = '', $unSyncFiles = [], $unSyncFolder = ['source']): bool
+
+    /**
+     * 指定文件夹移动到新文件夹
+     * @param $path -- 需要移动的文件夹路径
+     * @param $newPath -- 新文件夹路径
+     * @param string $oldPath -- 旧文件夹路径
+     * @param array $unSyncFiles -- 不同步的文件名称
+     * @param array $unSyncFolder -- 不同步的文件夹名称
+     * @return bool
+     */
+    public static function oldDirToNewDir($path, $newPath, string $oldPath = '', array $unSyncFiles = [], array $unSyncFolder = ['source']): bool
     {
         if (empty($oldPath)) {
             $oldPath = $path;

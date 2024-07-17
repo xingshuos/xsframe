@@ -21,16 +21,16 @@ use xsframe\util\RequestUtil;
 class ModulesWrapper
 {
     // 执行安装应用
-    public function runInstalledModule($moduleName, $key = null, $token = null): bool
+    public function runInstalledModule($moduleName, $key = null, $token = null, $isCloud = false): bool
     {
         if (is_dir(IA_ROOT . '/app/' . $moduleName)) {
             $manifest = $this->extModuleManifest($moduleName);
-            $this->extModuleRunScript($manifest, 'install');
+            $this->extModuleRunScript($manifest, 'install', $isCloud);
         } else {
             $cloudWrapper = new CloudWrapper();
             $ret = $cloudWrapper->downloadCloudApp($moduleName, $key, $token);
             if ($ret) {
-                $this->runInstalledModule($moduleName, $key, $token);
+                $this->runInstalledModule($moduleName, $key, $token, true);
             } else {
                 return false;
             }
@@ -82,7 +82,7 @@ class ModulesWrapper
             @copy($modulePath . "/icon.png", $targetDirPath . "/icon.png");
         }
 
-        FileUtil::oldDirToNewDir($modulePackagesPath, $targetDirPath);
+        FileUtil::oldDirToNewDir($modulePackagesPath, $targetDirPath); // 默认source文件夹不被删除
         return true;
     }
 
@@ -209,7 +209,8 @@ class ModulesWrapper
         return true;
     }
 
-    public function extModuleManifest($moduleName)
+    // 解析应用xml配置
+    public function extModuleManifest($moduleName): array
     {
         $root = IA_ROOT . '/app/' . $moduleName . "/packages";
         $filename = $root . '/manifest.xml';
@@ -243,8 +244,8 @@ class ModulesWrapper
         return $xml;
     }
 
-    // 安装应用
-    private function extModuleRunScript($manifest, $scriptType)
+    // 执行模块安装脚本
+    private function extModuleRunScript($manifest, $scriptType, $isCloud = false)
     {
         if (!in_array($scriptType, ['install', 'uninstall', 'upgrade'])) {
             return false;
@@ -278,9 +279,7 @@ class ModulesWrapper
             }
         }
 
-        # 是否线上应用 如果是清空安装文件 TODO
-        $isOnlineModule = false;
-        if ($isOnlineModule) {
+        if ($isCloud) {
             $this->extModuleScriptClean($moduleName, $manifest);
         }
         return true;

@@ -9,7 +9,10 @@ use xsframe\util\RequestUtil;
 
 class CloudWrapper
 {
-    // 下载云应用
+    /**
+     * 下载云应用
+     * @throws ApiException
+     */
     public function downloadCloudApp($moduleName, $key = null, $token = null): bool
     {
         $postData = ['key' => $key, 'token' => $token, 'identifier' => $moduleName];

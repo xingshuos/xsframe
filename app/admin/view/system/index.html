@@ -80,9 +80,14 @@
 {block name='script'}
 <script>
     function windowOpen(module,url) {
-        $.post("{:webUrl('system/setAccountDefaultModule')}",{uniacid:"{$uniacid}",module:module}, function (json) {
-            window.open(url);
-        }, 'json')
+        let getModule = "{$_GET['module']}";
+        if( module === getModule ){
+
+        }else{
+            $.post("{:webUrl('system/setAccountDefaultModule')}",{uniacid:"{$uniacid}",module:module}, function (json) {
+                window.open(url);
+            }, 'json')
+        }
     }
 </script>
 {/block}

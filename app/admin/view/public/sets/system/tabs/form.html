@@ -16,16 +16,16 @@
     <input type="hidden" name="id" value="{$uniacid}"/>
 
     <ul class="nav nav-tabs" id="myTab">
-        <li class="{if empty($_GET['tab']) || $_GET['tab'] == 'basic'}active{/if}"><a href="#tab_basic">基础设置</a></li>
-        <li class="{if $_GET['tab'] == 'host'}active{/if}"><a href="#tab_host">域名设置</a></li>
-        <li class="{if $_GET['tab']=='wechat'}active{/if}"><a href="#tab_wechat">微信公众号</a></li>
-        <li class="{if $_GET['tab']=='wxapp'}active{/if}"><a href="#tab_wxapp">微信小程序</a></li>
-        <li class="{if $_GET['tab']=='weixin'}active{/if}"><a href="#tab_weixin">企业微信</a></li>
-        <li class="{if $_GET['tab']=='wechatPay'}active{/if}"><a href="#tab_wechatPay">微信支付</a></li>
-        <li class="{if $_GET['tab']=='aliPay'}active{/if}"><a href="#tab_aliPay">支付宝支付</a></li>
-        <li class="{if $_GET['tab'] == 'attachment'}active{/if}"><a href="#tab_attachment">附件设置</a></li>
-        <li class="{if $_GET['tab']=='sms'}active{/if}"><a href="#tab_sms">短信设置</a></li>
-        <li class="{if $_GET['tab']=='smtp'}active{/if}"><a href="#tab_smtp">SMTP服务器</a></li>
+        <li class="{if empty($_GET['tab']) || $_GET['tab'] == 'basic'}active{/if}"><a href="#tab_basic">基础信息</a></li>
+        <!-- <li class="{if $_GET['tab'] == 'host'}active{/if}"><a href="#tab_host">域名设置</a></li> -->
+        {if p('xs_wechat')}<li class="{if $_GET['tab']=='wechat'}active{/if}"><a href="#tab_wechat">微信公众号</a></li>{/if}
+        {if p('xs_wxapp')}<li class="{if $_GET['tab']=='wxapp'}active{/if}"><a href="#tab_wxapp">微信小程序</a></li>{/if}
+        {if p('xs_weixin')}<li class="{if $_GET['tab']=='weixin'}active{/if}"><a href="#tab_weixin">企业微信</a></li>{/if}
+        {if p('xs_wxpay')}<li class="{if $_GET['tab']=='wechatPay'}active{/if}"><a href="#tab_wechatPay">微信支付</a></li>{/if}
+        {if p('xs_alipay')}<li class="{if $_GET['tab']=='aliPay'}active{/if}"><a href="#tab_aliPay">支付宝支付</a></li>{/if}
+        {if p('xs_attachment')}<li class="{if $_GET['tab'] == 'attachment'}active{/if}"><a href="#tab_attachment">附件设置</a></li>{/if}
+        {if p('xs_sms')}<li class="{if $_GET['tab']=='sms'}active{/if}"><a href="#tab_sms">短信设置</a></li>{/if}
+        {if p('xs_smtp')}<li class="{if $_GET['tab']=='smtp'}active{/if}"><a href="#tab_smtp">SMTP服务器</a></li>{/if}
     </ul>
 
     <div class="tab-content">

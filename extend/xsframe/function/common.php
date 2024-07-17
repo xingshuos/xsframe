@@ -47,6 +47,14 @@ if (!function_exists('tablename')) {
     }
 }
 
+// 验证应用权限
+if (!function_exists('a')) {
+    function a($moduleName): bool
+    {
+        return is_dir(IA_ROOT . "/app/" . $moduleName);
+    }
+}
+
 // 验证主菜单权限
 if (!function_exists('cm')) {
     function cm($permUrl)

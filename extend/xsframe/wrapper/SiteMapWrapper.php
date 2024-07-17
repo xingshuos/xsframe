@@ -65,23 +65,22 @@ class SiteMapWrapper
         $urls = ArrayUtil::getDifferent($urls, $urlsLogs);
 
         if (!empty($urls)) {
-            $result = [];
             if (!empty($this->token)) {
                 $apiUrl = "http://data.zz.baidu.com/urls?site={$this->site}&token=" . $this->token;
                 $result = $this->httpPost($apiUrl, $urls);
                 $result = json_decode($result, true);
-                if ($result['error'] == 401) {
+                if ($result['error'] == 401 || $result['error'] == 400) {
                     echo("Submission failed : " . $result['message'] . PHP_EOL . "<br>");
+                } else {
+                    echo("Baidu Included remain:" . $result['remain'] ?? '无' . " success:{$result['success']} " . date('Y-m-d H:i:s') . PHP_EOL . "<br>");
                 }
             }
 
             foreach ($urls as $url) {
                 file_put_contents($urlsPath . "/urls.log", $url . "\n", FILE_APPEND);
             }
-            echo("Baidu Included remain:" . $result['remain'] ?? '无' . " success:{$result['success']} " . date('Y-m-d H:i:s') . PHP_EOL . "<br>");
         }
 
-        echo("暂无任何需要收录的URL地址" . PHP_EOL . "<br>");
         return true;
     }
 
