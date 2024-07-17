@@ -48,8 +48,8 @@ if (!function_exists('tablename')) {
 }
 
 // 验证应用权限
-if (!function_exists('a')) {
-    function a($moduleName): bool
+if (!function_exists('m')) {
+    function m($moduleName): bool
     {
         return is_dir(IA_ROOT . "/app/" . $moduleName);
     }
