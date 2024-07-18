@@ -78,28 +78,34 @@
                 <label class="col-lg control-label must">应用支持</label>
                 <div class="col-sm-9 col-xs-12">
                     <label for="wechat_support" class="checkbox-inline">
-                        <input type="checkbox" name="wechat_support" value="1" id="wechat_support" {if $item['wechat_support'] == 1}checked{/if}/> 公众号
+                        <input type="checkbox" name="wechat_support" value="1" id="wechat_support" {if $item['wechat_support'] == 1}checked{/if} disabled/> 公众号
                     </label>
                     <label for="wxapp_support" class="checkbox-inline">
-                        <input type="checkbox" name="wxapp_support" value="1" id="wxapp_support" {if $item['wxapp_support'] == 1}checked{/if}/> 微信小程序
+                        <input type="checkbox" name="wxapp_support" value="1" id="wxapp_support" {if $item['wxapp_support'] == 1}checked{/if} disabled/> 微信小程序
                     </label>
                     <label for="pc_support" class="checkbox-inline">
-                        <input type="checkbox" name="pc_support" value="1" id="pc_support" {if $item['pc_support'] == 1}checked{/if}/> PC
+                        <input type="checkbox" name="pc_support" value="1" id="pc_support" {if $item['pc_support'] == 1}checked{/if} disabled/> PC
                     </label>
                     <label for="app_support" class="checkbox-inline">
-                        <input type="checkbox" name="app_support" value="1" id="app_support" {if $item['app_support'] == 1}checked{/if}/> APP
+                        <input type="checkbox" name="app_support" value="1" id="app_support" {if $item['app_support'] == 1}checked{/if} disabled/> APP
                     </label>
                     <label for="h5_support" class="checkbox-inline">
-                        <input type="checkbox" name="h5_support" value="1" id="h5_support" {if $item['h5_support'] == 1}checked{/if}/> H5
+                        <input type="checkbox" name="h5_support" value="1" id="h5_support" {if $item['h5_support'] == 1}checked{/if} disabled/> H5
                     </label>
                     <label for="aliapp_support" class="checkbox-inline">
-                        <input type="checkbox" name="aliapp_support" value="1" id="aliapp_support" {if $item['aliapp_support'] == 1}checked{/if}/> 支付宝小程序
+                        <input type="checkbox" name="aliapp_support" value="1" id="aliapp_support" {if $item['aliapp_support'] == 1}checked{/if} disabled/> 支付宝小程序
                     </label>
                     <label for="bdapp_support" class="checkbox-inline">
-                        <input type="checkbox" name="bdapp_support" value="1" id="bdapp_support" {if $item['bdapp_support'] == 1}checked{/if}/> 百度小程序
+                        <input type="checkbox" name="bdapp_support" value="1" id="bdapp_support" {if $item['bdapp_support'] == 1}checked{/if} disabled/> 百度小程序
                     </label>
                     <label for="uniapp_support" class="checkbox-inline">
-                        <input type="checkbox" name="uniapp_support" value="1" id="uniapp_support" {if $item['uniapp_support'] == 1}checked{/if}/> UniApp
+                        <input type="checkbox" name="uniapp_support" value="1" id="uniapp_support" {if $item['uniapp_support'] == 1}checked{/if} disabled/> UniApp
+                    </label>
+                    <label for="harmonyos_support" class="checkbox-inline">
+                        <input type="checkbox" name="harmonyos_support" value="1" id="harmonyos_support" {if $item['harmonyos_support'] == 1}checked{/if} disabled/> 鸿蒙OS
+                    </label>
+                    <label for="dyapp_support" class="checkbox-inline">
+                        <input type="checkbox" name="dyapp_support" value="1" id="dyapp_support" {if $item['dyapp_support'] == 1}checked{/if} disabled/> 抖音小程序
                     </label>
                 </div>
             </div>
