@@ -1034,7 +1034,9 @@ if (!function_exists('tpl_form_field_video2')) {
             $html .= ' style="width: 100%;"';
         }
 
-        $html .= '><input class="form-control" id="select-video-' . $name . '" name="' . $name . '" value="' . $value . '" placeholder="' . $options['placeholder'] . '"';
+        $idName = str_replace("]","",str_replace("[","-",$name));
+
+        $html .= '><input class="form-control" id="select-video-' . $idName . '" name="' . $name . '" value="' . $value . '" placeholder="' . $options['placeholder'] . '"';
 
         if ($options['readonly']) {
             $html .= ' readonly="readonly"';
@@ -1043,14 +1045,14 @@ if (!function_exists('tpl_form_field_video2')) {
         $html .= '/>';
 
         if (!$options['disabled']) {
-            $html .= '<span class="input-group-addon btn btn-primary" data-toggle="selectVideo" data-input="#select-video-' . $name . '" data-network="' . $options['network'] . '">' . $options['btntext'] . '</span>';
+            $html .= '<span class="input-group-addon btn btn-primary" data-toggle="selectVideo" data-input="#select-video-' . $idName . '" data-network="' . $options['network'] . '">' . $options['btntext'] . '</span>';
         }
 
         $html .= '</div>';
-        $html .= '<div class="input-group"><div class="multi-item" style="display: block" title="预览视频" data-toggle="previewVideo" data-input="#select-video-' . $name . '"><div class="img-responsive img-thumbnail img-video" style="width: 100px; height: 100px; position: relative; text-align: center; cursor: pointer;" src=""><i class="icon icon-play-circle" style="font-size: 60px; line-height: 90px; color: #999;"></i></div>';
+        $html .= '<div class="input-group"><div class="multi-item" style="display: block" title="预览视频" data-toggle="previewVideo" data-input="#select-video-' . $idName . '"><div class="img-responsive img-thumbnail img-video" style="width: 100px; height: 100px; position: relative; text-align: center; cursor: pointer;" src=""><i class="icon icon-play-circle" style="font-size: 60px; line-height: 90px; color: #999;"></i></div>';
 
         if (!$options['disabled']) {
-            $html .= '<em class="close" title="移除视频" data-toggle="previewVideoDel" data-element="#select-video-' . $name . '">×</em>';
+            $html .= '<em class="close" title="移除视频" data-toggle="previewVideoDel" data-element="#select-video-' . $idName . '">×</em>';
         }
 
         $html .= '</div></div>';

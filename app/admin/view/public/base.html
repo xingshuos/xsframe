@@ -44,6 +44,7 @@
             'siteurl': '{$iaRoot}',
             'attachurl': '{$attachUrl}',
             'module': '{$module}',
+            'client': '{$clientServiceName}',
         };
     </script>
 
@@ -182,10 +183,6 @@
     <script>
         // 二维码
         $(() => {
-            // 鼠标移入弹出信息框
-            $('[data-toggle="popover"]').popover("destroy").popover({
-                container: $(document.body)
-            });
 
             // tab切换
             $('#myTab a').click(function (e) {
@@ -298,6 +295,14 @@
                 $("#public_modal").html(html).modal('show');
             });
         }
+
+        // 防止bootstrap自带的tooltip和popover在模态框中失效
+        $('[data-toggle="tooltip"]').tooltip("destroy").tooltip({
+            container: $(document.body)
+        });
+        $('[data-toggle="popover"]').popover("destroy").popover({
+            container: $(document.body)
+        });
     </script>
     {/block}
 </head>

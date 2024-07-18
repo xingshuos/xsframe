@@ -99,15 +99,16 @@ DROP TABLE IF EXISTS `#__sys_attachment`;
 
 CREATE TABLE `#__sys_attachment`
 (
-    `id`         int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `uniacid`    int(10) unsigned NOT NULL,
-    `uid`        int(10) unsigned NOT NULL,
-    `filename`   varchar(100) NOT NULL,
-    `fileurl`    varchar(255) NOT NULL,
-    `type`       tinyint(3) unsigned NOT NULL DEFAULT '0',
-    `createtime` int(10) unsigned NOT NULL,
-    `module`     varchar(50)  NOT NULL,
-    `group_id`   int(11) DEFAULT NULL,
+    `id`          int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `uniacid`     int(10) unsigned NOT NULL,
+    `uid`         int(10) unsigned NOT NULL,
+    `filename`    varchar(100) NOT NULL,
+    `fileurl`     varchar(255) NOT NULL,
+    `type`        tinyint(3) unsigned NOT NULL DEFAULT '0',
+    `createtime`  int(10) unsigned NOT NULL,
+    `module`      varchar(50)  NOT NULL,
+    `group_id`    int(11) DEFAULT NULL,
+    `client_name` varchar(30)  NOT NULL DEFAULT 'web',
     PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
@@ -122,6 +123,7 @@ CREATE TABLE `#__sys_attachment_group`
     `parentid`     int(10) NOT NULL DEFAULT '0',
     `displayorder` int(10) NOT NULL DEFAULT '0',
     `uid`          int(10) NOT NULL DEFAULT '0',
+    `client_name`  varchar(30) NOT NULL DEFAULT 'web',
     PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

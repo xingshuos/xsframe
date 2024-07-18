@@ -61,6 +61,7 @@ abstract class WebBaseController extends BaseController
         $var['action'] = $this->action;
         $var['uniacid'] = $this->uniacid;
         $var['uid'] = $this->userId;
+        $var['clientServiceName'] = $this->clientServiceName;
         $var['url'] = $this->url;
         $var['siteRoot'] = $this->siteRoot;
         $var['iaRoot'] = $this->iaRoot;

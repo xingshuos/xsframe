@@ -84,8 +84,9 @@ class File extends AdminBaseController
     {
         $uniacid = $this->curUniacid;
         $type = $this->params['type'] ?? 0;
+        $clientName = $this->params['client'] ?? 'web';
 
-        $list = Db::name('sys_attachment_group')->where(['uniacid' => $uniacid, 'type' => $type])->order("displayorder desc,id desc")->select();
+        $list = Db::name('sys_attachment_group')->where(['uniacid' => $uniacid, 'type' => $type,'client_name' => $clientName])->order("displayorder desc,id desc")->select();
         $list = $list->toArray();
 
         $this->returnData($list);
@@ -96,12 +97,14 @@ class File extends AdminBaseController
     {
         $uniacid = $this->curUniacid;
         $type = $this->params['type'] ?? 0;
+        $clientName = $this->params['client'] ?? 'web';
 
         $data = ([
-            'uid'     => $this->userId,
-            'uniacid' => $uniacid,
-            'name'    => trim($this->params['name'] ?? ''),
-            'type'    => $type,
+            'uid'         => $this->userId,
+            'uniacid'     => $uniacid,
+            'name'        => trim($this->params['name'] ?? ''),
+            'type'        => $type,
+            'client_name' => $clientName,
         ]);
 
         $groupId = Db::name('sys_attachment_group')->insertGetId($data);
@@ -114,9 +117,10 @@ class File extends AdminBaseController
     {
         $name = trim($this->params['name'] ?? '');
         $id = intval($this->params['id'] ?? 0);
+        $clientName = $this->params['client'] ?? 'web';
 
         if (!empty($name)) {
-            Db::name('sys_attachment_group')->where(['id' => $id, 'uniacid' => $this->curUniacid])->update(['name' => $name]);
+            Db::name('sys_attachment_group')->where(['id' => $id, 'uniacid' => $this->curUniacid, 'client_name' => $clientName])->update(['name' => $name]);
         }
 
         $this->returnData("更新成功");
@@ -151,8 +155,7 @@ class File extends AdminBaseController
         $uniacid = $this->curUniacid;
         $condition = ['uniacid' => $uniacid, 'type' => 3];
 
-        $page = intval($this->params['page'] ?? 1);
-        $page = max(1, $page);
+        $page = max(1, $this->params['page'] ?? 1);
         $pageSize = 20;
 
         $fields = "s.*,s.fileurl attachment";
@@ -209,6 +212,7 @@ class File extends AdminBaseController
         $page = intval($this->params['page'] ?? 1);
         $groupId = intval($this->params['groupid'] ?? 0);
         $module = $this->params['module'] ?? '';
+        $clientName = $this->params['client'] ?? 'web';
 
         $pageSize = 20;
         $page = max(1, $page);
@@ -227,7 +231,14 @@ class File extends AdminBaseController
             $condition['module'] = $module;
         }
 
-        if ($year || $month) {
+        if (!empty($clientName)) {
+            $condition['client_name'] = $clientName;
+            if ($clientName != 'web') {
+                $condition['uid'] = $this->userId;
+            }
+        }
+
+        if ($year && $month) {
             $start_time = strtotime("{$year}-{$month}-01");
             $end_time = strtotime('+1 month', $start_time);
 

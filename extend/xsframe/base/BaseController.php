@@ -36,6 +36,7 @@ abstract class BaseController extends Controller
     protected $ip;
     protected $view;
     protected $clientBaseType;
+    protected $clientServiceName;
 
     protected $module;
     protected $controller;
@@ -120,6 +121,7 @@ abstract class BaseController extends Controller
         $this->controller = strtolower($this->request->controller());
         $this->action = strtolower($this->request->action());
         $this->url = $this->request->url();
+        $this->clientServiceName = explode(".", $this->controller)[0];
 
         $this->checkCors();
         $this->autoLoad();

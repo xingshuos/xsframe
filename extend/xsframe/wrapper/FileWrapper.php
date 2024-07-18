@@ -23,6 +23,7 @@ class FileWrapper
     // 上传文件 TODO 目前是只上传到了本地 需要兼容 第三方 例如 OSS 七牛云等
     public function fileUpload($uniacid, $module, $userId, $type = 'image', $folder = '', $originName = '', $filename = '', $ext = '', $compress = false)
     {
+        $clientName = ($_GET['client'] ?? $_POST['client']) ?? 'web';
         $groupId = 0;
         $attachmentPath = IA_ROOT . "/public/attachment/";
         $harmType = ['asp', 'php', 'jsp', 'js', 'css', 'php3', 'php4', 'php5', 'ashx', 'aspx', 'exe', 'cgi'];
@@ -59,7 +60,7 @@ class FileWrapper
             'filesize'   => filesize($attachmentPath . $folder . $filename),
             'group_id'   => $groupId
         ];
-        $this->addFileLog($uniacid, $userId, $result['name'], $result['fileurl'], $result['type'], $module, $groupId);
+        $this->addFileLog($uniacid, $userId, $result['name'], $result['fileurl'], $result['type'], $module, $groupId, $clientName);
 
         return $result;
     }
@@ -85,17 +86,18 @@ class FileWrapper
     }
 
     // 添加文件
-    private function addFileLog($uniacid, $userId, $filename, $fileurl, $type, $module, $groupId = 0)
+    private function addFileLog($uniacid, $userId, $filename, $fileurl, $type, $module, $groupId = 0, $clientName = 'web')
     {
         $insertData = [
-            'uniacid'    => $uniacid,
-            'uid'        => $userId,
-            'filename'   => $filename,
-            'fileurl'    => $fileurl,
-            'type'       => $type,
-            'module'     => $module,
-            'group_id'   => $groupId,
-            'createtime' => time(),
+            'uniacid'     => $uniacid,
+            'uid'         => $userId,
+            'filename'    => $filename,
+            'fileurl'     => $fileurl,
+            'type'        => $type,
+            'module'      => $module,
+            'group_id'    => $groupId,
+            'client_name' => $clientName,
+            'createtime'  => time(),
         ];
         return Db::name('sys_attachment')->insert($insertData);
     }

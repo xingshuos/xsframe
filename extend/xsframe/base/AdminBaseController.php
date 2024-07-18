@@ -58,28 +58,31 @@ abstract class AdminBaseController extends BaseController
     // 校验用户登录
     protected function checkAuth()
     {
+        $clientName = $this->params['client'] ?? 'web';
         $isFileUpload = strtolower($this->controller) == 'file';
-        if ($isFileUpload && $this->params['uid'] && $this->params['module'] != 'admin') {
+        if ($clientName && $clientName != 'web' && $isFileUpload && $this->params['uid'] && $this->params['module'] != 'admin') {
             $this->userId = intval($this->params['uid']);
+            // 调用用户是否登录 TODO 这里是个漏洞，没有校验用户是否登录（1.每个应用重做上传 2.统一登录 3.提供调用登录的接口校验 推荐第三种方式）
         } else {
-            if (strtolower($this->controller) != 'login') {
-                $loginResult = UserWrapper::checkUser();
 
+            $loginResult = UserWrapper::checkUser();
+            if (!empty($loginResult)) {
+                $this->adminSession = $loginResult['adminSession'];
+                $this->userId = $this->adminSession['uid'];
+                $uniacid = $this->adminSession['uniacid'];
+
+                if (!empty($uniacid)) {
+                    $this->uniacid = $uniacid;
+                    $_COOKIE['uniacid'] = $uniacid;
+                }
+            }
+
+            if (strtolower($this->controller) != 'login') {
                 if (!$loginResult['isLogin']) {
                     header('location: ' . url('/admin/login'));
                     exit();
                 }
-
-                $this->adminSession = $loginResult['adminSession'];
-                $this->userId       = $this->adminSession['uid'];
-                $uniacid            = $this->adminSession['uniacid'];
-
-                if (!empty($uniacid)) {
-                    $this->uniacid      = $uniacid;
-                    $_COOKIE['uniacid'] = $uniacid;
-                }
             } else {
-                $loginResult = UserWrapper::checkUser();
                 if ($loginResult['isLogin'] && (!in_array($this->action, ['logout', 'verify']))) {
                     $url = UserWrapper::getLoginReturnUrl($loginResult['adminSession']['role'], $loginResult['adminSession']['uid']);
                     header('location: ' . $url);
@@ -107,10 +110,10 @@ abstract class AdminBaseController extends BaseController
     {
         $templateVars = $this->getDefaultVars($templateVars);
 
-        $content  = View::fetch($templateFile, $templateVars);
+        $content = View::fetch($templateFile, $templateVars);
         $htmlPath = !empty($htmlPath) ? $htmlPath : './appTemplate/';
         $htmlFile = $htmlPath . $htmlFile . '.' . config('view.view_suffix');
-        $File     = new \think\template\driver\File();
+        $File = new \think\template\driver\File();
         $File->write($htmlFile, $content);
         return $content;
     }
@@ -133,34 +136,35 @@ abstract class AdminBaseController extends BaseController
 
         $menusList = MenuWrapper::getMenusList($this->adminSession['role'], $this->module, $this->controller, $this->action);
 
-        $var                    = [];
-        $var['module']          = $this->module;
-        $var['controller']      = $this->controller;
-        $var['action']          = $this->action;
-        $var['uniacid']         = $this->uniacid;
-        $var['_GPC']            = $this->params;
-        $var['uid']             = $this->userId;
-        $var['url']             = $this->url;
-        $var['siteRoot']        = $this->siteRoot;
-        $var['moduleSiteRoot']  = $this->moduleSiteRoot;
+        $var = [];
+        $var['module'] = $this->module;
+        $var['controller'] = $this->controller;
+        $var['action'] = $this->action;
+        $var['uniacid'] = $this->uniacid;
+        $var['clientServiceName'] = $this->clientServiceName;
+        $var['_GPC'] = $this->params;
+        $var['uid'] = $this->userId;
+        $var['url'] = $this->url;
+        $var['siteRoot'] = $this->siteRoot;
+        $var['moduleSiteRoot'] = $this->moduleSiteRoot;
         $var['moduleAttachUrl'] = $this->moduleAttachUrl;
-        $var['token']           = RandomUtil::random(8);
-        $var['isSystem']        = $this->isSystem;
-        $var['menusList']       = $menusList;
-        $var['pageTitle']       = empty($menusList['pageTitle']) ? $this->websiteSets['name'] : $menusList['pageTitle'];
-        $var['userInfo']        = $this->adminSession;
-        $var['websiteSets']     = $this->websiteSets;
+        $var['token'] = RandomUtil::random(8);
+        $var['isSystem'] = $this->isSystem;
+        $var['menusList'] = $menusList;
+        $var['pageTitle'] = empty($menusList['pageTitle']) ? $this->websiteSets['name'] : $menusList['pageTitle'];
+        $var['userInfo'] = $this->adminSession;
+        $var['websiteSets'] = $this->websiteSets;
 
         # 收缩菜单
         $var['foldNav'] = intval($_COOKIE["foldnav"] ?? 0);
 
-        $var['account']    = $this->account;
+        $var['account'] = $this->account;
         $var['moduleInfo'] = $this->moduleInfo;
-        $var['attachUrl']  = getAttachmentUrl() . "/";
-        $var['isLogin']    = $this->isLogin;
+        $var['attachUrl'] = getAttachmentUrl() . "/";
+        $var['isLogin'] = $this->isLogin;
 
         # 选中系统菜单
-        $var['selSystemNav']    = intval($_COOKIE[$this->module . "_systemnav"]);
+        $var['selSystemNav'] = intval($_COOKIE[$this->module . "_systemnav"]);
         $var['selSystemNavUrl'] = $this->getSelSystemNavUrl();
 
         # 菜单通知点
@@ -176,7 +180,7 @@ abstract class AdminBaseController extends BaseController
 
     private function getSelSystemNavUrl()
     {
-        $uniacid         = $this->uniacid;
+        $uniacid = $this->uniacid;
         $selSystemNavUrl = $_COOKIE[$this->module . "_systemnavurl"] ?? null;
 
         if (empty($selSystemNavUrl)) {
