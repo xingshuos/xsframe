@@ -251,19 +251,6 @@
         })
     </script>
 
-    <script>
-        if ($('form.form-validate').length <= 0) {
-            window.formInited = true;
-        }
-
-        window.formInitTimer = setInterval(function () {
-            if (typeof (window.formInited) !== 'undefined') {
-                $('#page-loading').remove();
-                clearInterval(window.formInitTimer);
-            }
-        }, 1);
-    </script>
-
     <!--低分辨率一级导航显示不全问题 start-->
     <script>
         let navheight = document.getElementById('navheight');
@@ -483,6 +470,19 @@
 <!--图片放大 end-->
 
 {block name='script'}{/block}
+
+<script>
+    if ($('form.form-validate').length <= 0) {
+        window.formInited = true;
+    }
+
+    window.formInitTimer = setInterval(function () {
+        if (typeof (window.formInited) !== 'undefined') {
+            $('#page-loading').remove();
+            clearInterval(window.formInitTimer);
+        }
+    }, 1);
+</script>
 
 </body>
 
