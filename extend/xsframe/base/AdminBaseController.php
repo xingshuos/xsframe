@@ -66,7 +66,7 @@ abstract class AdminBaseController extends BaseController
         } else {
 
             $loginResult = UserWrapper::checkUser();
-            if (!empty($loginResult)) {
+            if (!empty($loginResult) && !empty($loginResult['adminSession'])) {
                 $this->adminSession = $loginResult['adminSession'];
                 $this->userId = $this->adminSession['uid'];
                 $uniacid = $this->adminSession['uniacid'];
