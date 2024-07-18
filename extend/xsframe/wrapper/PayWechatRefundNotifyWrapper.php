@@ -14,6 +14,7 @@ class PayWechatRefundNotifyWrapper
 {
     public $get = null;
     private $request;
+    private $uniacid = 0;
 
     public function __construct(Request $request)
     {
@@ -61,6 +62,7 @@ class PayWechatRefundNotifyWrapper
 
         $data = (array)$this->getReqInfoData($this->get);
         $data['module'] = $moduleName;
+        $data['uniacid'] = $this->uniacid;
 
         try {
             $payPath = strval("\app\\{$moduleName}\\service\PayService");
@@ -127,6 +129,8 @@ class PayWechatRefundNotifyWrapper
             $settings = unserialize($item['settings']);
             if ($settings && $settings['wxpay'] && $settings['wxpay']['appid'] == $appid) {
                 $apikey = $settings['wxpay']['apikey'];
+                $uniacid = $item['uniacid'];
+                $this->uniacid = $uniacid;
             }
         }
         return $apikey;
@@ -144,7 +148,13 @@ class PayWechatRefundNotifyWrapper
     private function getTextXml()
     {
         $resultXml = <<<EOF
-            <xml><return_code>SUCCESS</return_code><appid><![CDATA[wx21490d8841df7637]]></appid><mch_id><![CDATA[1606994267]]></mch_id><nonce_str><![CDATA[6e690d882dfc4f50df7cff71c2d0aa84]]></nonce_str><req_info><![CDATA[cnPSF/Aqj5fx7OA8CetNSqKUdS6uTTKVcvogonC9QHiq7xzt+7CEWHCdQ2KS3ou6ejkI1Z3L9Y+46yIBzFOBzuF5QCfg4Q106gMtw2DDsictyrET3MxIsIYciD3VuR/wwOUCGKMr1cPOn8X/wR888fhzJ987uPh4iVgj2lm5CBbRkglSlOCM67oW76f7h4dw/YydkUiKOxSnEvIXMQQjkXml6XYU68w/wbq9ltVazOlaH1urWUwselbKspQld2c//rPiefGRcR2RCriruGydt4k8+4YvsbEJNbhFy/HoYbVmlYgmKYqFrt+yw5vr/9pPMyJSdutN4yMjx0l1n93BRplDphvLJ+5asT1Tae51/2F2JVGYt/Qn4pnG9WFAeM74eNqWA4xlHVmG5CRKtbn8/nZlLtelGLYiuC6FTboDOHSBYcnKOM8Cy29pd79C+JFOwN6shNR6mCOrQLdHEzP6Ch3u5VTlTl/qqRIRlbFD90UmkwFJDxRcNT/PL+4KzC7RVlksH1fvjSAbsNAHGpzZlNGJrg8FyDBdx25bAR4nxoyciIGDs7/aXICgk3vUGKXm/FpLL9umaNxoX5+Gopl5mAVkMq4qV9Z028A8CXCbiZ6STNguxbTuIfJbb/TA65msuXxfr/9J5GYoZqKLmEKaiJa1Jl0XjW6SCZDlknpG3wgeNlFBQEsh215tlSrthyzj79Im5tqRu27eTTK373cN5gN3BnvBSNFarWpf+4ua63Qp5y0LaUS9d9cf3t4N6GOQnjjP4KlNVGnPzGCm+TofwQreDOM4z2RxyKvscnPEhTefNEWMhCtoMR4IA08fyqk8yrNTlEktZumjmwTVlBnYMewEuhOi78cEp2fvheCaN7ZrgXIncMYheWYeLpSFbZirjpruqGJgkvrCsTbUKnhxQdXS2qyVAZzWDMWQEqsX/tn5qj33eSqY31oquJdmQTB2VW8te5yk6veEV7p5JreKKR9HDqm/0JVo5FDy3FIwYTtX5z2FV22UV8M6hVFRLYbIhwyxc3CF9k6hFXndDu48xaCZMLlGbK2Cm+dnob7fV3qJ5w5nHqa1lDCiYJBBnu4rMVCRpU0XyPmbK+ULhNMoSSX6Y6jLCTGTRPrBFBgeZJYlRyhn4CkFkTCX24Hf9R08]]></req_info></xml>
+            <xml>
+            <return_code>SUCCESS</return_code>
+            <appid> <![CDATA[wx21490d8841df7637]]> </appid>
+            <mch_id> <![CDATA[1606994267]]> </mch_id>
+            <nonce_str> <![CDATA[6e690d882dfc4f50df7cff71c2d0aa84]]> </nonce_str>
+            <req_info> <![CDATA[cnPSF/Aqj5fx7OA8CetNSqKUdS6uTTKVcvogonC9QHiq7xzt+7CEWHCdQ2KS3ou6ejkI1Z3L9Y+46yIBzFOBzuF5QCfg4Q106gMtw2DDsictyrET3MxIsIYciD3VuR/wwOUCGKMr1cPOn8X/wR888fhzJ987uPh4iVgj2lm5CBbRkglSlOCM67oW76f7h4dw/YydkUiKOxSnEvIXMQQjkXml6XYU68w/wbq9ltVazOlaH1urWUwselbKspQld2c//rPiefGRcR2RCriruGydt4k8+4YvsbEJNbhFy/HoYbVmlYgmKYqFrt+yw5vr/9pPMyJSdutN4yMjx0l1n93BRplDphvLJ+5asT1Tae51/2F2JVGYt/Qn4pnG9WFAeM74eNqWA4xlHVmG5CRKtbn8/nZlLtelGLYiuC6FTboDOHSBYcnKOM8Cy29pd79C+JFOwN6shNR6mCOrQLdHEzP6Ch3u5VTlTl/qqRIRlbFD90UmkwFJDxRcNT/PL+4KzC7RVlksH1fvjSAbsNAHGpzZlNGJrg8FyDBdx25bAR4nxoyciIGDs7/aXICgk3vUGKXm/FpLL9umaNxoX5+Gopl5mAVkMq4qV9Z028A8CXCbiZ6STNguxbTuIfJbb/TA65msuXxfr/9J5GYoZqKLmEKaiJa1Jl0XjW6SCZDlknpG3wgeNlFBQEsh215tlSrthyzj79Im5tqRu27eTTK373cN5gN3BnvBSNFarWpf+4ua63Qp5y0LaUS9d9cf3t4N6GOQnjjP4KlNVGnPzGCm+TofwQreDOM4z2RxyKvscnPEhTefNEWMhCtoMR4IA08fyqk8yrNTlEktZumjmwTVlBnYMewEuhOi78cEp2fvheCaN7ZrgXIncMYheWYeLpSFbZirjpruqGJgkvrCsTbUKnhxQdXS2qyVAZzWDMWQEqsX/tn5qj33eSqY31oquJdmQTB2VW8te5yk6veEV7p5JreKKR9HDqm/0JVo5FDy3FIwYTtX5z2FV22UV8M6hVFRLYbIhwyxc3CF9k6hFXndDu48xaCZMLlGbK2Cm+dnob7fV3qJ5w5nHqa1lDCiYJBBnu4rMVCRpU0XyPmbK+ULhNMoSSX6Y6jLCTGTRPrBFBgeZJYlRyhn4CkFkTCX24Hf9R08]]> </req_info>
+            </xml>
 EOF;
         return trim($resultXml);
     }

@@ -79,7 +79,7 @@ trait ServiceTraits
                 $list = Db::name($this->tableName)->field($field)->where($where, $op, $condition)->order($order)->select()->toArray();
             } else {
                 $temp = Db::name($this->tableName)->field($field)->where($where, $op, $condition)->order($order)->select()->toArray();
-                $rs   = [];
+                $rs = [];
                 if (!empty($temp)) {
                     foreach ($temp as $key => &$row) {
                         if (isset($row[$keyField])) {
@@ -180,12 +180,56 @@ trait ServiceTraits
     // 获取查询条件
     private function getWhere($where = null): array
     {
-        $op        = null;
+        $op = null;
         $condition = null;
         if (is_array($where) && is_string($where[0]) && is_array($where[1])) {
-            $op    = $where[1];
+            $op = $where[1];
             $where = $where[0];
         }
         return ['where' => $where, 'op' => $op, 'condition' => $condition];
+    }
+
+    // 表是否存在
+    public function hasTable()
+    {
+        $tables = Db::query("SHOW TABLES LIKE '" . tablename($this->tableName) . "'");
+        return !empty($tables);
+    }
+
+    // 字段是否存在
+    public function hasField($field)
+    {
+        $fields = Db::name($this->tableName)->getTableFields();
+        return in_array($field, $fields);
+    }
+
+    // 添加字段
+    public function addField($field, $type = 'varchar', $length = 255, $default = '', $isNull = 1, $comment = '')
+    {
+        if ($this->hasField($field)) {
+            return true;
+        }
+        $sql = "ALTER TABLE " . tablename($this->tableName) . " ADD COLUMN `{$field}` {$type}({$length}) " . ($default ? "DEFAULT '{$default}'" : '') . ($isNull ? 'NULL' : 'NOT NULL') . " COMMENT '{$comment}' ";
+        return Db::execute($sql);
+    }
+
+    // 删除字段
+    public function delField($field)
+    {
+        if (!$this->hasField($field)) {
+            return true;
+        }
+        $sql = "ALTER TABLE " . tablename($this->tableName) . " DROP COLUMN `{$field}`";
+        return Db::execute($sql);
+    }
+
+    // 修改字段
+    public function updateField($oldFiled, $field, $type = 'varchar', $length = 255, $default = '', $isNull = 1, $comment = '')
+    {
+        if (!$this->hasField($field)) {
+            return true;
+        }
+        $sql = "ALTER TABLE " . tablename($this->tableName) . " CHANGE `{$oldFiled}` `{$field}` {$type}({$length}) " . ($default ? "DEFAULT '{$default}'" : '') . ($isNull ? 'NULL' : 'NOT NULL') . " COMMENT '{$comment}' ";
+        return Db::execute($sql);
     }
 }

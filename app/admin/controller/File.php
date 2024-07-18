@@ -14,6 +14,7 @@ namespace app\admin\controller;
 
 use xsframe\base\AdminBaseController;
 use xsframe\enum\UserRoleKeyEnum;
+use xsframe\facade\service\DbServiceFacade;
 use xsframe\wrapper\FileWrapper;
 use xsframe\util\ErrorUtil;
 use xsframe\util\FileUtil;
@@ -33,6 +34,16 @@ class File extends AdminBaseController
 
         $this->curUniacid = $this->params['uniacid'] ?? $this->uniacid;
         $this->curModule = $this->params['module'] ?? $this->module;
+
+        // 校验字段是否存在 TODO 20240718 待优化
+        $hasField = DbServiceFacade::name("sys_attachment")->hasField('client_name');
+        if (empty($hasField)) {
+            DbServiceFacade::name("sys_attachment")->addField('client_name', 'varchar', '30', 'web', 0, '上传图片用户端名称常见的 web管理后台，pc客户端，store等等');
+        }
+        $hasField = DbServiceFacade::name("sys_attachment_group")->hasField('client_name');
+        if (empty($hasField)) {
+            DbServiceFacade::name("sys_attachment_group")->addField('client_name', 'varchar', '30', 'web', 0, '上传图片用户端名称常见的 web管理后台，pc客户端，store等等');
+        }
     }
 
     // 上传
@@ -86,7 +97,7 @@ class File extends AdminBaseController
         $type = $this->params['type'] ?? 0;
         $clientName = $this->params['client'] ?? 'web';
 
-        $list = Db::name('sys_attachment_group')->where(['uniacid' => $uniacid, 'type' => $type,'client_name' => $clientName])->order("displayorder desc,id desc")->select();
+        $list = Db::name('sys_attachment_group')->where(['uniacid' => $uniacid, 'type' => $type, 'client_name' => $clientName])->order("displayorder desc,id desc")->select();
         $list = $list->toArray();
 
         $this->returnData($list);

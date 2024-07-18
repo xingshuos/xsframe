@@ -89,7 +89,7 @@ abstract class BaseController extends Controller
      */
     protected function _initialize()
     {
-        $this->authkey = "xsframe_";
+        $this->authkey = env('AUTHKEY') ?? 'xsframe_';
         $this->expire = 3600 * 24 * 10; // 10天有效期
 
         $this->view = $this->app['view'];
@@ -236,6 +236,10 @@ abstract class BaseController extends Controller
             $attachArr = $this->params['attach'] ?? $this->params['body'];
             $attachArr = explode(":", $attachArr);
             $uniacid = $attachArr[1] ?? 0;
+        }
+        $isWxRefund = !empty($this->params['appid']) && !empty($this->params['mch_id']) && !empty($this->params['nonce_str']) && !empty($this->params['req_info']);
+        if ($isWxRefund) {
+            $uniacid = 1;
         }
         # end
 
