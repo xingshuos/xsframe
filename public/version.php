@@ -10,5 +10,5 @@
 // | Author: guiHai <786824455@qq.com>
 // +----------------------------------------------------------------------
 
-define('IMS_VERSION', '1.0.6');
-define('IMS_VERSION_TIME', '1717041762');
+define('IMS_VERSION', '1.0.8');
+define('IMS_VERSION_TIME', '1721299649');
