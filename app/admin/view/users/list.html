@@ -94,11 +94,19 @@
                         {$row['createtime']|date="H:i:s"}
                     </td>
                     <td>
-                        {$row['logintime']|date="Y-m-d"}<br>
-                        {$row['logintime']|date="H:i:s"}
+                        {if empty($row['logintime'])}
+                            尚未登录
+                        {else}
+                            {$row['logintime']|date="Y-m-d"}<br>
+                            {$row['logintime']|date="H:i:s"}
+                        {/if}
                     </td>
                     <td>
-                        {$row['lastip']}
+                        {if empty($row['logintime'])}
+                            尚未登录
+                        {else}
+                            {$row['lastip']}
+                        {/if}
                     </td>
                     <td>
                         <span class='label {if $row['status']==1}label-success{else}label-default{/if}'
