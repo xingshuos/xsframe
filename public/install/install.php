@@ -990,6 +990,9 @@ PASSWORD = {db-password}
 HOSTPORT = {db-port}
 PREFIX = {db-prefix}
 
+[SITEMAP]
+TOKEN = data.zz.baidu.com-token
+
 EOF;
     return trim($cfg);
 }

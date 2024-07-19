@@ -295,7 +295,6 @@ abstract class BaseController extends Controller
                             if (env('DEFAULT_APP') == $this->module) {
                                 $uniacid = $this->websiteSets['uniacid'] ?? 0; // 当访问系统默认应用且没有访问权限时，默认跳转到系统默认商户
                             } else {
-
                                 if ($this->request->isAjax()) {
                                     throw new ApiException("当前商户暂无应用（{$this->module}）的访问权限，请联系管理员!", 403);
                                 } else {

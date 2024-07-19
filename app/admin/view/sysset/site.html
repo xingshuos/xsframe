@@ -50,7 +50,7 @@
         </div>
 
         <div class="form-group">
-            <label class="col-lg control-label must">默认商户</label>
+            <label class="col-lg control-label">默认商户</label>
             <div class="col-sm-9 col-xs-12">
                 <select name="data[uniacid]" class="form-control" onchange="changeUniacid(this)">
                     <option value="0" {if empty($websiteSets['uniacid'])}selected{/if}>未选择</option>
@@ -58,7 +58,7 @@
                     <option value="{$row['uniacid']}" {if $row['uniacid'] == $websiteSets['uniacid']}selected{/if}>{$row['name']}</option>
                     {/foreach}
                 </select>
-                <span class="help-block">选择默认商户后，未选择商户的应用初始数据按照默认商户的数据显示</span>
+                <span class="help-block text-primary">解释：主域名没有绑定单独的商户时，且默认应用不是admin管理后台 此时会显示默认商户的应用数据。</span>
             </div>
         </div>
 
@@ -69,7 +69,15 @@
                 <label class="col-lg control-label">LOGO</label>
                 <div class="col-sm-9 col-xs-12">
                     {:tpl_form_field_image('data[logo]', $websiteSets['logo'])}
-                    <span class='help-block'>建议尺寸:300*300</span>
+                    <span class='help-block'>建议尺寸:300px*300px</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-lg control-label">左侧宣传图</label>
+                <div class="col-sm-9 col-xs-12">
+                    {:tpl_form_field_image('data[poster]', $websiteSets['poster'])}
+                    <span class='help-block'>建议尺寸:500px*482px</span>
                 </div>
             </div>
 
