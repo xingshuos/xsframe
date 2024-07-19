@@ -14,6 +14,7 @@ namespace app\admin\controller;
 
 use xsframe\base\AdminBaseController;
 use xsframe\enum\SysSettingsKeyEnum;
+use xsframe\facade\wrapper\SystemWrapperFacade;
 use xsframe\util\ArrayUtil;
 use xsframe\util\FileUtil;
 use xsframe\util\RandomUtil;
@@ -189,21 +190,31 @@ class System extends AdminBaseController
                 $this->settingsController->reloadAccountSettings($uniacid);
             }
 
+            # 分配应用
+            $this->setAccountModules($uniacid);
+
             $this->success(["url" => webUrl("account", ['module' => $this->params['module'], 'tab' => str_replace("#tab_", "", $this->params['tab'])])]);
         }
 
-        $attachmentPath = IA_ROOT . "/public/attachment/images/{$this->uniacid}";
+        $attachmentPath = IA_ROOT . "/public/attachment/images/{$uniacid}";
         $localAttachment = FileUtil::fileDirExistImage($attachmentPath);
 
+        $identifies = Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'deleted' => 0])->order('displayorder asc,id asc')->column('module');
         $hostList = Db::name('sys_account_host')->where(['uniacid' => $uniacid])->order('id asc')->select();
         $item = Db::name('sys_account')->where(['uniacid' => $uniacid])->find();
+
+        $modules = Db::name('sys_modules')->where(['identifie' => $identifies])->orderRaw("FIELD(identifie," . "'" . implode("','", $identifies) . "'" . ")")->select()->toArray();
+        foreach ($modules as &$module) {
+            $module['logo'] = !empty($module['logo']) ? tomedia($module['logo']) : $this->siteRoot . "/app/{$module['identifie']}/icon.png";
+        }
 
         $result = [
             'item'             => $item,
             'uniacid'          => $uniacid,
             'hostList'         => $hostList,
-            'postUrl'          => strval(url('system/attachment')),
             'accountSettings'  => $accountSettings,
+            'modules'          => $modules,
+            'postUrl'          => strval(url('system/attachment')),
             'local_attachment' => $localAttachment,
         ];
 
@@ -282,6 +293,41 @@ class System extends AdminBaseController
         }
 
         return '';
+    }
+
+    // 分配应用
+    private function setAccountModules($uniacid): bool
+    {
+        $modulesIds = $this->params['modulesids'] ?? [];
+        if (!empty($modulesIds)) {
+            Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'module' => Db::raw("not in ('" . implode("','", $modulesIds) . "')")])->update(['deleted' => 1]);
+            foreach ($modulesIds as $key => $identifie) {
+                $moduleInfo = Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'module' => $identifie])->find();
+                $updateData = [
+                    'uniacid'      => $uniacid,
+                    'displayorder' => $key + 1,
+                    'module'       => $identifie,
+                    'deleted'      => 0,
+                ];
+                if ($moduleInfo) {
+                    Db::name('sys_account_modules')->where(['id' => $moduleInfo['id']])->update($updateData);
+                } else {
+                    Db::name('sys_account_modules')->insert($updateData);
+                }
+            }
+            $isDefaultModule = Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'is_default' => 1])->count();
+            if (empty($isDefaultModule)) {
+                Db::name('sys_account_modules')->where(['uniacid' => $uniacid])->update(['is_default' => 0]);
+                Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'module' => $modulesIds[0]])->update(['is_default' => 1]);
+            }
+        } else {
+            Db::name('sys_account_modules')->where(['uniacid' => $uniacid])->update(['deleted' => 1]);
+        }
+
+        // 更新uniacid的应用列表
+        SystemWrapperFacade::reloadAccountModuleList($uniacid);
+
+        return true;
     }
 
 }

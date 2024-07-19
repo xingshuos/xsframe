@@ -3,8 +3,8 @@
 error_reporting(E_ALL ^ E_NOTICE);
 
 use think\facade\Config;
-use think\facade\Route;
 use think\response\View;
+use xsframe\facade\wrapper\SystemWrapperFacade;
 use xsframe\util\OpensslUtil;
 use xsframe\util\StringUtil;
 use xsframe\wrapper\SettingsWrapper;
@@ -51,7 +51,12 @@ if (!function_exists('tablename')) {
 if (!function_exists('m')) {
     function m($moduleName): bool
     {
-        return is_dir(IA_ROOT . "/app/" . $moduleName);
+        $isModule = false;
+        $systemModuleList = SystemWrapperFacade::getAllModuleList();
+        if (in_array($moduleName, $systemModuleList) && is_dir(IA_ROOT . "/app/" . $moduleName)) {
+            $isModule = true;
+        }
+        return $isModule;
     }
 }
 

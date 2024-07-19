@@ -104,7 +104,10 @@ class Account extends Base
                 $uniacid = Db::name('sys_account')->insertGetId($data);
             }
 
+            # 分配应用
             $this->setAccountModules($uniacid);
+
+            # 绑定域名
             $this->bindHost($uniacid);
 
             # 重新加载商户配置信息
@@ -222,9 +225,9 @@ class Account extends Base
     }
 
     // 分配应用
-    private function setAccountModules($uniacid)
+    private function setAccountModules($uniacid): bool
     {
-        $modulesIds = $this->params['modulesids'];
+        $modulesIds = $this->params['modulesids'] ?? [];
         if (!empty($modulesIds)) {
             Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'module' => Db::raw("not in ('" . implode("','", $modulesIds) . "')")])->update(['deleted' => 1]);
             foreach ($modulesIds as $key => $identifie) {
