@@ -140,7 +140,7 @@ define(['jquery'], function ($) {
             } else {
                 html += "<div class='multi-audio-item' data-" + key + "='" + data[key] + "' data-name='" + name + "'>";
                 html += "<div class='input-group'><input type='hidden' name='" + id + "' value='" + data[key] + "'> ";
-                html += "<input type='text' class='form-control img-textname' readonly='' value='" + data[text] + "'>";
+                html += "<input type='text' class='form-control img-textname' readonly='' value='" + (data[valuetext] ? data[valuetext] : data[text]) + "'>";
                 html += "<div class='input-group-btn'><button class='btn btn-default' onclick='biz.selector.remove(this,\"" + name + "\")' type='button'><i class='fa fa-remove'></i></button></div></div></div>"
             }
             if (multi === 0) {

@@ -43,7 +43,11 @@ if (!function_exists('tpl_selector')) {
         $titles = '';
 
         foreach ($options['items'] as $item) {
-            $titles .= $item[$options['text']];
+            if( $item[$options['valuetext']] ){
+                $titles .= $item[$options['valuetext']];
+            }else{
+                $titles .= $item[$options['text']];
+            }
 
             if (1 < count($options['items'])) {
                 $titles .= '; ';
