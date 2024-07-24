@@ -294,21 +294,21 @@ class ModulesWrapper
         $manifest['upgrade'] = trim($manifest['upgrade']);
         if (strexists($manifest['install'], '.php')) {
             if (file_exists($moduleDir . $manifest['install'])) {
-                unlink($moduleDir . $manifest['install']);
+                @unlink($moduleDir . $manifest['install']);
             }
         }
         if (strexists($manifest['uninstall'], '.php')) {
             if (file_exists($moduleDir . $manifest['uninstall'])) {
-                unlink($moduleDir . $manifest['uninstall']);
+                @unlink($moduleDir . $manifest['uninstall']);
             }
         }
         if (strexists($manifest['upgrade'], '.php')) {
             if (file_exists($moduleDir . $manifest['upgrade'])) {
-                unlink($moduleDir . $manifest['upgrade']);
+                @unlink($moduleDir . $manifest['upgrade']);
             }
         }
         if (file_exists($moduleDir . 'manifest.xml')) {
-            unlink($moduleDir . 'manifest.xml');
+            @unlink($moduleDir . 'manifest.xml');
         }
     }
 

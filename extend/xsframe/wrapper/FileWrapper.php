@@ -72,7 +72,7 @@ class FileWrapper
         $filePath = $attachmentPath . $fileUrl;
 
         if (is_file($filePath)) {
-            unlink($filePath);
+            @unlink($filePath);
         }
 
         # TODO 删除远程附件
