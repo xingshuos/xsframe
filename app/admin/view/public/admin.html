@@ -3,7 +3,11 @@
 {block name='title'}{$pageTitle?:'后台管理'}-{$moduleInfo['name'] ? $moduleInfo['name'] : ($websiteSets['name']?:'星数引擎')}{/block}
 
 {block name='style'}
-
+<style>
+    .text-more{
+        margin-left: 10px !important;
+    }
+</style>
 {/block}
 
 {block name='header'}
@@ -125,7 +129,7 @@
             <li {if $sysmenu['active'] && !$selSystemNav}class="active"{/if}>
                 <a data-href="{:webUrl($sysmenu['route'])}" class="wb-nav-item" data-module="{$module}" data-route="{$sysmenu['route']}">
                     {if !empty($sysmenu['icon'])}
-                    <i class="icon {$sysmenu['icon']}"></i>
+                    <i class="icon {if strlen($sysmenu['text']) == 9}text-more{/if} {$sysmenu['icon']}"></i>
                     {/if}
                     <span class="wb-nav-title {if in_array($sysmenu['route'],$oneMenuNoticePoint??[])}point{/if}">{$sysmenu['text']}</span>
                 </a>

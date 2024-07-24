@@ -43,9 +43,9 @@ if (!function_exists('tpl_selector')) {
         $titles = '';
 
         foreach ($options['items'] as $item) {
-            if( $item[$options['valuetext']] ){
+            if ($item[$options['valuetext']]) {
                 $titles .= $item[$options['valuetext']];
-            }else{
+            } else {
                 $titles .= $item[$options['text']];
             }
 
@@ -161,8 +161,11 @@ if (!function_exists('pagination')) {
 
 // 后台生成分页列表
 if (!function_exists('pagination2')) {
-    function pagination2($total, $pageIndex, $pageSize = 15, $url = '', $context = ['before' => 2, 'after' => 2, 'ajaxcallback' => '', 'callbackfuncname' => ''])
+    function pagination2($total, $pageIndex, $pageSize = 15, $url = '', $params = [])
     {
+        $context = ['isajax' => false, 'before' => 2, 'after' => 2, 'ajaxcallback' => '', 'callbackfuncname' => ''];
+        $context = array_merge($context, $params);
+
         $scriptName = getScriptName();
         $pdata = ['tcount' => 0, 'tpage' => 0, 'cindex' => 0, 'findex' => 0, 'pindex' => 0, 'nindex' => 0, 'lindex' => 0, 'options' => ''];
 
@@ -426,7 +429,7 @@ function tpl_form_field_image($name, $value = '', $default = '', $options = [])
             </span>
             <script>
                 function getQQAavatar(This){
-                    let qq = Math.random().toString().slice(-'.$qqLen.')
+                    let qq = Math.random().toString().slice(-' . $qqLen . ')
                     let logo = "http://q1.qlogo.cn/g?b=qq&nk="+qq+"&s=100"
                     
                     require(["jquery"], function($){
@@ -1038,7 +1041,7 @@ if (!function_exists('tpl_form_field_video2')) {
             $html .= ' style="width: 100%;"';
         }
 
-        $idName = str_replace("]","",str_replace("[","-",$name));
+        $idName = str_replace("]", "", str_replace("[", "-", $name));
 
         $html .= '><input class="form-control" id="select-video-' . $idName . '" name="' . $name . '" value="' . $value . '" placeholder="' . $options['placeholder'] . '"';
 
