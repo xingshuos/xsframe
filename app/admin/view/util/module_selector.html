@@ -2,9 +2,10 @@
     <thead>
     <tr>
         <td>应用名称</td>
-        <td>作者</td>
-        <td>版本</td>
-        <td>操作</td>
+        <td style="width: 100px">作者</td>
+        <td style="width: 80px">版本</td>
+        <td style="width: 120px">安装时间</td>
+        <td style="width: 120px">操作</td>
     </tr>
     </thead>
     <tbody class="ui-sortable container">
@@ -26,6 +27,11 @@
                 </td>
                 <td>
                     {$row['version']}
+                </td>
+                <td>
+                    {:date("Y-m-d",$row['create_time'])}
+                    <br/>
+                    {:date("H:i:s",$row['create_time'])}
                 </td>
                 <td>
                     <a href="javascript:void(0);" class="label label-primary selectit" data-id="{$row['id']}" data-json='{:json_encode($row);}'>

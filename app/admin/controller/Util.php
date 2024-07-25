@@ -43,7 +43,7 @@ class Util extends Base
             $where['name'] = Db::raw("like '%" . trim($keywords) . "%'");
         }
 
-        $list = Db::name('sys_modules')->where($where)->limit($page_start, $page_size)->select();
+        $list = Db::name('sys_modules')->where($where)->order('id desc')->limit($page_start, $page_size)->select();
         $count = Db::name('sys_modules')->where($where)->count();
 
         if (!empty($list)) {
