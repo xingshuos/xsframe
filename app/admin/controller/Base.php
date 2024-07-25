@@ -30,7 +30,7 @@ class Base extends AdminBaseController
             if (!empty($adminSession)) {
 
                 # 非管理员用户一律不得进入平台端
-                if ($adminSession['role'] != 'owner') {
+                if ($adminSession['role'] != 'owner' && $this->controller != 'login') {
                     $moduleInfo = UserWrapper::getModuleInfoByUserId($this->adminSession['uid']);
                     $uniacid = $moduleInfo['uniacid'];
                     $moduleName = $moduleInfo['module'];
@@ -40,8 +40,8 @@ class Base extends AdminBaseController
                         if ($adminSession['role'] == 'manager') {
                             $accountModuleList = SystemWrapperFacade::getAccountModuleList($uniacid);
                             if (!in_array($moduleName, $accountModuleList)) {
-                                // header('location: ' . webUrl('admin/system/index', ['i' => $uniacid]));
-                                // exit();
+                                header('location: ' . webUrl('admin/system/index', ['i' => $uniacid]));
+                                exit();
                             }
                         }
                         $realUrl = UserWrapper::getModuleOneUrl($moduleName, true);

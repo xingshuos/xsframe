@@ -120,7 +120,7 @@ class FileUtil
      * @param array $unSyncFolder -- 不同步的文件夹名称
      * @return bool
      */
-    public static function oldDirToNewDir($path, $newPath, string $oldPath = '', array $unSyncFiles = ['icon.png'], array $unSyncFolder = ['source']): bool
+    public static function oldDirToNewDir($path, $newPath, string $oldPath = '', array $unSyncFiles = [], array $unSyncFolder = ['source']): bool
     {
         if (empty($oldPath)) {
             $oldPath = $path;

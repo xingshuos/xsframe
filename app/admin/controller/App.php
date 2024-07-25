@@ -280,6 +280,7 @@ class App extends Base
             $packagesPath . "/manifest.xml",
             $packagesPath . "/uninstall.php",
             $packagesPath . "/upgrade.php",
+            $packagesPath . "/icon.png",
         ];
         FileUtil::rmDirs($packagesPath, $unFiles);
         return true;
