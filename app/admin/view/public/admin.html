@@ -139,7 +139,7 @@
 
         {if in_array($userInfo['role'],['operator','owner','manager']) && !$isSystem}
         <li class="sysset wb-nav-system">
-            <a href="{:url('admin/system/index')}" target="_blank">
+            <a href="{:url('admin/system/index',['i' => $uniacid])}" target="_blank">
                 <i class="icon icon-cog"></i>
                 <span class="wb-nav-title">商户管理</span>
             </a>
