@@ -263,8 +263,12 @@ class System extends AdminBaseController
         $module = $this->params['module'] ?? '';
 
         if (!empty($uniacid) && !empty($module)) {
+            # 设置默认应用
             Db::name('sys_account_modules')->where(['uniacid' => $uniacid])->update(['is_default' => 0]);
             Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'module' => $module])->update(['is_default' => 1]);
+
+            # 切换用户的默认应用
+            Db::name('sys_account_users')->where(['uniacid' => $uniacid, 'user_id' => $this->userId])->update(['module' => $module]);
         }
 
         show_json(1);

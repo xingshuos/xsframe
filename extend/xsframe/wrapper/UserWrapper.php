@@ -143,7 +143,7 @@ class UserWrapper
     }
 
     // 通过用户id获取默认插件
-    public static function getModuleInfoByUserId($userId)
+    public static function getModuleInfoByUserId($userId): array
     {
         $moduleName = null;
         $uniacid = 0;

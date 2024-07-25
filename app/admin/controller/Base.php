@@ -6,6 +6,7 @@ namespace app\admin\controller;
 
 use think\facade\Config;
 use xsframe\base\AdminBaseController;
+use xsframe\facade\wrapper\SystemWrapperFacade;
 use xsframe\wrapper\UserWrapper;
 
 class Base extends AdminBaseController
@@ -33,10 +34,18 @@ class Base extends AdminBaseController
                     $moduleInfo = UserWrapper::getModuleInfoByUserId($this->adminSession['uid']);
                     $uniacid = $moduleInfo['uniacid'];
                     $moduleName = $moduleInfo['module'];
-
                     if (!empty($moduleName)) {
+
+                        # 1.验证码管理员访问当前应用是否还有权限，如果没有就进入到商户管理页面
+                        if ($adminSession['role'] == 'manager') {
+                            $accountModuleList = SystemWrapperFacade::getAccountModuleList($uniacid);
+                            if (!in_array($moduleName, $accountModuleList)) {
+                                // header('location: ' . webUrl('admin/system/index', ['i' => $uniacid]));
+                                // exit();
+                            }
+                        }
                         $realUrl = UserWrapper::getModuleOneUrl($moduleName, true);
-                        $url = webUrl(rtrim($realUrl, '.html'), ['i' => $uniacid]);
+                        $url = webUrl(strval($realUrl), ['i' => $uniacid]);
                         header('location: ' . $url);
                     } else {
                         header('location: ' . url('/admin/error/index', ['type' => 403]));
