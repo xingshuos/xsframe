@@ -26,6 +26,7 @@
         {if m('xs_attachment')}<li class="{if $_GET['tab'] == 'attachment'}active{/if}"><a href="#tab_attachment">附件设置</a></li>{/if}
         {if m('xs_sms')}<li class="{if $_GET['tab']=='sms'}active{/if}"><a href="#tab_sms">短信设置</a></li>{/if}
         {if m('xs_smtp')}<li class="{if $_GET['tab']=='smtp'}active{/if}"><a href="#tab_smtp">SMTP服务器</a></li>{/if}
+        {if m('xs_mind')}<li class="{if $_GET['tab']=='mind'}active{/if}"><a href="#tab_mind">传播大脑</a></li>{/if}
     </ul>
 
     <div class="tab-content">
@@ -68,6 +69,11 @@
         <!--短信设置-->
         <div class="tab-pane {if $_GET['tab']=='sms'}active{/if}" id="tab_sms">
             {include file="../app/admin/view/public/sets/system/tabs/sms.html" /}
+        </div>
+        
+        
+          <div class="tab-pane {if $_GET['tab']=='mind'}active{/if}" id="tab_mind">
+            {include file="../app/admin/view/public/sets/system/tabs/mind.html" /}
         </div>
 
         <!-- 邮箱通知 -->
