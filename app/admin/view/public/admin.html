@@ -69,31 +69,31 @@
                         </a>
                     </li>
                 {else}
-                    <li class="wb-nav-system" data-href="{:url('admin/system/index')}" data-module="{$module}">
-                        <a href="">
-                            <i class="icon icon-exchange" style="font-size: 22px;"></i>
-                            <span style="display: block">切换应用</span>
+                    <li class="wb-nav-system"><!-- data-href="{:url('admin/system/index')}" data-module="{$module}" -->
+                        <a href="{:url('admin/system/index',['i' => $_GET['i']])}">
+                            <i class="icon icon-th-large" style="font-size: 22px;"></i>
+                            <span style="display: block">应用列表</span>
                         </a>
                     </li>
 
                     {if in_array($userInfo['role'],['operator','owner','manager']) && !$isSystem}
-                        <li class="wb-nav-system" data-href="{:url('admin/system/account')}" data-module="{$module}">
-                            <a href="">
+                        <li class="wb-nav-system"><!-- data-href="{:url('admin/system/account')}" data-module="{$module}" -->
+                            <a href="{:url('admin/system/account',['i' => $_GET['i']])}">
                                 <i class="icon icon-cog" style="font-size: 22px;"></i>
                                 <span style="display: block">系统设置</span>
                             </a>
                         </li>
-                        <li class="wb-nav-system" data-href="{:url('admin/perm/user')}" data-module="{$module}">
-                            <a href="">
+                        <li class="wb-nav-system"><!-- data-href="{:url('admin/perm/user')}" data-module="{$module}" -->
+                            <a href="{:url('admin/perm/user',['i' => $_GET['i']])}">
                                 <i class="icon icon-tasks" style="font-size: 22px;"></i>
                                 <span style="display: block">权限管理</span>
                             </a>
                         </li>
                     {/if}
 
-                    <li class="wb-nav-system" data-href="{:url('admin/system/profile')}" data-module="{$module}">
-                        <a href="">
-                            <i class="icon icon-lock " style="font-size: 22px;"></i>
+                    <li class="wb-nav-system"><!-- data-href="{:url('admin/system/profile')}" data-module="{$module}" -->
+                        <a href="{:url('admin/system/profile',['i' => $_GET['i']])}">
+                            <i class="icon icon-lock" style="font-size: 22px;"></i>
                             <span style="display: block">修改密码</span>
                         </a>
                     </li>
@@ -138,17 +138,25 @@
         {/foreach}
 
         {if in_array($userInfo['role'],['operator','owner','manager']) && !$isSystem}
-        <li class="sysset wb-nav-system" data-module="{$module}" {if $selSystemNav}style="background-color:#161f29;"{/if}>
-            <a href="">
+        <li class="sysset wb-nav-system">
+            <a href="{:url('admin/system/index')}" target="_blank">
                 <i class="icon icon-cog"></i>
-                <span class="wb-nav-title" data-href="">系统管理</span>
+                <span class="wb-nav-title">商户管理</span>
             </a>
         </li>
+        <!-- 旧代码iframe方式 -->
+        <!-- <li class="sysset wb-nav-system" data-module="{$module}" {if $selSystemNav}style="background-color:#161f29;"{/if}>
+        <a href="">
+            <i class="icon icon-cog"></i>
+            <span class="wb-nav-title" data-href="">系统管理</span>
+        </a>
+        </li> -->
         {/if}
 
     </ul>
 </div>
 
+<!-- 这是以前的系统菜单逻辑，放在缓存中做验证 selSystemNav 判定是否系统菜单 -->
 {if empty($selSystemNav)}
 
     <!-- 二级导航 -->
@@ -211,7 +219,3 @@
 {block name='script'}
 
 {/block}
-
-</body>
-
-</html>

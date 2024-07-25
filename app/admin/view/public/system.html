@@ -1,0 +1,135 @@
+{extend name="../../admin/view/public/admin_base"}
+
+{block name='title'}{$pageTitle?:'系统管理'}-($account['name']?:'星数引擎')}{/block}
+
+{block name='header'}
+<div class="wb-header" style="position: fixed;">
+    <div class="logo {if !empty($foldNav)}small{/if}">
+        <img class="logo-img" src="{:tomedia($account['logo']?:'images/global/logo.png')}">
+        <div class="title">{$account['name']?:'星数引擎'}</div>
+    </div>
+
+    <ul>
+        {if $isSystem}
+            <li>
+                <a href="{:url('home/welcome')}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="系统概况"><i class="icon icon-home"></i></a>
+            </li>
+        {else}
+            {if in_array($userInfo['role'],['operator','owner','manager']) }
+                <li class="sysset wb-nav-system" data-module="{$module}" style="padding: 0;width: 60px;">
+                    <a href="" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="系统概况"><i class="icon icon-home" style="font-size: 16px;"></i></a>
+                </li>
+            {/if}
+        {/if}
+    </ul>
+
+    <div class="wb-header-flex"></div>
+
+    <ul>
+        <li class="dropdown ellipsis">
+            <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                {$account['name']}
+                <span></span>
+            </a>
+
+            <ul class="dropdown-menu">
+                <li class="wb-nav-system">
+                    <a href="{:url('admin/system/index',['i' => $uniacid])}">
+                        <i class="icon icon-th-large" style="font-size: 22px;"></i>
+                        <span style="display: block">应用列表</span>
+                    </a>
+                </li>
+
+                <li class="wb-nav-system">
+                    <a href="{:url('admin/system/account',['i' => $uniacid])}">
+                        <i class="icon icon-cog" style="font-size: 22px;"></i>
+                        <span style="display: block">系统设置</span>
+                    </a>
+                </li>
+                <li class="wb-nav-system">
+                    <a href="{:url('admin/perm/user',['i' => $uniacid])}">
+                        <i class="icon icon-minus-sign" style="font-size: 22px;"></i>
+                        <span style="display: block">权限管理</span>
+                    </a>
+                </li>
+
+                <li class="wb-nav-system">
+                    <a href="{:url('admin/system/profile',['i' => $uniacid])}">
+                        <i class="icon icon-lock " style="font-size: 22px;"></i>
+                        <span style="display: block">修改密码</span>
+                    </a>
+                </li>
+
+                <li href="{:url('admin/login/logout')}" class="wb-header-logout">
+                    <a><i class="icon icon-off"></i> 退出系统</a>
+                </li>
+            </ul>
+        </li>
+        <li data-toggle="tooltip" data-placement="bottom" title="" href="{:url('admin/login/logout')}" data-original-title="退出" class="wb-header-logout">
+            <a><i class="icon icon-off"></i></a>
+        </li>
+    </ul>
+</div>
+{/block}
+
+{block name='menus'}
+
+<!-- 一级导航 -->
+<div class="wb-nav {if !empty($foldNav)}fold{/if}">
+    <p class="wb-nav-fold"><i class="icon icon-indent-left"></i></p>
+    <ul id="navheight">
+
+        <li class="{if $action == 'index'}active{/if}">
+            <a href="{:url('admin/system/index',['i' => $uniacid,'module' => $_GET['module']])}" class="wb-nav-item">
+                <i class="icon icon-th-large"></i>
+                <span class="wb-nav-title">应用列表</span>
+            </a>
+            <span class="wb-nav-tip">应用列表</span>
+        </li>
+
+        <li class="{if $action == 'profile'}active{/if}">
+            <a href="{:url('admin/system/profile',['i' => $uniacid,'module' => $_GET['module']])}" class="wb-nav-item">
+                <i class="icon icon-lock"></i>
+                <span class="wb-nav-title">修改密码</span>
+            </a>
+            <span class="wb-nav-tip">修改密码</span>
+        </li>
+
+        <li class="{if $action == 'user'}active{/if}">
+            <a href="{:url('admin/perm/user',['i' => $uniacid,'module' => $_GET['module']])}" class="wb-nav-item">
+                <i class="icon icon-minus-sign"></i>
+                <span class="wb-nav-title">权限管理</span>
+            </a>
+            <span class="wb-nav-tip">权限管理</span>
+        </li>
+
+        <li class="{if $action == 'account'}active{/if}">
+            <a href="{:url('admin/system/account',['i' => $uniacid,'module' => $_GET['module']])}" class="wb-nav-item">
+                <i class="icon icon-cog"></i>
+                <span class="wb-nav-title">商户设置</span>
+            </a>
+            <span class="wb-nav-tip">商户设置</span>
+        </li>
+    </ul>
+</div>
+{/block}
+
+{block name='copyright'}
+
+    {if !empty($account['copyright'])}
+        <div class="container-fluid footer text-center copyright-footer">
+            <div class="copyright">{$account['copyright'] | raw}</div>
+        </div>
+    {else}
+        {if !empty($websiteSets['copyright'])}
+            <div class="container-fluid footer text-center copyright-footer">
+                <div class="copyright">{$websiteSets['copyright'] | raw}</div>
+            </div>
+        {/if}
+    {/if}
+
+{/block}
+
+{block name='script'}
+
+{/block}

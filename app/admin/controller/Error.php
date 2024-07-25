@@ -19,7 +19,6 @@ class Error extends AdminBaseController
     public function index()
     {
         $type = $this->params['type'] ?? '403';
-        return $this->template($type);
+        return $this->template("/error/{$type}");
     }
-
 }

@@ -1,17 +1,25 @@
-{extend name="../../admin/view/public/admin"}
+{extend name="../../admin/view/public/admin_base"}
+
+{block name="style"}
+<style>
+    .wb-container{
+        margin: 0;
+        background: unset;
+    }
+</style>
+{/block}
 
 {block name='content'}
-
-<!--<link rel="stylesheet" href="__ADMIN_CSS__/other/error.css"/>-->
+<link rel="stylesheet" href="__ADMIN_CSS__/other/error.css"/>
 <div class="content">
     <img src="__ADMIN_IMG__/500.svg" alt="">
     <div class="content-r">
         <h1>500</h1>
         <p style="text-align: center;">抱歉，服务器出错了</p>
-<!--        <button class="pear-btn pear-btn-primary">返回首页</button>-->
+        <p class="flex-center">
+            <a class="btn btn-default" onclick="javascript:history.go(-1);">返回</a>
+        </p>
     </div>
 </div>
-
-
 {/block}
 

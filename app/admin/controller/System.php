@@ -33,7 +33,8 @@ class System extends AdminBaseController
         $this->pSize = 20;
         $condition = [
             'am.uniacid' => $this->uniacid,
-            'am.deleted' => 0
+            'm.status'   => 1,
+            'am.deleted' => 0,
         ];
 
         $field = "am.id,am.module,am.settings," . "m.name,m.identifie,m.logo,m.ability";

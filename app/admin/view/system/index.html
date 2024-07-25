@@ -1,4 +1,6 @@
-{extend name="../../admin/view/public/admin_base"}
+{extend name="../../admin/view/public/system"}
+
+{block name='title'}应用列表-系统管理-{$account['name']}{/block}
 
 {block name='style'}
 <style>
@@ -34,7 +36,6 @@
 {/block}
 
 {block name='content'}
-{include file="../app/admin/view/system/menu.html" /}
 
 <div class="page-header">当前位置：<span class="text-primary">应用管理</span></div>
 
