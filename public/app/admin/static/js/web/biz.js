@@ -22,7 +22,7 @@ define(['jquery'], function ($) {
             modalObj = $('#' + modalid);
             if (modalObj.length <= 0) {
                 var modal = '<div id="' + modalid + '"  class="modal fade" tabindex="-1">';
-                modal += '<div class="modal-dialog" style="width: 920px;">';
+                modal += '<div class="modal-dialog" style="width: 1020px;">';
                 modal += '<div class="modal-content">';
                 modal += '<div class="modal-header"><button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button><h3>数据选择器</h3></div>';
                 modal += '<div class="modal-body" >';
@@ -215,7 +215,7 @@ define(['jquery'], function ($) {
             modalObj = $('#' + modalid);
             if (modalObj.length <= 0) {
                 var modal = '<div id="' + modalid + '"  class="modal fade" tabindex="-1">';
-                modal += '<div class="modal-dialog" style="width: 920px;">';
+                modal += '<div class="modal-dialog" style="width: 1020px;">';
                 modal += '<div class="modal-content">';
                 modal += '<div class="modal-header"><button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button><h3>数据选择器</h3></div>';
                 modal += '<div class="modal-body" >';
@@ -388,7 +388,7 @@ define(['jquery'], function ($) {
             modalObj = $('#' + modalid);
             if (modalObj.length <= 0) {
                 var modal = '<div id="' + modalid + '"  class="modal fade" tabindex="-1">';
-                modal += '<div class="modal-dialog" style="width: 920px;">';
+                modal += '<div class="modal-dialog" style="width: 1020px;">';
                 modal += '<div class="modal-content">';
                 modal += '<div class="modal-header"><button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button><h3>数据选择器</h3></div>';
                 modal += '<div class="modal-body" >';
