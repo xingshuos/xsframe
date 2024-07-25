@@ -107,14 +107,14 @@
                 <tr>
                     <th style="width:40px;"></th>
                     <th style='width:60px'>ID</th>
-                    <th style='width:180px'>应用名称</th>
-                    <th style='width:80px'>应用标识</th>
-                    <th style='width:150px'>简介</th>
-                    <th style="width: 80px;">作者</th>
+                    <th style='width:140px'>应用名称</th>
+                    <th style='width:100px'>应用标识</th>
+                    <th style='width:130px'>简介</th>
+                    <th style="width: 70px;">作者</th>
                     <th style='width:80px;'>版本号</th>
-                    <th style='width:80px;'>类型</th>
+                    <th style='width:70px;'>类型</th>
                     {if $do != 'not_installed'}
-                    <th style='width:80px;'>启用</th>
+                    <th style='width:65px;'>启用</th>
                     {/if}
                     <th style="width: 140px;">操作</th>
                 </tr>
@@ -210,7 +210,11 @@
                             <a href="{:webUrl('admin/app/destroy', array('id' => $row['id']))}" data-toggle="ajaxPost" data-confirm="确认要彻底删除 “{$row['name']}” 么 ?" class="btn btn-default btn-op btn-operation">彻底删除</a>
                         {else}
                             {if $do == 'installed' || empty($do)}
-                                <a href="{:webUrl('admin/app/uninstall', array('identifie' => $row['identifie'],'id' => $row['id']))}" data-toggle="ajaxPost" data-confirm="卸载后将同时删除该应用所有数据,确认要卸载 “{$row['name']}” 么 ?" class="btn btn-danger btn-op btn-operation">卸载</a>
+                                <a href="{:webUrl('admin/app/uninstall', array('identifie' => $row['identifie'],'id' => $row['id']))}" data-toggle="ajaxPost" data-confirm="卸载后将同时删除该应用所有数据,确认要卸载 “{$row['name']}” 么 ?" class="btn btn-op btn-operation">
+                                    <span data-toggle="tooltip" data-placement="top" data-original-title="卸载">
+                                        <i class="icon icon-download-alt"></i>
+                                    </span>
+                                </a>
                             {/if}
                             {if ( $do == 'installed' || empty($do) ) && $row['new_version']}
                                 <a href="{:webUrl('admin/app/upgrade', array('identifie' => $row['identifie'],'id' => $row['id'],'is_cloud' => $row['is_cloud']))}" data-toggle="ajaxPost" data-confirm="升级前请备份好您的应用文件,确认要升级 “{$row['name']}” 到最新版本么 ?" class="btn btn-primary btn-op btn-operation">升级</a>
@@ -220,11 +224,6 @@
                                     <i class='icon icon icon-edit'></i>
                                 </span>
                             </a>
-                            <a data-toggle='ajaxRemove' href="{:webUrl('admin/app/change', array('type' => 'is_deleted','value' => 1,'id' => $row['id']))}" class="btn btn-op btn-operation" data-confirm='确认要删除此应用吗?'>
-                                <span data-toggle="tooltip" data-placement="top" data-original-title="删除">
-                                   <i class='icon icon-trash'></i>
-                                </span>
-                            </a>
                             {if ( $do == 'installed' || empty($do) ) && !$row['new_version']}
                                 <a href="{:webUrl('admin/app/upgrade', array('identifie' => $row['identifie'],'id' => $row['id'],'is_cloud' => $row['is_cloud']))}" data-toggle="ajaxPost" data-confirm="已经是最新版本，确认要再次更新 “{$row['name']}” 到最新版本么，更新前请做好备份 ?" class="btn btn-default btn-op btn-operation">
                                     <span data-toggle="tooltip" data-placement="top" data-original-title="强制更新">
@@ -232,6 +231,13 @@
                                     </span>
                                 </a>
                             {/if}
+                        {/if}
+                        {if $do == 'not_installed' || $do == 'recycle'}
+                        <a data-toggle='ajaxRemove' href="{:webUrl('admin/app/change', array('type' => 'is_deleted','value' => 1,'id' => $row['id']))}" class="btn btn-op btn-operation" data-confirm='确认要删除此应用吗?'>
+                            <span data-toggle="tooltip" data-placement="top" data-original-title="删除">
+                               <i class='icon icon-trash'></i>
+                            </span>
+                        </a>
                         {/if}
                     </td>
                 </tr>
