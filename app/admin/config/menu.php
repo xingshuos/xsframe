@@ -61,16 +61,8 @@ return [
                 'title' => '常用工具',
                 'items' => [
                     [
-                        'title' => '系统表单',
-                        'route' => '/form',
-                    ],
-                    [
                         'title' => '系统图标',
                         'route' => '/icon',
-                    ],
-                    [
-                        'title' => '静态页面',
-                        'route' => '/static',
                     ],
                     [
                         'title' => '检测BOM',
