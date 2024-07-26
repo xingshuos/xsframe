@@ -39,24 +39,22 @@
                         <span style="display: block">应用列表</span>
                     </a>
                 </li>
-
-                <li class="wb-nav-system">
-                    <a href="{:url('admin/system/account',['i' => $uniacid])}">
-                        <i class="icon icon-cog" style="font-size: 22px;"></i>
-                        <span style="display: block">系统设置</span>
-                    </a>
-                </li>
                 <li class="wb-nav-system">
                     <a href="{:url('admin/perm/user',['i' => $uniacid])}">
                         <i class="icon icon-minus-sign" style="font-size: 22px;"></i>
                         <span style="display: block">权限管理</span>
                     </a>
                 </li>
-
+                <li class="wb-nav-system">
+                    <a href="{:url('admin/system/account',['i' => $uniacid])}">
+                        <i class="icon icon-cog" style="font-size: 22px;"></i>
+                        <span style="display: block">商户设置</span>
+                    </a>
+                </li>
                 <li class="wb-nav-system">
                     <a href="{:url('admin/system/profile',['i' => $uniacid])}">
                         <i class="icon icon-lock " style="font-size: 22px;"></i>
-                        <span style="display: block">修改密码</span>
+                        <span style="display: block">当前账号</span>
                     </a>
                 </li>
 
@@ -88,33 +86,33 @@
         <li class="{if $action == 'index'}active{/if}">
             <a href="{:url('admin/system/index',['i' => $uniacid,'module' => $_GET['module']])}" class="wb-nav-item">
                 <i class="icon icon-th-large"></i>
-                <span class="wb-nav-title">应用列表</span>
+                <span class="wb-nav-title">应用</span>
             </a>
             <span class="wb-nav-tip">应用列表</span>
         </li>
 
-        <li class="{if $action == 'profile'}active{/if}">
-            <a href="{:url('admin/system/profile',['i' => $uniacid,'module' => $_GET['module']])}" class="wb-nav-item">
-                <i class="icon icon-lock"></i>
-                <span class="wb-nav-title">修改密码</span>
+        <li class="{if $action == 'account'}active{/if}">
+            <a href="{:url('admin/system/account',['i' => $uniacid,'module' => $_GET['module']])}" class="wb-nav-item">
+                <i class="icon icon-archive"></i>
+                <span class="wb-nav-title">商户</span>
             </a>
-            <span class="wb-nav-tip">修改密码</span>
+            <span class="wb-nav-tip">商户设置</span>
         </li>
 
         <li class="{if $action == 'user'}active{/if}">
             <a href="{:url('admin/perm/user',['i' => $uniacid,'module' => $_GET['module']])}" class="wb-nav-item">
                 <i class="icon icon-minus-sign"></i>
-                <span class="wb-nav-title">权限管理</span>
+                <span class="wb-nav-title">权限</span>
             </a>
             <span class="wb-nav-tip">权限管理</span>
         </li>
 
-        <li class="{if $action == 'account'}active{/if}">
-            <a href="{:url('admin/system/account',['i' => $uniacid,'module' => $_GET['module']])}" class="wb-nav-item">
-                <i class="icon icon-cog"></i>
-                <span class="wb-nav-title">商户设置</span>
+        <li class="{if $action == 'profile'}active{/if}">
+            <a href="{:url('admin/system/profile',['i' => $uniacid,'module' => $_GET['module']])}" class="wb-nav-item">
+                <i class="icon icon-lock"></i>
+                <span class="wb-nav-title">账号</span>
             </a>
-            <span class="wb-nav-tip">商户设置</span>
+            <span class="wb-nav-tip">修改密码</span>
         </li>
     </ul>
 </div>
