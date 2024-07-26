@@ -194,8 +194,14 @@ class Account extends Base
         }
 
         # 获取后台地址
-        $realUrl = UserWrapper::getModuleOneUrl($defaultModuleInfo['module'], true);
-        $url = webUrl(str_replace('.html', "", $realUrl), ['i' => $uniacid]);
+        $systemModuleList = SystemWrapperFacade::getAllModuleList();
+        $accountModuleList = SystemWrapperFacade::getAccountModuleList($uniacid);
+        if (empty($accountModuleList) || empty($systemModuleList) || !in_array($this->module, $accountModuleList) || !in_array($this->module, $systemModuleList)) {
+            $url = strval(url('admin/system/index', ['i' => $uniacid]));
+        } else {
+            $realUrl = UserWrapper::getModuleOneUrl($defaultModuleInfo['module'], true);
+            $url = webUrl(str_replace('.html', "", $realUrl), ['i' => $uniacid]);
+        }
 
         $this->success(['url' => $url]);
     }
