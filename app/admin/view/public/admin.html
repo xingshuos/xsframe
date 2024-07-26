@@ -32,10 +32,10 @@
                 <a href="{:url('home/welcome')}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="系统概况"><i class="icon icon-home"></i></a>
             </li>
         {else}
-            {if in_array($userInfo['role'],['operator','owner','manager']) }
-                <li class="sysset wb-nav-system" data-module="{$module}" style="padding: 0;width: 60px;">
-                    <a href="" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="系统概况"><i class="icon icon-home" style="font-size: 16px;"></i></a>
-                </li>
+            {if in_array($userInfo['role'],['owner','manager']) }
+            <!-- <li class="sysset wb-nav-system" data-module="{$module}" style="padding: 0;width: 60px;">
+                <a href="" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="系统概况"><i class="icon icon-home" style="font-size: 16px;"></i></a>
+            </li> -->
             {/if}
         {/if}
     </ul>

@@ -13,7 +13,8 @@
 namespace app\admin\controller;
 
 use xsframe\base\AdminBaseController;
-use xsframe\enum\SysSettingsKeyEnum;
+use xsframe\enum\AppCategoryKeyEnum;
+use xsframe\enum\AppTypesKeyEnum;
 use xsframe\facade\wrapper\SystemWrapperFacade;
 use xsframe\util\ArrayUtil;
 use xsframe\util\FileUtil;
@@ -33,16 +34,17 @@ class System extends AdminBaseController
         $this->pSize = 20;
         $condition = [
             'am.uniacid' => $this->uniacid,
-            'm.status'   => 1,
             'am.deleted' => 0,
         ];
 
-        $field = "am.id,am.module,am.settings," . "m.name,m.identifie,m.logo,m.ability";
+        $field = "am.settings," . "m.*";
         $list = Db::name('sys_account_modules')->alias('am')->field($field)->leftJoin("sys_modules m", "m.identifie = am.module")->where($condition)->order("am.displayorder asc")->page($this->pIndex, $this->pSize)->select()->toArray();
         $total = Db::name('sys_account_modules')->alias('am')->field($field)->leftJoin("sys_modules m", "m.identifie = am.module")->where($condition)->count();
         $pager = pagination2($total, $this->pIndex, $this->pSize);
 
         foreach ($list as &$item) {
+            $appTypes = $this->getAppTypes($item);
+            $item['app_types'] = AppTypesKeyEnum::getTextArray(implode(",", $appTypes));
             $settings = unserialize($item['settings']);
             if (!empty($settings)) {
                 if (!empty($settings['basic'])) {
@@ -60,8 +62,9 @@ class System extends AdminBaseController
             $item['logo'] = tomedia($item['logo']);
 
             // 获取后台访问地址
-            $item['url'] = $this->getRealModuleUrl($item['module']);
+            $item['url'] = $this->getRealModuleUrl($item['identifie']);
         }
+        unset($item);
         $list = set_medias($list, ['logo']);
 
         $uid = $this->userId;
@@ -71,13 +74,61 @@ class System extends AdminBaseController
         $user_perms = explode(',', $user['userperms']);
         $perms = array_merge($role_perms, $user_perms);
 
+        $category = AppCategoryKeyEnum::getEnumsText();
+
+        $newList = [];
+        foreach ($list as $item) {
+            $newList[$item['type']][] = $item;
+        }
+        unset($item);
+
+        // dd($newList);
+
         $result = [
-            'list'  => $list,
-            'pager' => $pager,
-            'total' => $total,
-            'perms' => $perms,
+            'list'     => $newList,
+            'pager'    => $pager,
+            'total'    => $total,
+            'perms'    => $perms,
+            'category' => $category,
         ];
         return $this->template('index', $result);
+    }
+
+    // 获取应用类型
+    private function getAppTypes($item): array
+    {
+        $appTypes = [];
+        if (isset($item['wechat_support']) && $item['wechat_support'] == 1) {
+            $appTypes[] = "wechat";
+        }
+        if (isset($item['wxapp_support']) && $item['wxapp_support'] == 1) {
+            $appTypes[] = "wxapp";
+        }
+        if (isset($item['pc_support']) && $item['pc_support'] == 1) {
+            $appTypes[] = "pc";
+        }
+        if (isset($item['app_support']) && $item['app_support'] == 1) {
+            $appTypes[] = "app";
+        }
+        if (isset($item['h5_support']) && $item['h5_support'] == 1) {
+            $appTypes[] = "h5";
+        }
+        if (isset($item['aliapp_support']) && $item['aliapp_support'] == 1) {
+            $appTypes[] = "aliapp";
+        }
+        if (isset($item['bdapp_support']) && $item['bdapp_support'] == 1) {
+            $appTypes[] = "bdapp";
+        }
+        if (isset($item['uniapp_support']) && $item['uniapp_support'] == 1) {
+            $appTypes[] = "uniapp";
+        }
+        if (isset($item['harmonyos_support']) && $item['harmonyos_support'] == 1) {
+            $appTypes[] = "harmonyos";
+        }
+        if (isset($item['dyapp_support']) && $item['dyapp_support'] == 1) {
+            $appTypes[] = "dyapp";
+        }
+        return $appTypes;
     }
 
     // 我的账号

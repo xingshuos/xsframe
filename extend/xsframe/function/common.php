@@ -47,13 +47,26 @@ if (!function_exists('tablename')) {
     }
 }
 
-// 验证应用权限
+// 验证系统是否有使用应用的权限
 if (!function_exists('m')) {
     function m($moduleName): bool
     {
         $isModule = false;
         $systemModuleList = SystemWrapperFacade::getAllModuleList();
         if (in_array($moduleName, $systemModuleList) && is_dir(IA_ROOT . "/app/" . $moduleName)) {
+            $isModule = true;
+        }
+        return $isModule;
+    }
+}
+
+// 验证商户是否有使用应用的权限
+if (!function_exists('am')) {
+    function am($uniacid, $moduleName): bool
+    {
+        $isModule = false;
+        $accountModuleList = SystemWrapperFacade::getAccountModuleList($uniacid);
+        if (in_array($moduleName, $accountModuleList) && is_dir(IA_ROOT . "/app/" . $moduleName)) {
             $isModule = true;
         }
         return $isModule;

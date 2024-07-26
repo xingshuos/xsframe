@@ -1,0 +1,94 @@
+{extend name="../../admin/view/public/system"}
+
+{block name='title'}应用列表-系统管理-{$account['name']}{/block}
+
+{block name='style'}
+<style>
+    .file-box .icon .cover .desc{
+        width: 100%;
+        height: 100%;
+        font-size: 14px;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .file-box .icon .cover {
+        position: absolute;
+        top: 100%;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        text-align: center;
+        backface-visibility: hidden;
+        background: rgba(0, 0, 0, 0.4);
+        transition: all 0.35s ease-in-out;
+        height: 0;
+        opacity: 0;
+    }
+
+    .file-box:hover .cover {
+        opacity: 1;
+        height: 100%;
+        top: 0;
+    }
+</style>
+{/block}
+
+{block name='content'}
+
+<div class="page-header">当前位置：<span class="text-primary">应用管理</span></div>
+
+<div class="page-content">
+
+    <form action="" method="post" class="form-horizontal form-validate" enctype="multipart/form-data">
+
+        <div class="row">
+            <div class="col-sm-12">
+
+                {foreach $list as $key=>$row }
+                {if in_array($row['identifie'],$perms) || $userInfo['role'] != 'operator'}
+                <div class="file-box" style="width:260px;cursor: pointer" onclick="windowOpen('{$row.identifie}','{$row.url}')">
+                    <div class="file">
+                        <div class="icon" style="height: 150px; padding-bottom:10px; padding-top: 20px;position: relative;">
+                            <img src="{$row['logo']}" class="image" width="100" height="100" onerror="this.src='/app/admin/static/images/nopic.png'" style="border-radius: 4px;object-fit: contain;">
+                            <div class="cover">
+                                <div class="desc">{$row['ability']}</div>
+                            </div>
+                        </div>
+                        <div class="file-name" data-toggle="tooltip" data-placement="top"
+                             data-original-title="点击切换应用"
+                             style="white-space:nowrap;overflow:hidden;text-overflow: ellipsis;">{$row['name']}
+                        </div>
+                    </div>
+                </div>
+                {/if}
+                {/foreach}
+
+            </div>
+        </div>
+
+        <div class="footer pull-right">
+            {$pager | raw}
+        </div>
+
+    </form>
+
+</div>
+
+{/block}
+
+{block name='script'}
+<script>
+    function windowOpen(module,url) {
+        let getModule = "{$_GET['module']}";
+        if( module === getModule ){
+
+        }else{
+            $.post("{:webUrl('system/setAccountDefaultModule')}",{uniacid:"{$uniacid}",module:module}, function (json) {
+                window.open(url);
+            }, 'json')
+        }
+    }
+</script>
+{/block}

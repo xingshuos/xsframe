@@ -4,75 +4,120 @@
 
 {block name='style'}
 <style>
-    .file-box .icon .cover .desc{
+    .feed-activity-list {
         width: 100%;
-        height: 100%;
-        font-size: 14px;
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .file-box .icon .cover {
-        position: absolute;
-        top: 100%;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        text-align: center;
-        backface-visibility: hidden;
-        background: rgba(0, 0, 0, 0.4);
-        transition: all 0.35s ease-in-out;
-        height: 0;
-        opacity: 0;
+        overflow: hidden;
     }
 
-    .file-box:hover .cover {
-        opacity: 1;
-        height: 100%;
+    .feed-element {
+        float: left;
+        width: 500px;
+        margin-left: 20px;
+        margin-bottom: 20px;
+        border: 1px solid #efefef;
+        padding: 20px;
+    }
+
+    .feed-element::after {
+        display: none
+    }
+
+    .feed-element .title {
+        font-size: 18px;
+        height: 24px;
+        line-height: 20px;
+        vertical-align: bottom;
+        color: var(--primary-color);
+        font-weight: bold;
+        margin-left: 10px;
+    }
+
+    .feed-element img.img-circle,
+    .dropdown-messages-box img.img-circle {
+        float: left;
+        width: 100px;
+        height: 100px;
+        border-radius: 4px;
+        border: 1px solid #f1f1f1;
+    }
+
+    .media-body {
+        margin-top: 3px;
+        height: 65px;
+        padding-left: 15px;
+        position: relative;
+    }
+
+    .text-muted {
+        margin-left: 10px;
+        width: 100%;
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        font-size: 13px;
+        color: var(--sub-color);
+        margin-top: 15px;
+    }
+
+    .status-box{
+        position: absolute;
+        right: 0;
         top: 0;
+    }
+
+    .authorization{
+        width: 95%;
+        height:20px;
+        color: #999;
+        line-height: 24px;
+        border-top: 1px solid #efefef;
     }
 </style>
 {/block}
 
 {block name='content'}
 
-<div class="page-header">当前位置：<span class="text-primary">应用管理</span></div>
+<div class="page-header">当前位置：<span class="text-primary">我的应用</span></div>
 
 <div class="page-content">
 
-    <form action="" method="post" class="form-horizontal form-validate" enctype="multipart/form-data">
-
-        <div class="row">
-            <div class="col-sm-12">
-
-                {foreach $list as $key=>$row }
+    <div class='panel panel-default' style='border:none;'>
+        {foreach $list as $ck => $cv}
+        <div class="panel-heading" style='background:none;border:none;'>
+            {$category[$ck]}
+        </div>
+        <div class="feed-activity-list">
+            {foreach $cv as $plugin}
                 {if in_array($row['identifie'],$perms) || $userInfo['role'] != 'operator'}
-                <div class="file-box" style="width:260px;cursor: pointer" onclick="windowOpen('{$row.identifie}','{$row.url}')">
-                    <div class="file">
-                        <div class="icon" style="height: 150px; padding-bottom:10px; padding-top: 20px;position: relative;">
-                            <img src="{$row['logo']}" class="image" width="100" height="100" onerror="this.src='/app/admin/static/images/nopic.png'" style="border-radius: 4px;object-fit: contain;">
-                            <div class="cover">
-                                <div class="desc">{$row['ability']}</div>
-                            </div>
-                        </div>
-                        <div class="file-name" data-toggle="tooltip" data-placement="top"
-                             data-original-title="点击切换应用"
-                             style="white-space:nowrap;overflow:hidden;text-overflow: ellipsis;">{$row['name']}
+                <a class="feed-element" style="cursor: pointer" onclick="windowOpen('{$plugin.identifie}','{$plugin.url}')" href="javascript:;">
+                    <span class="pull-left">
+                        <img src="{:tomedia($plugin['logo'])}" class="img-circle" alt="image">
+                    </span>
+                    <div class="media-body">
+                        <span class="title flex-start-center">
+                            <span class="fl">{$plugin['name']}</span>
+                            {foreach $plugin['app_types'] as $key1=>$item1 }
+                            <img src="/app/admin/static/images/icon/type-{$key1}.png" alt="{$key1}" data-placement="top" data-toggle="popover" data-trigger="hover" data-html="true" data-content="已支持{$item1}" style="font-size: 12px;color: #00c952;margin-left:8px;width: 20px;height: 20px;">
+                            {/foreach}
+                        </span>
+                        <small class="text-muted">{$plugin['ability']}</small>
+                        <div class="status-box">
+                            {if $plugin['status'] == 1}
+                            <span class="text text-success">已启用</span>
+                            {else}
+                            <span class="text text-danger">不可用</span>
+                            {/if}
                         </div>
                     </div>
-                </div>
+                </a>
                 {/if}
-                {/foreach}
-
-            </div>
+            {/foreach}
         </div>
-
-        <div class="footer pull-right">
-            {$pager | raw}
-        </div>
-
-    </form>
+        {/foreach}
+    </div>
 
 </div>
 
@@ -81,14 +126,9 @@
 {block name='script'}
 <script>
     function windowOpen(module,url) {
-        let getModule = "{$_GET['module']}";
-        if( module === getModule ){
-
-        }else{
-            $.post("{:webUrl('system/setAccountDefaultModule')}",{uniacid:"{$uniacid}",module:module}, function (json) {
-                window.open(url);
-            }, 'json')
-        }
+        $.post("{:webUrl('system/setAccountDefaultModule')}",{uniacid:"{$uniacid}",module:module}, function (json) {
+            window.open(url);
+        }, 'json')
     }
 </script>
 {/block}

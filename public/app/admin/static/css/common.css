@@ -1,6 +1,36 @@
-
 :root {
+    /*主色*/
     --primary-color: #0062ff; /*主题 根据后台可更改*/
+    --primary-assist-color: #55B3FF; /*主题 加亮*/
+    --primary-light-color: #5cadff; /*主题 加亮*/
+    --primary-dark-color: #2b85e4; /*主题 加深*/
+    --primary-black-color: #282828; /*主题 黑色*/
+    --primary-grey-color: #919191; /*主题 灰色*/
+
+    --primary-main-color: #8DC332; /*主题色*/
+    --primary-price-color: #cf1110; /*标价色*/
+
+    /*按钮色*/
+    --success-color: #19be6b; /*成功*/
+    --warning-color: #ff9900; /*警告*/
+    --danger-color: #ed4014; /*失败*/
+    --info-color: #2db7f5; /*默认*/
+
+    /*文字色*/
+    --title-color: #17233d; /*标题 title*/
+    --content-color: #515a6e; /*正文 Content*/
+    --sub-color: #808695; /*辅助/图标 Sub Color*/
+    --disabled-color: #c5c8ce; /*失效 Disabled*/
+
+    /*边框色*/
+    --border-base-color: #DCDFE6; /*边框 Border*/
+    --border-divider-color: #E4E7ED; /*分割线 Divider*/
+
+    /*背景色*/
+    --background-page-color: #f8f8f8; /*页面背景*/
+    --background-black-color: #1f2730; /*黑色背景*/
+    --background-white-color: #ffffff; /*白色背景*/
+    --background-transparent-color: transparent; /*透明背景*/
 }
 
 ::-webkit-scrollbar {
