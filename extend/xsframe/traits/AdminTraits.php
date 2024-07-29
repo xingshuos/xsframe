@@ -64,8 +64,12 @@ trait AdminTraits
                 $startTime = strtotime($this->params["time"]["start"]);
                 $endTime = strtotime($this->params["time"]["end"]);
 
-                if (!empty($searchTime) && in_array($searchTime, ["create"])) {
+                if (array_key_exists($searchTime . "time", $fieldList)) {
                     $condition[$searchTime . "time"] = Db::raw("between {$startTime} and {$endTime} ");
+                }else{
+                    if (array_key_exists($searchTime . "_time", $fieldList)) {
+                        $condition[$searchTime . "_time"] = Db::raw("between {$startTime} and {$endTime} ");
+                    }
                 }
             }
 

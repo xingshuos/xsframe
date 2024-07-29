@@ -80,7 +80,15 @@
 
 {block name='content'}
 
-<div class="page-header">当前位置：<span class="text-primary">我的应用</span></div>
+<div class="page-header">
+    <div class="pull-right">
+        <div class="input-group" style="width:400px;">
+            <span class="input-group-addon">搜索</span>
+            <input type="text" class="form-control" id="name" placeholder="输入应用名称进行快速搜索"/>
+        </div>
+    </div>
+    当前位置：<span class="text-primary">我的应用</span>
+</div>
 
 <div class="page-content">
 
@@ -92,7 +100,7 @@
         <div class="feed-activity-list">
             {foreach $cv as $plugin}
                 {if in_array($row['identifie'],$perms) || $userInfo['role'] != 'operator'}
-                <a class="feed-element" style="cursor: pointer" onclick="windowOpen('{$plugin.identifie}','{$plugin.url}')" href="javascript:;">
+                <a class="feed-element" style="cursor: pointer" onclick="windowOpen('{$plugin.identifie}','{$plugin.url}')" href="javascript:;" data-name="{$plugin['name']}">
                     <span class="pull-left">
                         <img src="{:tomedia($plugin['logo'])}" class="img-circle" alt="image">
                     </span>
@@ -130,5 +138,25 @@
             window.open(url);
         }, 'json')
     }
+
+    $(function(){
+        $('#name').bind('input propertychange',function(){
+            let name = $.trim( $('#name').val() );
+            if( name === ''){
+                $('.feed-activity-list').prev('.panel-heading').show();
+                $('.feed-element').show();
+            }else{
+                let feedElement = $('.feed-element');
+                $('.feed-activity-list').prev('.panel-heading').hide();
+                feedElement.hide();
+                feedElement.each(function(){
+                    let pluginName = $(this).data('name');
+                    if(pluginName.indexOf( name ) !== -1){
+                        $(this).show().closest('.feed-activity-list').prev('.panel-heading').show();
+                    }
+                });
+            }
+        })
+    })
 </script>
 {/block}
