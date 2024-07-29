@@ -264,7 +264,7 @@ class SmsService extends BaseService
     }
 
     // 自定义发送短信
-    public function customSendSMS($mobile, $tplId, $data, $smsSet = null, $replace = true): bool
+    public function customSendSMS($mobile, $tplId, $data = [], $smsSet = null, $replace = true): bool
     {
         if (!empty($smsSet)) {
             $this->smsSet = ArrayUtil::customMergeArrays($this->smsSet, $smsSet);
