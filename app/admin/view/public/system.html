@@ -1,6 +1,6 @@
 {extend name="../../admin/view/public/admin_base"}
 
-{block name='title'}{$pageTitle?:'系统管理'}-($account['name']?:'星数引擎')}{/block}
+{block name='title'}{$pageTitle?:'系统管理'}-{$account['name']?:'星数引擎'}{/block}
 
 {block name='header'}
 <div class="wb-header" style="position: fixed;">
@@ -28,7 +28,7 @@
     <ul>
         <li class="dropdown ellipsis">
             <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                {$account['name']}
+                {$account['name']?:'星数引擎'}
                 <span></span>
             </a>
 
