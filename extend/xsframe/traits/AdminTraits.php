@@ -66,7 +66,7 @@ trait AdminTraits
 
                 if (array_key_exists($searchTime . "time", $fieldList)) {
                     $condition[$searchTime . "time"] = Db::raw("between {$startTime} and {$endTime} ");
-                }else{
+                } else {
                     if (array_key_exists($searchTime . "_time", $fieldList)) {
                         $condition[$searchTime . "_time"] = Db::raw("between {$startTime} and {$endTime} ");
                     }
@@ -86,6 +86,8 @@ trait AdminTraits
                 $field = str_replace(",", "|", $field);
                 $condition[] = [$field, 'like', "%" . trim($keyword) . "%"];
             }
+
+            $this->setMainCondition($condition);
 
             $field = "*";
 
@@ -126,6 +128,11 @@ trait AdminTraits
         $this->afterMainResult($this->result);
 
         return $this->template('list', $this->result);
+    }
+
+    // 设置查询条件
+    public function setMainCondition(&$condition = [])
+    {
     }
 
     // 主题返回以后执行
