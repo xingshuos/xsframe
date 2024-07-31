@@ -43,12 +43,12 @@ trait ServiceTraits
      * 分页获取数据
      * @param array $where
      * @param string $field
-     * @param string $order
+     * @param string|array $order
      * @param int $pIndex
      * @param int $pSize
      * @return array
      */
-    public function getList(array $where = [], string $field = "*", string $order = "", int $pIndex = 1, int $pSize = 10): array
+    public function getList(array $where = [], string $field = "*", $order = "", int $pIndex = 1, int $pSize = 10): array
     {
         try {
             extract(self::getWhere($where));
@@ -56,6 +56,7 @@ trait ServiceTraits
                 $pIndex = $this->params['page'];
             if ($pSize == 10 && !empty($this->params['size']) && $this->params['size'] != 10)
                 $pSize = $this->params['size'];
+
             $list = Db::name($this->tableName)->field($field)->where($where, $op, $condition)->order($order)->page($pIndex, $pSize)->select()->toArray();
         } catch (\Exception $exception) {
             $list = [];
@@ -79,7 +80,7 @@ trait ServiceTraits
                 $list = Db::name($this->tableName)->field($field)->where($where, $op, $condition)->order($order)->select()->toArray();
             } else {
                 $temp = Db::name($this->tableName)->field($field)->where($where, $op, $condition)->order($order)->select()->toArray();
-                $rs = [];
+                $rs   = [];
                 if (!empty($temp)) {
                     foreach ($temp as $key => &$row) {
                         if (isset($row[$keyField])) {
@@ -180,10 +181,10 @@ trait ServiceTraits
     // 获取查询条件
     private function getWhere($where = null): array
     {
-        $op = null;
+        $op        = null;
         $condition = null;
         if (is_array($where) && is_string($where[0]) && is_array($where[1])) {
-            $op = $where[1];
+            $op    = $where[1];
             $where = $where[0];
         }
         return ['where' => $where, 'op' => $op, 'condition' => $condition];
