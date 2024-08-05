@@ -91,14 +91,6 @@
             <span class="wb-nav-tip">应用列表</span>
         </li>
 
-        <li class="{if $action == 'account'}active{/if}">
-            <a href="{:url('admin/system/account',['i' => $uniacid,'module' => $_GET['module']])}" class="wb-nav-item">
-                <i class="icon icon-archive"></i>
-                <span class="wb-nav-title">商户</span>
-            </a>
-            <span class="wb-nav-tip">商户设置</span>
-        </li>
-
         <li class="{if $action == 'user'}active{/if}">
             <a href="{:url('admin/perm/user',['i' => $uniacid,'module' => $_GET['module']])}" class="wb-nav-item">
                 <i class="icon icon-minus-sign"></i>
@@ -110,10 +102,19 @@
         <li class="{if $action == 'profile'}active{/if}">
             <a href="{:url('admin/system/profile',['i' => $uniacid,'module' => $_GET['module']])}" class="wb-nav-item">
                 <i class="icon icon-lock"></i>
-                <span class="wb-nav-title">账号</span>
+                <span class="wb-nav-title">密码</span>
             </a>
             <span class="wb-nav-tip">修改密码</span>
         </li>
+
+        <li class="{if $action == 'account'}active{/if}">
+            <a href="{:url('admin/system/account',['i' => $uniacid,'module' => $_GET['module']])}" class="wb-nav-item">
+                <i class="icon icon-cog"></i>
+                <span class="wb-nav-title">设置</span>
+            </a>
+            <span class="wb-nav-tip">商户设置</span>
+        </li>
+
     </ul>
 </div>
 {/block}

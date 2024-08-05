@@ -22,8 +22,8 @@ return [
         'icon'     => 'icon-th-large',
     ],
     'users'   => [
-        'title'    => '用户',
-        'subtitle' => '用户管理',
+        'title'    => '管理员',
+        'subtitle' => '管理员管理',
         'icon'     => 'icon-user',
         'items'    => [
             [
