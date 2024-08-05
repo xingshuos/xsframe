@@ -2,14 +2,6 @@
 
 {block name='title'}{$pageTitle?:'后台管理'}-{$moduleInfo['name'] ? $moduleInfo['name'] : ($websiteSets['name']?:'星数引擎')}{/block}
 
-{block name='style'}
-<style>
-    .text-more{
-        margin-left: 10px !important;
-    }
-</style>
-{/block}
-
 {block name='header'}
 <div class="wb-header" style="position: fixed;">
     <div class="logo {if !empty($foldNav)}small{/if}">
