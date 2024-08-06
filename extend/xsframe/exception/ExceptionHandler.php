@@ -35,7 +35,7 @@ class ExceptionHandler extends Handle
                 'code' => $code,
                 'msg'  => $msg,
             ];
-            return json($result);
+            return json($result, $code);
         }
 
         // HTTP异常
@@ -47,7 +47,7 @@ class ExceptionHandler extends Handle
                 'code' => $code,
                 'msg'  => $msg,
             ];
-            return json($result);
+            return json($result, $code);
         }
 
         // BaseException请求异常POST
@@ -81,7 +81,7 @@ class ExceptionHandler extends Handle
             LoggerUtil::error($logData);
             // end
 
-            return json($result);
+            return json($result, $code);
         }
 
         // 其他错误交给系统处理

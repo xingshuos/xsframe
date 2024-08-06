@@ -15,5 +15,5 @@ namespace xsframe\exception;
 class ApiException extends BaseException
 {
     public $msg = 'api error';
-    public $code = "404";
+    public $code = "400";
 }
