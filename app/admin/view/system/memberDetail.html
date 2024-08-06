@@ -13,6 +13,16 @@
 <div class="page-content">
     <form id="dataform" action="" method="post" class="form-horizontal form-validate" >
         <input type="hidden" name="id" value="{$item['id']}" />
+
+        {if $item['username']}
+        <div class="form-group">
+            <label class="col-lg control-label">账号</label>
+            <div class="col-sm-9 col-xs-12">
+                <div class="form-control-static">{$item['username']}</div>
+            </div>
+        </div>
+        {/if}
+
         <div class="form-group">
             <label class="col-lg control-label">用户头像</label>
             <div class="col-sm-9 col-xs-12">
@@ -22,68 +32,31 @@
         <div class="form-group">
             <label class="col-lg control-label must">昵称</label>
             <div class="col-sm-9 col-xs-12">
-                <input type="text" name="nickname" class="form-control" value="{$item['nickname']}" data-rule-required="true" autocomplete="off" />
+                <input type="text" name="nickname" class="form-control" value="{$item['nickname']}" data-rule-required="false" autocomplete="off" />
             </div>
         </div>
         <div class="form-group">
-            <label class="col-lg control-label must">姓名</label>
+            <label class="col-lg control-label">姓名</label>
             <div class="col-sm-9 col-xs-12">
-                <input type="text" name="realname" required class="form-control" value="{$item['realname']}" data-rule-required="false" autocomplete="off" />
+                <input type="text" name="realname" class="form-control" value="{$item['realname']}" data-rule-required="false" autocomplete="off" />
             </div>
         </div>
         <div class="form-group">
-            <label class="col-lg control-label must">手机号</label>
+            <label class="col-lg control-label">手机号</label>
             <div class="col-sm-9 col-xs-12">
-                <input type="text" name="mobile" required class="form-control" value="{$item['mobile']}" data-rule-required="false" autocomplete="off" />
+                <input type="text" name="mobile" class="form-control" value="{$item['mobile']}" data-rule-required="false" autocomplete="off" />
             </div>
         </div>
         <div class="form-group">
-            <label class="col-lg control-label must">邮箱</label>
+            <label class="col-lg control-label">邮箱</label>
             <div class="col-sm-9 col-xs-12">
-                <input type="text" name="email" required class="form-control" value="{$item['email']}" data-rule-required="false" autocomplete="off" />
+                <input type="text" name="email" class="form-control" value="{$item['email']}" data-rule-required="false" autocomplete="off" />
             </div>
         </div>
         <div class="form-group">
-            <label class="col-lg control-label must">职位</label>
+            <label class="col-lg control-label">职位</label>
             <div class="col-sm-9 col-xs-12">
-                <input type="text" name="job" required class="form-control" value="{$item['job']}" data-rule-required="false" autocomplete="off" />
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="col-lg control-label">账号</label>
-            <div class="col-sm-9 col-xs-12">
-                <input type="text" name="username" class="form-control" value="{$item['username']}" data-rule-required="false" autocomplete="off" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-lg control-label">密码</label>
-            <div class="col-sm-9 col-xs-12">
-                <input type="text" name="password" class="form-control" value="" data-rule-required="false" autocomplete="off" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-lg control-label must">选择企业</label>
-            <div class="col-sm-9 col-xs-12">
-                <select id="company_id" name='company_id' required class='form-control select2'>
-                    <option value="">--请选择--</option>
-
-                    {foreach $companys as $key => $row}
-                    <option value="{$row['id']}" {if $row['id']==$item['company_id']}selected{/if} data-id="{$item['company_id']}">{$row['title']??$row['en_title']}</option>
-                    {/foreach}
-                </select>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="col-lg control-label">已购票（免购票）</label>
-            <div class="col-sm-9 col-xs-12">
-                <label class="radio-inline">
-                    <input type="radio" name="ispay" value="0" {if $item['ispay']==0 || empty($item)}checked="checked"{/if}> 未购票
-                </label>
-                <label class="radio-inline">
-                    <input type="radio" name="ispay" value="1" {if $item['ispay']==1}checked="checked"{/if}> 已购票（免购票）
-                </label>
+                <input type="text" name="job" class="form-control" value="{$item['job']}" data-rule-required="false" autocomplete="off" />
             </div>
         </div>
 

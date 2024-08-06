@@ -71,12 +71,12 @@ class PayWechatNotifyWrapper
             'module'       => $attachArr[0],
             'uniacid'      => $attachArr[1],
             'service_type' => $attachArr[2],
-            'attach'       => $this->get['attach'],
+            'attach'       => trim($this->get['attach']),
 
             'pay_type'       => PayTypeEnum::WXPAY_TYPE,
-            'out_trade_no'   => $this->get['out_trade_no'],
+            'out_trade_no'   => trim($this->get['out_trade_no']),
             'total_fee'      => PriceUtil::fen2yuan($this->get['total_fee']),
-            'transaction_id' => $this->get['transaction_id'],
+            'transaction_id' => trim($this->get['transaction_id']),
         ];
 
         try {

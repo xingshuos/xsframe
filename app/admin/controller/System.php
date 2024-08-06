@@ -116,10 +116,25 @@ class System extends AdminBaseController
     {
         $this->pSize = 20;
 
+        $searchTime = trim($this->params["searchtime"]);
+        $startTime = strtotime("-1 month");
+        $endTime = time();
+
         $condition = [
             'uniacid'    => $this->uniacid,
             'is_deleted' => 0,
         ];
+
+        if (!empty($searchTime) && is_array($this->params["time"]) && in_array($searchTime, ["create"])) {
+            $startTime = strtotime($this->params["time"]["start"]);
+            $endTime = strtotime($this->params["time"]["end"]);
+
+            $condition[$searchTime . "_time"] = Db::raw("between {$startTime} and {$endTime} ");
+        }
+
+        if (!empty($this->params['module'])) {
+            $condition['module'] = trim($this->params['module']);
+        }
 
         $list = DbServiceFacade::name('sys_member')->getList($condition, "*", "id desc");
         $total = DbServiceFacade::name('sys_member')->getTotal($condition);
@@ -127,10 +142,15 @@ class System extends AdminBaseController
 
         $list = set_medias($list, ['avatar']);
 
+        $appList = DbServiceFacade::name('sys_account_modules')->getAll(['uniacid' => $this->uniacid], "module");
+
         $result = [
-            'list'  => $list,
-            'pager' => $pager,
-            'total' => $total,
+            'appList' => $appList,
+            'list'    => $list,
+            'pager'   => $pager,
+            'total'   => $total,
+            'starttime' => $startTime,
+            'endtime'   => $endTime,
         ];
         return $this->template('member', $result);
     }
@@ -138,7 +158,14 @@ class System extends AdminBaseController
     // 用户详情
     public function memberDetail()
     {
-
+        $condition = [
+            'id' => $this->params['id']
+        ];
+        $item = DbServiceFacade::name('sys_member')->getInfo($condition, "*");
+        $result = [
+            'item' => $item,
+        ];
+        return $this->template('memberDetail', $result);
     }
 
     // 获取应用类型

@@ -15,16 +15,11 @@
         <div class="page-toolbar">
             <div class="col-md-12 input-group pull-right" style="margin-top: 10px;">
                 <span class="input-group-select">
-                    <select name="ispay" class="form-control" style="width:130px;padding:0 5px;">
-                        <option value="">全部用户</option>
-                        <option value="0" {if is_numeric($_GET['ispay']) && $_GET['ispay']==0}selected{/if}>未购票</option>
-                        <option value="1" {if $_GET['ispay']==1}selected{/if}>已购票</option>
-                    </select>
-                </span>
-                <span class="input-group-select">
-                    <select name="nobind" class="form-control" style="width:130px;padding:0 5px;">
-                        <option value="">全部用户</option>
-                        <option value="1" {if $_GET['nobind']=='1'}selected{/if}>未绑定企业</option>
+                    <select name="module" class="form-control" style="width:130px;padding:0 5px;">
+                        <option value="">选择应用</option>
+                        {foreach $appList as $app}
+                        <option value="{$app['module']}" {if $_GET['module']==$app['module']}selected{/if}>{$app['module']}</option>
+                        {/foreach}
                     </select>
                 </span>
                 <span class="input-group-select">
@@ -59,9 +54,7 @@
                     <th style="width:120px">登录账号</th>
                     <th style="width:100px">手机号</th>
                     <th style="width:120px">邮箱</th>
-                    <th style="width:90px">企业名称</th>
                     <th style="width:90px">职位</th>
-                    <th style="width: 80px;">是否已购票(免购票)</th>
                     <th style="width: 100px;">注册时间</th>
                     <th style="width: 100px;text-align:center;">操作</th>
                 </tr>
@@ -73,13 +66,13 @@
                     <td style="overflow: visible;white-space:normal;">
                         <div rel="pop" style="display: flex" data-content="
                                 <span>ID: </span>{$row['id']} </br>
-                                {if empty($row['username'])}
+                                {if !empty($row['username'])}
                                 <span>账号: </span>{$row['username']}</br>
                                 {/if}
-                                {if empty($row['nickname'])}
+                                {if !empty($row['nickname'])}
                                 <span>昵称: </span>{$row['nickname']}</br>
                                 {/if}
-                                {if empty($row['mobile'])}
+                                {if !empty($row['mobile'])}
                                 <span>手机号: </span>{$row['mobile']} </br>
                                 {/if}
                                 <span>性别: </span>{$row['gender'] == 1 ? '男' : ( $row['gender'] == 2 ? '女' : '未知' )} </br>
@@ -107,20 +100,7 @@
                         {$row['email']?:'无'}
                     </td>
                     <td class="full">
-                        {$row['company_name']} - {$row['company_id']}
-                    </td>
-                    <td class="full">
                         {$row['job']?:'无'}
-                    </td>
-                    <td class="full">
-                        <span class='label {if $row['ispay']==1}label-primary{else}label-default{/if}'
-                        data-toggle='ajaxSwitch'
-                        data-switch-value='{$row['ispay']}'
-                        data-switch-value0='0|需购票|label label-default|{:webUrl('system/memberchange',array('type' => 'ispay','value'=>1,'id'=>$row['id']))}'
-                        data-switch-value1='1|已购票(或免购票)|label label-primary|{:webUrl('system/memberchange',array('type'=>'ispay','value' => 0,'id'=>$row['id']))}'
-                        >
-                        {if $row['ispay']==1}已购票(或免购票){else}需购票{/if}
-                        </span>
                     </td>
                     <td class="full">
                         {:date("Y-m-d",$row['create_time'])}
@@ -139,7 +119,7 @@
                 </tbody>
                 <tfoot>
                 <tr>
-                    <td colspan="10" class="text-right">
+                    <td colspan="8" class="text-right">
                         {$pager | raw}
                     </td>
                 </tr>
