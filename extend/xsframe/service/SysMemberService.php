@@ -260,6 +260,7 @@ class SysMemberService extends BaseService
         if (!$memberInfo) {
             $insertData = [
                 'uniacid'     => $this->uniacid,
+                'module'      => $this->module,
                 'username'    => $value,
                 'nickname'    => $nickname ?? '',
                 'avatar'      => $avatar ?? '',

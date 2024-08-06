@@ -15,6 +15,7 @@ namespace app\admin\controller;
 use xsframe\base\AdminBaseController;
 use xsframe\enum\AppCategoryKeyEnum;
 use xsframe\enum\AppTypesKeyEnum;
+use xsframe\facade\service\DbServiceFacade;
 use xsframe\facade\wrapper\SystemWrapperFacade;
 use xsframe\util\ArrayUtil;
 use xsframe\util\FileUtil;
@@ -38,6 +39,22 @@ class System extends AdminBaseController
         ];
 
         $field = "am.settings," . "m.*";
+
+        if ($this->adminSession['role'] == 'operator') {
+            $permUserInfo = DbServiceFacade::name('sys_account_perm_user')->getInfo(['uniacid' => $this->uniacid, 'uid' => $this->userId]);
+            $perms = $permUserInfo['perms'];
+
+            // 使用逗号分割字符串
+            $parts = explode(',', $perms);
+
+            // 使用array_filter过滤掉包含'.'的字符串
+            $filtered = array_filter($parts, function ($item) {
+                return strpos($item, '.') === false;
+            });
+
+            $condition['am.module'] = $filtered;
+        }
+
         $list = Db::name('sys_account_modules')->alias('am')->field($field)->leftJoin("sys_modules m", "m.identifie = am.module")->where($condition)->order("am.displayorder asc")->page($this->pIndex, $this->pSize)->select()->toArray();
         $total = Db::name('sys_account_modules')->alias('am')->field($field)->leftJoin("sys_modules m", "m.identifie = am.module")->where($condition)->count();
         $pager = pagination2($total, $this->pIndex, $this->pSize);
@@ -92,6 +109,36 @@ class System extends AdminBaseController
             'category' => $category,
         ];
         return $this->template('index', $result);
+    }
+
+    // 会员列表
+    public function member()
+    {
+        $this->pSize = 20;
+
+        $condition = [
+            'uniacid'    => $this->uniacid,
+            'is_deleted' => 0,
+        ];
+
+        $list = DbServiceFacade::name('sys_member')->getList($condition, "*", "id desc");
+        $total = DbServiceFacade::name('sys_member')->getTotal($condition);
+        $pager = pagination2($total, $this->pIndex, $this->pSize);
+
+        $list = set_medias($list, ['avatar']);
+
+        $result = [
+            'list'  => $list,
+            'pager' => $pager,
+            'total' => $total,
+        ];
+        return $this->template('member', $result);
+    }
+
+    // 用户详情
+    public function memberDetail()
+    {
+
     }
 
     // 获取应用类型

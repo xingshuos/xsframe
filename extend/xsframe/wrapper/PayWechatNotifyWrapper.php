@@ -71,6 +71,7 @@ class PayWechatNotifyWrapper
             'module'       => $attachArr[0],
             'uniacid'      => $attachArr[1],
             'service_type' => $attachArr[2],
+            'attach'       => $this->get['attach'],
 
             'pay_type'       => PayTypeEnum::WXPAY_TYPE,
             'out_trade_no'   => $this->get['out_trade_no'],

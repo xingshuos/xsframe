@@ -130,19 +130,21 @@
         {/foreach}
 
         {if in_array($userInfo['role'],['operator','owner','manager']) && !$isSystem}
-        <li class="sysset wb-nav-system">
-            <a href="{:url('admin/system/index',['i' => $uniacid])}" target="_blank">
-                <i class="icon icon-cog"></i>
-                <span class="wb-nav-title">商户管理</span>
-            </a>
-        </li>
-        <!-- 旧代码iframe方式 -->
-        <!-- <li class="sysset wb-nav-system" data-module="{$module}" {if $selSystemNav}style="background-color:#161f29;"{/if}>
-        <a href="">
-            <i class="icon icon-cog"></i>
-            <span class="wb-nav-title" data-href="">系统管理</span>
-        </a>
-        </li> -->
+            <li class="sysset wb-nav-system">
+                <a href="{:url('admin/system/index',['i' => $uniacid])}" target="_blank">
+                    <i class="icon icon-cog"></i>
+                    <span class="wb-nav-title">
+                        {if $userInfo['role'] != 'operator'}商户管理{else}其他管理{/if}
+                    </span>
+                </a>
+            </li>
+            <!-- 旧代码iframe方式 -->
+            <!-- <li class="sysset wb-nav-system" data-module="{$module}" {if $selSystemNav}style="background-color:#161f29;"{/if}> -->
+            <!--     <a href=""> -->
+            <!--         <i class="icon icon-cog"></i> -->
+            <!--         <span class="wb-nav-title" data-href="">其他管理</span> -->
+            <!--     </a> -->
+            <!-- </li> -->
         {/if}
 
     </ul>

@@ -1,0 +1,176 @@
+{extend name="../../admin/view/public/system"}
+
+{block name='content'}
+<div class="page-header">
+    <span>
+        当前位置：<span class="text-primary">用户列表</span>
+    </span>
+    <span>
+        全用户数:  <span class='text-danger'>{$total}</span>
+    </span>
+</div>
+<div class="page-content">
+
+    <form action="" method="get" class="form-horizontal table-search" role="form">
+        <div class="page-toolbar">
+            <div class="col-md-12 input-group pull-right" style="margin-top: 10px;">
+                <span class="input-group-select">
+                    <select name="ispay" class="form-control" style="width:130px;padding:0 5px;">
+                        <option value="">全部用户</option>
+                        <option value="0" {if is_numeric($_GET['ispay']) && $_GET['ispay']==0}selected{/if}>未购票</option>
+                        <option value="1" {if $_GET['ispay']==1}selected{/if}>已购票</option>
+                    </select>
+                </span>
+                <span class="input-group-select">
+                    <select name="nobind" class="form-control" style="width:130px;padding:0 5px;">
+                        <option value="">全部用户</option>
+                        <option value="1" {if $_GET['nobind']=='1'}selected{/if}>未绑定企业</option>
+                    </select>
+                </span>
+                <span class="input-group-select">
+                    <select name="searchtime" class="form-control" style="width:100px;padding:0 5px;" id="searchtime">
+                        <option value="">全部时间</option>
+                        <option value="create" {if $_GET['searchtime']=='create'}selected{/if}>注册时间</option>
+                    </select>
+                </span>
+                <span class="input-group-btn">{:tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}</span>
+                <input type="text" class="form-control " name="keyword" value="{$_GPC['keyword']}" placeholder="可搜索昵称、姓名、手机号关键词查询" style="min-width: 150px;">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit"> 搜索</button>
+                    <button type="submit" name="export" value="1" class="btn btn-success" style="margin-left: 20px;">导出</button>
+                </span>
+            </div>
+        </div>
+
+    </form>
+
+    {if empty($list)}
+    <div class="panel panel-default">
+        <div class="panel-body empty-data">未查询到相关数据</div>
+    </div>
+    {else/}
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-responsive">
+                <thead>
+                <tr>
+                    <th style="width:40px">ID</th>
+                    <th style="width:100px">用户</th>
+                    <th style="width:120px">登录账号</th>
+                    <th style="width:100px">手机号</th>
+                    <th style="width:120px">邮箱</th>
+                    <th style="width:90px">企业名称</th>
+                    <th style="width:90px">职位</th>
+                    <th style="width: 80px;">是否已购票(免购票)</th>
+                    <th style="width: 100px;">注册时间</th>
+                    <th style="width: 100px;text-align:center;">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $list as $key=>$row }
+                <tr>
+                    <td class="full">{$row['id']}</td>
+                    <td style="overflow: visible;white-space:normal;">
+                        <div rel="pop" style="display: flex" data-content="
+                                <span>ID: </span>{$row['id']} </br>
+                                {if empty($row['username'])}
+                                <span>账号: </span>{$row['username']}</br>
+                                {/if}
+                                {if empty($row['nickname'])}
+                                <span>昵称: </span>{$row['nickname']}</br>
+                                {/if}
+                                {if empty($row['mobile'])}
+                                <span>手机号: </span>{$row['mobile']} </br>
+                                {/if}
+                                <span>性别: </span>{$row['gender'] == 1 ? '男' : ( $row['gender'] == 2 ? '女' : '未知' )} </br>
+                                ">
+
+                            <a href="{:tomedia($row['avatar'])}" target="_blank">
+                                <img class="img-40" src="{$row['avatar']}" style="border-radius:50%;border:1px solid #efefef;" onerror="this.src='{if $row.gender == 0 || $row.gender == 1}/app/admin/static/images/male.png{else}/app/admin/static/images/female.png{/if}'">
+                            </a>
+
+                            <span style="display: flex;flex-direction: column;justify-content: center;align-items: flex-start;padding-left: 5px">
+                                <span class="realname">
+                                    {$row['realname']}<br>
+                                </span>
+                            </span>
+
+                        </div>
+                    </td>
+                    <td class="full">
+                        {$row['username']?:'暂无'}
+                    </td>
+                    <td class="full">
+                        {$row['mobile']?:'无'}
+                    </td>
+                    <td class="full">
+                        {$row['email']?:'无'}
+                    </td>
+                    <td class="full">
+                        {$row['company_name']} - {$row['company_id']}
+                    </td>
+                    <td class="full">
+                        {$row['job']?:'无'}
+                    </td>
+                    <td class="full">
+                        <span class='label {if $row['ispay']==1}label-primary{else}label-default{/if}'
+                        data-toggle='ajaxSwitch'
+                        data-switch-value='{$row['ispay']}'
+                        data-switch-value0='0|需购票|label label-default|{:webUrl('system/memberchange',array('type' => 'ispay','value'=>1,'id'=>$row['id']))}'
+                        data-switch-value1='1|已购票(或免购票)|label label-primary|{:webUrl('system/memberchange',array('type'=>'ispay','value' => 0,'id'=>$row['id']))}'
+                        >
+                        {if $row['ispay']==1}已购票(或免购票){else}需购票{/if}
+                        </span>
+                    </td>
+                    <td class="full">
+                        {:date("Y-m-d",$row['create_time'])}
+                        <br/>
+                        {:date("H:i:s",$row['create_time'])}
+                    </td>
+                    <td style="text-align:center;">
+                        <a class='btn btn-default btn-sm  btn-op btn-operation' href="{:webUrl('system/memberDetail', array('id' => $row['id']))}">
+                            <span data-toggle="tooltip" data-placement="top" title="" data-original-title="查看详情">
+                                <i class="icon icon-eye-open"></i>
+                            </span>
+                        </a>
+                    </td>
+                </tr>
+                {/foreach}
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td colspan="10" class="text-right">
+                        {$pager | raw}
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    {/if}
+</div>
+
+<script language="javascript">
+    require(['jquery', 'tip'], function () {
+
+        $(".user_del").click(function () {
+
+            var id = $(this).attr('data-id');
+            console.log(id)
+            tip.confirm('确定删除吗？', function () {
+                $.ajax({
+                    method: "post",
+                    url: "{:webUrl('web.member/delete')}",
+                    data: {id: id},
+                    success: (res) => {
+                        console.log(res);
+                        window.location.reload();
+                    },
+                })
+            });
+
+        });
+    });
+
+</script>
+{/block}

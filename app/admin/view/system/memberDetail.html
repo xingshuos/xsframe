@@ -1,0 +1,106 @@
+{extend name="../../admin/view/public/admin"}
+
+{block name='content'}
+<style>
+    #xiangqing{
+        color:#44abf7;
+        font-size:14px;
+    }
+</style>
+<div class="page-header">
+    <span>当前位置：<span class="text-primary">{if !empty($item['id'])}编辑{else}添加{/if}用户 <small>{if !empty($item['id'])}修改【{$item['nickname']}】{/if}</small></span></span>
+</div>
+<div class="page-content">
+    <form id="dataform" action="" method="post" class="form-horizontal form-validate" >
+        <input type="hidden" name="id" value="{$item['id']}" />
+        <div class="form-group">
+            <label class="col-lg control-label">用户头像</label>
+            <div class="col-sm-9 col-xs-12">
+                {:tpl_form_field_image('avatar', $item['avatar'])}
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg control-label must">昵称</label>
+            <div class="col-sm-9 col-xs-12">
+                <input type="text" name="nickname" class="form-control" value="{$item['nickname']}" data-rule-required="true" autocomplete="off" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg control-label must">姓名</label>
+            <div class="col-sm-9 col-xs-12">
+                <input type="text" name="realname" required class="form-control" value="{$item['realname']}" data-rule-required="false" autocomplete="off" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg control-label must">手机号</label>
+            <div class="col-sm-9 col-xs-12">
+                <input type="text" name="mobile" required class="form-control" value="{$item['mobile']}" data-rule-required="false" autocomplete="off" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg control-label must">邮箱</label>
+            <div class="col-sm-9 col-xs-12">
+                <input type="text" name="email" required class="form-control" value="{$item['email']}" data-rule-required="false" autocomplete="off" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg control-label must">职位</label>
+            <div class="col-sm-9 col-xs-12">
+                <input type="text" name="job" required class="form-control" value="{$item['job']}" data-rule-required="false" autocomplete="off" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-lg control-label">账号</label>
+            <div class="col-sm-9 col-xs-12">
+                <input type="text" name="username" class="form-control" value="{$item['username']}" data-rule-required="false" autocomplete="off" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg control-label">密码</label>
+            <div class="col-sm-9 col-xs-12">
+                <input type="text" name="password" class="form-control" value="" data-rule-required="false" autocomplete="off" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg control-label must">选择企业</label>
+            <div class="col-sm-9 col-xs-12">
+                <select id="company_id" name='company_id' required class='form-control select2'>
+                    <option value="">--请选择--</option>
+
+                    {foreach $companys as $key => $row}
+                    <option value="{$row['id']}" {if $row['id']==$item['company_id']}selected{/if} data-id="{$item['company_id']}">{$row['title']??$row['en_title']}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-lg control-label">已购票（免购票）</label>
+            <div class="col-sm-9 col-xs-12">
+                <label class="radio-inline">
+                    <input type="radio" name="ispay" value="0" {if $item['ispay']==0 || empty($item)}checked="checked"{/if}> 未购票
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="ispay" value="1" {if $item['ispay']==1}checked="checked"{/if}> 已购票（免购票）
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group"></div>
+        <div class="form-group">
+            <label class="col-lg control-label"></label>
+            <div class="col-sm-9 col-xs-12">
+                <input type="submit" value="提交" class="btn btn-primary" />
+                <input type="button" name="back" onclick='history.back()' style='margin-left:10px;' value="返回列表" class="btn btn-default" />
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<script language='javascript'>
+
+</script>
+
+{/block}
