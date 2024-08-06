@@ -9,6 +9,7 @@ use xsframe\util\FileUtil;
 use think\facade\Db;
 use think\Request;
 use XMLWriter;
+use xsframe\util\LoggerUtil;
 
 class SiteMapWrapper
 {
@@ -70,7 +71,9 @@ class SiteMapWrapper
                 $result = $this->httpPost($apiUrl, $urls);
                 $result = json_decode($result, true);
                 if ($result['error'] == 401 || $result['error'] == 400) {
-                    echo("Submission failed : " . $result['message'] . PHP_EOL . "<br>");
+                    $errorMsg = "Submission failed : " . $result['message'] . PHP_EOL . "<br>";
+                    echo($errorMsg);
+                    LoggerUtil::warning($errorMsg);
                 } else {
                     echo("Baidu Included remain:" . $result['remain'] ?? '无' . " success:{$result['success']} " . date('Y-m-d H:i:s') . PHP_EOL . "<br>");
                 }
