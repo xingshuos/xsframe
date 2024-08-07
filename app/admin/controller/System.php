@@ -141,14 +141,22 @@ class System extends AdminBaseController
         $pager = pagination2($total, $this->pIndex, $this->pSize);
 
         $list = set_medias($list, ['avatar']);
+        foreach ($list as &$item) {
+            $item['module_name'] = DbServiceFacade::name('sys_modules')->getValue(['identifie' => $item['module']], "name");
+        }
+        unset($item);
 
         $appList = DbServiceFacade::name('sys_account_modules')->getAll(['uniacid' => $this->uniacid], "module");
+        foreach ($appList as &$item) {
+            $item['module_name'] = DbServiceFacade::name('sys_modules')->getValue(['identifie' => $item['module']], "name");
+        }
+        unset($item);
 
         $result = [
-            'appList' => $appList,
-            'list'    => $list,
-            'pager'   => $pager,
-            'total'   => $total,
+            'appList'   => $appList,
+            'list'      => $list,
+            'pager'     => $pager,
+            'total'     => $total,
             'starttime' => $startTime,
             'endtime'   => $endTime,
         ];

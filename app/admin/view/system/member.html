@@ -15,10 +15,10 @@
         <div class="page-toolbar">
             <div class="col-md-12 input-group pull-right" style="margin-top: 10px;">
                 <span class="input-group-select">
-                    <select name="module" class="form-control" style="width:130px;padding:0 5px;">
+                    <select name="module" class="form-control" style="width:230px;padding:0 5px;">
                         <option value="">选择应用</option>
                         {foreach $appList as $app}
-                        <option value="{$app['module']}" {if $_GET['module']==$app['module']}selected{/if}>{$app['module']}</option>
+                        <option value="{$app['module']}" {if $_GET['module']==$app['module']}selected{/if}>{$app['module_name']}（{$app['module']}）</option>
                         {/foreach}
                     </select>
                 </span>
@@ -50,8 +50,8 @@
                 <thead>
                 <tr>
                     <th style="width:40px">ID</th>
-                    <th style="width:100px">用户</th>
-                    <th style="width:120px">登录账号</th>
+                    <th style="width:80px">用户</th>
+                    <th style="width:100px">来源</th>
                     <th style="width:100px">手机号</th>
                     <th style="width:120px">邮箱</th>
                     <th style="width:90px">职位</th>
@@ -84,14 +84,14 @@
 
                             <span style="display: flex;flex-direction: column;justify-content: center;align-items: flex-start;padding-left: 5px">
                                 <span class="realname">
-                                    {$row['realname']}<br>
+                                    {$row['nickname']}<br>
                                 </span>
                             </span>
 
                         </div>
                     </td>
                     <td class="full">
-                        {$row['username']?:'暂无'}
+                        {$row['module_name'] . "（".$row['module']."）"?:'暂无'}
                     </td>
                     <td class="full">
                         {$row['mobile']?:'无'}

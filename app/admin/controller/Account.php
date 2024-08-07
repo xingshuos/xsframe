@@ -13,8 +13,10 @@
 namespace app\admin\controller;
 
 use think\facade\Db;
+use xsframe\facade\service\DbServiceFacade;
 use xsframe\facade\wrapper\SystemWrapperFacade;
 use xsframe\util\ArrayUtil;
+use xsframe\util\RandomUtil;
 use xsframe\wrapper\AccountHostWrapper;
 use xsframe\wrapper\UserWrapper;
 
@@ -117,6 +119,9 @@ class Account extends Base
             $accountHost = new AccountHostWrapper();
             $accountHost->reloadAccountHost();
 
+            # 管理员账号
+            $this->accountUser();
+
             $this->success(["url" => webUrl("account/edit", ['id' => $uniacid, 'tab' => str_replace("#tab_", "", $this->params['tab'])])]);
         }
 
@@ -124,6 +129,12 @@ class Account extends Base
         $identifies = Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'deleted' => 0])->order('displayorder asc,id asc')->column('module');
         $hostList = Db::name('sys_account_host')->where(['uniacid' => $uniacid])->order('id asc')->select();
         $modules = Db::name('sys_modules')->where(['identifie' => $identifies])->orderRaw("FIELD(identifie," . "'" . implode("','", $identifies) . "'" . ")")->select()->toArray();
+
+        $accountUserInfo = DbServiceFacade::name('sys_account_users')->getInfo(['uniacid' => $uniacid]);
+        if (!empty($accountUserInfo)) {
+            $userInfo = DbServiceFacade::name('sys_users')->getInfo(['id' => $accountUserInfo['user_id']]);
+            $item['username'] = $userInfo['username'];
+        }
 
         foreach ($modules as &$module) {
             $module['logo'] = !empty($module['logo']) ? tomedia($module['logo']) : $this->siteRoot . "/app/{$module['identifie']}/icon.png";
@@ -326,5 +337,44 @@ class Account extends Base
         }
 
         return '';
+    }
+
+    // 管理员管理
+    private function accountUser()
+    {
+        $username = $this->params['username'] ?? '';
+        $password = $this->params['password'] ?? '';
+
+        if (!empty($username) && !empty($password)) {
+            $salt = RandomUtil::random(6);
+            $newPassword = md5($password . $salt);
+
+            $userInfo = DbServiceFacade::name('sys_users')->getInfo(['username' => $username]);
+
+            if (!empty($userInfo)) {
+                $accountUserInfo = DbServiceFacade::name('sys_account_users')->getInfo(['user_id' => $userInfo['id']]);
+                if (!empty($accountUserInfo)) {
+                    if ($accountUserInfo['uniacid'] == $this->uniacid) {
+                        DbServiceFacade::name('sys_users')->updateInfo(['id' => $userInfo['id'], 'salt' => $salt, 'password' => $newPassword]);
+                    }
+                }
+            } else {
+                $userData = [
+                    "username"   => $username,
+                    "password"   => $newPassword,
+                    "salt"       => $salt,
+                    "role"       => 'manager',
+                    "createtime" => TIMESTAMP,
+                    "status"     => 1,
+                ];
+                $userId = DbServiceFacade::name('sys_users')->insertInfo($userData);
+                $accountUserData = [
+                    "uniacid" => $this->uniacid,
+                    "user_id" => $userId,
+                    "module"  => '',
+                ];
+                DbServiceFacade::name('sys_account_users')->insertInfo($accountUserData);
+            }
+        }
     }
 }
