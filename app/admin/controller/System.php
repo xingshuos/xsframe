@@ -166,8 +166,36 @@ class System extends AdminBaseController
     // 用户详情
     public function memberDetail()
     {
+        $id = $this->params['id'];
+
+        if ($this->request->isPost()) {
+            $data = [
+                'uniacid'  => $this->uniacid,
+                'nickname' => trim($this->params['nickname']),
+                'avatar'   => trim($this->params['avatar']),
+                'realname' => trim($this->params['realname']),
+                'mobile'   => trim($this->params['mobile']),
+                'gender'   => trim($this->params['gender']),
+            ];
+
+            if (!empty($this->params['birthday_str'])) {
+                $birthdayDate = strtotime($this->params['birthday_str']);
+                $data['birthyear'] = date('Y', $birthdayDate);
+                $data['birthmonth'] = date('m', $birthdayDate);
+                $data['birthday'] = date('d', $birthdayDate);
+            }
+
+            if (!empty($id)) {
+                DbServiceFacade::name('sys_member')->updateInfo($data, ['id' => $id]);
+            } else {
+                DbServiceFacade::name('sys_member')->insertInfo($data);
+            }
+
+            $this->success();
+        }
+
         $condition = [
-            'id' => $this->params['id']
+            'id' => $id
         ];
         $item = DbServiceFacade::name('sys_member')->getInfo($condition, "*");
         $result = [
