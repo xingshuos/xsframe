@@ -236,4 +236,22 @@ class WechatService
 
         return $userInfo;
     }
+    
+    /**
+     * 微信创建子菜单
+     * @param $appid
+     * @param $secret
+     * @param $menus
+     * @return array|bool|mixed|string
+     * @throws ApiException
+     */
+
+    public function createMenu($appId, $secret, $menus,  $isReload = false){
+        $access_token = $this->getAccessToken($appId, $secret, 7000, $isReload);
+        $url = 'https://api.weixin.qq.com/cgi-bin/menu/create?access_token=' . $access_token;
+        $response = RequestUtil::httpPostJson($url, json_encode($menus,320));
+        $output = json_decode($response, true);
+        return $output;
+
+    }
 }
