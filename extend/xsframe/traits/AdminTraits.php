@@ -74,10 +74,7 @@ trait AdminTraits
             }
 
             if (!empty($keyword) && !empty($kwFields)) {
-                $kwFields = str_replace(" ", "|", $kwFields);
-                $kwFields = str_replace("，", "|", $kwFields);
-                $kwFields = str_replace(",", "|", $kwFields);
-                $condition[] = [$kwFields, 'like', "%" . trim($keyword) . "%"];
+                $field = $kwFields;
             }
 
             if (!empty($keyword) && !empty($field)) {
