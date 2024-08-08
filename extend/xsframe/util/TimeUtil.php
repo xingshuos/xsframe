@@ -14,6 +14,61 @@ namespace xsframe\util;
 
 class TimeUtil
 {
+    // 批量设置时间格式
+    public static function setTimes($list = [], $fields = null, $format = null)
+    {
+        if (empty($list)) {
+            return [];
+        }
+
+        if (empty($fields)) {
+            foreach ($list as &$row) {
+                $row = date($format ?: 'Y-m-d H:i:s', $row);
+            }
+
+            return $list;
+        }
+
+        if (!is_array($fields)) {
+            $fields = explode(',', $fields);
+        }
+
+        if (is_object($list)) {
+            $list = $list->toArray();
+        }
+
+        if (is_array2($list)) {
+            foreach ($list as $key => &$value) {
+                foreach ($fields as $field) {
+                    if (strexists($field, ".")) {
+                        $str = explode(".", $field);
+                        if (isset($value[$str[0]][$str[1]])) {
+                            $value[$str[0]][$str[1]] = date($format ?: 'Y-m-d H:i:s', $value[$str[0]][$str[1]]);
+                        }
+                    }
+
+                    if (isset($list[$field])) {
+                        $list[$field] = date($format ?: 'Y-m-d H:i:s', $list[$field]);
+                    }
+
+                    if (is_array($value) && isset($value[$field])) {
+                        $value[$field] = date($format ?: 'Y-m-d H:i:s', $value[$field]);
+                    }
+                }
+            }
+
+            return $list;
+        }
+
+        foreach ($fields as $field) {
+            if (isset($list[$field])) {
+                $list[$field] = tomedia($list[$field]);
+                $list[$field] = date($format ?: 'Y-m-d H:i:s', $list[$field]);
+            }
+        }
+
+        return $list;
+    }
 
     // 获取星期几
     public static function getWeek($key = 0)
@@ -51,7 +106,7 @@ class TimeUtil
     {
         if ($seconds > 3600) {
             $hours = intval($seconds / 3600);
-            $time  = $hours . ":" . gmstrftime('%M:%S', $seconds);
+            $time = $hours . ":" . gmstrftime('%M:%S', $seconds);
         } else {
             $time = gmstrftime('%H:%M:%S', $seconds);
         }
@@ -61,7 +116,7 @@ class TimeUtil
     // 将时分秒转换成秒数
     public static function timeToDuration($time)
     {
-        $parsed   = date_parse($time);
+        $parsed = date_parse($time);
         $duration = $parsed['hour'] * 3600 + $parsed['minute'] * 60 + $parsed['second'];
         return $duration;
     }
@@ -70,7 +125,7 @@ class TimeUtil
     public static function timeSlot($time)
     {
         $datetime = date('H', $time);
-        $text     = "";
+        $text = "";
 
         if ($datetime >= 0 && $datetime < 5) {
             $text = "凌晨";
@@ -93,11 +148,11 @@ class TimeUtil
     public static function formatTimeToStr($time)
     {
         $diff = time() - $time;
-        $day  = floor($diff / 86400);
+        $day = floor($diff / 86400);
         $free = $diff % 86400;
 
         if ($day > 0) {
-            $month    = floor($day / 30);
+            $month = floor($day / 30);
             $monthNum = intval($day / 30);
             if ($month > 0) {
                 if ($monthNum > 12) {
@@ -117,7 +172,7 @@ class TimeUtil
                     $timeStr = $hour . "小时前";
                 } else {
                     if ($free > 0) {
-                        $min  = floor($free / 60);
+                        $min = floor($free / 60);
                         $free = $free % 60;
                         if ($min > 0) {
                             $timeStr = $min . "分钟前";
@@ -147,7 +202,7 @@ class TimeUtil
      */
     public static function getMillisecond()
     {
-        list($s1, $s2) = explode(' ', microtime());
+        [$s1, $s2] = explode(' ', microtime());
         return sprintf('%.0f', (floatval($s1) + floatval($s2)) * 1000);
     }
 
@@ -158,7 +213,7 @@ class TimeUtil
      */
     public static function getMillisecond32()
     {
-        list($s1, $s2) = explode(' ', microtime());
+        [$s1, $s2] = explode(' ', microtime());
         return (float)sprintf('%.0f', (floatval($s1) + floatval($s2)) * 1000);
     }
 
@@ -178,7 +233,7 @@ class TimeUtil
      */
     public static function getMillisecondMerge()
     {
-        list($usec, $sec) = explode(" ", microtime());
+        [$usec, $sec] = explode(" ", microtime());
         $msec = round($usec * 1000);
         return $msec;
     }
@@ -189,10 +244,10 @@ class TimeUtil
      */
     public static function getTotalMillisecond()
     {
-        $time  = explode(" ", microtime());
-        $time  = $time [1] . ($time [0] * 1000);
+        $time = explode(" ", microtime());
+        $time = $time [1] . ($time [0] * 1000);
         $time2 = explode(".", $time);
-        $time  = $time2 [0];
+        $time = $time2 [0];
         return $time;
     }
 
@@ -202,7 +257,7 @@ class TimeUtil
      */
     public static function microtimeFloat()
     {
-        list($usec, $sec) = explode(" ", microtime());
+        [$usec, $sec] = explode(" ", microtime());
         return ((float)$usec + (float)$sec);
     }
 
@@ -210,9 +265,9 @@ class TimeUtil
     {
         $length = strlen($string);
         if ($length == 8) {
-            $year  = mb_substr($string, 0, 4);
+            $year = mb_substr($string, 0, 4);
             $month = mb_substr($string, 4, 2);
-            $day   = mb_substr($string, 6, 2);
+            $day = mb_substr($string, 6, 2);
             try {
                 $data = new \DateTime($year . '-' . $month . '-' . $day);
             } catch (\Exception $e) {
@@ -226,7 +281,7 @@ class TimeUtil
     // 获取当前时间是星期几
     public static function formatWeek(string $timeString)
     {
-        $week      = date('w', strtotime($timeString));
+        $week = date('w', strtotime($timeString));
         $weekarray = ["日", "一", "二", "三", "四", "五", "六"]; //先定义一个数组
         return "星期" . $weekarray[$week];
     }
@@ -242,7 +297,7 @@ class TimeUtil
             $datetime2 = new \DateTime($date2);
         } catch (\Exception $e) {
         }
-        $interval  = $datetime1->diff($datetime2);
+        $interval = $datetime1->diff($datetime2);
         $time['y'] = $interval->format('%Y');
         $time['m'] = $interval->format('%m');
         $time['d'] = $interval->format('%d');
@@ -266,9 +321,9 @@ class TimeUtil
             $datetime2 = new \DateTime($date2);
         } catch (\Exception $e) {
         }
-        $interval   = $datetime1->diff($datetime2);
-        $year       = intval($interval->format('%Y'));
-        $month      = intval($interval->format('%m'));
+        $interval = $datetime1->diff($datetime2);
+        $year = intval($interval->format('%Y'));
+        $month = intval($interval->format('%m'));
         $diff_month = ($year * 12) + $month;
         return $diff_month;
     }
@@ -310,7 +365,7 @@ class TimeUtil
             $monthFirstDay = date('Y-m-1 00:00:00', $timestamp);
             return strtotime($monthFirstDay);
         } else {
-            $mdays        = date('t', $timestamp);
+            $mdays = date('t', $timestamp);
             $monthLastDay = date('Y-m-' . $mdays . ' 23:59:59', $timestamp);
             return strtotime($monthLastDay);
         }
@@ -399,7 +454,7 @@ class TimeUtil
             $hour = '0' . $hour;
         }
 
-        $t      = $second % 3600;
+        $t = $second % 3600;
         $minute = floor($t / 60);
         if ($minute < 10) {
             $minute = '0' . $minute;

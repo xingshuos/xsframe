@@ -87,6 +87,13 @@ trait AdminTraits
                 $condition[] = [$field, 'like', "%" . trim($keyword) . "%"];
             }
 
+            foreach ($this->params as $field => $value) {
+                if (array_key_exists($field, $fieldList) && !empty($value) && !array_key_exists($field, $condition)) {
+                    $condition[$field] = $value;
+                }
+            }
+            unset($item);
+
             $this->setMainCondition($condition);
 
             $field = "*";
