@@ -64,6 +64,11 @@ let myConfig = {
         'init': "js/web/init",
         'table': "js/web/table",
         'util': "js/web/util",
+
+        'vue': 'components/vue/vue.min',
+        'axios': 'components/vue/axios.min',
+        'h7.axios': 'components/vue/h7.axios',
+        'sweetalert': 'components/sweetalert2/sweetalert2.min',
     },
     // shim配置项中的每个条目都代表一个非AMD模块，并包含以下两个关键属性：
     // deps：这是一个数组，列出了该模块所依赖的其他模块。这些依赖模块将首先被加载，然后才会加载当前模块。
@@ -97,6 +102,11 @@ let myConfig = {
         },
         tip: {
             deps: ["loadcss!components/tip/tip.css", "loadcss!components/jquery/confirm/jquery-confirm.css"]
+        },
+        "sweetalert": {
+            deps: [
+                "loadcss!components/sweetalert2/sweetalert2.css",
+            ]
         },
         'jquery-confirm': {
             deps: ["loadcss!components/jquery/confirm/jquery-confirm.css"]

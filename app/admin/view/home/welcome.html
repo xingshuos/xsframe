@@ -1,10 +1,18 @@
 {extend name="../../admin/view/public/admin"}
 
+{block name='style'}
+<style>
+    .icon-star{
+        color: #dba617;
+    }
+</style>
+{/block}
+
 {block name='content'}
 
 <div class="page-content transparent">
 
-    <div class="row">
+    <div class="col-xs-12">
         <div class="col-md-6">
             <div class="ibox h300">
                 <div class="ibox-title">
@@ -15,7 +23,7 @@
                 </div>
                 <div class="ibox-content">
                     <ul class="fui-cell-group">
-                        <li class="fui-cell">系统名称：<span class="text">{$websiteSets['title']}</span></li>
+                        <li class="fui-cell">系统名称：<span class="text">{$websiteSets['name']?:'星数引擎'}</span></li>
                         <li class="fui-cell">系统关键词：<span class="text">{$websiteSets['keywords']}</span></li>
                         <li class="fui-cell">系统介绍：<span class="text">{$websiteSets['description']}</span></li>
                     </ul>
@@ -28,8 +36,8 @@
                     <ul class="fui-list-group">
                         <li class="fui-list">
                             <a href="{:webUrl('account/list')}">
-                                <div class="fui-list-media">
-                                    <span class="icon icon-th-large text-info"></span>
+                                <div class="fui-list-media flex-center">
+                                    <span class="icon icon-archive text-info"></span>
                                 </div>
                                 <div class="fui-list-inner">
                                     <h5 class="goods_totals">{$accountTotal}</h5>
@@ -39,8 +47,8 @@
                         </li>
                         <li class="fui-list">
                             <a href="{:webUrl('app/list')}">
-                                <div class="fui-list-media">
-                                    <span class="icon icon-apple text-green"></span>
+                                <div class="fui-list-media flex-center">
+                                    <span class="icon  icon-th-large text-green"></span>
                                 </div>
                                 <div class="fui-list-inner">
                                     <h5 class="order_status1">{$moduleTotal}</h5>
@@ -51,24 +59,24 @@
                     </ul>
                     <ul class="fui-list-group">
                         <li class="fui-list">
-                            <a href="{:webUrl('users/list',['role' => 'owner'])}">
-                                <div class="fui-list-media">
+                            <a href="{:webUrl('users/list')}">
+                                <div class="fui-list-media flex-center">
                                     <span class="icon icon-user text-primary"></span>
                                 </div>
                                 <div class="fui-list-inner">
                                     <h5 class="goods_totals">{$userTotal}</h5>
-                                    <p>超级管理员</p>
+                                    <p>管理员</p>
                                 </div>
                             </a>
                         </li>
                         <li class="fui-list">
-                            <a href="{:webUrl('users/list',['role' => 'manager'])}">
-                                <div class="fui-list-media">
-                                    <span class="icon icon-user text-warning"></span>
+                            <a href="{:webUrl('sysset/host')}">
+                                <div class="fui-list-media flex-center">
+                                    <span class="icon icon-link text-warning"></span>
                                 </div>
                                 <div class="fui-list-inner">
                                     <h5 class="order_status1">{$userModuleTotal}</h5>
-                                    <p>商户管理员</p>
+                                    <p>独立域名</p>
                                 </div>
                             </a>
                         </li>
@@ -78,7 +86,118 @@
         </div>
     </div>
 
+    <div class="col-xs-12">
+
+        <div class="panel-heading col-xs-12">
+            <a href="https://www.xsframe.cn/store/app.html" target="_blank" class="color-default pull-right">查看更多>></a>
+            <div class="menu">
+                <h2 class="topic active notice">推荐应用</h2>
+            </div>
+        </div>
+
+        <div id="app-root">
+
+            <div class="app-list-table">
+
+                <div class="app-list" v-cloak>
+
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 app-item" style="margin-bottom: 20px;float: left;" v-for="(item,index) in appList" :key="index">
+                        <div class="app-item-top" style="background: #fff;padding: 20px 20px 10px;">
+                            <div class="app-logo" style="height: 180px;float: left;">
+                                <img :src="item.thumb" class="logo" style="width: 128px;height: 128px;background: green;">
+                            </div>
+                            <div class="app-info" style="height: 180px;padding-left: 140px;">
+                                <div class="app-name flex-between">
+                                    <a :href="'https://www.xsframe.cn/store/app-'+item.id+'.html'" target="_blank">
+                                        <span class="name" style="font-size: 18px;font-weight: bold;">{{ item.title }}</span>
+                                    </a>
+                                    <a :href="'https://www.xsframe.cn/store/app-'+item.id+'.html'" target="_blank">
+                                        <span class="btn btn-primary btn-xs" style="line-height: 20px; height: 24px; background: #fff !important; color: var(--primary-color) !important; padding: 0 10px; box-sizing: border-box;">立即安装</span>
+                                    </a>
+                                </div>
+                                <div class="app-feature">
+                                    <div class="feature text-over-1" style="line-height: 30px;">特点: {{ item.subtitle }}</div>
+                                </div>
+                                <div class="app-desc">
+                                    <div class="desc text-over-2" style="line-height: 30px;">简介: {{ item.description }}</div>
+                                </div>
+                                <div class="app-author text-over-1" style="height: 30px;line-height: 30px;">
+                                    <span>标签: </span>
+                                    <span class="name">{{ item.app_labels }}</span>
+                                </div>
+                                <div class="app-author text-over-1" style="height: 30px;line-height: 30px;">
+                                    <span class="name price" style="font-size: 16px;font-weight: bold;">
+                                        <template v-if="item.marketprice <= 0">
+                                            免费
+                                        </template>
+                                        <template v-else>
+                                            ¥ {{ item.marketprice }}
+                                        </template>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="app-item-bottom" style="padding: 12px 20px;background-color: #fff;border-top: 1px solid #efefef;">
+                            <div class="flex flex-between">
+                                <div class="rating-box flex-start-center">
+                                    <div class="star-rating">
+                                        <span class="icon" :class="item.app_score > 0 ? 'icon-star' : 'icon-star-empty'"></span>
+                                        <span class="icon" :class="item.app_score > 1 ? 'icon-star' : 'icon-star-empty'"></span>
+                                        <span class="icon" :class="item.app_score > 2 ? 'icon-star' : 'icon-star-empty'"></span>
+                                        <span class="icon" :class="item.app_score > 3 ? 'icon-star' : 'icon-star-empty'"></span>
+                                        <span class="icon" :class="item.app_score > 4 ? 'icon-star' : 'icon-star-empty'"></span>
+                                    </div>
+                                    <span class="num-ratings" style="margin-left: 6px;">({{ item.sales }})</span>
+                                </div>
+                                <div class="column-updated">
+                                    <strong>更新于</strong> {{ item.up_time }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="footer" style="text-align: center;">
+                    <a class="btn btn-primary" href="https://www.xsframe.cn/store/app.html" target="_blank">查看更多>></a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
 
 {/block}
 
+
+{block name="script"}
+<script>
+
+    require(['vue', 'h7.axios', 'jquery', 'tip'], (Vue, axios, $) => {
+
+        new Vue({
+            el: '#app-root',
+            data: {
+                appList: []
+            },
+            mounted() {
+                this.getAppList();
+            },
+            methods: {
+                getAppList() {
+                    let url = "{:webUrl('app/getRecommendAppList')}";
+                    axios.post(url, {}).then((res) => {
+                        console.log(res)
+                        this.appList = res.appList || [];
+                    });
+                },
+            }
+        });
+
+    });
+
+</script>
+{/block}}

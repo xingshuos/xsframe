@@ -14,9 +14,11 @@ namespace app\admin\controller;
 
 use think\Exception;
 use think\facade\Db;
+use xsframe\facade\service\DbServiceFacade;
 use xsframe\facade\wrapper\SystemWrapperFacade;
 use xsframe\util\FileUtil;
 use xsframe\util\PinYinUtil;
+use xsframe\util\RequestUtil;
 use xsframe\wrapper\ModulesWrapper;
 
 class App extends Base
@@ -290,5 +292,20 @@ class App extends Base
     private function updateSystemModuleList()
     {
         return SystemWrapperFacade::reloadAllModuleList();
+    }
+
+    // 获取推荐应用列表
+    public function getRecommendAppList()
+    {
+        $key = $this->websiteSets['key'] ?? '';
+        $token = $this->websiteSets['token'] ?? '';
+
+        $result = RequestUtil::cloudHttpPost("app/recommend", ['key' => $key, 'token' => $token]);
+        $data = $result['data'] ?? [];
+
+        return json([
+            'code' => '200',
+            'data' => $data
+        ]);
     }
 }
