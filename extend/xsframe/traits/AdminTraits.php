@@ -15,6 +15,7 @@ trait AdminTraits
     protected $result = []; // 可以自定义返回多个值到前端页面
     protected $backUrl = null; // post提交后返回的url
     protected $isBackMain = true; // post提交后是否返回到列表页 默认返回到列表页
+    protected $deleteField = "deleted"; // 软删除字段
 
     public function index()
     {
@@ -44,8 +45,8 @@ trait AdminTraits
             $condition = (array)$this->condition;
             $condition['uniacid'] = $this->uniacid;
 
-            if (array_key_exists('deleted', $fieldList)) {
-                $condition['deleted'] = 0;
+            if (array_key_exists($this->deleteField, $fieldList)) {
+                $condition[$this->deleteField] = 0;
             }
 
             if (array_key_exists('is_deleted', $fieldList)) {
@@ -222,7 +223,7 @@ trait AdminTraits
                             case 'updatetime':
                                 $updateData[$filed] = TIMESTAMP;
                                 break;
-                            case 'deleted':
+                            case $this->deleteField:
                                 $updateData[$filed] = 0;
                                 break;
                         }
@@ -339,8 +340,8 @@ trait AdminTraits
 
             $updateData = [];
             $fieldList = $this->getFiledList();
-            if (array_key_exists('deleted', $fieldList)) {
-                $updateData['deleted'] = 1;
+            if (array_key_exists($this->deleteField, $fieldList)) {
+                $updateData[$this->deleteField] = 1;
             }
             if (array_key_exists('delete_time', $fieldList)) {
                 $updateData['delete_time'] = TIMESTAMP;
@@ -401,8 +402,8 @@ trait AdminTraits
 
             $updateData = [];
             $fieldList = $this->getFiledList();
-            if (array_key_exists('deleted', $fieldList)) {
-                $updateData['deleted'] = 0;
+            if (array_key_exists($this->deleteField, $fieldList)) {
+                $updateData[$this->deleteField] = 0;
             }
             if (array_key_exists('is_deleted', $fieldList)) {
                 $updateData['is_deleted'] = 0;
@@ -421,8 +422,8 @@ trait AdminTraits
     {
         if (!empty($this->tableName)) {
             $condition = [
-                'uniacid' => $this->uniacid,
-                'deleted' => 1,
+                'uniacid'          => $this->uniacid,
+                $this->deleteField => 1,
             ];
 
             $field = "*";
