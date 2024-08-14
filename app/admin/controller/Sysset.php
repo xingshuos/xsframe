@@ -299,7 +299,22 @@ class Sysset extends Base
         $isUpgrade = $result['data']['isUpgrade'];
 
         $result = [
-            'isUpgrade' => $isUpgrade
+            'isUpgrade' => (bool)$isUpgrade
+        ];
+        $this->success($result);
+    }
+
+    // 监测应用更新
+    public function checkAppVersion()
+    {
+        $key = $this->websiteSets['key'] ?? '';
+        $token = $this->websiteSets['token'] ?? '';
+
+        $result = RequestUtil::cloudHttpPost("app/upgrade", ['key' => $key, 'token' => $token]);
+        $isUpgrade = $result['data']['isUpgrade'];
+
+        $result = [
+            'isUpgrade' => (bool)$isUpgrade
         ];
         $this->success($result);
     }

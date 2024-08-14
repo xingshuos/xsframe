@@ -167,11 +167,11 @@ class SmsService extends BaseService
             }
         }
 
-        return $this->sendSMS($this->smsSet, $mobile, $tplId);
+        return $this->sendSMS($mobile, $tplId, $this->smsSet);
     }
 
     // 发送验证码
-    public function sendSMS($smsSet, $mobile, $tplId): bool
+    public function sendSMS($mobile, $tplId, $smsSet = null): bool
     {
         if (!preg_match("/^1[3456789]{1}\d{9}$/", $mobile)) {
             throw new ApiException(ExceptionEnum::getText(ExceptionEnum::SMS_MOBILE_ERROR));

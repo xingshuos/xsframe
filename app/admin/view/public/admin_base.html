@@ -282,10 +282,17 @@
 
         if( isOwner === 1 && isSystem === 1 ){
             let isUpgradeSystemNotice = util.cookie.get('isUpgradeSystemNotice') || 0;
+            let isUpgradeAppNotice = util.cookie.get('isUpgradeAppNotice') || 0;
+
             if( parseInt(isUpgradeSystemNotice) === 0 ){
                 checkSystemVersion();
             }
-            // 定义一个异步函数
+
+            if( parseInt(isUpgradeAppNotice) === 0 ){
+                checkAppVersion();
+            }
+
+            // 1.定义一个异步函数 监测系统版本
             async function checkSystemVersion() {
                 try {
                     const response = await fetch("{:webUrl('sysset/checkVersion')}");
@@ -294,9 +301,32 @@
                     let isUpgrade = data.result.isUpgrade;
 
                     if( isUpgrade ){
-                        util.cookie.set('isUpgradeSystemNotice', 1,3600);
-                        tip.confirm("系统检测到有新版本，请及时更新",function(){
-                            location.href = "{:webUrl('sysset/upgrade')}"
+                        require(['tip'], function ($) {
+                            tip.confirm("系统检测到有新版本，请及时更新",function(){
+                                util.cookie.set('isUpgradeSystemNotice', 1,3600);
+                                location.href = "{:webUrl('sysset/upgrade')}"
+                            });
+                        });
+                    }
+                } catch (error) {
+                    console.log('Error fetching data:', error);
+                }
+            }
+
+            // 1.定义一个异步函数 监测应用版本
+            async function checkAppVersion() {
+                try {
+                    const response = await fetch("{:webUrl('sysset/checkAppVersion')}");
+                    const data = await response.json();
+
+                    let isUpgrade = data.result.isUpgrade;
+
+                    if( isUpgrade ){
+                        require(['tip'], function ($) {
+                            tip.confirm("应用检测到有新版本，立即查看",function(){
+                                util.cookie.set('isUpgradeAppNotice', 1,3600);
+                                location.href = "{:webUrl('app/list')}"
+                            });
                         });
                     }
                 } catch (error) {
