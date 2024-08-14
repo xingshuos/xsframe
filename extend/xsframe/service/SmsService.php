@@ -167,12 +167,29 @@ class SmsService extends BaseService
             }
         }
 
-        return $this->sendSMS($mobile, $tplId, $this->smsSet);
+        $code = self::getCode($mobile);
+        $data = ['code' => $code];
+
+        return $this->sendSMS($mobile, $tplId, $data, $this->smsSet);
     }
 
     // 发送验证码
-    public function sendSMS($mobile, $tplId, $smsSet = null): bool
+    public function sendSMS($mobile, $tplId, $data = [], $smsSet = null): bool
     {
+        try {
+            return $this->customSendSMS($mobile, $tplId, $data, $smsSet);
+        } catch (ApiException $e) {
+            return false;
+        }
+    }
+
+    // 自定义发送短信
+    public function customSendSMS($mobile, $tplId, $data = [], $smsSet = null): bool
+    {
+        if (!empty($smsSet)) {
+            $this->smsSet = ArrayUtil::customMergeArrays($this->smsSet, $smsSet);
+        }
+
         if (!preg_match("/^1[3456789]{1}\d{9}$/", $mobile)) {
             throw new ApiException(ExceptionEnum::getText(ExceptionEnum::SMS_MOBILE_ERROR));
         }
@@ -181,17 +198,11 @@ class SmsService extends BaseService
             throw new ApiException(ExceptionEnum::getText(ExceptionEnum::SMS_SMSID_ERROR));
         }
 
-        if (empty($smsSet) || empty($smsSet['accessKeyId']) || empty($smsSet['accessKeySecret']) || empty($smsSet['sign'])) {
+        if (empty($this->smsSet) || empty($this->smsSet['accessKeyId']) || empty($this->smsSet['accessKeySecret']) || empty($this->smsSet['sign'])) {
             throw new ApiException(ExceptionEnum::getText(ExceptionEnum::SMS_PARAMS_ERROR));
         }
 
-        $code = self::getCode($mobile);
-
-        $accessKeyId = $smsSet['accessKeyId'];
-        $accessKeySecret = $smsSet['accessKeySecret'];
-        $signName = $smsSet['sign'];
-
-        return self::send($accessKeyId, $accessKeySecret, $signName, $mobile, $tplId, ['code' => $code]);
+        return self::send($this->smsSet['accessKeyId'], $this->smsSet['accessKeySecret'], $this->smsSet['sign'], $mobile, $tplId, $data);
     }
 
     // 清除验证码
@@ -263,28 +274,18 @@ class SmsService extends BaseService
         return true;
     }
 
-    // 自定义发送短信
-    public function customSendSMS($mobile, $tplId, $data = [], $smsSet = null, $replace = true): bool
-    {
-        if (!empty($smsSet)) {
-            $this->smsSet = ArrayUtil::customMergeArrays($this->smsSet, $smsSet);
-        }
-        return self::send($this->smsSet['accessKeyId'], $this->smsSet['accessKeySecret'], $this->smsSet['sign'], $mobile, $tplId, $data, $replace);
-    }
-
     /**
      * 发送短信
      * @param string $rootAccessKeyId
      * @param string $rootAccessKeySecret
      * @param $signName
-     * @param int $mobile 手机号
+     * @param string $mobile 手机号
      * @param string $tplId 短信模板iID
-     * @param array $data 发送数据  $replace=true $data替换模板数据  $replace=false 则直接使用$data作为发送数据 ['code' => $code]
-     * @param true $replace 是否替换数据
+     * @param $data
      * @return true
      * @throws ApiException
      */
-    public function send(string $rootAccessKeyId, string $rootAccessKeySecret, $signName, string $mobile, string $tplId, $data, $replace = true)
+    public function send(string $rootAccessKeyId, string $rootAccessKeySecret, $signName, string $mobile, string $tplId, $data)
     {
         date_default_timezone_set('GMT');
         $post = [
