@@ -84,11 +84,22 @@ class App extends Base
 
         $list = $list->toArray();
 
+        $key = $this->websiteSets['key'] ?? '';
+        $token = $this->websiteSets['token'] ?? '';
+        $cloudResult = RequestUtil::cloudHttpPost("app/list", ['key' => $key, 'token' => $token]);
+
         foreach ($list as &$item) {
             $item['logo'] = !empty($item['logo']) ? tomedia($item['logo']) : $this->siteRoot . "/app/{$item['identifie']}/icon.png";
             $manifest = $modulesController->extModuleManifest($item['identifie']);
             if (!empty($manifest) && version_compare($manifest['application']['version'], $item['version'], '>')) {
-                $item['new_version'] = 1;
+                $item['new_version'] = $manifest['application']['version'];
+            }
+
+            if ($cloudResult && empty($item['new_version'])) {
+                $cloudAppList = $cloudResult['data']['appList'];
+                if (!empty($cloudAppList) && version_compare($cloudAppList[$item['identifie']]['version'], $item['version'], '>')) {
+                    $item['new_version'] = $cloudAppList[$item['identifie']]['version'];
+                }
             }
         }
 

@@ -177,7 +177,7 @@
                         <span style="display: flex;flex-direction: column;justify-content: center;align-items: flex-start;padding-left: 5px">
                             <span>版本：{$row['version']} </span>
                             {if ( $do == 'installed' || empty($do) ) && $row['new_version']}
-                                <span class="text text-danger">发现新版本</span>
+                                <span class="text text-danger">发现新版本 v{$row['new_version']}</span>
                             {/if}
                         </span>
                     </td>
