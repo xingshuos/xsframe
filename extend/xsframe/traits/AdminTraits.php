@@ -46,7 +46,7 @@ trait AdminTraits
             $condition['uniacid'] = $this->uniacid;
 
             if (array_key_exists($this->deleteField, $fieldList)) {
-                $condition[$this->deleteField] = 0;
+                $condition[] = Db::raw($this->deleteField . " is null or " . $this->deleteField . " = '' or " . $this->deleteField . " = '0' ");
             }
 
             if (array_key_exists('is_deleted', $fieldList)) {
@@ -224,7 +224,11 @@ trait AdminTraits
                                 $updateData[$filed] = TIMESTAMP;
                                 break;
                             case $this->deleteField:
-                                $updateData[$filed] = 0;
+                                if ($fieldItem['type'] == 'tinyint(1)') {
+                                    $updateData[$filed] = 0;
+                                } else {
+                                    $updateData[$filed] = TIMESTAMP;
+                                }
                                 break;
                         }
                     }
@@ -342,6 +346,13 @@ trait AdminTraits
             $fieldList = $this->getFiledList();
             if (array_key_exists($this->deleteField, $fieldList)) {
                 $updateData[$this->deleteField] = 1;
+
+                if ($fieldList[$this->deleteField]['type'] == 'tinyint(1)') {
+                    $updateData[$this->deleteField] = 1;
+                } else {
+                    $updateData[$this->deleteField] = TIMESTAMP;
+                }
+
             }
             if (array_key_exists('delete_time', $fieldList)) {
                 $updateData['delete_time'] = TIMESTAMP;
