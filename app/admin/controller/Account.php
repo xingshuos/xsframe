@@ -42,6 +42,9 @@ class Account extends Base
 
             $hostTotal = Db::name("sys_account_host")->where(['uniacid' => $item['uniacid']])->count();
             $item['hostTotal'] = $hostTotal;
+
+            $memberTotal = Db::name("sys_member")->where(['uniacid' => $item['uniacid']])->count();
+            $item['memberTotal'] = $memberTotal;
         }
 
         // 更新uniacid列表

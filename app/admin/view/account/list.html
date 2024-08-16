@@ -52,6 +52,7 @@
                 <th style="width:40px;"></th>
                 <th style='width:80px'>排序</th>
                 <th style='width:200px'>商户名称</th>
+               <th style='width:80px'>会员数</th>
                <th style='width:80px'>访问域名</th>
                 <th style="width: 80px;">应用数量</th>
                 <th style='width:120px'>备注</th>
@@ -76,6 +77,9 @@
                             <span class="nickname">[{$row['uniacid']}] {$row['name']}</span>
                         </span>
                     </a>
+                </td>
+                <td>
+                    {$row['memberTotal']}人
                 </td>
                 <td>
                     {$row['hostTotal']}个
@@ -120,7 +124,7 @@
             <tfoot>
             <tr>
                 <td><input type="checkbox"></td>
-                <td colspan="3">
+                <td colspan="4">
                     <div class="btn-group">
                         <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('account/change',array('type' => 'status','value'=>1))}"><i class='icon icon-eye-open'></i> 启用</button>
                         <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('account/change',array('type' => 'status','value'=>0))}"><i class='icon icon-eye-close'></i> 禁用</button>
