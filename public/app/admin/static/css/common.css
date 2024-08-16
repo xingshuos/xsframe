@@ -143,6 +143,10 @@ a.js-clip {
     color: var(--primary-color);
 }
 
+.cursor, .pointer {
+    cursor: pointer;
+}
+
 select, input:focus, input {
     outline: none !important;
     box-shadow: none !important;
@@ -941,11 +945,11 @@ select, input:focus, input {
     color: #7c838a;
 }
 
-.wb-subnav ul li a .wb-nav-title{
+.wb-subnav ul li a .wb-nav-title {
     position: relative;
 }
 
-.wb-subnav ul li a .wb-nav-title.point:before{
+.wb-subnav ul li a .wb-nav-title.point:before {
     position: absolute;
     content: '';
     width: 5px;
@@ -965,7 +969,7 @@ select, input:focus, input {
     color: #666;
 }
 
-.wb-subnav ul.single li a .wb-nav-title{
+.wb-subnav ul.single li a .wb-nav-title {
     position: relative;
 }
 
