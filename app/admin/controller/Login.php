@@ -74,7 +74,7 @@ class Login extends Base
         $url = $resultInfo['url'];
 
         Db::name("sys_users")->where(['id' => $userInfo['id']])->update(['logintime' => time(), 'lastip' => $this->request->ip()]);
-        show_json(1, array('url' => webUrl($url)));
+        show_json(1, ['url' => $url]);
     }
 
     // 注册

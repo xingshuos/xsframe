@@ -350,6 +350,12 @@ class TimeUtil
         return $isData ? date("Y-m-d H:i:s", $timeStamp) : $timeStamp;
     }
 
+    // 获取本月结束时间
+    public static function getMonthLastDay($year, $month)
+    {
+        return date('t', strtotime($year . '-' . $month . ' -1'));
+    }
+
     /**
      * 获取指定日期所在月的开始日期与结束日期
      * @param string $date
@@ -357,7 +363,6 @@ class TimeUtil
      * @return array
      * @access private
      */
-
     public static function getMonthRange($date, $returnFirstDay = true)
     {
         $timestamp = strtotime($date);
