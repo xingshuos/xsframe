@@ -127,6 +127,55 @@ CREATE TABLE `#__sys_attachment_group`
     PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+
+DROP TABLE IF EXISTS `#__sys_dispatch`;
+CREATE TABLE `#__sys_dispatch`
+(
+    `id`                   int(11) NOT NULL AUTO_INCREMENT,
+    `uniacid`              int(11) DEFAULT '0',
+    `dispatchname`         varchar(50)             DEFAULT '',
+    `dispatchtype`         int(11) DEFAULT '0',
+    `displayorder`         int(11) DEFAULT '0',
+    `firstprice`           decimal(10, 2)          DEFAULT '0.00',
+    `secondprice`          decimal(10, 2)          DEFAULT '0.00',
+    `firstweight`          int(11) DEFAULT '0',
+    `secondweight`         int(11) DEFAULT '0',
+    `express`              varchar(250)            DEFAULT '',
+    `areas`                longtext,
+    `carriers`             text,
+    `enabled`              int(11) DEFAULT '0',
+    `calculatetype`        tinyint(1) DEFAULT '0',
+    `firstnum`             int(11) DEFAULT '0',
+    `secondnum`            int(11) DEFAULT '0',
+    `firstnumprice`        decimal(10, 2)          DEFAULT '0.00',
+    `secondnumprice`       decimal(10, 2)          DEFAULT '0.00',
+    `isdefault`            tinyint(1) DEFAULT '0',
+    `nodispatchareas`      text,
+    `nodispatchareas_code` longtext,
+    `isdispatcharea`       tinyint(3) NOT NULL DEFAULT '0',
+    `freeprice`            decimal(10, 2) NOT NULL DEFAULT '0.00',
+    PRIMARY KEY (`id`),
+    KEY                    `idx_uniacid` (`uniacid`),
+    KEY                    `idx_displayorder` (`displayorder`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8
+
+
+DROP TABLE IF EXISTS `#__sys_express`;
+
+CREATE TABLE `#__sys_express`
+(
+    `id`           int(11) NOT NULL AUTO_INCREMENT,
+    `name`         varchar(50)          DEFAULT '' COMMENT '快递名称',
+    `express`      varchar(50)          DEFAULT '' COMMENT '快递拼音',
+    `status`       tinyint(1) DEFAULT '1' COMMENT '显示状态 1显示 0隐藏',
+    `displayorder` tinyint(3) unsigned DEFAULT '0' COMMENT '排序',
+    `code`         varchar(30) NOT NULL DEFAULT '' COMMENT '编码',
+    `coding`       varchar(10) NOT NULL DEFAULT '' COMMENT '简写',
+    PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC
+
+insert into `#__sys_express`(`id`,`name`,`express`,`status`,`displayorder`,`code`,`coding`) values (1,'顺丰','shunfeng',1,0,'JH_014','SF'),(2,'申通','shentong',1,0,'JH_005','STO'),(3,'韵达快运','yunda',1,0,'JH_003','YD'),(4,'天天快递','tiantian',1,0,'JH_004','HHTT'),(5,'圆通速递','yuantong',1,0,'JH_002','YTO'),(6,'中通速递','zhongtong',1,0,'JH_006','ZTO'),(7,'ems快递','ems',1,0,'JH_001','EMS'),(8,'百世快递','huitongkuaidi',1,0,'JH_012','HTKY'),(9,'全峰快递','quanfengkuaidi',1,0,'JH_009',''),(10,'宅急送','zhaijisong',1,0,'JH_007','ZJS'),(11,'aae全球专递','aae',1,0,'JHI_049','AAE'),(12,'安捷快递','anjie',1,0,'','AJ'),(13,'安信达快递','anxindakuaixi',1,0,'JH_131',''),(14,'彪记快递','biaojikuaidi',1,0,'',''),(15,'bht','bht',1,0,'JHI_008','BHT'),(16,'百福东方国际物流','baifudongfang',1,0,'JH_062',''),(17,'中国东方（COE）','coe',1,0,'JHI_038',''),(18,'长宇物流','changyuwuliu',1,0,'',''),(19,'大田物流','datianwuliu',1,0,'JH_050','DTWL'),(20,'德邦物流','debangwuliu',1,0,'JH_011','DBL'),(21,'dhl','dhl',1,0,'JHI_002','DHL'),(22,'dpex','dpex',1,0,'JHI_011','DPEX'),(23,'d速快递','dsukuaidi',1,0,'JH_049','DSWL'),(24,'递四方','disifang',1,0,'JHI_080','D4PX'),(25,'fedex（国外）','fedex',1,0,'JHI_014','FEDEX_GJ'),(26,'飞康达物流','feikangda',1,0,'JH_088','FKD'),(27,'凤凰快递','fenghuangkuaidi',1,0,'',''),(28,'飞快达','feikuaida',1,0,'JH_151',''),(29,'国通快递','guotongkuaidi',1,0,'JH_010','GTO'),(30,'港中能达物流','ganzhongnengda',1,0,'JH_033',''),(31,'广东邮政物流','guangdongyouzhengwuliu',1,0,'JH_135','GDEMS'),(32,'共速达','gongsuda',1,0,'JH_039','GSD'),(33,'恒路物流','hengluwuliu',1,0,'JH_048','HLWL'),(34,'华夏龙物流','huaxialongwuliu',1,0,'JH_129','HXLWL'),(35,'海红','haihongwangsong',1,0,'JH_132',''),(36,'海外环球','haiwaihuanqiu',1,0,'JHI_013',''),(37,'佳怡物流','jiayiwuliu',1,0,'JH_035','JYWL'),(38,'京广速递','jinguangsudikuaijian',1,0,'JH_041','JGSD'),(39,'急先达','jixianda',1,0,'JH_040','JXD'),(40,'佳吉物流','jiajiwuliu',1,0,'JH_030','CNEX'),(41,'加运美物流','jymwl',1,0,'JH_054','JYM'),(42,'金大物流','jindawuliu',1,0,'JH_079',''),(43,'嘉里大通','jialidatong',1,0,'JH_060',''),(44,'晋越快递','jykd',1,0,'JHI_046','JYKD'),(45,'快捷速递','kuaijiesudi',1,0,'JH_008',''),(46,'联邦快递（国内）','lianb',1,0,'JH_122',''),(47,'联昊通物流','lianhaowuliu',1,0,'JH_021','LHT'),(48,'龙邦物流','longbanwuliu',1,0,'JH_019','LB'),(49,'立即送','lijisong',1,0,'JH_044','LJSKD'),(50,'乐捷递','lejiedi',1,0,'JH_043',''),(51,'民航快递','minghangkuaidi',1,0,'JH_100','MHKD'),(52,'美国快递','meiguokuaidi',1,0,'JHI_044',''),(53,'门对门','menduimen',1,0,'JH_036','MDM'),(54,'OCS','ocs',1,0,'JHI_012','OCS'),(55,'配思货运','peisihuoyunkuaidi',1,0,'',''),(56,'全晨快递','quanchenkuaidi',1,0,'JH_055','QCKD'),(57,'全际通物流','quanjitong',1,0,'JH_127',''),(58,'全日通快递','quanritongkuaidi',1,0,'JH_029','QRT'),(59,'全一快递','quanyikuaidi',1,0,'JH_020','UAPEX'),(60,'如风达','rufengda',1,0,'JH_017','RFD'),(61,'三态速递','santaisudi',1,0,'JH_065',''),(62,'盛辉物流','shenghuiwuliu',1,0,'JH_066',''),(63,'速尔物流','suer',1,0,'JH_016','SURE'),(64,'盛丰物流','shengfeng',1,0,'JH_082','SFWL'),(65,'赛澳递','saiaodi',1,0,'JH_042','SAD'),(66,'天地华宇','tiandihuayu',1,0,'JH_018','HOAU'),(67,'tnt','tnt',1,0,'JHI_003','TNT'),(68,'ups','ups',1,0,'JHI_004','UPS'),(69,'万家物流','wanjiawuliu',1,0,'','WJWL'),(70,'文捷航空速递','wenjiesudi',1,0,'',''),(71,'伍圆','wuyuan',1,0,'',''),(72,'万象物流','wxwl',1,0,'JH_115','WXWL'),(73,'新邦物流','xinbangwuliu',1,0,'JH_022',''),(74,'信丰物流','xinfengwuliu',1,0,'JH_023','XFEX'),(75,'亚风速递','yafengsudi',1,0,'JH_075','YFSD'),(76,'一邦速递','yibangwuliu',1,0,'JH_064',''),(77,'优速物流','youshuwuliu',1,0,'JH_013','UC'),(78,'邮政快递包裹','youzhengguonei',1,0,'JH_077','YZPY'),(79,'邮政国际包裹挂号信','youzhengguoji',1,0,'',''),(80,'远成物流','yuanchengwuliu',1,0,'JH_024','YCWL'),(81,'源伟丰快递','yuanweifeng',1,0,'JH_141',''),(82,'元智捷诚快递','yuanzhijiecheng',1,0,'JH_126',''),(83,'运通快递','yuntongkuaidi',1,0,'JH_145','YTKD'),(84,'越丰物流','yuefengwuliu',1,0,'JH_068',''),(85,'源安达','yad',1,0,'JH_067','YADEX'),(86,'银捷速递','yinjiesudi',1,0,'JH_148',''),(87,'中铁快运','zhongtiekuaiyun',1,0,'JH_015','ZTKY'),(88,'中邮物流','zhongyouwuliu',1,0,'JH_027','ZYKD'),(89,'忠信达','zhongxinda',1,0,'JH_086',''),(90,'芝麻开门','zhimakaimen',1,0,'JH_026',''),(91,'安能物流','annengwuliu',1,0,'JH_059','ANE'),(92,'京东快递','jd',1,0,'JH_046','JD'),(93,'微特派','weitepai',1,0,'','WTP'),(94,'九曳供应链','jiuyescm',1,0,'','JIUYE');
+
 DROP TABLE IF EXISTS `#__sys_member`;
 
 CREATE TABLE `#__sys_member`

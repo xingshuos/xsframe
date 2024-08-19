@@ -30,6 +30,61 @@ class PriceUtil
         return $price;
     }
 
+    // 批量格式转换
+    public static function setPrice($list = [], $fields = null, int $precision = 2, bool $isReserveNum = false)
+    {
+        if (empty($list)) {
+            return [];
+        }
+
+        if (empty($fields)) {
+            foreach ($list as &$row) {
+                $row = self::numberFormat($row, $precision, $isReserveNum);
+            }
+
+            return $list;
+        }
+
+        if (!is_array($fields)) {
+            $fields = explode(',', $fields);
+        }
+
+        if (is_object($list)) {
+            $list = $list->toArray();
+        }
+
+        if (is_array2($list)) {
+            foreach ($list as $key => &$value) {
+                foreach ($fields as $field) {
+                    if (strexists($field, ".")) {
+                        $str = explode(".", $field);
+                        if (isset($value[$str[0]][$str[1]])) {
+                            $value[$str[0]][$str[1]] = self::numberFormat($value[$str[0]][$str[1]], $precision, $isReserveNum);
+                        }
+                    }
+
+                    if (isset($list[$field])) {
+                        $list[$field] = self::numberFormat($list[$field], $precision, $isReserveNum);
+                    }
+
+                    if (is_array($value) && isset($value[$field])) {
+                        $value[$field] = self::numberFormat($value[$field], $precision, $isReserveNum);
+                    }
+                }
+            }
+
+            return $list;
+        }
+
+        foreach ($fields as $field) {
+            if (isset($list[$field])) {
+                $list[$field] = tomedia($list[$field], $precision, $isReserveNum);
+            }
+        }
+
+        return $list;
+    }
+
     /**
      * 元转角
      *
@@ -87,7 +142,7 @@ class PriceUtil
         $money = 0.00;
         if ($calcType == 1) { // 固定金额
             $money = $numberPrice;
-        } elseif ($calcType == 2) { // 百分比
+        } else if ($calcType == 2) { // 百分比
             $money = self::numberFormat(($basePrice * $numberPrice) / $digits, 2);
         }
         return $money;
