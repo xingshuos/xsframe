@@ -823,39 +823,45 @@ textarea:focus {
 }
 
 .alert-danger {
-    color: #f56c6c;
+    color: #5e6d82;
     background: #fef0f0;
     border-color: #fbc4c4;
+    border-left: 5px solid #f56c6c;
 }
 
 .alert-warning {
-    color: #e6a23c;
+    color: #5e6d82;
     background: #fdf6ec;
     border-color: #f5dab1;
+    border-left: 5px solid #e6a23c;
 }
 
 .alert-info {
-    color: #909399;
-    background: #f4f4f5;
-    border-color: #d3d4d6;
+    color: #5e6d82;
+    background-color: #ecf8ff;
+    border-color: #ecf8ff;
+    border-left: 5px solid #50bfff;
 }
 
 .alert-primary {
-    color: #409eff;
+    color: #5e6d82;
     background: #ecf5ff;
     border-color: #b3d8ff;
+    border-left: 5px solid #409eff;
 }
 
 .alert-success {
-    color: #67c23a;
+    color: #5e6d82;
     background: #f0f9eb;
     border-color: #c2e7b0;
+    border-left: 5px solid #67c23a;
 }
 
 .alert-default {
-    color: #8c8c8c;
+    color: #5e6d82;
     background-color: #f2f2f2;
     border-color: #e3e4e5;
+    border-left: 5px solid #8c8c8c;
 }
 
 .alert a {
