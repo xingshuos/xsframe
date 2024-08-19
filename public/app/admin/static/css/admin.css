@@ -823,33 +823,33 @@ textarea:focus {
 }
 
 .alert-danger {
-    color: #e55640;
-    background-color: #fce9e6;
-    border-color: #edd7d4;
+    color: #f56c6c;
+    background: #fef0f0;
+    border-color: #fbc4c4;
 }
 
 .alert-warning {
-    color: #e1a72b;
-    background-color: #fdf6e7;
-    border-color: #eee6d4;
+    color: #e6a23c;
+    background: #fdf6ec;
+    border-color: #f5dab1;
 }
 
 .alert-info {
-    color: #00c1de;
-    background-color: #dff6fa;
-    border-color: #c1e7ee;
+    color: #909399;
+    background: #f4f4f5;
+    border-color: #d3d4d6;
 }
 
 .alert-primary {
-    color: #259fdc;
-    background-color: #d9edf7;
-    border-color: #c5dce7;
+    color: #409eff;
+    background: #ecf5ff;
+    border-color: #b3d8ff;
 }
 
 .alert-success {
-    color: #29bc85;
-    background-color: #e7f7f1;
-    border-color: #cfe5dd;
+    color: #67c23a;
+    background: #f0f9eb;
+    border-color: #c2e7b0;
 }
 
 .alert-default {
