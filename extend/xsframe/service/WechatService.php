@@ -172,7 +172,7 @@ class WechatService
     }
 
     // 获取accessToken
-    private function getAccessToken($appId, $secret, $expire = 7000, $isReload = false)
+    public function getAccessToken($appId, $secret, $expire = 7000, $isReload = false)
     {
         $accessTokenKey   = 'accessToken' . "_" . $appId;
         $accessTokenCache = Cache::get($accessTokenKey);
