@@ -31,8 +31,10 @@
     <link href="__ADMIN_FONTS__/awesome/font-awesome.min.css?v=3.2.1" rel="stylesheet">
     {/block}
 
-    <script>var require = {urlArgs: 'v=20211031'};</script>
+    <script type="text/javascript" src="__ADMIN_COMPONENT__/jquery/jquery-1.11.1.min.js"></script>
 
+    {block name='baseScript'}
+    <script>var require = {urlArgs: 'v=20211031'};</script>
     <script type="text/javascript">
         if (navigator.appName === 'Microsoft Internet Explorer') {
             if (navigator.userAgent.indexOf("MSIE 5.0") > 0 || navigator.userAgent.indexOf("MSIE 6.0") > 0 || navigator.userAgent.indexOf("MSIE 7.0") > 0) {
@@ -50,8 +52,6 @@
             'client': '{$clientServiceName}',
         };
     </script>
-
-    <script type="text/javascript" src="__ADMIN_COMPONENT__/jquery/jquery-1.11.1.min.js"></script>
 
     <script type="text/javascript" src="__ADMIN_JS__/web/util.js"></script>
     <script type="text/javascript" src="__ADMIN_COMPONENT__/bootstrap/bootstrap.min.js"></script>
@@ -71,6 +71,7 @@
         // util.message("验证正确", '', 'success')
         // });
     </script>
+    {/block}
 </head>
 <style>
     .wb-container {
@@ -415,72 +416,76 @@
 <script>
     // 二维码
     $(() => {
-        require(['bootstrap'], function ($) {
+        if( typeof require != 'undefined') {
+            require(['bootstrap'], function ($) {
 
-            /*添加拖拽功能 start*/
-            $(document).on("show.bs.modal", ".modal", function () {
-                require(['jquery.ui'],() => {
-                    $(this).draggable({
-                        handle: ".modal-header",   // 只能点击头部拖动
-                        cursor: 'move',
+                /*添加拖拽功能 start*/
+                $(document).on("show.bs.modal", ".modal", function () {
+                    require(['jquery.ui'], () => {
+                        $(this).draggable({
+                            handle: ".modal-header",   // 只能点击头部拖动
+                            cursor: 'move',
+                        });
+                        $(this).css("overflow", "hidden"); // 防止出现滚动条，出现的话，你会把滚动条一起拖着走的
+                    })
+                });
+                /*添加拖拽功能 end*/
+
+                // 鼠标选中弹出信息框
+                $("[rel=pop]").popover({
+                    trigger: 'manual',
+                    placement: 'right',
+                    title: $(this).data('title'),
+                    html: true,
+                    content: $(this).data('content'),
+                    animation: false
+                }).on("mouseenter", function () {
+                    let _this = this;
+                    $(this).popover("show");
+                    $(this).siblings(".popover").on("mouseleave", function () {
+                        $(_this).popover('hide');
                     });
-                    $(this).css("overflow", "hidden"); // 防止出现滚动条，出现的话，你会把滚动条一起拖着走的
+                }).on("mouseleave", function () {
+                    let _this = this;
+                    setTimeout(function () {
+                        if (!$(".popover:hover").length) {
+                            $(_this).popover("hide")
+                        }
+                    }, 100);
+                });
+            });
+        }
+
+        if( typeof require != 'undefined') {
+            require(['jquery.qrcode'], function () {
+                $(".qrcode-box").hover(function () {
+                    $(this).children('.qrcode').show().html("").qrcode({
+                        render: "canvas",
+                        width: 140,
+                        height: 140,
+                        text: $(this).children('.qrcode').data('url')
+                    });
+                    $(this).children('.qrcode').append(`<div class="arrow" style="top: 50%;"></div>`)
+                }, function () {
+                    $(this).children('.qrcode').hide();
+                })
+
+                $(".qrcode-info").each(function () {
+                    $(this).children('.qrcode').show().html("").qrcode({
+                        render: "canvas",
+                        width: 140,
+                        height: 140,
+                        text: $(this).children('.qrcode').data('url')
+                    });
                 })
             });
-            /*添加拖拽功能 end*/
-
-            // 鼠标选中弹出信息框
-            $("[rel=pop]").popover({
-                trigger: 'manual',
-                placement: 'right',
-                title: $(this).data('title'),
-                html: true,
-                content: $(this).data('content'),
-                animation: false
-            }).on("mouseenter", function () {
-                let _this = this;
-                $(this).popover("show");
-                $(this).siblings(".popover").on("mouseleave", function () {
-                    $(_this).popover('hide');
-                });
-            }).on("mouseleave", function () {
-                let _this = this;
-                setTimeout(function () {
-                    if (!$(".popover:hover").length) {
-                        $(_this).popover("hide")
-                    }
-                }, 100);
-            });
-        });
+        }
 
         // tab切换
         $('#myTab a').click(function (e) {
             $('#tab').val($(this).attr('href'));
             e.preventDefault();
             $(this).tab('show');
-        });
-
-        require(['jquery.qrcode'], function () {
-            $(".qrcode-box").hover(function () {
-                $(this).children('.qrcode').show().html("").qrcode({
-                    render: "canvas",
-                    width: 140,
-                    height: 140,
-                    text: $(this).children('.qrcode').data('url')
-                });
-                $(this).children('.qrcode').append(`<div class="arrow" style="top: 50%;"></div>`)
-            }, function () {
-                $(this).children('.qrcode').hide();
-            })
-
-            $(".qrcode-info").each(function () {
-                $(this).children('.qrcode').show().html("").qrcode({
-                    render: "canvas",
-                    width: 140,
-                    height: 140,
-                    text: $(this).children('.qrcode').data('url')
-                });
-            })
         });
 
         // 监测搜索表单是否添加了i参数 start
@@ -525,13 +530,14 @@
     }
 
     // 防止bootstrap自带的tooltip和popover在模态框中失效
-    $('[data-toggle="tooltip"]').tooltip("destroy").tooltip({
-        container: $(document.body)
-    });
-    $('[data-toggle="popover"]').popover("destroy").popover({
-        container: $(document.body)
-    });
-
+    if( typeof require != 'undefined'){
+        $('[data-toggle="tooltip"]').tooltip("destroy").tooltip({
+            container: $(document.body)
+        });
+        $('[data-toggle="popover"]').popover("destroy").popover({
+            container: $(document.body)
+        });
+    }
 </script>
 
 {block name='script'}{/block}
