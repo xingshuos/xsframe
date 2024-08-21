@@ -122,6 +122,7 @@ CREATE TABLE `#__sys_attachment`
     `uid`         int(10) unsigned NOT NULL,
     `filename`    varchar(100) NOT NULL,
     `fileurl`     varchar(255) NOT NULL,
+    `filesize`    int(10) unsigned NOT NULL DEFAULT '0',
     `type`        tinyint(3) unsigned NOT NULL DEFAULT '0',
     `createtime`  int(10) unsigned NOT NULL,
     `module`      varchar(50)  NOT NULL,

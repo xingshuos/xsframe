@@ -60,7 +60,7 @@ class FileWrapper
             'filesize'   => filesize($attachmentPath . $folder . $filename),
             'group_id'   => $groupId
         ];
-        $this->addFileLog($uniacid, $userId, $result['name'], $result['fileurl'], $result['type'], $module, $groupId, $clientName);
+        $this->addFileLog($uniacid, $userId, $result['name'], $result['fileurl'], $result['type'], $result['filesize'], $module, $groupId, $clientName);
 
         return $result;
     }
@@ -86,7 +86,7 @@ class FileWrapper
     }
 
     // 添加文件
-    private function addFileLog($uniacid, $userId, $filename, $fileurl, $type, $module, $groupId = 0, $clientName = 'web')
+    private function addFileLog($uniacid, $userId, $filename, $fileurl, $type, $filesize, $module, $groupId = 0, $clientName = 'web')
     {
         $insertData = [
             'uniacid'     => $uniacid,
@@ -94,6 +94,7 @@ class FileWrapper
             'filename'    => $filename,
             'fileurl'     => $fileurl,
             'type'        => $type,
+            'filesize'    => $filesize,
             'module'      => $module,
             'group_id'    => $groupId,
             'client_name' => $clientName,
