@@ -336,15 +336,13 @@ if (!function_exists('getScriptName')) {
  * 单图上传
  * @param string $name 名称
  * @param string $value
- * @param string $default
  * @param array $options
  * @return string
  */
-function tpl_form_field_image($name, $value = '', $default = '', $options = [])
+function tpl_form_field_image(string $name, string $value = '', array $options = [])
 {
-    if (empty($default)) {
-        $default = '/app/admin/static/images/nopic.png';
-    }
+    $default = $options['default'] ?: '/app/admin/static/images/nopic.png';
+
     $val = $default;
     if (!empty($value)) {
         $val = tomedia($value);
@@ -379,13 +377,13 @@ function tpl_form_field_image($name, $value = '', $default = '', $options = [])
 		<script type="text/javascript">
 			function showImageDialog(elm, opts, options) {
 				require(["util"], function(util){
-					var btn = $(elm);
-					var ipt = btn.parent().prev();
-					var val = ipt.val();
-					var img = ipt.parent().next().children();
+					let btn = $(elm);
+					let ipt = btn.parent().prev();
+					let val = ipt.val();
+					let img = ipt.parent().next().children();
 
 					util.image(val, function(url){
-					    // console.log("url",url)
+					    console.log("url",url)
 						if(url.url){
 							if(img.length > 0){
 								img.get(0).src = url.url;
