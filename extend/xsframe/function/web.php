@@ -641,7 +641,7 @@ function tpl_form_field_nickname(string $name, $value = ''){
 
     $s .= '
         <div class="input-group">
-            <input type="text" class="form-control" name="nickname" value="'.$value.'">
+            <input type="text" class="form-control" name="'.$name.'" value="'.$value.'">
             <a class="input-group-addon" onclick="getNickName(this)" href="javascript:;">自动获取昵称</a>
         </div>
     ';
