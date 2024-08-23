@@ -279,7 +279,7 @@ class App extends Base
             $this->updateSystemModuleList();
             $this->success('升级成功');
         } else {
-            $this->success('升级失败');
+            $this->error('升级失败');
         }
     }
 
