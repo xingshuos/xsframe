@@ -432,7 +432,7 @@ function tpl_form_field_image(string $name, $value = '', $options = [])
                     
                     require(["jquery"], function($){
                         $(This).parent().parent().children("input[name=' . $name . ']").val(logo)
-                        $(This).parent().parent().parent().children().eq(2).children("img").attr("src",logo)
+                        $(This).parent().parent().parent().children().find("img").attr("src",logo)
                     });
                 }
             </script>
