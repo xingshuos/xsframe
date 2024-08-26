@@ -73,12 +73,13 @@ class AccountHostWrapper
     // 获取域名绑定的uniacid值
     public function getAccountHostUniacid($hostUrl)
     {
-        $hostList = $this->getAccountHost(false);
+        $hostList = $this->getAccountHost();
 
         $uniacid = 0;
         if (!empty($hostList)) {
             $uniacid = array_key_exists($hostUrl, $hostList) ? $hostList[$hostUrl]['uniacid'] : 0;
         }
+
         return $uniacid;
     }
 

@@ -244,6 +244,7 @@ abstract class BaseController extends Controller
         # end
 
         if (!$isWechatPay && !$isAliPay) {
+
             # 校验域名路由 start
             if (empty($uniacid) && $this->module != 'admin' && !empty($_SERVER['HTTP_HOST'])) {
                 $uniacid = $this->accountHostController->getAccountHostUniacid($_SERVER['HTTP_HOST']);
@@ -287,11 +288,6 @@ abstract class BaseController extends Controller
                         $accountModuleList = SystemWrapperFacade::getAccountModuleList($uniacid);
 
                         if (empty($accountModuleList) || empty($systemModuleList) || !in_array($this->module, $accountModuleList) || !in_array($this->module, $systemModuleList)) {
-
-                            // if (in_array($this->clientBaseType, ['mobile', 'web', 'api']) && !$checkUrl) { // 这个是如果没有应用权限就跳转到默认商户
-                            //     self::getUniacid(true);
-                            // }
-
                             if (env('DEFAULT_APP') == $this->module) {
                                 $uniacid = $this->websiteSets['uniacid'] ?? 0; // 当访问系统默认应用且没有访问权限时，默认跳转到系统默认商户
                             } else {
@@ -318,7 +314,9 @@ abstract class BaseController extends Controller
         }
         // end
 
-        $this->module != 'admin' && empty($uniacid) && exit("<p style='width:100%;height:80px;line-height:80px;text-align: center;font-size: 15px;'>商户不存在,请联系管理员配置默认商户</p>");
+        if( $this->module != 'admin' && empty($uniacid) ){
+            exit("<p style='width:100%;height:80px;line-height:80px;text-align: center;font-size: 15px;'>商户不存在,请联系管理员配置默认商户</p>");
+        }
 
         $this->uniacid = intval($uniacid);
         return $uniacid;

@@ -118,10 +118,6 @@ class Account extends Base
             # 重新加载商户配置信息
             $this->settingsController->reloadAccountSettings($uniacid);
 
-            # 重新加载域名映射关系列表
-            $accountHost = new AccountHostWrapper();
-            $accountHost->reloadAccountHost();
-
             # 管理员账号
             $this->accountUser();
 
@@ -314,6 +310,10 @@ class Account extends Base
         SystemWrapperFacade::reloadUniacidList();
         # 更新禁用的uniacid列表
         SystemWrapperFacade::reloadDisabledUniacidList();
+
+        # 重新加载域名映射关系列表
+        $accountHost = new AccountHostWrapper();
+        $accountHost->reloadAccountHost();
     }
 
     // 解析证书
