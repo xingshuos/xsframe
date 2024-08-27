@@ -12,6 +12,7 @@
 
 namespace app\admin\controller;
 
+use think\Image;
 use xsframe\base\AdminBaseController;
 use xsframe\enum\UserRoleKeyEnum;
 use xsframe\facade\service\DbServiceFacade;
@@ -44,6 +45,13 @@ class File extends AdminBaseController
         if (empty($hasField)) {
             DbServiceFacade::name("sys_attachment_group")->addField('client_name', 'varchar', '30', 'web', 0, '上传图片用户端名称常见的 web管理后台，pc客户端，store等等');
         }
+    }
+
+    public function upload2()
+    {
+        $filePath = IA_ROOT . "/public/attachment/images/9/zy_map/2024/08/Gi2GCAtoI6ead1IR.jpg";
+        $image = Image::open($filePath);
+        dd($image);
     }
 
     // 上传

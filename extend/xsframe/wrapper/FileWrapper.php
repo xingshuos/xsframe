@@ -13,6 +13,7 @@
 namespace xsframe\wrapper;
 
 use xsframe\enum\SysSettingsKeyEnum;
+use xsframe\exception\ApiException;
 use xsframe\util\ErrorUtil;
 use xsframe\util\FileUtil;
 use think\facade\Db;
@@ -146,11 +147,19 @@ class FileWrapper
 
                     if ($setting['image']['width'] > 0) {
                         $newFileName = FileUtil::fileRandomName($filePath, $ext);
+
                         $maxWidth = $setting['image']['width'];
                         $maxQuality = min(intval($setting['image']['quality'] ?? 100), 100);
-                        $image = Image::open($filePath . $fileName);
-                        $image->thumb($maxWidth, $maxWidth)->save($filePath . $newFileName, null, $maxQuality); // 清晰度100
-                        @unlink($filePath . $fileName);// 删除源图
+
+                        try {
+                            if (is_file($filePath . $fileName)) {
+                                $image = Image::open($filePath . $fileName);
+                                $image->thumb($maxWidth, $maxWidth)->save($filePath . $newFileName, null, $maxQuality); // 清晰度100
+                                @unlink($filePath . $fileName);// 删除源图
+                            }
+                        } catch (\Exception $e) {
+                            throw new ApiException($e->getMessage());
+                        }
                     }
 
                 }

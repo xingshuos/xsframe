@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 // | Author: yunwuxin <448901948@qq.com>
 // +----------------------------------------------------------------------
-declare (strict_types = 1);
+declare (strict_types=1);
 
 namespace think\exception;
 
@@ -77,7 +77,8 @@ class Handle
 
             try {
                 $this->app->log->record($log, 'error');
-            } catch (Exception $e) {}
+            } catch (Exception $e) {
+            }
         }
     }
 
@@ -96,7 +97,7 @@ class Handle
      * Render an exception into an HTTP response.
      *
      * @access public
-     * @param Request   $request
+     * @param Request $request
      * @param Throwable $e
      * @return Response
      */
@@ -105,7 +106,7 @@ class Handle
         $this->isJson = $request->isJson();
         if ($e instanceof HttpResponseException) {
             return $e->getResponse();
-        } elseif ($e instanceof HttpException) {
+        } else if ($e instanceof HttpException) {
             return $this->renderHttpException($e);
         } else {
             return $this->convertExceptionToResponse($e);
@@ -114,7 +115,7 @@ class Handle
 
     /**
      * @access public
-     * @param Output    $output
+     * @param Output $output
      * @param Throwable $e
      */
     public function renderForConsole(Output $output, Throwable $e): void
@@ -133,7 +134,7 @@ class Handle
      */
     protected function renderHttpException(HttpException $e): Response
     {
-        $status   = $e->getStatusCode();
+        $status = $e->getStatusCode();
         $template = $this->app->config->get('app.http_exception_template');
 
         if (!$this->app->isDebug() && !empty($template[$status])) {
@@ -152,7 +153,7 @@ class Handle
     {
         if ($this->app->isDebug()) {
             // 调试模式，获取详细的错误信息
-            $traces        = [];
+            $traces = [];
             $nextException = $exception;
             do {
                 $traces[] = [
@@ -176,7 +177,7 @@ class Handle
                     'Files'               => $this->app->request->file(),
                     'Cookies'             => $this->app->request->cookie(),
                     'Session'             => $this->app->exists('session') ? $this->app->session->all() : [],
-                    'Server/Request Data' => $this->app->request->server(),
+                    'Server/Request Data' => $this->convertUtf8($this->app->request->server()),
                 ],
             ];
         } else {
@@ -262,12 +263,12 @@ class Handle
         $lang = $this->app->lang;
 
         if (strpos($message, ':')) {
-            $name    = strstr($message, ':', true);
+            $name = strstr($message, ':', true);
             $message = $lang->has($name) ? $lang->get($name) . strstr($message, ':') : $message;
-        } elseif (strpos($message, ',')) {
-            $name    = strstr($message, ',', true);
+        } else if (strpos($message, ',')) {
+            $name = strstr($message, ',', true);
             $message = $lang->has($name) ? $lang->get($name) . ':' . substr(strstr($message, ','), 1) : $message;
-        } elseif ($lang->has($message)) {
+        } else if ($lang->has($message)) {
             $message = $lang->get($message);
         }
 
@@ -284,12 +285,12 @@ class Handle
     protected function getSourceCode(Throwable $exception): array
     {
         // 读取前9行和后9行
-        $line  = $exception->getLine();
+        $line = $exception->getLine();
         $first = ($line - 9 > 0) ? $line - 9 : 1;
 
         try {
             $contents = file($exception->getFile()) ?: [];
-            $source   = [
+            $source = [
                 'first'  => $first,
                 'source' => array_slice($contents, $first - 1, 19),
             ];
@@ -329,4 +330,19 @@ class Handle
 
         return $const['user'] ?? [];
     }
+
+    /**
+     * 将字符编码转为utf-8
+     * @access protected
+     * @param array $data
+     * @return array   转化后的数组
+     */
+    protected function convertUtf8(array $data): array
+    {
+        foreach ($data as $key => $value) {
+            $data[$key] = mb_convert_encoding($value, "UTF-8", "GBK, GBK2312");
+        }
+        return $data;
+    }
+
 }
