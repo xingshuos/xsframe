@@ -15,6 +15,29 @@ namespace xsframe\util;
 class ValidateUtil
 {
     /**
+     * 验证域名格式是否正确
+     * @param string $domain 域名
+     * @return bool
+     */
+    public static function isDomain(string $domain, $checkDns = false): bool
+    {
+        if ($checkDns) {
+            return self::isDomain($domain) && self::isDomainResolvable($domain);
+        }
+        return preg_match('/^([a-z\d]([-a-z\d]*[a-z\d])?\.)+[a-z\d]{2,}$/i', $domain) === 1;
+    }
+
+    /**
+     * 验证域名dns解析是否正确
+     * @param string $domain 域名
+     * @return bool
+     */
+    public static function isDomainResolvable($domain)
+    {
+        return checkdnsrr($domain, 'A') || checkdnsrr($domain, 'AAAA') || checkdnsrr($domain, 'MX');
+    }
+
+    /**
      * 验证手机号格式是否正确
      * @param string $mobile 手机号
      * @return bool
