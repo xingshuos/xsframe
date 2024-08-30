@@ -17,7 +17,7 @@ use xsframe\service\PayService;
 use think\Facade;
 
 /**
- * @method static wxNative($ordersn, $price, $serviceType, $title = '')
+ * @method static wxNative($ordersn, $price, $serviceType, $title = '', string $notifyUrl = '')
  * @method static aliPagePay($ordersn, $price, $serviceType, $title = '', string $returnUrl = '', bool $returnQrcode = false, int $qrcodeWidth = 300)
  * @method static aliRsaCheck(array $get, $signType = 'RSA2')
  * @method static wxPay(string $ordersn, float $price, string $title, int $service_type, string $openid = '')
