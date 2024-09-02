@@ -199,7 +199,7 @@ define(['jquery'], function($) {
 				onClosed: onClosed
 			})
 		}
-	}, tip.impower = function(msg, callback, cancel_callback) {
+	}, tip.msg = tip.msgbox,tip.impower = function(msg, callback, cancel_callback) {
 		msg = msg.replace(/&lt;/g, "<");
 		msg = msg.replace(/&gt;/g, ">");
 		require(['jquery.confirm'], function() {
