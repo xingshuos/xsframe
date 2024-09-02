@@ -218,7 +218,7 @@ define(['jquery', 'bootstrap'], function ($, bs) {
                 }).fail(function (fail) {
                     obj.removeAttr('submitting').html(html)
                     try {
-                        if( fail.status == '404' ){
+                        if( fail.status != '200'){
                             tip.msgbox.err(fail.responseJSON.msg)
                         }else{
                             tip.msgbox.err(tip.lang.exception)
