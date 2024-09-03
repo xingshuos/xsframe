@@ -188,7 +188,8 @@ class PermWrapper
                         if (empty($c)) {
                             $itemModuleMenus[$item['route']] = $newModuleMenusItem;
                         } else {
-                            $itemRoute = ltrim($c, "web.");
+                            $itemRoute = preg_replace('/^\./u', '', $c); // 去掉第一个字符是.的
+                            $itemRoute = preg_replace('/\bweb\..*?\b/u', '', $itemRoute);// 去掉第一个字符是web.的
                             $itemModuleMenus[$itemRoute] = $newModuleMenusItem;
                         }
                     }

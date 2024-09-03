@@ -125,7 +125,9 @@ class Perm extends AdminBaseController
                 'roleid'   => $roleId,
                 'status'   => $status,
             ];
+
             $data['perms'] = trim($this->params['permsarray']);
+            $permsArray = explode(",", $this->params['permsarray']);
 
             $salt = RandomUtil::random(6);
 
@@ -139,6 +141,9 @@ class Perm extends AdminBaseController
                     $userUpdateData['salt'] = $salt;
                 }
                 Db::name('sys_users')->where(['id' => $item['uid']])->update($userUpdateData);
+                if (!empty($permsArray[0])) {
+                    Db::name('sys_account_users')->where(['user_id' => $item['uid'], 'uniacid' => $this->uniacid])->update(['module' => $permsArray[0]]);
+                }
             } else {
                 $data['createtime'] = time();
 
@@ -158,17 +163,21 @@ class Perm extends AdminBaseController
                     $userId = Db::name('sys_users')->insertGetId($userData);
                     $data['uid'] = $userId;
 
-                    $userAccountData = [
-                        'user_id' => $userId,
-                        'uniacid' => $this->uniacid,
-                        'module'  => $this->module != 'admin' ? $this->module : '',
-                    ];
-                    Db::name('sys_account_users')->insert($userAccountData);
+                    $permsArray = explode(",", $this->params['permsarray']);
+
+                    if (!empty($permsArray[0])) {
+                        $userAccountData = [
+                            'user_id' => $userId,
+                            'uniacid' => $this->uniacid,
+                            'module'  => $permsArray[0],
+                        ];
+                        Db::name('sys_account_users')->insert($userAccountData);
+                    }
                 }
 
                 Db::name('sys_account_perm_user')->insert($data);
             }
-            $this->success(['url' => webUrl('perm/userPost', ['id' => $id,'module' => $this->params['module']])]);
+            $this->success(['url' => webUrl('perm/userPost', ['id' => $id, 'module' => $this->params['module']])]);
         }
 
         $perms = PermFacade::formatPerms($this->uniacid);
@@ -308,7 +317,7 @@ class Perm extends AdminBaseController
             } else {
                 $id = Db::name('sys_account_perm_role')->insertGetId($data);
             }
-            $this->success(['url' => webUrl('perm/rolePost', ['id' => $id,'module' => $this->params['module']])]);
+            $this->success(['url' => webUrl('perm/rolePost', ['id' => $id, 'module' => $this->params['module']])]);
         }
 
 
