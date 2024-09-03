@@ -40,10 +40,12 @@ class Sysset extends Base
                     show_json(1);
                     break;
                 case 'qiniu':
-                    $attachmentController->qiNiu();
+                    $attachmentController->qiNiu($this->params['key'], $this->params['secret'], $this->params['bucket']);
+                    show_json(1);
                     break;
                 case 'cos':
                     $attachmentController->cos();
+                    show_json(1);
                     break;
                 case 'buckets':
                     $ret = $attachmentController->buckets($this->params['key'], $this->params['secret']);

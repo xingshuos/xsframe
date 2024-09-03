@@ -10,14 +10,14 @@
             <input type="radio" name="data[remote][type]" value="2" onclick="$('.remote-qiniu').hide();$('.remote-alioss').show();$('.remote-ftp').hide();$('.remote-close').hide();$('.remote-cos').hide();" {if !empty($accountSettings['remote']['type']) && $accountSettings['remote']['type'] == '2'} checked="checked" {/if}> 阿里云OSS
             <span class="label label-success">推荐，快速稳定</span>
         </label>
-        <!--<label class="radio-inline">
+        <label class="radio-inline">
             <input type="radio" name="data[remote][type]" value="3" onclick="$('.remote-qiniu').show();$('.remote-alioss').hide();$('.remote-ftp').hide();$('.remote-close').hide();$('.remote-cos').hide();" {if !empty($accountSettings['remote']['type']) && $accountSettings['remote']['type'] == '3'} checked="checked" {/if}> 七牛云存储
             <span class="label label-success">推荐，快速稳定</span>
         </label>
         <label class="radio-inline">
             <input type="radio" name="data[remote][type]" value="4" onclick="$('.remote-qiniu').hide();$('.remote-alioss').hide();$('.remote-ftp').hide();$('.remote-close').hide();$('.remote-cos').show();" {if !empty($accountSettings['remote']['type']) && $accountSettings['remote']['type'] == '4'} checked="checked" {/if}> 腾讯云存储
             <span class="label label-success">推荐，快速稳定</span>
-        </label>-->
+        </label>
     </div>
 </div>
 
@@ -233,13 +233,14 @@
 </div>
 
 <script type="text/javascript">
-    /*附件存储设置*/
+
+    /*阿里云oss 附件存储设置 start*/
     $('.js-checkremoteoss').on('click', function () {
-        var bucket = $.trim($('select[name="data[remote][alioss][bucket]"]').val());
+        let bucket = $.trim($('select[name="data[remote][alioss][bucket]"]').val());
         if (bucket == '') {
             bucket = $.trim($(':text[name="data[remote][alioss][bucket]"]').val());
         }
-        var param = {
+        let param = {
             'type': 'alioss',
             'key': $.trim($(':text[name="data[remote][alioss][key]"]').val()),
             'secret': $.trim($(':text[name="data[remote][alioss][secret]"]').val()),
@@ -248,8 +249,8 @@
             'internal': $('[name="data[remote][alioss][internal]"]:checked').val()
         };
 
-        $.post("{$postUrl}", param, function (data) {
-            var data = $.parseJSON(data);
+        $.post("{$postUrl}", param, function (json) {
+            let data = $.parseJSON(json);
             if (parseInt(data.status) === 1) {
                 tip.msgbox.suc('配置成功');
                 return false;
@@ -273,7 +274,6 @@
         }
 
         $.post("{$postUrl}", {'type': 'buckets', 'key': key, 'secret': secret}, function (data) {
-            console.log(data);
             if (parseInt(data.status) === 1) {
                 $('#bucket').show();
                 let bucket = $('select[name="data[remote][alioss][bucket]"]');
@@ -284,7 +284,7 @@
                     bucket.append('<option value="' + buckets[i]['name'] + '@@' + buckets[i]['location'] + '"' + selected + '>' + buckets[i]['loca_name'] + '</option>');
                 }
             } else {
-                util.message('Access Key ID 或 Access Key Secret 填写错误，请重新填写。', '', 'error');
+                tip.msgbox.err('Access Key ID 或 Access Key Secret 填写错误，请重新填写。', '', 'error');
                 $('#bucket').hide();
                 $('select[name="data[remote][alioss][bucket]"]').val('');
                 return false;
@@ -325,6 +325,49 @@
         }catch (e) {
             console.log(e)
         }
-
     }
+    /* 阿里云oss 附件存储设置 end */
+
+    /*七牛云cos 附件存储设置 start*/
+    $('.js-checkremoteqiniu').on('click', function(){
+        let key = $.trim($(':text[name="data[remote][qiniu][accesskey]"]').val());
+        if (key === '') {
+            tip.msgbox.err('请填写Accesskey');
+            return false;
+        }
+        let secret = $.trim($(':text[name="data[remote][qiniu][secretkey]"]').val());
+        if (secret === '') {
+            tip.msgbox.err('请填写Secretkey');
+            return false;
+        }
+        let param = {
+            'type' : 'qiniu',
+            'accesskey' : key,
+            'secretkey' : secret,
+            'url'  : $.trim($(':text[name="data[remote][qiniu][url]"]').val()),
+            'bucket' :  $.trim($(':text[name="data[remote][qiniu][bucket]"]').val())
+        };
+
+        $.post("{$postUrl}",param, function(json) {
+            let data = $.parseJSON(json);
+
+            console.log('json',data)
+            return false
+
+            if(data.message.errno === 0) {
+                tip.msgbox.suc('配置成功');
+                return false;
+            }
+            if(data.message.errno < 0) {
+                tip.msgbox.err(data.message.message);
+                return false;
+            }
+        });
+    });
+
+    /* 七牛云cos 附件存储设置 end */
+
+    /* 腾讯云cos 附件存储设置 start */
+
+    /* 腾讯云cos 附件存储设置 end */
 </script>

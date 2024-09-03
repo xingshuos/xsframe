@@ -28,7 +28,7 @@ class AttachmentWrapper
             show_json(-1, $buckets['msg']);
         }
 
-        list($bucket, $url) = explode('@@', $bucket);
+        [$bucket, $url] = explode('@@', $bucket);
         $result = $this->attachmentNewAliossAuth($key, $secret, $bucket, $internal);
         if (ErrorUtil::isError($result)) {
             show_json(-1, $result['msg']);
@@ -45,7 +45,7 @@ class AttachmentWrapper
             show_json(-1, $buckets['msg']);
         }
         $bucketDataCenter = $this->attachmentAliossDataCenters();
-        $bucket = array();
+        $bucket = [];
         foreach ($buckets as $key => $value) {
             $value['loca_name'] = $key . '@@' . $bucketDataCenter[$value['location']];
             $bucket[] = $value;
@@ -54,12 +54,27 @@ class AttachmentWrapper
     }
 
     // qiNiu
-    public function qiNiu()
+    public function qiNiu($key, $secret, $bucket)
     {
-        $result = [
+        load()->library('qiniu');
+        $auth = new Qiniu\Auth($key, $secret);
+        $token = $auth->uploadToken($bucket);
+        $config = new Qiniu\Config();
+        $uploadmgr = new Qiniu\Storage\UploadManager($config);
 
-        ];
-        return $result;
+        $attachmentPath = IA_ROOT . "/public/attachment/";
+        $filename = 'HeEngine.ico';
+        $filePath = $attachmentPath . 'images/global/' . $filename;
+
+        list($ret, $err) = $uploadmgr->putFile($token, 'MicroEngine.ico', $filePath);
+        if ($err !== null) {
+            $err = (array)$err;
+            $err = (array)array_pop($err);
+            $err = json_decode($err['body'], true);
+            return false;
+        } else {
+            return true;
+        }
     }
 
     // cos
@@ -91,7 +106,7 @@ class AttachmentWrapper
         } catch (OssException $e) {
             show_json(-1, $e->getMessage());
         }
-        return 1;
+        return true;
     }
 
     // 文件上传
@@ -105,13 +120,13 @@ class AttachmentWrapper
         if (!empty($dir_path)) {
             $local_attachment = FileUtil::fileTreeLimit($dir_path, $limit);
         } else {
-            $local_attachment = array();
+            $local_attachment = [];
         }
 
         if (is_array($local_attachment) && !empty($local_attachment)) {
             foreach ($local_attachment as $attachment) {
                 $filename = str_replace($attachmentPath, '', $attachment);
-                list($image_dir, $file_account) = explode('/', $filename);
+                [$image_dir, $file_account] = explode('/', $filename);
 
                 if ($file_account == 'global' || !FileUtil::fileIsImage($attachment)) {
                     continue;
@@ -136,15 +151,15 @@ class AttachmentWrapper
     // 获取oss数据中心
     private function attachmentAliossDataCenters()
     {
-        $bucketDataCenter = array(
+        $bucketDataCenter = [
             'oss-cn-hangzhou' => '杭州数据中心',
-            'oss-cn-qingdao' => '青岛数据中心',
-            'oss-cn-beijing' => '北京数据中心',
+            'oss-cn-qingdao'  => '青岛数据中心',
+            'oss-cn-beijing'  => '北京数据中心',
             'oss-cn-hongkong' => '香港数据中心',
             'oss-cn-shenzhen' => '深圳数据中心',
             'oss-cn-shanghai' => '上海数据中心',
-            'oss-us-west-1' => '美国硅谷数据中心',
-        );
+            'oss-us-west-1'   => '美国硅谷数据中心',
+        ];
         return $bucketDataCenter;
     }
 
@@ -168,9 +183,9 @@ class AttachmentWrapper
         }
 
         $bucketListInfo = $bucketListInfo->getBucketList();
-        $bucketList = array();
+        $bucketList = [];
         foreach ($bucketListInfo as &$bucket) {
-            $bucketList[$bucket->getName()] = array('name' => $bucket->getName(), 'location' => $bucket->getLocation());
+            $bucketList[$bucket->getName()] = ['name' => $bucket->getName(), 'location' => $bucket->getLocation()];
         }
 
         return $bucketList;
@@ -184,7 +199,7 @@ class AttachmentWrapper
         }
 
         if ($setting['remote']['type'] == '2') {
-            list($bucket, $url) = explode('@@', $setting['remote']['alioss']['bucket']);
+            [$bucket, $url] = explode('@@', $setting['remote']['alioss']['bucket']);
 
             $buckets = $this->attachmentAliossBuctkets($setting['remote']['alioss']['key'], $setting['remote']['alioss']['secret']);
             $host_name = $setting['remote']['alioss']['internal'] ? '-internal.aliyuncs.com' : '.aliyuncs.com';
