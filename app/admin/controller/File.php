@@ -35,18 +35,9 @@ class File extends AdminBaseController
 
         $this->curUniacid = $this->params['uniacid'] ?? $this->uniacid;
         $this->curModule = $this->params['module'] ?? $this->module;
-
-        // 校验字段是否存在 TODO 20240718 待优化
-        $hasField = DbServiceFacade::name("sys_attachment")->hasField('client_name');
-        if (empty($hasField)) {
-            DbServiceFacade::name("sys_attachment")->addField('client_name', 'varchar', '30', 'web', 0, '上传图片用户端名称常见的 web管理后台，pc客户端，store等等');
-        }
-        $hasField = DbServiceFacade::name("sys_attachment_group")->hasField('client_name');
-        if (empty($hasField)) {
-            DbServiceFacade::name("sys_attachment_group")->addField('client_name', 'varchar', '30', 'web', 0, '上传图片用户端名称常见的 web管理后台，pc客户端，store等等');
-        }
     }
 
+    // 测试压缩图片代码
     public function upload2()
     {
         $filePath = IA_ROOT . "/public/attachment/images/9/zy_map/2024/08/Gi2GCAtoI6ead1IR.jpg";

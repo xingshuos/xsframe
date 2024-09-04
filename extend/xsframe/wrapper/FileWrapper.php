@@ -42,6 +42,8 @@ class FileWrapper
             return ErrorUtil::error(0, "不允许上传此类文件");
         }
 
+        $filesize = @filesize($attachmentPath . $folder . $filename) ?? 0;
+
         # 图片压缩/上传处理
         if ($type == 'image') {
             $filename = $this->fileRemoteUpload($uniacid, $attachmentPath . $folder, $filename, $ext);
@@ -58,10 +60,12 @@ class FileWrapper
             'attachment' => $folder . $filename,
             'url'        => tomedia($folder . $filename),
             'type'       => $type == 'image' ? 1 : ($type == 'video' ? 2 : ($type == 'audio' ? 3 : 0)),
-            'filesize'   => filesize($attachmentPath . $folder . $filename),
+            'filesize'   => $filesize,
             'group_id'   => $groupId
         ];
+
         $this->addFileLog($uniacid, $userId, $result['name'], $result['fileurl'], $result['type'], $result['filesize'], $module, $groupId, $clientName);
+
 
         return $result;
     }

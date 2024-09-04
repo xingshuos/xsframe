@@ -357,7 +357,7 @@ class FileUtil
         }
         $pathInfo  = pathinfo($url);
         $extension = strtolower($pathInfo['extension']);
-        return !empty($extension) && in_array($extension, ['jpg', 'jpeg', 'gif', 'png']);
+        return !empty($extension) && in_array($extension, ['gif', 'jpg', 'jpeg', 'bmp', 'png', 'ico', 'heic']);
     }
 
     // 文件限制

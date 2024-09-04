@@ -23,15 +23,17 @@
 
 <!-- 阿里云 start -->
 <div class="remote-alioss" {if empty($accountSettings['remote']['type']) || $accountSettings['remote']['type'] != '2'} style="display:none;" {/if}>
-<div class="alert alert-warning">
-    启用阿里oss后，请把/attachment目录（不包括此目录）下的子文件及子目录上传至阿里云oss<br>
-    使用内网上传请一定注意OSS地域必须与ECS服务器的地域相同（例如:杭州）<br>
-    <ul class="link-list">
-        <p style="line-height: 2rem;"><a>相关工具：</a></p>
-        <p style="line-height: 2rem;"><a target="_blank" href="http://market.aliyun.com/products/53690006/cmgj000281.html?spm=5176.383663.9.22.faitxp" class="product-grey-font" data-spm-anchor-id="5176.383663.9.22">官方推荐OSS客户端工具（Windows版）</a></p>
-        <p style="line-height: 2rem;"><a target="_blank" href="http://market.aliyun.com/products/53690006/cmgj000282.html?spm=5176.383663.9.23.faitxp" class="product-grey-font" data-spm-anchor-id="5176.383663.9.23">官方推荐OSS客户端工具（Mac版）</a></p>
-        <p style="line-height: 2rem;"><a target="_blank" href="http://market.aliyun.com/products/53690006/cmgj000208.html?spm=5176.383663.9.24.faitxp" class="product-grey-font" data-spm-anchor-id="5176.383663.9.24">Ftp4ossServer（OSS的FTP云工具）</a></p>
-    </ul>
+<div style="padding-left: 60px;">
+    <div class="alert alert-warning">
+        启用阿里oss后，请把/attachment目录（不包括此目录）下的子文件及子目录上传至阿里云oss<br>
+        使用内网上传请一定注意OSS地域必须与ECS服务器的地域相同（例如:杭州）<br>
+        <ul class="link-list">
+            <p style="line-height: 2rem;"><a>相关工具：</a></p>
+            <p style="line-height: 2rem;"><a target="_blank" href="http://market.aliyun.com/products/53690006/cmgj000281.html?spm=5176.383663.9.22.faitxp" class="product-grey-font" data-spm-anchor-id="5176.383663.9.22">官方推荐OSS客户端工具（Windows版）</a></p>
+            <p style="line-height: 2rem;"><a target="_blank" href="http://market.aliyun.com/products/53690006/cmgj000282.html?spm=5176.383663.9.23.faitxp" class="product-grey-font" data-spm-anchor-id="5176.383663.9.23">官方推荐OSS客户端工具（Mac版）</a></p>
+            <p style="line-height: 2rem;"><a target="_blank" href="http://market.aliyun.com/products/53690006/cmgj000208.html?spm=5176.383663.9.24.faitxp" class="product-grey-font" data-spm-anchor-id="5176.383663.9.24">Ftp4ossServer（OSS的FTP云工具）</a></p>
+        </ul>
+    </div>
 </div>
 <div class="form-group">
     <label class="col-sm-2 control-label">Access Key ID</label>
@@ -99,11 +101,13 @@
 
 <!-- 七牛云 start -->
 <div class="remote-qiniu" {if empty($accountSettings['remote']['type']) || $accountSettings['remote']['type'] != '3'} style="display:none;" {/if}>
-<div class="alert alert-info">
-    启用七牛云存储后，请把/attachment目录（不包括此目录）下的子文件及子目录上传至七牛云存储, 相关工具：<br>
-    <ul class="link-list">
-        <p><a target="_blank" href="https://portal.qiniu.com/signin" class="product-grey-font">七牛云存储</a></p>
-    </ul>
+<div style="padding-left: 60px;">
+    <div class="alert alert-info">
+        启用七牛云存储后，请把/attachment目录（不包括此目录）下的子文件及子目录上传至七牛云存储, 相关工具：<br>
+        <ul class="link-list">
+            <p><a target="_blank" href="https://portal.qiniu.com/signin" class="product-grey-font">七牛云存储</a></p>
+        </ul>
+    </div>
 </div>
 <div class="form-group">
     <label class="col-sm-2 control-label">Accesskey</label>
@@ -147,11 +151,13 @@
 
 <!-- 腾讯云 start -->
 <div class="remote-cos" {if empty($accountSettings['remote']['type']) || $accountSettings['remote']['type'] != '4'} style="display:none;" {/if}>
-<div class="alert alert-info">
-    启用腾讯云cos对象存储后，请把/attachment目录（不包括此目录）下的子文件及子目录上传至腾讯云存储, 相关工具：<br>
-    <ul class="link-list">
-        <p><a target="_blank" href="https://console.qcloud.com/cos/bucket" class="product-grey-font">腾讯云存储</a></p>
-    </ul>
+<div style="padding-left: 60px;">
+    <div class="alert alert-info">
+        启用腾讯云cos对象存储后，请把/attachment目录（不包括此目录）下的子文件及子目录上传至腾讯云存储, 相关工具：<br>
+        <ul class="link-list">
+            <p><a target="_blank" href="https://console.qcloud.com/cos/bucket" class="product-grey-font">腾讯云存储</a></p>
+        </ul>
+    </div>
 </div>
 <div class="form-group">
     <label class="col-sm-2 control-label">APPID</label>
@@ -178,7 +184,7 @@
     <label class="col-sm-2 control-label">Bucket</label>
     <div class="col-sm-9">
         <input type="text" name="data[remote][cos][bucket]" class="form-control" value="{$accountSettings['remote']['cos']['bucket']}" placeholder=""/>
-        <span class="help-block">请保证bucket为可公共读取的</span>
+        <span class="help-block">请保证bucket为可公共读取的(备注:创建存储桶时的名称，访问域名前缀)</span>
     </div>
 </div>
 <div class="form-group" id="data[remote][cos]_local">
@@ -197,6 +203,7 @@
             <option value="ger" {if $accountSettings['remote']['cos']['local'] == 'ger'}selected{/if}>法兰克福</option>
         </select>
         <span class="help-block">选择bucket对应的区域，如果没有选择无</span>
+        <span class="help-block">备注:中国香港(港澳台地区),北京(华北地区),上海(华东地区),南京(华东地区),广州(华南地区),硅谷(美国西部),成都(西南地区),重庆(西南地区),曼谷(亚太东南),雅加达(亚太东南);</span>
     </div>
 </div>
 <div class="form-group">
@@ -305,7 +312,7 @@
     let upload_remote = function () {
         try {
             // $('#name').modal('show');
-            $.post("{$postUrl}", {type: 'upload_remote'}, function (data) {
+            $.post("{$postUrl}", {type: 'upload_remote','uniacid':"{$uniacid}"}, function (data) {
                 console.log(data);
                 // $('#name').modal('hide');
 
@@ -348,26 +355,72 @@
             'bucket' :  $.trim($(':text[name="data[remote][qiniu][bucket]"]').val())
         };
 
-        $.post("{$postUrl}",param, function(json) {
+        $.post("{$postUrl}", param).done(function (json) {
             let data = $.parseJSON(json);
 
-            console.log('json',data)
-            return false
-
-            if(data.message.errno === 0) {
+            if (data.status === 1) {
                 tip.msgbox.suc('配置成功');
-                return false;
+            } else {
+                tip.msgbox.err(data.result.message);
             }
-            if(data.message.errno < 0) {
-                tip.msgbox.err(data.message.message);
-                return false;
+        }).fail(function (fail) {
+            if (fail.responseJSON.code !== 200) {
+                tip.msgbox.err(fail.responseJSON.msg)
             }
-        });
-    });
+        }).always(function () {
+            console.log("finished");
+        })
 
+    })
     /* 七牛云cos 附件存储设置 end */
 
     /* 腾讯云cos 附件存储设置 start */
-
+    $('.js-checkremotecos').on('click', function(){
+        let appid = $.trim($(':text[name="data[remote][cos][appid]"]').val());
+        if (appid === '') {
+            tip.msgbox.err('请填写APPID');
+            return false;
+        }
+        let secretid = $.trim($(':text[name="data[remote][cos][secretid]"]').val());
+        if (secretid === '') {
+            tip.msgbox.err('请填写secretid');
+            return false;
+        }
+        let secretkey = $.trim($(':text[name="data[remote][cos][secretkey]"]').val());
+        if (secretkey === '') {
+            tip.msgbox.err('请填写Secretkey');
+            return false;
+        }
+        let bucket = $.trim($(':text[name="data[remote][cos][bucket]"]').val());
+        if (bucket === '') {
+            tip.msgbox.err('请填写bucket');
+            return false;
+        }
+        let url = $.trim($(':text[name="data[remote][cos][url]"]').val());
+        let local = $('[name="data[remote][cos][local]"]').val();
+        let param = {
+            'type' : 'cos',
+            'appid' : appid,
+            'secretid' : secretid,
+            'secretkey'  : secretkey,
+            'bucket' :  bucket,
+            'url' : url,
+            'local' : local
+        };
+        $.post("{$postUrl}", param).done(function (json) {
+            let data = $.parseJSON(json);
+            if (data.status === 1) {
+                tip.msgbox.suc('配置成功');
+            } else {
+                tip.msgbox.err(data.result.message);
+            }
+        }).fail(function (fail) {
+            if (fail.responseJSON.code !== 200) {
+                tip.msgbox.err(fail.responseJSON.msg)
+            }
+        }).always(function () {
+            console.log("finished");
+        })
+    });
     /* 腾讯云cos 附件存储设置 end */
 </script>

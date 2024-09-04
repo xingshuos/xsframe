@@ -30,31 +30,32 @@ class Sysset extends Base
 
         if ($this->request->isPost()) {
             $type = $this->params['type'];
-            # 测试配置
+            $uniacid = $this->params['uniacid'] ?? 0;
+
             $attachmentController = new AttachmentWrapper();
 
-            $ret = [];
             switch ($type) {
                 case 'alioss':
                     $attachmentController->aliOss($this->params['key'], $this->params['secret'], $this->params['url'], $this->params['bucket']);
                     show_json(1);
                     break;
                 case 'qiniu':
-                    $attachmentController->qiNiu($this->params['key'], $this->params['secret'], $this->params['bucket']);
+                    $attachmentController->qiNiu($this->params['accesskey'], $this->params['secretkey'], $this->params['bucket']);
                     show_json(1);
                     break;
                 case 'cos':
-                    $attachmentController->cos();
+                    $attachmentController->cos($this->params['appid'], $this->params['secretid'], $this->params['secretkey'], $this->params['bucket'], $this->params['local']);
                     show_json(1);
                     break;
                 case 'buckets':
-                    $ret = $attachmentController->buckets($this->params['key'], $this->params['secret']);
-                    show_json(1, ['data' => $ret]);
+                    $attachmentController->buckets($this->params['key'], $this->params['secret']);
+                    show_json(1);
                     break;
                 case 'upload_remote':
                     $setting = $this->settingsController->getSysSettings(SysSettingsKeyEnum::ATTACHMENT_KEY);
-                    $attachmentController->fileDirRemoteUpload($setting, $attachmentPath, $attachmentPath . 'images');
+                    $attachmentController->fileDirRemoteUpload($setting, $attachmentPath, $attachmentPath . 'images' . ($uniacid > 0 ? '/' . $uniacid : ''));
                     show_json(1, "上传成功");
+                    break;
             }
 
             $data = $this->params['data'];
@@ -71,6 +72,7 @@ class Sysset extends Base
             'upload_max_filesize' => $upload_max_filesize,
             'accountSettings'     => $accountSettings,
             'local_attachment'    => $localAttachment,
+            'uniacid'             => 0,
         ];
         return $this->template('attachment', $result);
     }

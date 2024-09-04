@@ -12,7 +12,11 @@
 
 namespace xsframe\wrapper;
 
-use xsframe\enum\SysSettingsKeyEnum;
+use Qcloud\Cos\Client;
+use Qiniu\Auth;
+use Qiniu\Storage\UploadManager;
+use think\Exception;
+use xsframe\exception\ApiException;
 use xsframe\util\ErrorUtil;
 use xsframe\util\FileUtil;
 use OSS\Core\OssException;
@@ -54,36 +58,63 @@ class AttachmentWrapper
     }
 
     // qiNiu
-    public function qiNiu($key, $secret, $bucket)
+    public function qiNiu($key, $secret, $bucket): bool
     {
-        load()->library('qiniu');
-        $auth = new Qiniu\Auth($key, $secret);
-        $token = $auth->uploadToken($bucket);
-        $config = new Qiniu\Config();
-        $uploadmgr = new Qiniu\Storage\UploadManager($config);
+        // 初始化Auth状态
+        $auth = new Auth($key, $secret);
 
+        // 构建UploadToken
+        $token = $auth->uploadToken($bucket);
+
+        // 初始化UploadManager对象并进行文件上传
+        $uploadMgr = new UploadManager();
+
+        // 调用UploadManager的putFileUp方法进行文件上传
         $attachmentPath = IA_ROOT . "/public/attachment/";
         $filename = 'HeEngine.ico';
         $filePath = $attachmentPath . 'images/global/' . $filename;
 
-        list($ret, $err) = $uploadmgr->putFile($token, 'MicroEngine.ico', $filePath);
+        [$ret, $err] = $uploadMgr->putFile($token, $filename, $filePath);
+
         if ($err !== null) {
             $err = (array)$err;
             $err = (array)array_pop($err);
             $err = json_decode($err['body'], true);
-            return false;
-        } else {
-            return true;
+            throw new ApiException($err['error']);
         }
+
+        return true;
     }
 
     // cos
-    public function cos()
+    public function cos($appid, $secretId, $secretKey, $bucket, $region): bool
     {
-        $result = [
+        $cosClient = new Client([
+            'region'      => $region,
+            'credentials' => [
+                'appId'     => $appid,
+                'secretId'  => $secretId,
+                'secretKey' => $secretKey,
+            ],
+        ]);
 
-        ];
-        return $result;
+        // 调用UploadManager的putFileUp方法进行文件上传
+        $attachmentPath = IA_ROOT . "/public/attachment/";
+        $filename = 'HeEngine.ico';
+        $filePath = $attachmentPath . 'images/global/' . $filename;
+
+        try {
+            $result = $cosClient->putObject([
+                'Bucket' => $bucket,
+                'Key'    => $filename,
+                'Body'   => fopen($filePath, 'rb')
+            ]);
+            // dd($result);
+        } catch (Exception $e) {
+            throw new ApiException($e->getMessage());
+        }
+
+        return true;
     }
 
     private function attachmentNewAliossAuth($key, $secret, $bucket, $internal = false)
@@ -123,26 +154,17 @@ class AttachmentWrapper
             $local_attachment = [];
         }
 
-        if (is_array($local_attachment) && !empty($local_attachment)) {
+        if (!empty($local_attachment)) {
             foreach ($local_attachment as $attachment) {
                 $filename = str_replace($attachmentPath, '', $attachment);
                 [$image_dir, $file_account] = explode('/', $filename);
 
+                # TODO 应该验证下 $file_account 也就是 uniacid 是否配置过独立的存储空间 这里暂时是没有验证独立库的，一旦提交上传将都提交到全局库
                 if ($file_account == 'global' || !FileUtil::fileIsImage($attachment)) {
                     continue;
                 }
 
-                // if (is_numeric($file_account) && is_dir($attachmentPath . 'images/' . $file_account) && !empty($setting['remote_complete_info'][$file_account]['type'])) {
-                //     $setting['remote'] = $setting['remote_complete_info'][$file_account];
-                // } else {
-                //     $setting['remote'] = $setting['remote_complete_info'];
-                // }
-
-                $result = $this->fileRemoteUpload($setting, $attachmentPath, $filename);
-
-                if (ErrorUtil::isError($result)) {
-                    show_json(-1, $result['msg']);
-                }
+                $this->fileRemoteUpload($setting, $attachmentPath, $filename);
             }
         }
         return true;
@@ -198,6 +220,7 @@ class AttachmentWrapper
             return false;
         }
 
+        // 阿里云
         if ($setting['remote']['type'] == '2') {
             [$bucket, $url] = explode('@@', $setting['remote']['alioss']['bucket']);
 
@@ -211,10 +234,63 @@ class AttachmentWrapper
             } catch (OssException $e) {
                 show_json(-1, $e->getMessage());
             }
+        }
 
-            if ($auto_delete_local) {
-                FileUtil::fileDelete($filename);
+        // 七牛云
+        if ($setting['remote']['type'] == '3') {
+            try {
+                // 初始化Auth状态
+                $auth = new Auth($setting['remote']['qiniu']['accesskey'], $setting['remote']['qiniu']['secretkey']);
+
+                // 构建UploadToken
+                $token = $auth->uploadToken($setting['remote']['qiniu']['bucket']);
+
+                // 初始化UploadManager对象并进行文件上传
+                $uploadMgr = new UploadManager();
+
+                [$ret, $err] = $uploadMgr->putFile($token, $filename, $attachmentPath . $filename);
+
+                if ($err !== null) {
+                    $err = (array)$err;
+                    $err = (array)array_pop($err);
+                    $err = json_decode($err['body'], true);
+                    throw new ApiException($err['error']);
+                }
+            } catch (Exception $e) {
+                throw new ApiException($e->getMessage());
             }
+        }
+
+        // 腾讯云
+        if ($setting['remote']['type'] == '4') {
+            try {
+                $region = $setting['remote']['cos']['local'];
+                $appid = $setting['remote']['cos']['appid'];
+                $secretId = $setting['remote']['cos']['secretid'];
+                $secretKey = $setting['remote']['cos']['secretkey'];
+                $bucket = $setting['remote']['cos']['bucket'];
+
+                $cosClient = new Client([
+                    'region'      => $region,
+                    'credentials' => [
+                        'appId'     => $appid,
+                        'secretId'  => $secretId,
+                        'secretKey' => $secretKey,
+                    ],
+                ]);
+
+                $cosClient->putObject([
+                    'Bucket' => $bucket,
+                    'Key'    => $filename,
+                    'Body'   => fopen($attachmentPath . $filename, 'rb')
+                ]);
+            } catch (Exception $e) {
+                throw new ApiException($e->getMessage());
+            }
+        }
+
+        if ($auto_delete_local) {
+            FileUtil::fileDelete($filename);
         }
 
         return true;

@@ -16,6 +16,7 @@ use think\facade\Db;
 use xsframe\facade\service\DbServiceFacade;
 use xsframe\facade\wrapper\SystemWrapperFacade;
 use xsframe\util\ArrayUtil;
+use xsframe\util\FileUtil;
 use xsframe\util\RandomUtil;
 use xsframe\wrapper\AccountHostWrapper;
 use xsframe\wrapper\UserWrapper;
@@ -142,14 +143,18 @@ class Account extends Base
         // 更新uniacid列表
         $this->reloadUniacidList();
 
+        $attachmentPath = IA_ROOT . "/public/attachment/";
+        $localAttachment = FileUtil::fileDirExistImage($attachmentPath . 'images/' . $uniacid);
+
         $result = [
-            'item'            => $item,
-            'uniacid'         => $uniacid,
-            'hostList'        => $hostList,
-            'accountSettings' => $accountSettings,
-            'modules'         => $modules,
-            'postUrl'         => strval(url('sysset/attachment')),
-            'upload'          => (array)$accountSettings['attachment'],
+            'item'             => $item,
+            'uniacid'          => $uniacid,
+            'hostList'         => $hostList,
+            'accountSettings'  => $accountSettings,
+            'modules'          => $modules,
+            'postUrl'          => strval(url('sysset/attachment')),
+            'upload'           => (array)$accountSettings['attachment'],
+            'local_attachment' => $localAttachment,
         ];
         return $this->template('post', $result);
     }
