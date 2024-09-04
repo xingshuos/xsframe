@@ -46,7 +46,6 @@
     "topthink/think-helper": "^3.1",
     "alibabacloud/vod-20170321": "2.16.12",
     "alibabacloud/iot": "^1.8",
-    "ext-imagick": "*",
     "topthink/think-queue": "^3.0",
     "ext-bcmath": "*",
     "tinywan/antfin-php-sdk": "^0.0.1",

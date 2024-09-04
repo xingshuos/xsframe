@@ -30,18 +30,16 @@
         {if isset($bomTree)}
         <div class="form-group">
             <label class="col-lg control-label">检测结果</label>
-            <div class="col-sm-10">
+            <div class="alert alert-info col-sm-10">
                 {if empty($bomTree)}
-                <p><strong>没有检测到存在BOM的异常文件</strong></p>
+                    <p><strong>没有检测到存在BOM的异常文件</strong></p>
                 {else}
-                <div class="alert alert-info" style="line-height:20px;">
+                <p style="line-height:20px;">
                     {volist name="bomtree" id="line"}
                     <div>{$line}</div>
                     {/volist}
-                </div>
-
+                </p>
                 {/if}
-                <div class=" alert alert-warning ">为保证系统正常运行, 系统不会尝试修复检测出来的错误文件, 检测完成后请自行使用编辑器修改文件编码方式</div>
             </div>
         </div>
         {/if}
