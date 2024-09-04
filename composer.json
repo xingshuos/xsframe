@@ -67,7 +67,8 @@
     }
   },
   "config": {
-    "preferred-install": "dist"
+    "preferred-install": "dist",
+    "optimize-autoloader": true
   },
   "scripts": {
     "post-autoload-dump": [

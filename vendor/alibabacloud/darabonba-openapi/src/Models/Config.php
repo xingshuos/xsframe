@@ -17,6 +17,7 @@ class Config extends Model
         'accessKeyId' => '',
         'accessKeySecret' => '',
         'securityToken' => '',
+        'bearerToken' => '',
         'protocol' => 'http',
         'method' => '',
         'regionId' => '',
@@ -56,6 +57,9 @@ class Config extends Model
         }
         if (null !== $this->securityToken) {
             $res['securityToken'] = $this->securityToken;
+        }
+        if (null !== $this->bearerToken) {
+            $res['bearerToken'] = $this->bearerToken;
         }
         if (null !== $this->protocol) {
             $res['protocol'] = $this->protocol;
@@ -132,6 +136,9 @@ class Config extends Model
         if (null !== $this->ca) {
             $res['ca'] = $this->ca;
         }
+        if (null !== $this->disableHttp2) {
+            $res['disableHttp2'] = $this->disableHttp2;
+        }
         return $res;
     }
     /**
@@ -149,6 +156,9 @@ class Config extends Model
         }
         if (isset($map['securityToken'])) {
             $model->securityToken = $map['securityToken'];
+        }
+        if (isset($map['bearerToken'])) {
+            $model->bearerToken = $map['bearerToken'];
         }
         if (isset($map['protocol'])) {
             $model->protocol = $map['protocol'];
@@ -225,6 +235,9 @@ class Config extends Model
         if (isset($map['ca'])) {
             $model->ca = $map['ca'];
         }
+        if (isset($map['disableHttp2'])) {
+            $model->disableHttp2 = $map['disableHttp2'];
+        }
         return $model;
     }
     /**
@@ -245,6 +258,13 @@ class Config extends Model
      * @var string
      */
     public $securityToken;
+
+    /**
+     * @description bearer token
+     * @example the-bearer-token
+     * @var string
+     */
+    public $bearerToken;
 
     /**
      * @description http protocol
@@ -408,17 +428,23 @@ class Config extends Model
 
     /**
      * @description client certificate
-     * @example -----BEGIN CERTIFICATE-----
-xxx-----END CERTIFICATE-----
+     * @example -----BEGIN CERTIFICATE-----xxx-----END CERTIFICATE-----
      * @var string
      */
     public $cert;
 
     /**
      * @description server certificate
-     * @example -----BEGIN CERTIFICATE-----
-xxx-----END CERTIFICATE-----
+     * @example -----BEGIN CERTIFICATE-----xxx-----END CERTIFICATE-----
      * @var string
      */
     public $ca;
+
+    /**
+     * @description disable HTTP/2
+     * @example false
+     * @var bool
+     */
+    public $disableHttp2;
+
 }

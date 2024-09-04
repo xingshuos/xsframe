@@ -86,6 +86,8 @@ class OpenApiClient
 
     protected $_ca;
 
+    protected $_disableHttp2;
+
     /**
      * Init client with Config
      * @param config config contains the necessary information to create a client
@@ -111,6 +113,12 @@ class OpenApiClient
             ]);
             $credentialConfig->securityToken = $config->securityToken;
             $this->_credential = new Credential($credentialConfig);
+        } else if (!Utils::empty_($config->bearerToken)) {
+            $cc = new Config([
+                "type" => "bearer",
+                "bearerToken" => $config->bearerToken
+            ]);
+            $this->_credential = new Credential($cc);
         } else if (!Utils::isUnset($config->credential)) {
             $this->_credential = $config->credential;
         }
@@ -136,6 +144,7 @@ class OpenApiClient
         $this->_key = $config->key;
         $this->_cert = $config->cert;
         $this->_ca = $config->ca;
+        $this->_disableHttp2 = $config->disableHttp2;
     }
 
     /**
@@ -208,13 +217,24 @@ class OpenApiClient
                         $globalHeaders = $globalParams->headers;
                     }
                 }
+                $extendsHeaders = [];
+                $extendsQueries = [];
+                if (!Utils::isUnset($runtime->extendsParameters)) {
+                    $extendsParameters = $runtime->extendsParameters;
+                    if (!Utils::isUnset($extendsParameters->headers)) {
+                        $extendsHeaders = $extendsParameters->headers;
+                    }
+                    if (!Utils::isUnset($extendsParameters->queries)) {
+                        $extendsQueries = $extendsParameters->queries;
+                    }
+                }
                 $_request->query = Tea::merge([
                     "Action" => $action,
                     "Format" => "json",
                     "Version" => $version,
                     "Timestamp" => OpenApiUtilClient::getTimestamp(),
                     "SignatureNonce" => Utils::getNonce()
-                ], $globalQueries, $request->query);
+                ], $globalQueries, $extendsQueries, $request->query);
                 $headers = $this->getRpcHeaders();
                 if (Utils::isUnset($headers)) {
                     // endpoint is setted in product client
@@ -223,14 +243,14 @@ class OpenApiClient
                         "x-acs-version" => $version,
                         "x-acs-action" => $action,
                         "user-agent" => $this->getUserAgent()
-                    ], $globalHeaders);
+                    ], $globalHeaders, $extendsHeaders);
                 } else {
                     $_request->headers = Tea::merge([
                         "host" => $this->_endpoint,
                         "x-acs-version" => $version,
                         "x-acs-action" => $action,
                         "user-agent" => $this->getUserAgent()
-                    ], $globalHeaders, $headers);
+                    ], $globalHeaders, $extendsHeaders, $headers);
                 }
                 if (!Utils::isUnset($request->body)) {
                     $m = Utils::assertAsMap($request->body);
@@ -239,21 +259,28 @@ class OpenApiClient
                     $_request->headers["content-type"] = "application/x-www-form-urlencoded";
                 }
                 if (!Utils::equalString($authType, "Anonymous")) {
-                    $accessKeyId = $this->getAccessKeyId();
-                    $accessKeySecret = $this->getAccessKeySecret();
-                    $securityToken = $this->getSecurityToken();
-                    if (!Utils::empty_($securityToken)) {
-                        $_request->query["SecurityToken"] = $securityToken;
+                    $credentialType = $this->getType();
+                    if (Utils::equalString($credentialType, "bearer")) {
+                        $bearerToken = $this->getBearerToken();
+                        $_request->query["BearerToken"] = $bearerToken;
+                        $_request->query["SignatureType"] = "BEARERTOKEN";
+                    } else {
+                        $accessKeyId = $this->getAccessKeyId();
+                        $accessKeySecret = $this->getAccessKeySecret();
+                        $securityToken = $this->getSecurityToken();
+                        if (!Utils::empty_($securityToken)) {
+                            $_request->query["SecurityToken"] = $securityToken;
+                        }
+                        $_request->query["SignatureMethod"] = "HMAC-SHA1";
+                        $_request->query["SignatureVersion"] = "1.0";
+                        $_request->query["AccessKeyId"] = $accessKeyId;
+                        $t = null;
+                        if (!Utils::isUnset($request->body)) {
+                            $t = Utils::assertAsMap($request->body);
+                        }
+                        $signedParam = Tea::merge($_request->query, OpenApiUtilClient::query($t));
+                        $_request->query["Signature"] = OpenApiUtilClient::getRPCSignature($signedParam, $_request->method, $accessKeySecret);
                     }
-                    $_request->query["SignatureMethod"] = "HMAC-SHA1";
-                    $_request->query["SignatureVersion"] = "1.0";
-                    $_request->query["AccessKeyId"] = $accessKeyId;
-                    $t = null;
-                    if (!Utils::isUnset($request->body)) {
-                        $t = Utils::assertAsMap($request->body);
-                    }
-                    $signedParam = Tea::merge($_request->query, OpenApiUtilClient::query($t));
-                    $_request->query["Signature"] = OpenApiUtilClient::getRPCSignature($signedParam, $_request->method, $accessKeySecret);
                 }
                 $_lastRequest = $_request;
                 $_response = Tea::send($_request, $_runtime);
@@ -360,13 +387,13 @@ class OpenApiClient
             "socks5NetWork" => Utils::defaultString($runtime->socks5NetWork, $this->_socks5NetWork),
             "maxIdleConns" => Utils::defaultNumber($runtime->maxIdleConns, $this->_maxIdleConns),
             "retry" => [
-                "retryable" => $runtime->autoretry,
-                "maxAttempts" => Utils::defaultNumber($runtime->maxAttempts, 3)
-            ],
+                    "retryable" => $runtime->autoretry,
+                    "maxAttempts" => Utils::defaultNumber($runtime->maxAttempts, 3)
+                ],
             "backoff" => [
-                "policy" => Utils::defaultString($runtime->backoffPolicy, "no"),
-                "period" => Utils::defaultNumber($runtime->backoffPeriod, 1)
-            ],
+                    "policy" => Utils::defaultString($runtime->backoffPolicy, "no"),
+                    "period" => Utils::defaultNumber($runtime->backoffPeriod, 1)
+                ],
             "ignoreSSL" => $runtime->ignoreSSL
         ];
         $_lastRequest = null;
@@ -397,6 +424,17 @@ class OpenApiClient
                         $globalHeaders = $globalParams->headers;
                     }
                 }
+                $extendsHeaders = [];
+                $extendsQueries = [];
+                if (!Utils::isUnset($runtime->extendsParameters)) {
+                    $extendsParameters = $runtime->extendsParameters;
+                    if (!Utils::isUnset($extendsParameters->headers)) {
+                        $extendsHeaders = $extendsParameters->headers;
+                    }
+                    if (!Utils::isUnset($extendsParameters->queries)) {
+                        $extendsQueries = $extendsParameters->queries;
+                    }
+                }
                 $_request->headers = Tea::merge([
                     "date" => Utils::getDateUTCString(),
                     "host" => $this->_endpoint,
@@ -407,25 +445,32 @@ class OpenApiClient
                     "x-acs-version" => $version,
                     "x-acs-action" => $action,
                     "user-agent" => Utils::getUserAgent($this->_userAgent)
-                ], $globalHeaders, $request->headers);
+                ], $globalHeaders, $extendsHeaders, $request->headers);
                 if (!Utils::isUnset($request->body)) {
                     $_request->body = Utils::toJSONString($request->body);
                     $_request->headers["content-type"] = "application/json; charset=utf-8";
                 }
-                $_request->query = $globalQueries;
+                $_request->query = Tea::merge($globalQueries, $extendsQueries);
                 if (!Utils::isUnset($request->query)) {
                     $_request->query = Tea::merge($_request->query, $request->query);
                 }
                 if (!Utils::equalString($authType, "Anonymous")) {
-                    $accessKeyId = $this->getAccessKeyId();
-                    $accessKeySecret = $this->getAccessKeySecret();
-                    $securityToken = $this->getSecurityToken();
-                    if (!Utils::empty_($securityToken)) {
-                        $_request->headers["x-acs-accesskey-id"] = $accessKeyId;
-                        $_request->headers["x-acs-security-token"] = $securityToken;
+                    $credentialType = $this->getType();
+                    if (Utils::equalString($credentialType, "bearer")) {
+                        $bearerToken = $this->getBearerToken();
+                        $_request->headers["x-acs-bearer-token"] = $bearerToken;
+                        $_request->headers["x-acs-signature-type"] = "BEARERTOKEN";
+                    } else {
+                        $accessKeyId = $this->getAccessKeyId();
+                        $accessKeySecret = $this->getAccessKeySecret();
+                        $securityToken = $this->getSecurityToken();
+                        if (!Utils::empty_($securityToken)) {
+                            $_request->headers["x-acs-accesskey-id"] = $accessKeyId;
+                            $_request->headers["x-acs-security-token"] = $securityToken;
+                        }
+                        $stringToSign = OpenApiUtilClient::getStringToSign($_request);
+                        $_request->headers["authorization"] = "acs " . $accessKeyId . ":" . OpenApiUtilClient::getROASignature($stringToSign, $accessKeySecret) . "";
                     }
-                    $stringToSign = OpenApiUtilClient::getStringToSign($_request);
-                    $_request->headers["authorization"] = "acs " . $accessKeyId . ":" . OpenApiUtilClient::getROASignature($stringToSign, $accessKeySecret) . "";
                 }
                 $_lastRequest = $_request;
                 $_response = Tea::send($_request, $_runtime);
@@ -542,9 +587,9 @@ class OpenApiClient
                 "maxAttempts" => Utils::defaultNumber($runtime->maxAttempts, 3)
             ],
             "backoff" => [
-                "policy" => Utils::defaultString($runtime->backoffPolicy, "no"),
-                "period" => Utils::defaultNumber($runtime->backoffPeriod, 1)
-            ],
+                    "policy" => Utils::defaultString($runtime->backoffPolicy, "no"),
+                    "period" => Utils::defaultNumber($runtime->backoffPeriod, 1)
+                ],
             "ignoreSSL" => $runtime->ignoreSSL
         ];
         $_lastRequest = null;
@@ -575,6 +620,17 @@ class OpenApiClient
                         $globalHeaders = $globalParams->headers;
                     }
                 }
+                $extendsHeaders = [];
+                $extendsQueries = [];
+                if (!Utils::isUnset($runtime->extendsParameters)) {
+                    $extendsParameters = $runtime->extendsParameters;
+                    if (!Utils::isUnset($extendsParameters->headers)) {
+                        $extendsHeaders = $extendsParameters->headers;
+                    }
+                    if (!Utils::isUnset($extendsParameters->queries)) {
+                        $extendsQueries = $extendsParameters->queries;
+                    }
+                }
                 $_request->headers = Tea::merge([
                     "date" => Utils::getDateUTCString(),
                     "host" => $this->_endpoint,
@@ -585,26 +641,33 @@ class OpenApiClient
                     "x-acs-version" => $version,
                     "x-acs-action" => $action,
                     "user-agent" => Utils::getUserAgent($this->_userAgent)
-                ], $globalHeaders, $request->headers);
+                ], $globalHeaders, $extendsHeaders, $request->headers);
                 if (!Utils::isUnset($request->body)) {
                     $m = Utils::assertAsMap($request->body);
                     $_request->body = OpenApiUtilClient::toForm($m);
                     $_request->headers["content-type"] = "application/x-www-form-urlencoded";
                 }
-                $_request->query = $globalQueries;
+                $_request->query = Tea::merge($globalQueries, $extendsQueries);
                 if (!Utils::isUnset($request->query)) {
                     $_request->query = Tea::merge($_request->query, $request->query);
                 }
                 if (!Utils::equalString($authType, "Anonymous")) {
-                    $accessKeyId = $this->getAccessKeyId();
-                    $accessKeySecret = $this->getAccessKeySecret();
-                    $securityToken = $this->getSecurityToken();
-                    if (!Utils::empty_($securityToken)) {
-                        $_request->headers["x-acs-accesskey-id"] = $accessKeyId;
-                        $_request->headers["x-acs-security-token"] = $securityToken;
+                    $credentialType = $this->getType();
+                    if (Utils::equalString($credentialType, "bearer")) {
+                        $bearerToken = $this->getBearerToken();
+                        $_request->headers["x-acs-bearer-token"] = $bearerToken;
+                        $_request->headers["x-acs-signature-type"] = "BEARERTOKEN";
+                    } else {
+                        $accessKeyId = $this->getAccessKeyId();
+                        $accessKeySecret = $this->getAccessKeySecret();
+                        $securityToken = $this->getSecurityToken();
+                        if (!Utils::empty_($securityToken)) {
+                            $_request->headers["x-acs-accesskey-id"] = $accessKeyId;
+                            $_request->headers["x-acs-security-token"] = $securityToken;
+                        }
+                        $stringToSign = OpenApiUtilClient::getStringToSign($_request);
+                        $_request->headers["authorization"] = "acs " . $accessKeyId . ":" . OpenApiUtilClient::getROASignature($stringToSign, $accessKeySecret) . "";
                     }
-                    $stringToSign = OpenApiUtilClient::getStringToSign($_request);
-                    $_request->headers["authorization"] = "acs " . $accessKeyId . ":" . OpenApiUtilClient::getROASignature($stringToSign, $accessKeySecret) . "";
                 }
                 $_lastRequest = $_request;
                 $_response = Tea::send($_request, $_runtime);
@@ -747,7 +810,18 @@ class OpenApiClient
                         $globalHeaders = $globalParams->headers;
                     }
                 }
-                $_request->query = Tea::merge($globalQueries, $request->query);
+                $extendsHeaders = [];
+                $extendsQueries = [];
+                if (!Utils::isUnset($runtime->extendsParameters)) {
+                    $extendsParameters = $runtime->extendsParameters;
+                    if (!Utils::isUnset($extendsParameters->headers)) {
+                        $extendsHeaders = $extendsParameters->headers;
+                    }
+                    if (!Utils::isUnset($extendsParameters->queries)) {
+                        $extendsQueries = $extendsParameters->queries;
+                    }
+                }
+                $_request->query = Tea::merge($globalQueries, $extendsQueries, $request->query);
                 // endpoint is setted in product client
                 $_request->headers = Tea::merge([
                     "host" => $this->_endpoint,
@@ -757,7 +831,7 @@ class OpenApiClient
                     "x-acs-date" => OpenApiUtilClient::getTimestamp(),
                     "x-acs-signature-nonce" => Utils::getNonce(),
                     "accept" => "application/json"
-                ], $globalHeaders, $request->headers);
+                ], $globalHeaders, $extendsHeaders, $request->headers);
                 if (Utils::equalString($params->style, "RPC")) {
                     $headers = $this->getRpcHeaders();
                     if (!Utils::isUnset($headers)) {
@@ -797,6 +871,11 @@ class OpenApiClient
                     if (Utils::equalString($authType, "bearer")) {
                         $bearerToken = $this->getBearerToken();
                         $_request->headers["x-acs-bearer-token"] = $bearerToken;
+                        if (Utils::equalString($params->style, "RPC")) {
+                            $_request->query["SignatureType"] = "BEARERTOKEN";
+                        } else {
+                            $_request->headers["x-acs-signature-type"] = "BEARERTOKEN";
+                        }
                     } else {
                         $accessKeyId = $this->getAccessKeyId();
                         $accessKeySecret = $this->getAccessKeySecret();
@@ -916,7 +995,8 @@ class OpenApiClient
                 "policy" => Utils::defaultString($runtime->backoffPolicy, "no"),
                 "period" => Utils::defaultNumber($runtime->backoffPeriod, 1)
             ],
-            "ignoreSSL" => $runtime->ignoreSSL
+            "ignoreSSL" => $runtime->ignoreSSL,
+            "disableHttp2" => self::defaultAny($this->_disableHttp2, false)
         ];
         $_lastRequest = null;
         $_lastException = null;
@@ -945,9 +1025,20 @@ class OpenApiClient
                         $globalHeaders = $globalParams->headers;
                     }
                 }
+                $extendsHeaders = [];
+                $extendsQueries = [];
+                if (!Utils::isUnset($runtime->extendsParameters)) {
+                    $extendsParameters = $runtime->extendsParameters;
+                    if (!Utils::isUnset($extendsParameters->headers)) {
+                        $extendsHeaders = $extendsParameters->headers;
+                    }
+                    if (!Utils::isUnset($extendsParameters->queries)) {
+                        $extendsQueries = $extendsParameters->queries;
+                    }
+                }
                 $requestContext = new \Darabonba\GatewaySpi\Models\InterceptorContext\request([
-                    "headers" => Tea::merge($globalHeaders, $request->headers, $headers),
-                    "query" => Tea::merge($globalQueries, $request->query),
+                    "headers" => Tea::merge($globalHeaders, $extendsHeaders, $request->headers, $headers),
+                    "query" => Tea::merge($globalQueries, $extendsQueries, $request->query),
                     "body" => $request->body,
                     "stream" => $request->stream,
                     "hostMap" => $request->hostMap,

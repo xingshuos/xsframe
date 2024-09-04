@@ -35,6 +35,7 @@ if (!is_dir(__DIR__ . '/../runtime')) {
 $app = (new App());
 
 // 执行HTTP应用并响应
+$app->debug(true);
 $http = $app->http;
 $response = $http->run();
 $response->send();

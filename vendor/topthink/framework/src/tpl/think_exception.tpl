@@ -68,7 +68,7 @@ if (!function_exists('parse_args')) {
                     break;
             }
 
-            $result[] = is_int($key) ? $value : "'{$key}' => {$value}";
+            $result[] = is_int($key) ? $value : sprintf('\'%s\' => %s', htmlentities($key), $value);
         }
 
         return implode(', ', $result);
@@ -394,12 +394,11 @@ if (!function_exists('echo_value')) {
     <?php } ?>
 
     <div class="copyright">
-        <a title="官方网站" href="http://www.thinkphp.cn">XS_FRAME</a>
-        <span>V<?php echo \think\facade\App::version(); ?></span>
-        <span>{ 星数引擎-专为Developer开发设计的高性能框架 }</span>
-        <span>- <a title="官方手册" href="https://www.xsframe.cn" target="_blank">官方手册</a></span>
+        <a title="官方网站" href="http://www.thinkphp.cn">ThinkPHP</a> 
+        <span>V<?php echo \think\facade\App::version(); ?></span> 
+        <span>{ 十年磨一剑-为API开发设计的高性能框架 }</span>
+        <span>- <a title="官方手册" href="https://www.kancloud.cn/manual/thinkphp6_0/content">官方手册</a></span>
     </div>
-
     <?php if (\think\facade\App::isDebug()) { ?>
     <script>
         function $(selector, node){
