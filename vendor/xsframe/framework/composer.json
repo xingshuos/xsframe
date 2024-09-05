@@ -1,0 +1,35 @@
+{
+  "name": "xsframe/framework",
+  "description": "The XsFrame Framework.",
+  "keywords": [
+    "framework",
+    "thinkphp",
+    "ORM",
+    "xsframe"
+  ],
+  "homepage": "http://xsframe.cn/",
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "GuiHai",
+      "email": "786824455@qq.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.4.0",
+    "ext-json": "*",
+    "ext-mbstring": "*",
+    "topthink/framework": "^6.0.0",
+    "ext-gd": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "xsframe\\": "src/xsframe/"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "config": {
+    "sort-packages": true
+  }
+}
