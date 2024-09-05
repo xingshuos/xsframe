@@ -4350,6 +4350,97 @@
                 }
             ],
             "install-path": "../workerman/workerman"
+        },
+        {
+            "name": "xsframe/framework",
+            "version": "v1.0",
+            "version_normalized": "1.0.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://gitee.com/xingshuos_admin/framework",
+                "reference": "9c762a64bd5e8dfe7fd81a2179f0be1d1d8c871b"
+            },
+            "require": {
+                "ext-gd": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "php": ">=7.4.0",
+                "topthink/framework": "^6.0.0"
+            },
+            "time": "2024-09-05T03:07:08+00:00",
+            "type": "library",
+            "installation-source": "source",
+            "autoload": {
+                "psr-4": {
+                    "xsframe\\": "src/xsframe/"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "GuiHai",
+                    "email": "786824455@qq.com"
+                }
+            ],
+            "description": "The XsFrame Framework.",
+            "homepage": "http://xsframe.cn/",
+            "keywords": [
+                "ORM",
+                "framework",
+                "thinkphp",
+                "xsframe"
+            ],
+            "install-path": "../xsframe/framework"
+        },
+        {
+            "name": "xsframe/think-qrcode",
+            "version": "1.0",
+            "version_normalized": "1.0.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://gitee.com/he7/think-qrcode",
+                "reference": "91067fa774985fe4301d44a278d9a30855fe40d1"
+            },
+            "require": {
+                "ext-gd": "*",
+                "php": ">=7.1.0",
+                "topthink/framework": "^6.0.0"
+            },
+            "time": "2024-09-05T01:59:25+00:00",
+            "type": "think-extend",
+            "extra": {
+                "think": {
+                    "config": {
+                        "qrcode": "src/config/qrcode.php"
+                    }
+                }
+            },
+            "installation-source": "source",
+            "autoload": {
+                "psr-4": {
+                    "xsframe\\qrcode\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "xsframe",
+                    "email": "786824455@qq.com"
+                }
+            ],
+            "description": "QR code generation for thinkphp6",
+            "homepage": "https://github.com/xingshuos/think-qrcode",
+            "keywords": [
+                "qrcode",
+                "think-qrcode",
+                "thinkphp",
+                "thinkphp6"
+            ],
+            "install-path": "../xsframe/think-qrcode"
         }
     ],
     "dev": true,

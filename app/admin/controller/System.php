@@ -281,8 +281,8 @@ class System extends AdminBaseController
     private function getRealModuleUrl($moduleName)
     {
         $realModuleName = realModuleName($moduleName);
-
         $moduleMenuConfigFile = IA_ROOT . "/app/" . $moduleName . "/config/menu.php";
+
         if (is_file($moduleMenuConfigFile)) {
             $menuConfig = include($moduleMenuConfigFile);
             $oneMenus = array_slice($menuConfig, 0, 1);

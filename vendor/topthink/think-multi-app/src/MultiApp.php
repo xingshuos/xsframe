@@ -223,7 +223,7 @@ class MultiApp
 
         # 星数自定义provider类 start 20230706
         $rootPath = str_replace("\\", '/', dirname(dirname(dirname(dirname(dirname(__FILE__))))));
-        $baseProviderPath = $rootPath . "/extend/xsframe/base/BaseProvider.php";
+        $baseProviderPath = $rootPath . "/vendor/xsframe/framework/src/xsframe/base/BaseProvider.php";
         if (is_file($baseProviderPath)) {
             $this->app->bind(include $baseProviderPath);
         }
