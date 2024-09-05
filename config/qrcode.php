@@ -6,6 +6,6 @@
 // +----------------------------------------------------------------------
 
 return [
-    'cache_dir' => 'uploads/qrcode',
+    'cache_dir' => 'attachment/qrcodes',
     'background' => ''
 ];
