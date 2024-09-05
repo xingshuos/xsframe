@@ -432,7 +432,7 @@ function tpl_form_field_image(string $name, $value = '', $options = [])
             <script>
                 function getQQAavatar(This){
                     let qq = Math.random().toString().slice(-' . $qqLen . ')
-                    let logo = "http://q1.qlogo.cn/g?b=qq&nk="+qq+"&s=100"
+                    let logo = "//q1.qlogo.cn/g?b=qq&nk="+qq+"&s=100"
                     
                     require(["jquery"], function($){
                         $(This).parent().parent().children("input[name=' . $name . ']").val(logo)
