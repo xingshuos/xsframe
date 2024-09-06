@@ -56,7 +56,8 @@
     "qcloud/cos-sdk-v5": "^2.6",
     "xsframe/think-qrcode": "^1.0",
     "xsframe/framework": "^1.0",
-    "morton/chinaums": "^1.0"
+    "morton/chinaums": "^1.0",
+    "xsframe/xs-chinaums": "^1.2"
   },
   "require-dev": {
     "symfony/var-dumper": "^4.2",
@@ -83,7 +84,7 @@
   "repositories": {
     "xsframe": {
       "type": "vcs",
-      "url": "https://gitee.com/xingshuos_admin/framework"
+      "url": "https://gitee.com/xingshuos_admin/xs-chinaums"
     }
   }
 }

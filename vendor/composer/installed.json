@@ -4493,6 +4493,42 @@
                 "thinkphp6"
             ],
             "install-path": "../xsframe/think-qrcode"
+        },
+        {
+            "name": "xsframe/xs-chinaums",
+            "version": "v1.2",
+            "version_normalized": "1.2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://gitee.com/xingshuos_admin/xs-chinaums",
+                "reference": "92451b6a6bf8e24232ab50276bf489e934968597"
+            },
+            "time": "2024-09-06T08:06:10+00:00",
+            "type": "library",
+            "installation-source": "source",
+            "autoload": {
+                "psr-4": {
+                    "xsframe\\chinaums\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "GuiHai",
+                    "email": "786824455@qq.com"
+                }
+            ],
+            "description": "一个银联商务sdk扩展包",
+            "keywords": [
+                "alipay",
+                "chinaums",
+                "pay",
+                "wechat",
+                "xsframe"
+            ],
+            "install-path": "../xsframe/xs-chinaums"
         }
     ],
     "dev": true,

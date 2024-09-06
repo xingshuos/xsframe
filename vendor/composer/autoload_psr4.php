@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'xsframe\\qrcode\\' => array($vendorDir . '/xsframe/think-qrcode/src'),
+    'xsframe\\chinaums\\' => array($vendorDir . '/xsframe/xs-chinaums/src'),
     'xsframe\\' => array($vendorDir . '/xsframe/framework/src/xsframe'),
     'think\\worker\\' => array($vendorDir . '/topthink/think-worker/src'),
     'think\\view\\driver\\' => array($vendorDir . '/topthink/think-view/src'),
