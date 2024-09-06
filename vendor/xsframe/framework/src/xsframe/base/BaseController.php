@@ -102,9 +102,8 @@ abstract class BaseController extends Controller
             $this->siteRoot = str_replace("http:", "https:", $this->siteRoot);
         }
 
-        $this->iaRoot = str_replace("\\", '/', dirname(dirname(dirname(dirname(__FILE__)))));
-
         $this->module = app('http')->getName(); // 获取的是真实应用名称不是别名
+        $this->iaRoot = str_replace("\\", '/', dirname(dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))))));
 
         // 后台运行时需要获取到module的值时可以设置下cookie start
         if (empty($this->module) && !empty($_COOKIE['module'])) {
@@ -149,7 +148,7 @@ abstract class BaseController extends Controller
 
     protected function autoLoad()
     {
-        $path = $this->iaRoot . '/src/xsframe/function';
+        $path = $this->iaRoot . '/vendor/xsframe/framework/src/xsframe/function';
         $files = FileUtil::getDir($path);
 
         if (!empty($files)) {
