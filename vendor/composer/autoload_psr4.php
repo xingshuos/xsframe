@@ -38,6 +38,7 @@ return array(
     'OneSm\\' => array($vendorDir . '/lizhichao/one-sm/src'),
     'OSS\\' => array($vendorDir . '/aliyuncs/oss-sdk-php/src/OSS'),
     'MyCLabs\\Enum\\' => array($vendorDir . '/myclabs/php-enum/src'),
+    'Morton\\Chinaums\\' => array($vendorDir . '/morton/chinaums/src'),
     'Matrix\\' => array($vendorDir . '/markbaker/matrix/classes/src'),
     'JmesPath\\' => array($vendorDir . '/mtdowling/jmespath.php/src'),
     'GuzzleHttp\\UriTemplate\\' => array($vendorDir . '/guzzlehttp/uri-template/src'),

@@ -1330,8 +1330,11 @@ function tpl_form_field_multi_audio($name, $value = [], $options = [])
 }
 
 if (!function_exists('tpl_form_field_position')) {
-    function tpl_form_field_position($field, $value = [])
+    function tpl_form_field_position($field, $value = [], $locationType = "GCJ-02")
     {
+        // BD-09 是百度地图的坐标系，需要百度坐标的类型改为 BD-09
+        // GCJ-02 是腾讯与高德地图的坐标系，需要高德坐标的类型改为 GCJ-02
+
         $s = '';
 
         if (!defined('TPL_INIT_COORDINATE')) {
@@ -1341,14 +1344,16 @@ if (!function_exists('tpl_form_field_position')) {
                             var val = {};
                             val.lng = parseFloat($(elm).parent().prev().prev().find(":text").val());
                             val.lat = parseFloat($(elm).parent().prev().find(":text").val());
-                            val = biz.BdMapToTxMap(val.lat,val.lng);
+                            
+                            '.($locationType == 'BD-09' ? "val = biz.BdMapToTxMap(val.lat,val.lng);" : "").'
+                            
                             biz.map(val, function(r){
                                 var address_label = $("#address_label");
                                 if (address_label.length>0)
                                 {
                                     address_label.val(r.label);
                                 }
-                                r = biz.TxMapToBdMap(r.lat,r.lng);
+                                '.($locationType == 'BD-09' ? "r = biz.TxMapToBdMap(r.lat,r.lng);" : "").'
                                 $(elm).parent().prev().prev().find(":text").val(r.lng);
                                 $(elm).parent().prev().find(":text").val(r.lat);
                             },"' . '/admin/util/map.html' . '");

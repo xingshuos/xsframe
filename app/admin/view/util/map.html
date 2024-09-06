@@ -659,7 +659,7 @@ qq.maps.event.addListener(map, "mousemove", function (e) {
 var url3;
 qq.maps.event.addListener(map, "click", function (e) {
     document.getElementById("poi_cur").value = e.latLng.getLat().toFixed(6) + "," + e.latLng.getLng().toFixed(6);
-	document.getElementById("poi_json").value = '{"lng":'+e.latLng.getLng().toFixed(6)+',"lat":'+e.latLng.getLat().toFixed(6)+'}';
+	document.getElementById("poi_json").value = '{"lng":"'+e.latLng.getLng().toFixed(6)+'","lat":"'+e.latLng.getLat().toFixed(6)+'"}';
     url3 = encodeURI("//apis.map.qq.com/ws/geocoder/v1/?location=" + e.latLng.getLat() + "," + e.latLng.getLng() + "&key=ZWXBZ-GJZLX-CX74Y-Z7B4O-MEAHS-TOBE6&output=jsonp&&callback=?");
     $.getJSON(url3, function (result) {
         if(result.result!=undefined){
@@ -860,7 +860,7 @@ function setFlagClicked(arr, index) {
             var str = '<div style="width:250px;">' + ele.div.children[1].innerHTML.toString() + '</div>';
             var latLng = ele.getPosition();
             document.getElementById("poi_cur").value = latLng.getLat().toFixed(6) + "," + latLng.getLng().toFixed(6);
-			document.getElementById("poi_json").value = '{"lng":'+latLng.getLng().toFixed(6)+',"lat":'+latLng.getLat().toFixed(6)+'}';
+			document.getElementById("poi_json").value = '{"lng":"'+latLng.getLng().toFixed(6)+'","lat":"'+latLng.getLat().toFixed(6)+'"}';
         } else {
             ele.isClicked = false;
             ele.div.isClicked = false;
