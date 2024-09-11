@@ -185,8 +185,8 @@ class RequestUtil
         if (is_array($postData)) {
             $postData['host_ip'] = $_SERVER['REMOTE_ADDR'];
             $postData['host_url'] = $_SERVER['HTTP_HOST'];
-            $postData['version'] = IMS_VERSION;
-            $postData['php_version'] = PHP_VERSION;
+            $postData['version'] = $postData['version'] ?? IMS_VERSION;
+            $postData['php_version'] = $postData['php_version'] ?? PHP_VERSION;
         }
 
         $response = self::httpPost("https://www.xsframe.cn/cloud/api/" . $url, $postData);
