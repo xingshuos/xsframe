@@ -127,7 +127,7 @@ if (!function_exists('webUrl')) {
             $url = "web." . $url;
         }
 
-        if (StringUtil::strexists($url, '/edit') && !empty($_GET['page'])) {
+        if (empty($params['page']) && StringUtil::strexists($url, '/edit') && !empty($_GET['page']) ) {
             $params['page'] = $_GET['page'];
         }
 
