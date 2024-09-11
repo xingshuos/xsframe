@@ -7,10 +7,12 @@ use think\facade\Cache;
 use think\facade\Db;
 use xsframe\enum\CacheKeyEnum;
 use xsframe\enum\SysSettingsKeyEnum;
+use xsframe\exception\ApiException;
 use xsframe\util\FileUtil;
 use xsframe\util\RequestUtil;
 use xsframe\wrapper\AccountHostWrapper;
 use xsframe\wrapper\AttachmentWrapper;
+use xsframe\wrapper\CloudWrapper;
 
 class Sysset extends Base
 {
@@ -317,7 +319,8 @@ class Sysset extends Base
 
         if ($this->request->isPost()) {
             if (empty($isCheckUpdate)) {
-                $this->doUpgradeFiles($updateFiles);
+                // $this->doUpgradeFiles($updateFiles);
+                $this->doZipUpgrade();
             }
             show_json(1, ["url" => url("sysset/upgrade", ['tab' => str_replace("#tab_", "", $this->params['tab'])])]);
         }
@@ -348,6 +351,23 @@ class Sysset extends Base
     private function upgradeSuccess($version, $updateTime = null): void
     {
         isetcookie('isUpgradeSystemNotice', 0);
+    }
+
+    // 执行zip包升级
+    private function doZipUpgrade()
+    {
+        $key = $this->websiteSets['key'] ?? '';
+        $token = $this->websiteSets['token'] ?? '';
+        $version = $this->params['version'] ?? '';
+        $type = $this->params['type'] ?? 0;
+
+        $cloudWrapper = new CloudWrapper();
+        try {
+            $cloudWrapper->downloadCloudFrame($version, $type, $key, $token);
+            return true;
+        } catch (ApiException $e) {
+            throw new ApiException("升级失败，请检查文件夹权限！");
+        }
     }
 
     // 执行文件升级
