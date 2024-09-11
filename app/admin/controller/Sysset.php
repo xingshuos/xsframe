@@ -328,7 +328,6 @@ class Sysset extends Base
                 }else{
                     $this->doUpgradeFiles($updateFiles);
                 }
-                $this->doUpgradeFiles($updateFiles);
             }
             show_json(1, ["url" => url("sysset/upgrade", ['tab' => str_replace("#tab_", "", $this->params['tab'])])]);
         }
