@@ -319,11 +319,16 @@ class Sysset extends Base
         $isCheckUpdate = $this->params['is_update'] ?? 0;
         $upgradeList = $this->getUpgradeList($isCheckUpdate);
         $updateFiles = $this->getUpdateFiles($upgradeList[0], $isCheckUpdate);
+        $updateType = $this->params['update_type'] ?? 0;
 
         if ($this->request->isPost() && !empty($updateFiles)) {
             if (empty($isCheckUpdate)) {
-                // $this->doUpgradeFiles($updateFiles);
-                $this->doZipUpgrade();
+                if( $updateType == 1 ){
+                    $this->doZipUpgrade();
+                }else{
+                    $this->doUpgradeFiles($updateFiles);
+                }
+                $this->doUpgradeFiles($updateFiles);
             }
             show_json(1, ["url" => url("sysset/upgrade", ['tab' => str_replace("#tab_", "", $this->params['tab'])])]);
         }
