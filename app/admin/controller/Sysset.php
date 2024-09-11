@@ -321,11 +321,11 @@ class Sysset extends Base
         $updateFiles = $this->getUpdateFiles($upgradeList[0], $isCheckUpdate);
         $updateType = $this->params['update_type'] ?? 0;
 
-        if ($this->request->isPost() && !empty($updateFiles)) {
-            if (empty($isCheckUpdate)) {
-                if( $updateType == 1 ){
+        if ($this->request->isPost()) {
+            if (empty($isCheckUpdate) && !empty($updateFiles)) {
+                if ($updateType == 1) {
                     $this->doZipUpgrade();
-                }else{
+                } else {
                     $this->doUpgradeFiles($updateFiles);
                 }
             }
