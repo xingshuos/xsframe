@@ -310,14 +310,17 @@ class Sysset extends Base
         $this->success($result);
     }
 
-    // 系统升级
+    /**
+     * 系统升级
+     * @throws ApiException
+     */
     public function upgrade(): \think\response\View
     {
         $isCheckUpdate = $this->params['is_update'] ?? 0;
         $upgradeList = $this->getUpgradeList($isCheckUpdate);
         $updateFiles = $this->getUpdateFiles($upgradeList[0], $isCheckUpdate);
 
-        if ($this->request->isPost()) {
+        if ($this->request->isPost() && !empty($updateFiles)) {
             if (empty($isCheckUpdate)) {
                 // $this->doUpgradeFiles($updateFiles);
                 $this->doZipUpgrade();
