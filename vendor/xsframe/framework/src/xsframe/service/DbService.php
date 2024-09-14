@@ -3,7 +3,9 @@
 namespace xsframe\service;
 
 use xsframe\base\BaseService;
+use xsframe\traits\ServiceTraits;
 
-class DbService extends BaseService
+class DbService
 {
+    use ServiceTraits;
 }
