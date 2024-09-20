@@ -152,6 +152,14 @@ class UserWrapper
             $uniacid = $usersAccountInfo['uniacid'];
             $moduleName = $usersAccountInfo['module'];
             $isInstall = Db::name('sys_account_modules')->where(['uniacid' => $usersAccountInfo['uniacid'], 'module' => $moduleName])->count();
+
+            if (!empty($moduleName)) {
+                $accountModuleInfo = Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'module' => $moduleName, 'deleted' => 0])->count();
+                if (empty($accountModuleInfo)) {
+                    $moduleName = null;
+                }
+            }
+
             if (empty($moduleName) || empty($isInstall)) {
                 $defaultModuleInfo = Db::name("sys_account_modules")->field("id,uniacid,module")->where(['uniacid' => $usersAccountInfo['uniacid']])->order("is_default desc")->find();
                 if (!empty($defaultModuleInfo)) {
