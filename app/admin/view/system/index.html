@@ -102,13 +102,19 @@
                 {if in_array($row['identifie'],$perms) || $userInfo['role'] != 'operator'}
                 <a class="feed-element" style="cursor: pointer" onclick="windowOpen('{$plugin.identifie}','{$plugin.url}')" href="javascript:;" data-name="{$plugin['name']}">
                     <span class="pull-left">
+                        {if !empty($plugin['logo'])}
                         <img src="{:tomedia($plugin['logo'])}" class="img-circle" alt="image">
+                        {else}
+                        <img src="/app/{$plugin.identifie}/icon.png" class="img-circle" alt="image">
+                        {/if}
                     </span>
                     <div class="media-body">
                         <span class="title flex-start-center">
                             <span class="fl">{$plugin['name']}</span>
                             {foreach $plugin['app_types'] as $key1=>$item1 }
-                            <img src="/app/admin/static/images/icon/type-{$key1}.png" alt="{$key1}" data-placement="top" data-toggle="popover" data-trigger="hover" data-html="true" data-content="已支持{$item1}" style="font-size: 12px;color: #00c952;margin-left:8px;width: 20px;height: 20px;">
+                                {if !empty($key1) && !empty($item1)}
+                                    <img src="/app/admin/static/images/icon/type-{$key1}.png" alt="{$key1}" data-placement="top" data-toggle="popover" data-trigger="hover" data-html="true" data-content="已支持{$item1}" style="font-size: 12px;color: #00c952;margin-left:8px;width: 20px;height: 20px;">
+                                {/if}
                             {/foreach}
                         </span>
                         <small class="text-muted">{$plugin['ability']}</small>
