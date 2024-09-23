@@ -224,7 +224,8 @@ trait AdminTraits
                                 $updateData[$filed] = TIMESTAMP;
                                 break;
                             case $this->deleteField:
-                                if ($fieldItem['type'] == 'tinyint(1)') {
+                                $type = explode('(', $fieldItem['type'])[0];
+                                if ($type == 'tinyint') {
                                     $updateData[$filed] = 0;
                                 } else {
                                     $updateData[$filed] = TIMESTAMP;
@@ -347,7 +348,8 @@ trait AdminTraits
             if (array_key_exists($this->deleteField, $fieldList)) {
                 $updateData[$this->deleteField] = 1;
 
-                if ($fieldList[$this->deleteField]['type'] == 'tinyint(1)') {
+                $type = explode('(', $fieldList[$this->deleteField]['type'])[0];
+                if ($type == 'tinyint') {
                     $updateData[$this->deleteField] = 1;
                 } else {
                     $updateData[$this->deleteField] = TIMESTAMP;

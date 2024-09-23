@@ -15,21 +15,21 @@ use xsframe\util\StringUtil;
 if (!function_exists('tpl_selector')) {
     function tpl_selector($name, $options = [])
     {
-        $options['multi']       = intval($options['multi']);
-        $options['buttontext']  = isset($options['buttontext']) ? $options['buttontext'] : '请选择';
-        $options['items']       = isset($options['items']) && $options['items'] ? $options['items'] : [];
-        $options['readonly']    = isset($options['readonly']) ? $options['readonly'] : true;
-        $options['callback']    = isset($options['callback']) ? $options['callback'] : '';
-        $options['key']         = isset($options['key']) ? $options['key'] : 'id';
-        $options['text']        = isset($options['text']) ? $options['text'] : 'title';
-        $options['thumb']       = isset($options['thumb']) ? $options['thumb'] : 'thumb';
-        $options['preview']     = isset($options['preview']) ? $options['preview'] : true;
-        $options['type']        = isset($options['type']) ? $options['type'] : 'image';
-        $options['input']       = isset($options['input']) ? $options['input'] : true;
-        $options['required']    = isset($options['required']) ? $options['required'] : false;
-        $options['nokeywords']  = isset($options['nokeywords']) ? $options['nokeywords'] : 0;
+        $options['multi'] = intval($options['multi']);
+        $options['buttontext'] = isset($options['buttontext']) ? $options['buttontext'] : '请选择';
+        $options['items'] = isset($options['items']) && $options['items'] ? $options['items'] : [];
+        $options['readonly'] = isset($options['readonly']) ? $options['readonly'] : true;
+        $options['callback'] = isset($options['callback']) ? $options['callback'] : '';
+        $options['key'] = isset($options['key']) ? $options['key'] : 'id';
+        $options['text'] = isset($options['text']) ? $options['text'] : 'title';
+        $options['thumb'] = isset($options['thumb']) ? $options['thumb'] : 'thumb';
+        $options['preview'] = isset($options['preview']) ? $options['preview'] : true;
+        $options['type'] = isset($options['type']) ? $options['type'] : 'image';
+        $options['input'] = isset($options['input']) ? $options['input'] : true;
+        $options['required'] = isset($options['required']) ? $options['required'] : false;
+        $options['nokeywords'] = isset($options['nokeywords']) ? $options['nokeywords'] : 0;
         $options['placeholder'] = isset($options['placeholder']) ? $options['placeholder'] : '请输入关键词';
-        $options['autosearch']  = isset($options['autosearch']) ? $options['autosearch'] : 0;
+        $options['autosearch'] = isset($options['autosearch']) ? $options['autosearch'] : 0;
 
         if (empty($options['items'])) {
             $options['items'] = [];
@@ -40,7 +40,7 @@ if (!function_exists('tpl_selector')) {
         }
 
         $options['name'] = $name;
-        $titles          = '';
+        $titles = '';
 
         foreach ($options['items'] as $item) {
             if ($item[$options['valuetext']]) {
@@ -55,11 +55,11 @@ if (!function_exists('tpl_selector')) {
         }
 
         $options['value'] = isset($options['value']) ? $options['value'] : $titles;
-        $readonly         = $options['readonly'] ? 'readonly' : '';
-        $required         = $options['required'] ? ' data-rule-required="true"' : '';
-        $callback         = !empty($options['callback']) ? ', ' . $options['callback'] : '';
-        $id               = $options['multi'] ? $name . '[]' : $name;
-        $html             = '<div id=\'' . $name . '_selector\' class=\'selector\'
+        $readonly = $options['readonly'] ? 'readonly' : '';
+        $required = $options['required'] ? ' data-rule-required="true"' : '';
+        $callback = !empty($options['callback']) ? ', ' . $options['callback'] : '';
+        $id = $options['multi'] ? $name . '[]' : $name;
+        $html = '<div id=\'' . $name . '_selector\' class=\'selector\'
                      data-type="' . $options['type'] . '"
                      data-key="' . $options['key'] . '"
                      data-text="' . $options['text'] . '"
@@ -127,7 +127,7 @@ if (!function_exists('webUrl')) {
             $url = "web." . $url;
         }
 
-        if (empty($params['page']) && StringUtil::strexists($url, '/edit') && !empty($_GET['page']) ) {
+        if (empty($params['page']) && StringUtil::strexists($url, '/edit') && !empty($_GET['page'])) {
             $params['page'] = $_GET['page'];
         }
 
@@ -154,10 +154,10 @@ if (!function_exists('pagination')) {
             $pageNum = intval($total / $pageSize) + (($total % $pageSize) > 0 ? 1 : 0);
         }
 
-        $pager            = [];
-        $pager['page']    = $pageIndex;
+        $pager = [];
+        $pager['page'] = $pageIndex;
         $pager['pageNum'] = $pageNum;
-        $pager['total']   = $total;
+        $pager['total'] = $total;
 
         return $pager;
     }
@@ -171,7 +171,7 @@ if (!function_exists('pagination2')) {
         $context = array_merge($context, $params);
 
         $scriptName = getScriptName();
-        $pdata      = ['tcount' => 0, 'tpage' => 0, 'cindex' => 0, 'findex' => 0, 'pindex' => 0, 'nindex' => 0, 'lindex' => 0, 'options' => ''];
+        $pdata = ['tcount' => 0, 'tpage' => 0, 'cindex' => 0, 'findex' => 0, 'pindex' => 0, 'nindex' => 0, 'lindex' => 0, 'options' => ''];
 
         if (empty($context['before'])) {
             $context['before'] = 2;
@@ -190,27 +190,29 @@ if (!function_exists('pagination2')) {
 
         $html = '<div><ul class="pagination pagination-centered"><li><span class="nobg">共' . $total . '条记录</span></li></ul>';
 
+        $urlParams = $_GET;
         if (!empty($total)) {
             $pdata['tcount'] = $total;
-            $pdata['tpage']  = empty($pageSize) || $pageSize < 0 ? 1 : ceil($total / $pageSize);
+            $pdata['tpage'] = empty($pageSize) || $pageSize < 0 ? 1 : ceil($total / $pageSize);
 
             if ($pdata['tpage'] <= 1) {
                 return '';
             }
 
             if (1 < $pdata['tpage']) {
-                $html            .= '<ul class="pagination pagination-centered">';
-                $cindex          = $pageIndex;
-                $cindex          = min($cindex, $pdata['tpage']);
-                $cindex          = max($cindex, 1);
+                $html .= '<ul class="pagination pagination-centered">';
+                $cindex = $pageIndex;
+                $cindex = min($cindex, $pdata['tpage']);
+                $cindex = max($cindex, 1);
                 $pdata['cindex'] = $cindex;
                 $pdata['findex'] = 1;
                 $pdata['pindex'] = 1 < $cindex ? $cindex - 1 : 1;
                 $pdata['nindex'] = $cindex < $pdata['tpage'] ? $cindex + 1 : $pdata['tpage'];
                 $pdata['lindex'] = $pdata['tpage'];
+
                 if ($context['isajax']) {
                     if (empty($url)) {
-                        $url = $scriptName . '?' . http_build_query($_GET);
+                        $url = $scriptName . '?' . http_build_query($urlParams);
                     }
                     $pdata['faa'] = 'href="javascript:;" page="' . $pdata['findex'] . '" ' . ($callbackfunc ? 'ng-click="' . $callbackfunc . '(\'' . $url . '\', \'' . $pdata['findex'] . '\', this);"' : '');
                     $pdata['paa'] = 'href="javascript:;" page="' . $pdata['pindex'] . '" ' . ($callbackfunc ? 'ng-click="' . $callbackfunc . '(\'' . $url . '\', \'' . $pdata['pindex'] . '\', this);"' : '');
@@ -219,22 +221,22 @@ if (!function_exists('pagination2')) {
                 } else {
                     if ($url) {
                         $pdata['jump'] = 'href="?' . str_replace('*', $pdata['lindex'], $url) . '"';
-                        $pdata['faa']  = 'href="?' . str_replace('*', $pdata['findex'], $url) . '"';
-                        $pdata['paa']  = 'href="?' . str_replace('*', $pdata['pindex'], $url) . '"';
-                        $pdata['naa']  = 'href="?' . str_replace('*', $pdata['nindex'], $url) . '"';
-                        $pdata['laa']  = 'href="?' . str_replace('*', $pdata['lindex'], $url) . '"';
+                        $pdata['faa'] = 'href="?' . str_replace('*', $pdata['findex'], $url) . '"';
+                        $pdata['paa'] = 'href="?' . str_replace('*', $pdata['pindex'], $url) . '"';
+                        $pdata['naa'] = 'href="?' . str_replace('*', $pdata['nindex'], $url) . '"';
+                        $pdata['laa'] = 'href="?' . str_replace('*', $pdata['lindex'], $url) . '"';
                     } else {
-                        $jump_get         = $_GET;
+                        $jump_get = $urlParams;
                         $jump_get['page'] = '';
-                        $pdata['jump']    = 'href="' . ($scriptName ?? '') . '?' . http_build_query($jump_get) . $pdata['cindex'] . '" data-href="' . ($scriptName ?? '') . '?' . http_build_query($jump_get) . '"';
-                        $_GET['page']     = $pdata['findex'];
-                        $pdata['faa']     = 'href="' . ($scriptName ?? '') . '?' . http_build_query($_GET) . '"';
-                        $_GET['page']     = $pdata['pindex'];
-                        $pdata['paa']     = 'href="' . ($scriptName ?? '') . '?' . http_build_query($_GET) . '"';
-                        $_GET['page']     = $pdata['nindex'];
-                        $pdata['naa']     = 'href="' . ($scriptName ?? '') . '?' . http_build_query($_GET) . '"';
-                        $_GET['page']     = $pdata['lindex'];
-                        $pdata['laa']     = 'href="' . ($scriptName ?? '') . '?' . http_build_query($_GET) . '"';
+                        $pdata['jump'] = 'href="' . ($scriptName ?? '') . '?' . http_build_query($jump_get) . $pdata['cindex'] . '" data-href="' . ($scriptName ?? '') . '?' . http_build_query($jump_get) . '"';
+                        $urlParams['page'] = $pdata['findex'];
+                        $pdata['faa'] = 'href="' . ($scriptName ?? '') . '?' . http_build_query($urlParams) . '"';
+                        $urlParams['page'] = $pdata['pindex'];
+                        $pdata['paa'] = 'href="' . ($scriptName ?? '') . '?' . http_build_query($urlParams) . '"';
+                        $urlParams['page'] = $pdata['nindex'];
+                        $pdata['naa'] = 'href="' . ($scriptName ?? '') . '?' . http_build_query($urlParams) . '"';
+                        $urlParams['page'] = $pdata['lindex'];
+                        $pdata['laa'] = 'href="' . ($scriptName ?? '') . '?' . http_build_query($urlParams) . '"';
                     }
                 }
 
@@ -252,12 +254,12 @@ if (!function_exists('pagination2')) {
                 }
 
                 if ($context['after'] != 0 && $context['before'] != 0) {
-                    $range          = [];
+                    $range = [];
                     $range['start'] = max(1, $pdata['cindex'] - $context['before']);
-                    $range['end']   = min($pdata['tpage'], $pdata['cindex'] + $context['after']);
+                    $range['end'] = min($pdata['tpage'], $pdata['cindex'] + $context['after']);
 
                     if ($range['end'] - $range['start'] < $context['before'] + $context['after']) {
-                        $range['end']   = min($pdata['tpage'], $range['start'] + $context['before'] + $context['after']);
+                        $range['end'] = min($pdata['tpage'], $range['start'] + $context['before'] + $context['after']);
                         $range['start'] = max(1, $range['end'] - $context['before'] - $context['after']);
                     }
 
@@ -270,8 +272,8 @@ if (!function_exists('pagination2')) {
                             if ($url) {
                                 $aa = 'href="?' . str_replace('*', $i, $url) . '"';
                             } else {
-                                $_GET['page'] = $i;
-                                $aa           = 'href="?' . http_build_query($_GET) . '"';
+                                $urlParams['page'] = $i;
+                                $aa = 'href="?' . http_build_query($urlParams) . '"';
                             }
                         }
 
@@ -369,7 +371,7 @@ function tpl_form_field_image(string $name, $value = '', $options = [])
     }
 
     $options['direct'] = true;
-    $options['multi']  = false;
+    $options['multi'] = false;
 
     if (isset($options['thumb'])) {
         $options['thumb'] = !empty($options['thumb']);
@@ -425,7 +427,7 @@ function tpl_form_field_image(string $name, $value = '', $options = [])
 
     if (!empty($options['isShowRandomlogoBtn'])) {
         $qqLen = $options['qq_length'] ?? 9;
-        $s     .= '
+        $s .= '
             <span class="input-group-btn">
                 <div class="btn btn-default" onclick="getQQAavatar(this)">自动获取头像</div>
             </span>
@@ -465,8 +467,8 @@ function tpl_form_field_image(string $name, $value = '', $options = [])
 if (!function_exists('tpl_form_field_multi_image')) {
     function tpl_form_field_multi_image($name, $value = [], $options = [])
     {
-        $options['multiple']      = true;
-        $options['direct']        = false;
+        $options['multiple'] = true;
+        $options['direct'] = false;
         $options['fileSizeLimit'] = 10 * 1024;
         if (isset($options['dest_dir']) && !empty($options['dest_dir'])) {
             if (!preg_match('/^\\w+([\\/]\\w+)?$/i', $options['dest_dir'])) {
@@ -553,8 +555,8 @@ if (!function_exists('tpl_form_field_multi_image')) {
 function tpl_form_field_tags_input($name, $value = '', $options = [])
 {
     $autocompleteUrl = $options['autocomplete_url'] ?? "";
-    $height          = $options['height'] ?? "42px";
-    $total           = $options['total'] ?? 5;
+    $height = $options['height'] ?? "42px";
+    $total = $options['total'] ?? 5;
 
     $html = '
     
@@ -598,7 +600,7 @@ function tpl_form_field_tags_input($name, $value = '', $options = [])
  */
 function tpl_form_field_date($name, $value = '', $withtime = false, $disabled = false)
 {
-    $s        = '';
+    $s = '';
     $withtime = empty($withtime) ? false : true;
     if (!empty($value)) {
         $value = strexists($value, '-') ? strtotime($value) : $value;
@@ -606,8 +608,8 @@ function tpl_form_field_date($name, $value = '', $withtime = false, $disabled = 
         $value = time();
     }
     $value = ($withtime ? date('Y-m-d H:i:s', $value) : date('Y-m-d', $value));
-    $s     .= '<input type="text" name="' . $name . '"  value="' . $value . '" placeholder="请选择日期时间" ' . ($disabled ? 'disabled' : '') . ' class="datetimepicker form-control" style="padding-left:12px;" />';
-    $s     .= '
+    $s .= '<input type="text" name="' . $name . '"  value="' . $value . '" placeholder="请选择日期时间" ' . ($disabled ? 'disabled' : '') . ' class="datetimepicker form-control" style="padding-left:12px;" />';
+    $s .= '
 		<script type="text/javascript">
 			require(["datetimepicker"], function(){
 					var option = {
@@ -628,7 +630,8 @@ function tpl_form_field_date($name, $value = '', $withtime = false, $disabled = 
  * 获取昵称
  * @return void
  */
-function tpl_form_field_nickname(string $name, $value = ''){
+function tpl_form_field_nickname(string $name, $value = '')
+{
     $s = '
 		<script type="text/javascript">
             function getNickName(This){
@@ -645,7 +648,7 @@ function tpl_form_field_nickname(string $name, $value = ''){
 
     $s .= '
         <div class="input-group">
-            <input type="text" class="form-control" name="'.$name.'" value="'.$value.'">
+            <input type="text" class="form-control" name="' . $name . '" value="' . $value . '">
             <a class="input-group-addon" onclick="getNickName(this)" href="javascript:;">自动获取昵称</a>
         </div>
     ';
@@ -654,17 +657,17 @@ function tpl_form_field_nickname(string $name, $value = ''){
 
 function tpl_ueditor($id, $value = '', $options = [])
 {
-    $s                             = '';
-    $options['height']             = empty($options['height']) ? 200 : $options['height'];
+    $s = '';
+    $options['height'] = empty($options['height']) ? 200 : $options['height'];
     $options['allow_upload_video'] = isset($options['allow_upload_video']) ? $options['allow_upload_video'] : true;
 
     $s .= !empty($id) ? "<textarea id=\"{$id}\" name=\"{$id}\" type=\"text/plain\" style=\"height:{$options['height']}px;\">{$value}</textarea>" : '';
 
-    $id               = $id ? $id : "";
-    $height           = $options['height'];
-    $audioLimit       = 30 * 1024; // 音频大小
-    $imageLimit       = 20 * 1024; // 图片大小
-    $destDir          = $options['dest_dir'] ? $options['dest_dir'] : '';
+    $id = $id ? $id : "";
+    $height = $options['height'];
+    $audioLimit = 30 * 1024; // 音频大小
+    $imageLimit = 20 * 1024; // 图片大小
+    $destDir = $options['dest_dir'] ? $options['dest_dir'] : '';
     $allowUploadVideo = $options['allow_upload_video'] ? true : false;
 
     $s .= "
@@ -685,8 +688,8 @@ function tpl_ueditor($id, $value = '', $options = [])
 
 function tpl_tinymce($name, $value = '', $options = [])
 {
-    $s                             = '';
-    $options['height']             = empty($options['height']) ? 200 : $options['height'];
+    $s = '';
+    $options['height'] = empty($options['height']) ? 200 : $options['height'];
     $options['allow_upload_video'] = isset($options['allow_upload_video']) ? $options['allow_upload_video'] : true;
 
     $id = str_replace("[", "_", $name);
@@ -1021,9 +1024,9 @@ function tpl_form_field_calendar($name, $values = [])
     if (empty($values) || !is_array($values)) {
         $values = [0, 0, 0];
     }
-    $values['year']  = intval($values['year']);
+    $values['year'] = intval($values['year']);
     $values['month'] = intval($values['month']);
-    $values['day']   = intval($values['day']);
+    $values['day'] = intval($values['day']);
 
     if (empty($values['year'])) {
         $values['year'] = '1980';
@@ -1106,11 +1109,11 @@ if (!function_exists('tpl_form_field_video')) {
         if (!is_array($options)) {
             $options = [];
         }
-        $options['direct']        = true;
-        $options['multi']         = false;
-        $options['type']          = 'video';
+        $options['direct'] = true;
+        $options['multi'] = false;
+        $options['type'] = 'video';
         $options['fileSizeLimit'] = 2048 * 1024;
-        $s                        = '';
+        $s = '';
         if (!defined('TPL_INIT_VIDEO')) {
             $s = '
 <script type="text/javascript">
@@ -1154,8 +1157,8 @@ function tpl_form_field_audio($name, $value = '', $options = [])
     if (!is_array($options)) {
         $options = [];
     }
-    $options['direct']        = true;
-    $options['multiple']      = false;
+    $options['direct'] = true;
+    $options['multiple'] = false;
     $options['fileSizeLimit'] = 1024 * 1024;
 
     $s = '';
@@ -1238,9 +1241,9 @@ function tpl_form_field_audio($name, $value = '', $options = [])
 
 function tpl_form_field_multi_audio($name, $value = [], $options = [])
 {
-    $s                        = '';
-    $options['direct']        = false;
-    $options['multiple']      = true;
+    $s = '';
+    $options['direct'] = false;
+    $options['multiple'] = true;
     $options['fileSizeLimit'] = intval($GLOBALS['_W']['setting']['upload']['audio']['limit']) * 1024;
 
     if (!defined('TPL_INIT_MULTI_AUDIO')) {
@@ -1345,7 +1348,7 @@ if (!function_exists('tpl_form_field_position')) {
                             val.lng = parseFloat($(elm).parent().prev().prev().find(":text").val());
                             val.lat = parseFloat($(elm).parent().prev().find(":text").val());
                             
-                            '.($locationType == 'BD-09' ? "val = biz.BdMapToTxMap(val.lat,val.lng);" : "").'
+                            ' . ($locationType == 'BD-09' ? "val = biz.BdMapToTxMap(val.lat,val.lng);" : "") . '
                             
                             biz.map(val, function(r){
                                 var address_label = $("#address_label");
@@ -1353,7 +1356,7 @@ if (!function_exists('tpl_form_field_position')) {
                                 {
                                     address_label.val(r.label);
                                 }
-                                '.($locationType == 'BD-09' ? "r = biz.TxMapToBdMap(r.lat,r.lng);" : "").'
+                                ' . ($locationType == 'BD-09' ? "r = biz.TxMapToBdMap(r.lat,r.lng);" : "") . '
                                 $(elm).parent().prev().prev().find(":text").val(r.lng);
                                 $(elm).parent().prev().find(":text").val(r.lat);
                             },"' . '/admin/util/map.html' . '");

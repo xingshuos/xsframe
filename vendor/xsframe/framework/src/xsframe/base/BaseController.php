@@ -94,8 +94,8 @@ abstract class BaseController extends Controller
 
         $this->view = $this->app['view'];
 
-        $this->pIndex = $this->request->param('page') ?? 1;
-        $this->pSize = $this->request->param('size') ?? 10;
+        $this->pIndex = max(1, intval($this->request->param('page') ?? 1));
+        $this->pSize = max(1, intval($this->request->param('size') ?? 10));
 
         $this->siteRoot = request()->domain();
         if (StringUtil::strexists($this->request->server('HTTP_REFERER'), 'https')) {
@@ -313,7 +313,7 @@ abstract class BaseController extends Controller
         }
         // end
 
-        if( $this->module != 'admin' && empty($uniacid) ){
+        if ($this->module != 'admin' && empty($uniacid)) {
             exit("<p style='width:100%;height:80px;line-height:80px;text-align: center;font-size: 15px;'>商户不存在,请联系管理员配置默认商户</p>");
         }
 
