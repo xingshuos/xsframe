@@ -19,7 +19,8 @@ use think\Facade;
 /**
  * @method static getAccessToken(string $appId, string $secret, $expire = 7000, $isReload = false)
  * @method static sendTplNotice($appid, $secret, $wxapp_openid, string $templateId, array $postData, string $url)
- * @method static getPhoneNumber($appid, $secret, string $code)
+ * @method static getPhoneNumber($appid, $secret, string $code, bool $isReload = false)
+ * @method static getOpenid($appid, $secret, string $code)
  */
 class WxappServiceFacade extends Facade
 {

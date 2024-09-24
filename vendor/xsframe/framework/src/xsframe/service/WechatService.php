@@ -26,17 +26,17 @@ class WechatService
         $token = $this->getAccessToken($appId, $secret, 7000, $isReload);
 
         if ($token) {
-            $data                = array();
-            $data['touser']      = $openid;
+            $data = [];
+            $data['touser'] = $openid;
             $data['template_id'] = trim($templateId);
-            $data['url']         = trim($url);
-            $data['topcolor']    = trim($topColor);
-            $data['data']        = $postData;
-            $data                = json_encode($data);
-            $postUrl             = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={$token}";
+            $data['url'] = trim($url);
+            $data['topcolor'] = trim($topColor);
+            $data['data'] = $postData;
+            $data = json_encode($data);
+            $postUrl = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={$token}";
 
-            $response = RequestUtil::request($postUrl, $data, true);
-            $result   = json_decode($response, true);
+            $response = RequestUtil::httpPost($postUrl, $data);
+            $result = json_decode($response, true);
 
             # token过期
             if (intval($result['errcode']) == 40001 && !$isReload) {
@@ -82,20 +82,20 @@ class WechatService
             $content .= "\n<a href='{$url}'>点击查看详情</a>";
         }
 
-        $data = array(
+        $data = [
             "touser"  => $openid,
             "msgtype" => "text",
-            "text"    => array(
+            "text"    => [
                 'content' => urlencode($content),
-            )
-        );
+            ]
+        ];
 
         $token = $this->getAccessToken($appId, $secret);
         if (ErrorUtil::isError($token)) {
             return $token;
         }
-        $postUrl  = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token={$token}";
-        $response = RequestUtil::request($postUrl, urldecode(json_encode($data)), true);
+        $postUrl = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token={$token}";
+        $response = RequestUtil::httpPostJson($postUrl, $data);
 
         if (ErrorUtil::isError($response)) {
             return ErrorUtil::error(-1, "访问公众平台接口失败, 错误: {$response['message']}");
@@ -114,7 +114,7 @@ class WechatService
     public function getSignPackage($appId, $secret, $url = '')
     {
         $timestamp = time();
-        $nonceStr  = RandomUtil::random(16, true);
+        $nonceStr = RandomUtil::random(16, true);
 
         $jsApiTicket = $this->getJsApiTicket($appId, $secret);
 
@@ -128,7 +128,7 @@ class WechatService
 
         $signature = sha1($string);
 
-        $signPackage = array(
+        $signPackage = [
             "appId"     => $appId,
             "nonceStr"  => $nonceStr,
             "timestamp" => strval($timestamp),
@@ -136,7 +136,7 @@ class WechatService
             "signature" => $signature,
             "rawString" => $string,
             "debug"     => false,
-        );
+        ];
         return $signPackage;
     }
 
@@ -154,8 +154,8 @@ class WechatService
         $jsApiTicketCache = json_decode($jsApiTicketCache, true);
 
         if (empty($jsApiTicketCache) || $jsApiTicketCache['errcode'] == 40001 || empty($jsApiTicketCache['expire_time']) || $jsApiTicketCache['expire_time'] < time()) {
-            $url              = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?type=jsapi&access_token=" . $accessToken;
-            $res              = RequestUtil::httpGet($url);
+            $url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?type=jsapi&access_token=" . $accessToken;
+            $res = RequestUtil::httpGet($url);
             $jsApiTicketCache = json_decode($res, true);
 
             if (empty($jsApiTicketCache['ticket'])) {
@@ -174,15 +174,15 @@ class WechatService
     // 获取accessToken
     public function getAccessToken($appId, $secret, $expire = 7000, $isReload = false)
     {
-        $accessTokenKey   = 'accessToken' . "_" . $appId;
+        $accessTokenKey = 'accessToken' . "_" . $appId;
         $accessTokenCache = Cache::get($accessTokenKey);
         $accessTokenCache = json_decode($accessTokenCache, true);
 
         if (empty($accessTokenCache) || empty($accessTokenCache['expire_time']) || $accessTokenCache['expire_time'] <= time() || $isReload) {
-            $url              = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" . $appId . "&secret=" . $secret;
-            $res              = RequestUtil::httpGet($url);
+            $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" . $appId . "&secret=" . $secret;
+            $res = RequestUtil::httpGet($url);
             $accessTokenCache = json_decode($res, true);
-            $accessToken      = $accessTokenCache['access_token'] ?? '';
+            $accessToken = $accessTokenCache['access_token'] ?? '';
 
             if (empty($accessToken)) {
                 return ErrorUtil::error(-1, $accessTokenCache['errmsg']);
@@ -224,7 +224,7 @@ class WechatService
             throw new ApiException($result['errmsg']);
         }
 
-        $userInfo = array();
+        $userInfo = [];
         if ($snsapi == "snsapi_userinfo") {
             $userInfo = RequestUtil::httpGet("https://api.weixin.qq.com/sns/userinfo?access_token=" . $result["access_token"] . "&openid=" . $result["openid"] . "&lang=zh_CN");
             $userInfo = json_decode($userInfo, true);
@@ -236,7 +236,7 @@ class WechatService
 
         return $userInfo;
     }
-    
+
     /**
      * 微信创建子菜单
      * @param $appid
@@ -246,10 +246,11 @@ class WechatService
      * @throws ApiException
      */
 
-    public function createMenu($appId, $secret, $menus,  $isReload = false){
+    public function createMenu($appId, $secret, $menus, $isReload = false)
+    {
         $access_token = $this->getAccessToken($appId, $secret, 7000, $isReload);
         $url = 'https://api.weixin.qq.com/cgi-bin/menu/create?access_token=' . $access_token;
-        $response = RequestUtil::httpPostJson($url, json_encode($menus,320));
+        $response = RequestUtil::httpPostJson($url, json_encode($menus, 320));
         $output = json_decode($response, true);
         return $output;
 

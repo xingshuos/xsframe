@@ -112,7 +112,7 @@ class RequestUtil
     public static function httpPostJson($url, $dataString, $extra = [])
     {
         if (is_array($dataString)) {
-            $dataString = json_encode($dataString);
+            $dataString = urldecode(json_encode($dataString));
         }
 
         $ch = curl_init();

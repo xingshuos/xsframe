@@ -30,7 +30,7 @@ class WeixinService
             $data['limit']  = 100;
             $postUrl        = "https://qyapi.weixin.qq.com/cgi-bin/kf/account/list?access_token={$token}";
 
-            $response = RequestUtil::request($postUrl, $data, true);
+            $response = RequestUtil::httpPost($postUrl, $data);
             $result   = json_decode($response, true);
 
             # token过期
@@ -64,7 +64,7 @@ class WeixinService
             return $token;
         }
         $postUrl  = "https://qyapi.weixin.qq.com/cgi-bin/kf/add_contact_way?access_token={$token}";
-        $response = RequestUtil::request($postUrl, urldecode(json_encode($data)), true);
+        $response = RequestUtil::httpPostJson($postUrl, $data);
 
         if (ErrorUtil::isError($response)) {
             throw new ApiException("访问企业微信接口失败, 错误: {$response['message']}");

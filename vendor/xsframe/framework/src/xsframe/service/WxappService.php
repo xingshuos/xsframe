@@ -18,19 +18,37 @@ use xsframe\util\RandomUtil;
 use xsframe\util\RequestUtil;
 use think\facade\Cache;
 
+// 如遇到接口可能不起作用，请尝试改为post json方式试试看
+
 class WxappService
 {
+    // 获取小程序openid
+    public function getOpenid($appId, $secret, $code)
+    {
+        $response = RequestUtil::httpGet('https://api.weixin.qq.com/sns/jscode2session?appid=' . $appId . '&secret=' . $secret . '&js_code=' . $code . '&grant_type=authorization_code');
+        $result = json_decode($response, true);
+
+        if (isset($result['errcode'])) {
+            throw new ApiException("微信登录失败:" . $result['errmsg']);
+        }
+
+        return [
+            'session_key' => $result['session_key'],
+            'openid'      => $result['openid'],
+        ];
+    }
+
     // 获取手机号(无法正常调用，报access_token错误，但是并没有错的)
     public function getPhoneNumber($appId, $secret, $code, $isReload = false)
     {
         $token = $this->getAccessToken($appId, $secret, 7000, $isReload);
 
-        $data         = array();
+        $data = [];
         $data['code'] = $code;
 
-        $postUrl  = "https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token=={$token}";
-        $response = RequestUtil::request($postUrl, $data, true);
-        $result   = json_decode($response, true);
+        $postUrl = "https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token={$token}";
+        $response = RequestUtil::httpPostJson($postUrl, $data);
+        $result = json_decode($response, true);
 
         # token过期
         if (intval($result['errcode']) == 40001 && !$isReload) {
@@ -49,19 +67,19 @@ class WxappService
     {
         $token = $this->getAccessToken($appId, $secret, 7000, $isReload);
         if ($token) {
-            $data                      = array();
-            $data['touser']            = $openid;
-            $data['template_id']       = trim($templateId);
-            $data['page']              = trim($url);
+            $data = [];
+            $data['touser'] = $openid;
+            $data['template_id'] = trim($templateId);
+            $data['page'] = trim($url);
             $data['miniprogram_state'] = "formal"; // 跳转小程序类型：developer为开发版；trial为体验版；formal为正式版；默认为正式版
-            $data['lang']              = "zh_CN";
-            $data['data']              = $postData;
+            $data['lang'] = "zh_CN";
+            $data['data'] = $postData;
 
-            $data    = json_encode($data);
+            $data = json_encode($data);
             $postUrl = "https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token={$token}";
 
-            $response = RequestUtil::request($postUrl, $data, true);
-            $result   = json_decode($response, true);
+            $response = RequestUtil::httpPost($postUrl, $data);
+            $result = json_decode($response, true);
 
             # token过期
             if (intval($result['errcode']) == 40001 && !$isReload) {
@@ -82,69 +100,34 @@ class WxappService
         return true;
     }
 
-    // 获取signPackage
-    public function getSignPackage($appId, $secret, $url = '')
-    {
-        $timestamp   = time();
-        $nonceStr    = RandomUtil::random(16, true);
-        $jsApiTicket = $this->getJsApiTicket($appId, $secret);
-
-        // $url = 'https://api.lymlart.com/mIndex';
-        // 这里参数的顺序要按照 key 值 ASCII 码升序排序
-        $string = "jsapi_ticket=$jsApiTicket&noncestr=$nonceStr&timestamp=$timestamp&url=$url";
-
-        $signature = sha1($string);
-
-        $signPackage = array(
-            "appId"     => $appId,
-            "nonceStr"  => $nonceStr,
-            "timestamp" => strval($timestamp),
-            "url"       => $url,
-            "signature" => $signature,
-            "rawString" => $string,
-            "debug"     => false,
-        );
-        return $signPackage;
-    }
-
-    // 获取jsApiTicket
-    private function getJsApiTicket($appId, $secret, $expire = 7000)
-    {
-        $accessToken    = $this->getAccessToken($appId, $secret);
-        $jsApiTicketKey = 'jsApiTicket' . "_" . $appId;
-
-        $jsApiTicketCache = Cache::get($jsApiTicketKey);
-        $jsApiTicketCache = json_decode($jsApiTicketCache, true);
-
-        if ($jsApiTicketCache['errcode'] == 40001 || empty($jsApiTicketCache) || empty($jsApiTicketCache['expire_time']) || $jsApiTicketCache['expire_time'] < time()) {
-            $url              = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?type=jsapi&access_token=" . $accessToken;
-            $res              = RequestUtil::httpGet($url);
-            $jsApiTicketCache = json_decode($res, true);
-
-            $jsApiTicketCache['expire_time'] = time() + $expire;
-            Cache::set($jsApiTicketKey, json_encode($jsApiTicketCache), $expire + 200);
-            $jsApiTicket = $jsApiTicketCache['ticket'];
-        } else {
-            $jsApiTicket = $jsApiTicketCache['ticket'];
-        }
-        return $jsApiTicket;
-    }
-
     // 获取accessToken
     public function getAccessToken($appId, $secret, $expire = 6000, $isReload = false)
     {
-        $accessTokenKey   = 'accessToken' . "_" . $appId;
+        $accessTokenKey = 'accessToken' . "_" . $appId;
         $accessTokenCache = Cache::get($accessTokenKey);
         $accessTokenCache = json_decode($accessTokenCache, true);
+
         if (empty($accessTokenCache) || empty($accessTokenCache['expire_time']) || $accessTokenCache['expire_time'] <= time() || $isReload) {
-            $url              = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" . $appId . "&secret=" . $secret;
-            $res              = RequestUtil::httpGet($url);
+            // if ($isReload) {
+            //     $url = "https://api.weixin.qq.com/cgi-bin/stable_token";  // 该接口调用频率限制为 1万次 每分钟，每天限制调用 50万 次
+            //     $data = [
+            //         'grant_type'    => 'client_credential',
+            //         'appid'         => $appId,
+            //         'secret'        => $secret,
+            //         'force_refresh' => false,
+            //     ];
+            //     $res = RequestUtil::httpPostJson($url, $data);
+            //     $accessTokenCache = json_decode($res, true);
+            // } else {
+            $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" . $appId . "&secret=" . $secret;
+            $res = RequestUtil::httpGet($url);
             $accessTokenCache = json_decode($res, true);
-            $accessToken      = $accessTokenCache['access_token'] ?? '';
+            // }
+
+            $accessToken = $accessTokenCache['access_token'] ?? '';
 
             if (empty($accessToken)) {
-                return false;
-                // throw new ApiException($accessTokenCache['errmsg']);
+                throw new ApiException($accessTokenCache['errmsg']);
             }
 
             $accessTokenCache['expire_time'] = time() + $expire;
