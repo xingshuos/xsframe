@@ -66,8 +66,10 @@ class PayWechatRefundNotifyWrapper
 
         try {
             $payPath = strval("\app\\{$moduleName}\\service\PayService");
-            $payService = new $payPath($data);
-            $payService->refundResult();
+            if (class_exists($payPath)) {
+                $payService = new $payPath($data);
+                $payService->refundResult();
+            }
         } catch (Exception $e) {
             LoggerUtil::error($e->getMessage());
         }
@@ -110,8 +112,10 @@ class PayWechatRefundNotifyWrapper
 
             $this->get['module'] = $moduleName;
             $payPath = strval("\app\\{$moduleName}\\service\PayService");
-            $payService = new $payPath($this->get);
-            $payService->refundResultError();
+            if (class_exists($payPath)) {
+                $payService = new $payPath($this->get);
+                $payService->refundResultError();
+            }
         } catch (Exception $e) {
         }
 

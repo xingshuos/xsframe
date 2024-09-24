@@ -59,8 +59,11 @@ class PayAlipayNotifyWrapper
         try {
             $moduleName = $attachArr[0];
             $payPath = strval("\app\\{$moduleName}\\service\PayService");
-            $payService = new $payPath($data);
-            $payService->payResult();
+
+            if (class_exists($payPath)) {
+                $payService = new $payPath($data);
+                $payService->payResult();
+            }
         } catch (Exception $e) {
             LoggerUtil::error($e->getMessage());
         }

@@ -82,8 +82,11 @@ class PayWechatNotifyWrapper
         try {
             $moduleName = $attachArr[0];
             $payPath = strval("\app\\{$moduleName}\\service\PayService");
-            $payService = new $payPath($data);
-            $payService->payResult();
+
+            if (class_exists($payPath)) {
+                $payService = new $payPath($data);
+                $payService->payResult();
+            }
         } catch (Exception $e) {
             LoggerUtil::error($e->getMessage());
         }
@@ -143,8 +146,10 @@ class PayWechatNotifyWrapper
 
             $this->get['module'] = $moduleName;
             $payPath = strval("\app\\{$moduleName}\\service\PayService");
-            $payService = new $payPath($this->get);
-            $payService->payResultError();
+            if (class_exists($payPath)) {
+                $payService = new $payPath($this->get);
+                $payService->payResultError();
+            }
         } catch (Exception $e) {
         }
 

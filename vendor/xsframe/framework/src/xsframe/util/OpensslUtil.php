@@ -115,4 +115,37 @@ class OpensslUtil
         return $data;
     }
 
+    // 检测密钥是否正确
+    public static function chackKey($key, $public = true)
+    {
+        if (empty($key)) {
+            return $key;
+        }
+
+        if ($public) {
+            if (strexists($key, '-----BEGIN PUBLIC KEY-----')) {
+                $key = str_replace(['-----BEGIN PUBLIC KEY-----', '-----END PUBLIC KEY-----'], '', $key);
+            }
+
+            $head_end = '-----BEGIN PUBLIC KEY-----
+{key}
+-----END PUBLIC KEY-----';
+        } else {
+            if (strexists($key, '-----BEGIN RSA PRIVATE KEY-----')) {
+                $key = str_replace(['-----BEGIN RSA PRIVATE KEY-----', '-----END RSA PRIVATE KEY-----'], '', $key);
+            }
+
+            $head_end = '-----BEGIN RSA PRIVATE KEY-----
+{key}
+-----END RSA PRIVATE KEY-----';
+        }
+
+        $key = str_replace(['
+', '
+', '
+'], '', trim($key));
+        $key = wordwrap($key, 64, '
+', true);
+        return str_replace('{key}', $key, $head_end);
+    }
 }
