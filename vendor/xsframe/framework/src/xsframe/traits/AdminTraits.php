@@ -136,12 +136,12 @@ trait AdminTraits
     }
 
     // 设置查询条件
-    public function setMainCondition(&$condition = [])
+    public function setMainCondition(&$condition)
     {
     }
 
     // 主题返回以后执行
-    public function afterMainResult(&$result = [])
+    public function afterMainResult(&$result)
     {
     }
 
@@ -296,12 +296,12 @@ trait AdminTraits
     }
 
     // 保存数据之前处理
-    public function beforeSetPostData(&$updateData = [])
+    public function beforeSetPostData(&$updateData)
     {
     }
 
     // 获取数据之后处理
-    public function afterPostResult(&$result = [])
+    public function afterPostResult(&$result)
     {
     }
 
