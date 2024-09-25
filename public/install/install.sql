@@ -359,8 +359,8 @@ CREATE TABLE `#__sys_paylog`
     `module`     varchar(50)    NOT NULL,
     `createtime` int(11) NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`),
-    KEY          `idx_tid` (`ordersn`),
-    KEY          `idx_uniacid` (`uniacid`)
+    UNIQUE KEY `idx_tid` (`ordersn`),
+    KEY `idx_uniacid` (`uniacid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `#__sys_queue`;
