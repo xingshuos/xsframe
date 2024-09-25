@@ -120,7 +120,7 @@ class Account extends Base
             $this->settingsController->reloadAccountSettings($uniacid);
 
             # 管理员账号
-            $this->accountUser();
+            $this->accountUser($uniacid);
 
             $this->success(["url" => webUrl("account/edit", ['id' => $uniacid, 'tab' => str_replace("#tab_", "", $this->params['tab'])])]);
         }
@@ -348,7 +348,7 @@ class Account extends Base
     }
 
     // 管理员管理
-    private function accountUser()
+    private function accountUser($uniacid)
     {
         $username = $this->params['username'] ?? '';
         $password = $this->params['password'] ?? '';
@@ -362,7 +362,7 @@ class Account extends Base
             if (!empty($userInfo)) {
                 $accountUserInfo = DbServiceFacade::name('sys_account_users')->getInfo(['user_id' => $userInfo['id']]);
                 if (!empty($accountUserInfo)) {
-                    if ($accountUserInfo['uniacid'] == $this->uniacid) {
+                    if ($accountUserInfo['uniacid'] == $uniacid) {
                         DbServiceFacade::name('sys_users')->updateInfo(['id' => $userInfo['id'], 'salt' => $salt, 'password' => $newPassword]);
                     }
                 }
@@ -377,7 +377,7 @@ class Account extends Base
                 ];
                 $userId = DbServiceFacade::name('sys_users')->insertInfo($userData);
                 $accountUserData = [
-                    "uniacid" => $this->uniacid,
+                    "uniacid" => $uniacid,
                     "user_id" => $userId,
                     "module"  => '',
                 ];
