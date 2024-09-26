@@ -250,6 +250,90 @@ class SysMemberService extends BaseService
         ];
     }
 
+    // 获取登录凭证token
+    public function getToken($memberId, $autoLogin = true)
+    {
+        $token = authcode2($memberId, "ENCODE", $this->expire);
+        if ($autoLogin) {
+            isetcookie($this->getMemberInfoKey(), $token, 30 * 86400);
+        }
+        return $token;
+    }
+
+    // 退出登录
+    public function logout($memberId = null): bool
+    {
+        if ($memberId) {
+            Cache::set($this->getMemberInfoKey() . "_" . $memberId, false, 86400 * 30);
+        }
+        return isetcookie($this->getMemberInfoKey(), false, -100);
+    }
+
+    // 更新积分或余额字段
+    public function setCredit($userId, $credittype = 'credit1', $credits = 0, $log = [])
+    {
+        if (empty($log)) {
+            $log = [$userId, '未记录'];
+        } else {
+            if (!is_array($log)) {
+                $log = [0, $log];
+            }
+        }
+
+        $log_data = [
+            'uid'        => intval($userId),
+            'credittype' => $credittype,
+            'uniacid'    => $this->uniacid,
+            'num'        => $credits,
+            'createtime' => TIMESTAMP,
+            'module'     => $this->module,
+            'operator'   => intval($log[0]),
+            'remark'     => $log[1]
+        ];
+
+        $newCredit = 0;
+        if (!empty($userId)) {
+            $member = self::getInfo(['id' => $userId]);
+            $value = $member[$credittype];
+            $newCredit = $credits + $value;
+
+            if ($newCredit <= 0) {
+                $newCredit = 0;
+            }
+
+            $log_data['remark'] = $log_data['remark'] . ' 剩余: ' . $newCredit;
+            self::updateInfo([$credittype => $newCredit], ['id' => $userId]);
+
+            SysMemberCreditsRecordServiceFacade::insertInfo($log_data);
+        }
+
+        return $newCredit;
+    }
+
+    // 设置会员信息
+    public function setMember($updateData = [], $where = [])
+    {
+        $memberInfo = self::getInfo($where);
+
+        if (empty($memberInfo)) {
+            $memberInfo = [
+                'uniacid'     => $this->uniacid,
+                'module'      => $this->module,
+                'create_time' => TIMESTAMP,
+                'update_time' => TIMESTAMP,
+            ];
+            $memberInfo = array_merge($memberInfo, $updateData);
+            $memberInfo['id'] = self::insertInfo($memberInfo);
+        }else{
+            $memberInfo = array_merge($memberInfo, $updateData);
+            self::updateInfo($memberInfo, $where);
+        }
+
+        return $memberInfo;
+    }
+
+    // ---------------------------------以下为私有方法，禁止外部调用----------------------------------
+
     // 校验注册用户
     private function checkMember($type, $value, $nickname = '', $avatar = '', $memberInfo = null, $updateData = [], $autoLogin = true)
     {
@@ -315,65 +399,5 @@ class SysMemberService extends BaseService
         }
 
         return $memberId ? $this->getToken($memberId, $autoLogin) : false;
-    }
-
-    // 获取登录凭证token
-    public function getToken($memberId, $autoLogin = true)
-    {
-        $token = authcode2($memberId, "ENCODE", $this->expire);
-        if ($autoLogin) {
-            isetcookie($this->getMemberInfoKey(), $token, 30 * 86400);
-        }
-        return $token;
-    }
-
-    // 退出登录
-    public function logout($memberId = null): bool
-    {
-        if ($memberId) {
-            Cache::set($this->getMemberInfoKey() . "_" . $memberId, false, 86400 * 30);
-        }
-        return isetcookie($this->getMemberInfoKey(), false, -100);
-    }
-
-    // 更新积分或余额字段
-    public function setCredit($userId, $credittype = 'credit1', $credits = 0, $log = [])
-    {
-        if (empty($log)) {
-            $log = [$userId, '未记录'];
-        } else {
-            if (!is_array($log)) {
-                $log = [0, $log];
-            }
-        }
-
-        $log_data = [
-            'uid'        => intval($userId),
-            'credittype' => $credittype,
-            'uniacid'    => $this->uniacid,
-            'num'        => $credits,
-            'createtime' => TIMESTAMP,
-            'module'     => $this->module,
-            'operator'   => intval($log[0]),
-            'remark'     => $log[1]
-        ];
-
-        $newCredit = 0;
-        if (!empty($userId)) {
-            $member = self::getInfo(['id' => $userId]);
-            $value = $member[$credittype];
-            $newCredit = $credits + $value;
-
-            if ($newCredit <= 0) {
-                $newCredit = 0;
-            }
-
-            $log_data['remark'] = $log_data['remark'] . ' 剩余: ' . $newCredit;
-            self::updateInfo([$credittype => $newCredit], ['id' => $userId]);
-
-            SysMemberCreditsRecordServiceFacade::insertInfo($log_data);
-        }
-
-        return $newCredit;
     }
 }
