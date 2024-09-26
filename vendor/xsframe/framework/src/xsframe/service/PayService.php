@@ -106,6 +106,36 @@ class PayService extends BaseService
         }
     }
 
+    // wap - 微信h5支付
+    public function h5WxPay($ordersn, $price, string $title = '', $serviceType = 1)
+    {
+        try {
+            $body = $title;
+            $orderPrice = PriceUtil::yuan2fen($price); // 订单总金额，单位为：分
+            $outTradeNo = $ordersn; // 订单号
+            $attach = $this->module . ":" . $this->uniacid . ":" . $serviceType;// 商品附加信息（订单支付成功回调原样返回数据）
+            $tradeType = 'MWEB'; // 支付类型
+            $goodsTag = ""; // 商品优惠信息
+            $openid = ""; // 微信公号支付用到
+            $bundleName = "WEB";
+            $timeExpire = date('YmdHis', time() + 600); // 订单过期时间 10分钟
+            $url = '';
+
+            if (!$this->wxPayService instanceof wxPayService) {
+                $paymentSet = $this->getPayment('wechat');
+                $this->wxPayService = new WxPayService($paymentSet['appid'], $paymentSet['mchid'], $paymentSet['apikey'], $this->wxPayConfig['notifyUrl']);
+            }
+            $unifiedReturn = $this->wxPayService->unifiedOrder($goodsBody, $orderPrice, $outTradeNo, $attach, $tradeType, $goodsTag, $openid, $bundleName, $timeExpire);
+
+            if ($unifiedReturn['return_code'] == 'SUCCESS' && $unifiedReturn['result_code'] == 'SUCCESS') {
+                $url = $unifiedReturn['mweb_url'];
+            }
+            return $url;
+        } catch (ApiException $e) {
+            throw new ApiException($e->getMessage());
+        }
+    }
+
     /**
      * 微信退款
      * @param $outTradeNo -- 订单号
@@ -117,7 +147,7 @@ class PayService extends BaseService
      * @throws ApiException
      * 返回值案例 ["appid" => "wx5e088370af731859" "cash_fee" => "1" "cash_refund_fee" => "1" "coupon_refund_count" => "0" "coupon_refund_fee" => "0" "mch_id" => "1606994267" "nonce_str" => "bq9eUP9f5oOBhYv0" "out_refund_no" => "RE20240705542392243824" "out_trade_no" => "GC20240705542392243824" "refund_channel" => [] "refund_fee" => "1" "refund_id" => "50303510002024070538517369371" "result_code" => "SUCCESS" "return_code" => "SUCCESS" "return_msg" => "OK" "sign" => "975BE2C1D195892292F0A535D1075308" "total_fee" => "1" "transaction_id" => "4200002301202407059764410008"]
      */
-    public function wxPayRefund($outTradeNo, $outRefundNo, $totalFee, $refundFee = null, $opUserId = null,$notifyUrl = null)
+    public function wxPayRefund($outTradeNo, $outRefundNo, $totalFee, $refundFee = null, $opUserId = null, $notifyUrl = null)
     {
         try {
             if (!$this->wxPayService instanceof WxPayService) {
