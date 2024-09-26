@@ -135,7 +135,7 @@ class PayService extends BaseService
                 $this->wxPayService = new WxPayService($paymentSet['appid'], $paymentSet['mchid'], $paymentSet['apikey'], $notifyUrl);
             }
 
-            $unifiedReturn = $this->wxPayService->unifiedOrder($goodsBody, $orderPrice, $outTradeNo, $attach, $tradeType, $goodsTag, $openid, $bundleName, $timeExpire);
+            $unifiedReturn = $this->wxPayService->unifiedOrder($body, $orderPrice, $outTradeNo, $attach, $tradeType, $goodsTag, $openid, $bundleName, $timeExpire);
 
             if ($unifiedReturn['return_code'] == 'SUCCESS' && $unifiedReturn['result_code'] == 'SUCCESS') {
                 $url = $unifiedReturn['mweb_url'];
