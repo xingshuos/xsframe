@@ -122,9 +122,19 @@ class PayService extends BaseService
             $url = '';
 
             if (!$this->wxPayService instanceof wxPayService) {
-                $paymentSet = $this->getPayment('wechat');
-                $this->wxPayService = new WxPayService($paymentSet['appid'], $paymentSet['mchid'], $paymentSet['apikey'], $this->wxPayConfig['notifyUrl']);
+                $paymentSet = $this->account['settings']['wxpay'];
+
+                if (empty($notifyUrl)) {
+                    $notifyUrl = $this->siteRoot . "/" . $this->module . "/wechat/notify";
+                }
+
+                if (empty($paymentSet['appid']) || empty($paymentSet['mchid']) || empty($paymentSet['apikey'])) {
+                    throw new ApiException("后台微信支付配置信息未配置");
+                }
+
+                $this->wxPayService = new WxPayService($paymentSet['appid'], $paymentSet['mchid'], $paymentSet['apikey'], $notifyUrl);
             }
+
             $unifiedReturn = $this->wxPayService->unifiedOrder($goodsBody, $orderPrice, $outTradeNo, $attach, $tradeType, $goodsTag, $openid, $bundleName, $timeExpire);
 
             if ($unifiedReturn['return_code'] == 'SUCCESS' && $unifiedReturn['result_code'] == 'SUCCESS') {
