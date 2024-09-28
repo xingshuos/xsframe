@@ -48,7 +48,7 @@ trait ServiceTraits
      * @param int $pSize
      * @return array
      */
-    public function getList(array $where = [], string $field = "*", $order = "", int $pIndex = 1, int $pSize = 10): array
+    public function getList(array $where = [], string $field = "*", $order = "", int $pIndex = 1, int $pSize = 10)
     {
         try {
             extract(self::getWhere($where));
@@ -72,7 +72,7 @@ trait ServiceTraits
      * @param string $keyField
      * @return array
      */
-    public function getAll(array $where = [], string $field = "*", string $order = "", string $keyField = ''): array
+    public function getAll(array $where = [], string $field = "*", string $order = "", string $keyField = '')
     {
         try {
             extract(self::getWhere($where));
@@ -80,7 +80,7 @@ trait ServiceTraits
                 $list = Db::name($this->tableName)->field($field)->where($where, $op, $condition)->order($order)->select()->toArray();
             } else {
                 $temp = Db::name($this->tableName)->field($field)->where($where, $op, $condition)->order($order)->select()->toArray();
-                $rs = [];
+                $rs   = [];
                 if (!empty($temp)) {
                     foreach ($temp as $key => &$row) {
                         if (isset($row[$keyField])) {
@@ -102,9 +102,9 @@ trait ServiceTraits
      * 获取数据数量
      * @param $where
      * @param string $field
-     * @return int
+     * @return int|mixed
      */
-    public function getTotal($where, string $field = "*"): int
+    public function getTotal($where, string $field = "*")
     {
         extract(self::getWhere($where));
 
@@ -127,35 +127,49 @@ trait ServiceTraits
     public function getValue($where, $field, string $orderBy = 'id desc')
     {
         extract(self::getWhere($where));
-        $total = Db::name($this->tableName)->where($where, $op, $condition)->order($orderBy)->value($field);
-        return $total ? $total : 0;
+
+        try {
+            $value = Db::name($this->tableName)->where($where, $op, $condition)->order($orderBy)->value($field);
+        } catch (\Exception $exception) {
+            $value = null;
+        }
+
+        return $value;
     }
 
     /**
      * 更新数据
      * @param array $updateData
      * @param array $condition
-     * @return bool
-     * @throws DbException
+     * @return int|mixed
      */
-    public function updateInfo(array $updateData, array $where = []): bool
+    public function updateInfo(array $updateData, array $where = [])
     {
         extract(self::getWhere($where));
-        $isUpdate = Db::name($this->tableName)->where($where, $op, $condition)->update($updateData);
-        return (bool)$isUpdate;
+
+        try {
+            $isUpdate = Db::name($this->tableName)->where($where, $op, $condition)->update($updateData);
+        } catch (\Exception $exception) {
+            $isUpdate = 0;
+        }
+
+        return (int)$isUpdate;
     }
 
     /**
      * 删除数据
      * @param $condition
-     * @return bool
-     * @throws DbException
+     * @return int|mixed
      */
-    public function deleteInfo($where): bool
+    public function deleteInfo($where)
     {
         extract(self::getWhere($where));
-        $isDelete = Db::name($this->tableName)->where($where, $op, $condition)->delete();
-        return (bool)$isDelete;
+        try {
+            $isDelete = Db::name($this->tableName)->where($where, $op, $condition)->delete();
+        } catch (\Exception $exception) {
+            $isDelete = 0;
+        }
+        return (int)$isDelete;
     }
 
     /**
@@ -173,7 +187,7 @@ trait ServiceTraits
      * @param $data
      * @return int
      */
-    public function insertAll($data): int
+    public function insertAll($data)
     {
         return Db::name($this->tableName)->insertAll($data);
     }
@@ -181,15 +195,15 @@ trait ServiceTraits
     // 获取查询条件
     private function getWhere($where = null): array
     {
-        $op = null;
+        $op        = null;
         $condition = null;
         if (is_array($where) && is_string($where[0]) && is_array($where[1])) {
-            $op = $where[1];
+            $op    = $where[1];
             $where = $where[0];
         } else {
             if (is_numeric($where)) {
                 $condition['id'] = $where;
-                $where = ['id' => $where];
+                $where           = ['id' => $where];
             }
         }
         return ['where' => $where, 'op' => $op, 'condition' => $condition];
