@@ -147,4 +147,31 @@ class PriceUtil
         }
         return $money;
     }
+
+    /**
+     * 通过类型计算金额
+     */
+    public static function formatPrice(float $price = 0.00, int $precision = 2): string
+    {
+        if ($price >= 10000000000) {
+            // 亿
+            return self::numberFormat($price / 100000000, $precision) . '亿';
+        } elseif ($price >= 10000) {
+            // 万
+            return self::numberFormat($price / 10000, $precision) . '万';
+        } else {
+            // 元
+            return self::numberFormat($price, $precision) . '元';
+        }
+        return $price;
+    }
+
+    /**
+     * 金额转换
+     */
+    public static function convertPrice($price, $exchangeRate = 1 / 4.6537, int $precision = 2)
+    {
+        $price = $price * $exchangeRate;
+        return self::numberFormat($price, $precision);
+    }
 }
