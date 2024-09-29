@@ -51,7 +51,8 @@
             <tr>
                 <th style="width:40px;"></th>
                 <th style='width:80px'>排序</th>
-                <th style='width:200px'>商户名称</th>
+                <th style='width:60px'>uniacid</th>
+                <th style='width:140px'>商户名称</th>
                <th style='width:80px'>会员数</th>
                <th style='width:80px'>访问域名</th>
                 <th style="width: 80px;">应用数量</th>
@@ -70,11 +71,14 @@
                     <a href='javascript:;' data-toggle="ajaxEdit" data-href="{:webUrl('account/change',array('type'=>'displayorder','id'=>$row['uniacid']))}">{$row['displayorder']}</a>
                     <i class="icon icon-pencil icon-weibiaoti-- " data-toggle="ajaxEdit2"></i>
                 </td>
+                <td class='full js-clip' data-url="{$row['uniacid']}">
+                    {$row['uniacid']}
+                </td>
                 <td style="overflow: visible">
                     <a data-toggle='ajaxHref' href="{:webUrl('account/manager', array('id' => $row['uniacid']))}" target="_blank" rel="pop" style="display: flex" data-content="">
                         <img class="img-40" src="{:tomedia($row['logo'])}" style='border-radius:50%;border:1px solid #efefef;' onerror="this.src='__ADMIN_IMG__/noface.png'"/>
                         <span data-toggle="tooltip" data-placement="top" data-original-title="{$row['name']}" style="display: flex;flex-direction: column;justify-content: center;align-items: flex-start;padding-left: 5px">
-                            <span class="nickname">[{$row['uniacid']}] {$row['name']}</span>
+                            <span class="nickname"> {$row['name']}</span>
                         </span>
                     </a>
                 </td>
@@ -133,7 +137,7 @@
                         </button>
                     </div>
                 </td>
-                <td colspan="4" style="text-align: right">
+                <td colspan="5" style="text-align: right">
                     {$pager | raw}
                 </td>
             </tr>
