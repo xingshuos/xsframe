@@ -43,7 +43,7 @@
                 {if $userInfo['role'] != 'operator'}
                     <li class="wb-nav-system">
                         <a href="{:url('admin/perm/user',['i' => $uniacid])}">
-                            <i class="icon icon-minus-sign" style="font-size: 22px;"></i>
+                            <i class="icon icon-key" style="font-size: 22px;"></i>
                             <span style="display: block">权限管理</span>
                         </a>
                     </li>
@@ -106,7 +106,7 @@
         {if $userInfo['role'] != 'operator'}
         <li class="{if $action == 'user'}active{/if}">
             <a href="{:url('admin/perm/user',['i' => $uniacid,'module' => $_GET['module']])}" class="wb-nav-item">
-                <i class="icon icon-minus-sign"></i>
+                <i class="icon icon-key"></i>
                 <span class="wb-nav-title">权限</span>
             </a>
             <span class="wb-nav-tip">权限管理</span>
