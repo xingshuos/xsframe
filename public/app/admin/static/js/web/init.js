@@ -630,12 +630,14 @@ define(['jquery', 'bootstrap'], function ($, bs) {
             nav.removeClass('fold');
             $(".wb-header .logo").removeClass('small');
             $(".fast-nav").removeClass('indent');
-            util.cookie.set('foldnav', 0)
+            util.cookie.set('foldnav', 0);
+            $(this).find('i').removeClass('icon-indent').addClass('icon-outdent');
         } else {
             nav.addClass('fold');
             $(".wb-header .logo").addClass('small');
             $(".fast-nav").addClass('indent');
-            util.cookie.set('foldnav', 1)
+            util.cookie.set('foldnav', 1);
+            $(this).find('i').removeClass('icon-outdent').addClass('icon-indent');
         }
     });
 
