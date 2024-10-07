@@ -285,7 +285,7 @@ define(['jquery', 'bootstrap'], function ($, bs) {
                 }
                 obj.trigger('valueChange', [val, oldval])
             }, obj.hide().html('<i class="fa fa-spinner fa-spin"></i>');
-            let input = $('<input type="text" class="form-control input-sm" style="width: 80%;display: inline;" />');
+            let input = $('<input type="text" class="form-control input-sm" style="width: 70%;display: inline;" />');
             if (edit == 'textarea') {
                 input = $('<textarea type="text" class="form-control" style="resize:none" rows=3 ></textarea>')
             }
