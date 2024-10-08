@@ -1844,58 +1844,6 @@
             "install-path": "../markbaker/matrix"
         },
         {
-            "name": "morton/chinaums",
-            "version": "1.0.1",
-            "version_normalized": "1.0.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/mjf9999/chinaums.git",
-                "reference": "9ca310ce1f0419c6f27a66a53344f95f1ce5cd62"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/mjf9999/chinaums/zipball/9ca310ce1f0419c6f27a66a53344f95f1ce5cd62",
-                "reference": "9ca310ce1f0419c6f27a66a53344f95f1ce5cd62",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
-            },
-            "time": "2023-01-14T06:46:01+00:00",
-            "type": "library",
-            "installation-source": "dist",
-            "autoload": {
-                "psr-4": {
-                    "Morton\\Chinaums\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "morton",
-                    "email": "mojiufeng@gmail.com"
-                }
-            ],
-            "description": "一个银联商务sdk扩展包",
-            "keywords": [
-                "alipay",
-                "chinaums",
-                "pay",
-                "wechat"
-            ],
-            "support": {
-                "issues": "https://github.com/mjf9999/chinaums/issues",
-                "source": "https://github.com/mjf9999/chinaums/tree/1.0.1"
-            },
-            "install-path": "../morton/chinaums"
-        },
-        {
             "name": "mtdowling/jmespath.php",
             "version": "2.7.0",
             "version_normalized": "2.7.0.0",
@@ -4493,42 +4441,6 @@
                 "thinkphp6"
             ],
             "install-path": "../xsframe/think-qrcode"
-        },
-        {
-            "name": "xsframe/xs-chinaums",
-            "version": "v1.2",
-            "version_normalized": "1.2.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://gitee.com/xingshuos_admin/xs-chinaums",
-                "reference": "92451b6a6bf8e24232ab50276bf489e934968597"
-            },
-            "time": "2024-09-06T08:06:10+00:00",
-            "type": "library",
-            "installation-source": "source",
-            "autoload": {
-                "psr-4": {
-                    "xsframe\\chinaums\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "GuiHai",
-                    "email": "786824455@qq.com"
-                }
-            ],
-            "description": "一个银联商务sdk扩展包",
-            "keywords": [
-                "alipay",
-                "chinaums",
-                "pay",
-                "wechat",
-                "xsframe"
-            ],
-            "install-path": "../xsframe/xs-chinaums"
         }
     ],
     "dev": true,
