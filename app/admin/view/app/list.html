@@ -212,7 +212,7 @@
                             {if $do == 'installed' || empty($do)}
                                 <a href="{:webUrl('admin/app/uninstall', array('identifie' => $row['identifie'],'id' => $row['id']))}" data-toggle="ajaxPost" data-confirm="卸载后将同时删除该应用所有数据,确认要卸载 “{$row['name']}” 么 ?" class="btn btn-op btn-operation">
                                     <span data-toggle="tooltip" data-placement="top" data-original-title="卸载">
-                                        <i class="icon icon-download-alt"></i>
+                                        <i class="icon icon-download"></i>
                                     </span>
                                 </a>
                             {/if}
