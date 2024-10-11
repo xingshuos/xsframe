@@ -80,7 +80,7 @@ trait ServiceTraits
                 $list = Db::name($this->tableName)->field($field)->where($where, $op, $condition)->order($order)->select()->toArray();
             } else {
                 $temp = Db::name($this->tableName)->field($field)->where($where, $op, $condition)->order($order)->select()->toArray();
-                $rs   = [];
+                $rs = [];
                 if (!empty($temp)) {
                     foreach ($temp as $key => &$row) {
                         if (isset($row[$keyField])) {
@@ -115,6 +115,17 @@ trait ServiceTraits
         }
 
         return intval($total);
+    }
+
+    /**
+     * 获取数据数量
+     * @param $where
+     * @param string $field
+     * @return int|mixed
+     */
+    public function getCount($where, string $field = "*")
+    {
+        return $this->getTotal($where, $field);
     }
 
     /**
@@ -195,15 +206,15 @@ trait ServiceTraits
     // 获取查询条件
     private function getWhere($where = null): array
     {
-        $op        = null;
+        $op = null;
         $condition = null;
         if (is_array($where) && is_string($where[0]) && is_array($where[1])) {
-            $op    = $where[1];
+            $op = $where[1];
             $where = $where[0];
         } else {
             if (is_numeric($where)) {
                 $condition['id'] = $where;
-                $where           = ['id' => $where];
+                $where = ['id' => $where];
             }
         }
         return ['where' => $where, 'op' => $op, 'condition' => $condition];
