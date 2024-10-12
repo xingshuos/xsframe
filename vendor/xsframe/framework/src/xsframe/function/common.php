@@ -40,10 +40,14 @@ if (!function_exists('realModuleName')) {
 
 // 获取完整表
 if (!function_exists('tablename')) {
-    function tablename($table)
+    function tablename($table, $separator = true)
     {
         $tablepre = Env::get('database.prefix');
-        return " `{$tablepre}{$table}` ";
+        $tablename = "{$tablepre}{$table}";
+        if ($separator) {
+            $tablename = " `{$tablepre}{$table}` ";
+        }
+        return $tablename;
     }
 }
 

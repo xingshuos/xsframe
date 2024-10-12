@@ -22,6 +22,26 @@ trait ServiceTraits
     }
 
     /**
+     * 执行sql
+     * @param $sql
+     * @return mixed
+     */
+    public function execute($sql)
+    {
+        return $sql ? Db::execute($sql) : "";
+    }
+
+    /**
+     * 执行sql
+     * @param $sql
+     * @return mixed
+     */
+    public function query($sql = null)
+    {
+        return $sql ? Db::query($sql) : "";
+    }
+
+    /**
      * 获取数据基本信息
      * @param $where
      * @param string $field
@@ -221,9 +241,13 @@ trait ServiceTraits
     }
 
     // 表是否存在
-    public function hasTable()
+    public function hasTable($tableName = null)
     {
-        $tables = Db::query("SHOW TABLES LIKE '" . tablename($this->tableName) . "'");
+        if (empty($tableName)) {
+            $tables = Db::query("SHOW TABLES LIKE '" . tablename($this->tableName, false) . "'");
+        } else {
+            $tables = Db::query("SHOW TABLES LIKE '" . tablename($tableName, false) . "'");
+        }
         return !empty($tables);
     }
 
@@ -262,5 +286,92 @@ trait ServiceTraits
         }
         $sql = "ALTER TABLE " . tablename($this->tableName) . " CHANGE `{$oldFiled}` `{$field}` {$type}({$length}) " . ($default ? "DEFAULT '{$default}'" : '') . ($isNull ? 'NULL' : 'NOT NULL') . " COMMENT '{$comment}' ";
         return Db::execute($sql);
+    }
+
+    /**
+     * 分割sql语句
+     * @param string $content sql内容
+     * @param bool $string 如果为真，则只返回一条sql语句，默认以数组形式返回
+     * @param array $replace 替换前缀，如：['my_' => 'me_']，表示将表前缀my_替换成me_
+     * @return array|string 除去注释之后的sql语句数组或一条语句
+     */
+    public function sqlParse($content = '', $string = false, $replace = [])
+    {
+        // 被替换的前缀
+        $from = '';
+        // 要替换的前缀
+        $to = '';
+
+        // 替换表前缀
+        if (!empty($replace)) {
+            $to = current($replace);
+            $from = current(array_flip($replace));
+        }
+
+        if ($content != '') {
+            // 纯sql内容
+            $pure_sql = [];
+
+            // 多行注释标记
+            $comment = false;
+
+            // 按行分割，兼容多个平台
+            $content = str_replace(["\r\n", "\r"], "\n", $content);
+            $content = explode("\n", trim($content));
+
+            // 循环处理每一行
+            foreach ($content as $key => $line) {
+                // 跳过空行
+                if ($line == '') {
+                    continue;
+                }
+
+                // 跳过以#或者--开头的单行注释
+                if (preg_match("/^(#|--)/", $line)) {
+                    continue;
+                }
+
+                // 跳过以/**/包裹起来的单行注释
+                if (preg_match("/^\/\*(.*?)\*\//", $line)) {
+                    continue;
+                }
+
+                // 多行注释开始
+                if (substr($line, 0, 2) == '/*') {
+                    $comment = true;
+                    continue;
+                }
+
+                // 多行注释结束
+                if (substr($line, -2) == '*/') {
+                    $comment = false;
+                    continue;
+                }
+
+                // 多行注释没有结束，继续跳过
+                if ($comment) {
+                    continue;
+                }
+
+                // 替换表前缀
+                if ($from != '') {
+                    $line = str_replace('`' . $from, '`' . $to, $line);
+                }
+
+                // sql语句
+                array_push($pure_sql, $line);
+            }
+
+            // 只返回一条语句
+            if ($string) {
+                return implode($pure_sql, "");
+            }
+            // 以数组形式返回sql语句
+            $pure_sql = implode("\n", $pure_sql);
+            $pure_sql = explode(";\n", $pure_sql);
+            return $pure_sql;
+        } else {
+            return $string == true ? '' : [];
+        }
     }
 }
