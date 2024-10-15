@@ -242,6 +242,7 @@ CREATE TABLE `#__sys_member`
     `apple_openid`  varchar(64)    DEFAULT '' COMMENT 'ios登录',
     `jt_openid`     varchar(100)   DEFAULT '' COMMENT '鲸探APP授权登录openid',
     `ali_openid`    varchar(100)   DEFAULT '' COMMENT '支付宝授权登录',
+    `douyin_openid` varchar(100) DEFAULT '' COMMENT '抖音授权登录openid',
     `isblack`       tinyint(1) DEFAULT '0' COMMENT '是否拉入黑名单 0否 1是',
     `job`           varchar(30)    DEFAULT '' COMMENT '工作职务',
     PRIMARY KEY (`id`) USING BTREE,
