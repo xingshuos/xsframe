@@ -186,4 +186,40 @@ abstract class BaseEnum
         }
         return false;
     }
+
+    /**
+     * 获取文本列表
+     * @param string $typeString
+     * @return array
+     */
+    public static function getTextArray(string $typeString): array
+    {
+        $appTypes = explode(",", $typeString);
+        $newAppTypes = [];
+        foreach ($appTypes as $type) {
+            $newAppTypes[] = self::getText($type);
+        }
+        return $newAppTypes;
+    }
+
+    /**
+     * 获取文字列表
+     * @return array
+     */
+    public static function getEnumsList(): array
+    {
+        $newEnumsList = [];
+
+        try {
+            $calledClass = get_called_class();
+            $enumsValuesList = self::getEnumsValues();
+            foreach ($enumsValuesList as $key => $item) {
+                $newEnumsList[$item] = (new $calledClass)->getText($item);
+            }
+        } catch (\ReflectionException $e) {
+            return [];
+        }
+
+        return $newEnumsList;
+    }
 }
