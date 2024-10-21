@@ -74,6 +74,7 @@ define(['jquery'], function ($) {
                     }
                     var confirm = submit_button.data('confirm') || submit_button.data('confirm');
                     var handler = function () {
+                        let oldButtonVal = submit_button.val()
                         if (buttontype == 'button') {
                             submit_button.html('<i class="fa fa-spinner fa-spin"></i> ' + tip.lang.processing)
                         } else {
@@ -85,27 +86,37 @@ define(['jquery'], function ($) {
                             timeout: timeout,
                             dataType: "json",
                             success: function (a) {
-                                if (a.result.url) {
-                                    a.result.url = a.result.url.replace(/&amp;/ig, "&");
-                                    a.result.url = a.result.url.replace('¬', "&not")
-                                }
-                                if (a.status != 1) {
-                                    submit_button.removeAttr('disabled');
-                                    submit_button.each(function (index) {
-                                        buttontype == 'button' ? $(this).html(html[index]) : $(this).val(html[index])
-                                    });
-                                    form_modal && form_modal.modal("hide"), tip.msgbox.err(a.result.message || a.result || tip.lang.error, a.result.url)
-                                } else {
-                                    tip.msgbox.suc(a.result.message || tip.lang.success, a.result.url)
+                                if( a && parseInt(a.code) > 200 && !a.status ){
+                                    tip.msgbox.err(a.msg || tip.lang.error)
+                                }else{
+                                    if (a.result.url) {
+                                        a.result.url = a.result.url.replace(/&amp;/ig, "&");
+                                        a.result.url = a.result.url.replace('¬', "&not")
+                                    }
+                                    if (a.status != 1) {
+                                        submit_button.removeAttr('disabled');
+                                        submit_button.each(function (index) {
+                                            buttontype == 'button' ? $(this).html(html[index]) : $(this).val(html[index])
+                                        });
+                                        form_modal && form_modal.modal("hide"), tip.msgbox.err(a.result.message || a.result || tip.lang.error, a.result.url)
+                                    } else {
+                                        submit_button.val(oldButtonVal)
+                                        submit_button.attr('disabled', false)
+                                        tip.msgbox.suc(a.result.message || tip.lang.success, a.result.url)
+                                    }
                                 }
                             },
                             error: function (a) {
-                                submit_button.removeAttr('disabled');
-                                submit_button.each(function (index) {
-                                    buttontype == 'button' ? $(this).html(html[index]) : $(this).val(html[index])
-                                });
-                                form_modal && form_modal.modal("hide");
-                                tip.msgbox.err(tip.lang.error)
+                                submit_button.removeAttr('disabled')
+                                try {
+                                    submit_button.each(function (index) {
+                                        buttontype == 'button' ? $(this).html(html[index]) : $(this).val(html[index])
+                                    });
+                                    form_modal && form_modal.modal("hide");
+                                    tip.msgbox.err(tip.lang.error)
+                                }catch (e){
+                                    console.log(e)
+                                }
                             }
                         });
                         return false
