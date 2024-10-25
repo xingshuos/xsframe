@@ -42,20 +42,16 @@ class App extends Base
         $condition = [];
 
         $modulesController = new ModulesWrapper();
-
         $this->updateSystemModuleList();
+
+        $key = $this->websiteSets['key'] ?? '';
+        $token = $this->websiteSets['token'] ?? '';
 
         if (empty($do) || $do == 'installed') {
             $condition = $condition1;
         } else {
             if ($do == 'not_installed') {
                 $condition = $condition2;
-
-                $key = $this->websiteSets['key'] ?? '';
-                $token = $this->websiteSets['token'] ?? '';
-
-                $modulesController->buildLocalUnInstalledModule();
-                $modulesController->buildCloudUnInstalledModule($key, $token);
             } else {
                 if ($do == 'recycle') {
                     $condition = $condition3;
@@ -65,6 +61,11 @@ class App extends Base
                     }
                 }
             }
+        }
+
+        if (in_array($do, ['installed', 'not_installed'])) {
+            $modulesController->buildLocalUnInstalledModule();
+            $modulesController->buildCloudUnInstalledModule($key, $token);
         }
 
         if (!empty($type)) {
