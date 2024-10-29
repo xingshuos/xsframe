@@ -16,6 +16,7 @@ trait AdminTraits
     protected $backUrl = null; // post提交后返回的url
     protected $isBackMain = true; // post提交后是否返回到列表页 默认返回到列表页
     protected $deleteField = "deleted"; // 软删除字段
+    protected $template = null; // 设置模板名称
 
     public function index()
     {
@@ -27,22 +28,22 @@ trait AdminTraits
         if (!empty($this->tableName)) {
             $fieldList = $this->getFiledList();
 
-            $keyword    = trim($this->params['keyword']) ?? '';
-            $kwFields   = trim($this->params['kwFields']) ?? '';
-            $field      = trim($this->params['field']) ?? '';
-            $status     = trim($this->params['status']) ?? '';
-            $enabled    = trim($this->params['enabled']) ?? 0;
+            $keyword = trim($this->params['keyword']) ?? '';
+            $kwFields = trim($this->params['kwFields']) ?? '';
+            $field = trim($this->params['field']) ?? '';
+            $status = trim($this->params['status']) ?? '';
+            $enabled = trim($this->params['enabled']) ?? 0;
             $searchTime = trim($this->params["searchtime"]) ?? '';
 
-            $export        = trim($this->params['export']);
-            $exportTitle   = trim($this->params['export_title']);
+            $export = trim($this->params['export']);
+            $exportTitle = trim($this->params['export_title']);
             $exportColumns = trim($this->params['export_columns']);
-            $exportKeys    = trim($this->params['export_keys']);
+            $exportKeys = trim($this->params['export_keys']);
 
             $startTime = strtotime("-1 month");
-            $endTime   = time();
+            $endTime = time();
 
-            $condition            = (array)$this->condition;
+            $condition = (array)$this->condition;
             $condition['uniacid'] = $this->uniacid;
 
             if (array_key_exists($this->deleteField, $fieldList)) {
@@ -63,7 +64,7 @@ trait AdminTraits
 
             if (is_array($this->params["time"])) {
                 $startTime = strtotime($this->params["time"]["start"]);
-                $endTime   = strtotime($this->params["time"]["end"]);
+                $endTime = strtotime($this->params["time"]["end"]);
 
                 if (array_key_exists($searchTime . "time", $fieldList)) {
                     $condition[$searchTime . "time"] = Db::raw("between {$startTime} and {$endTime} ");
@@ -79,9 +80,9 @@ trait AdminTraits
             }
 
             if (!empty($keyword) && !empty($field)) {
-                $field       = str_replace(" ", "|", $field);
-                $field       = str_replace("，", "|", $field);
-                $field       = str_replace(",", "|", $field);
+                $field = str_replace(" ", "|", $field);
+                $field = str_replace("，", "|", $field);
+                $field = str_replace(",", "|", $field);
                 $condition[] = [$field, 'like', "%" . trim($keyword) . "%"];
             }
 
@@ -123,16 +124,16 @@ trait AdminTraits
             $total = Db::name($this->tableName)->where($condition)->count();
             $pager = pagination2($total, $this->pIndex, $this->pSize);
 
-            $this->result['list']      = $list;
-            $this->result['pager']     = $pager;
-            $this->result['total']     = $total;
+            $this->result['list'] = $list;
+            $this->result['pager'] = $pager;
+            $this->result['total'] = $total;
             $this->result['starttime'] = $startTime;
-            $this->result['endtime']   = $endTime;
+            $this->result['endtime'] = $endTime;
         }
 
         $this->afterMainResult($this->result);
 
-        return $this->template('list', $this->result);
+        return $this->template($this->template ?: 'list', $this->result);
     }
 
     // 设置查询条件
@@ -149,10 +150,10 @@ trait AdminTraits
     private function exportExcelData($list = [], $column = null, $keys = null, $title = null, $last = null)
     {
         if (!empty($list) && !empty($column) && !empty($keys)) {
-            $title  = ($title ?? "数据列表") . "_" . date('YmdHi');
+            $title = ($title ?? "数据列表") . "_" . date('YmdHi');
             $column = explode(",", $column);
-            $keys   = explode(",", $keys);
-            $last   = explode(",", $last);
+            $keys = explode(",", $keys);
+            $last = explode(",", $last);
 
             $setWidth = [];
             for ($i = 0; $i < count($column); $i++) {
@@ -177,11 +178,11 @@ trait AdminTraits
     public function post()
     {
         if (!empty($this->tableName)) {
-            $id      = intval($this->params["id"] ?? 0);
+            $id = intval($this->params["id"] ?? 0);
             $backUrl = trim($this->params['backUrl'] ?? '');
 
             if ($this->request->isPost()) {
-                $fieldList  = $this->getFiledList();
+                $fieldList = $this->getFiledList();
                 $updateData = [];
                 foreach ($fieldList as $filed => $fieldItem) {
 
@@ -267,10 +268,10 @@ trait AdminTraits
                         }
                     } else {
                         $backUrl = referer();
-                        $params  = ['id' => $id, 'tab' => str_replace("#tab_", "", $this->params['tab'])];
+                        $params = ['id' => $id, 'tab' => str_replace("#tab_", "", $this->params['tab'])];
 
                         $parsedUrl = parse_url($backUrl);
-                        $query     = $parsedUrl['query'];
+                        $query = $parsedUrl['query'];
                         parse_str($query, $queryParams);
                         $queryParams = array_merge($queryParams, $params);
 
@@ -286,16 +287,15 @@ trait AdminTraits
                 }
             }
 
-            $field     = "*";
+            $field = "*";
             $condition = ['id' => $id];
-            $item      = Db::name($this->tableName)->field($field)->where($condition)->find();
+            $item = Db::name($this->tableName)->field($field)->where($condition)->find();
 
             $this->result['item'] = $item;
         }
 
         $this->afterPostResult($this->result);
-
-        return $this->template('post', $this->result);
+        return $this->template($this->template ?: 'post', $this->result);
     }
 
     // 保存数据之前处理
@@ -326,7 +326,7 @@ trait AdminTraits
                 $this->error("参数错误");
             }
 
-            $type  = trim($this->params["type"]);
+            $type = trim($this->params["type"]);
             $value = trim($this->params["value"]);
 
             $items = Db::name($this->tableName)->where(['id' => $id])->select();
@@ -352,7 +352,7 @@ trait AdminTraits
             }
 
             $updateData = [];
-            $fieldList  = $this->getFiledList();
+            $fieldList = $this->getFiledList();
             if (array_key_exists($this->deleteField, $fieldList)) {
                 $updateData[$this->deleteField] = 1;
 
@@ -422,7 +422,7 @@ trait AdminTraits
             }
 
             $updateData = [];
-            $fieldList  = $this->getFiledList();
+            $fieldList = $this->getFiledList();
             if (array_key_exists($this->deleteField, $fieldList)) {
                 $updateData[$this->deleteField] = 0;
             }
@@ -449,11 +449,11 @@ trait AdminTraits
 
             $field = "*";
             $order = "id desc";
-            $list  = Db::name($this->tableName)->field($field)->where($condition)->order($order)->page($this->pIndex, $this->pSize)->select()->toArray();
+            $list = Db::name($this->tableName)->field($field)->where($condition)->order($order)->page($this->pIndex, $this->pSize)->select()->toArray();
             $total = Db::name($this->tableName)->where($condition)->count();
             $pager = pagination2($total, $this->pIndex, $this->pSize);
 
-            $this->result['list']  = $list;
+            $this->result['list'] = $list;
             $this->result['pager'] = $pager;
             $this->result['total'] = $total;
         }
@@ -465,9 +465,9 @@ trait AdminTraits
     public function cover()
     {
         $moduleName = realModuleName($this->module);
-        $coverUrl   = $this->siteRoot . "/{$moduleName}.html?i=" . $this->uniacid;
-        $mobileUrl  = $this->siteRoot . "/{$moduleName}/mobile.html?i=" . $this->uniacid;
-        $pcUrl      = $this->siteRoot . "/{$moduleName}/pc.html?i=" . $this->uniacid;
+        $coverUrl = $this->siteRoot . "/{$moduleName}.html?i=" . $this->uniacid;
+        $mobileUrl = $this->siteRoot . "/{$moduleName}/mobile.html?i=" . $this->uniacid;
+        $pcUrl = $this->siteRoot . "/{$moduleName}/pc.html?i=" . $this->uniacid;
         return $this->template('cover', ['coverUrl' => $coverUrl, 'mobileUrl' => $mobileUrl, 'pcUrl' => $pcUrl]);
     }
 
