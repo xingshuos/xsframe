@@ -234,6 +234,9 @@ class MenuWrapper
                         }
                         # 如果是二级目录补全路径 end
 
+                        $actionTmpArr = explode("/", $actionTmp);
+                        $isUpdate = strexists($actionTmp, '/add') || strexists($actionTmp, '/edit') || strexists($actionTmp, '/post');
+
                         # 二级目录
                         if (empty($child['items'])) {
                             $return_menu_child = [
@@ -243,9 +246,6 @@ class MenuWrapper
                                 'url'    => $child['url'] ?? null,
                             ];
 
-                            $actionTmpArr = explode("/", $actionTmp);
-                            $isUpdate = strexists($actionTmp, '/add') || strexists($actionTmp, '/edit') || strexists($actionTmp, '/post');
-
                             if (!$submenuIsActive && strexists(strtolower(str_replace("_", "", $return_menu_child['route'])), $actionTmpArr[0]) || (strexists($return_menu_child['route'], 'main') && in_array($actionTmp, ['add', 'edit', 'post']))) {
 
                                 if (strtolower(str_replace("_", "", $return_menu_child['route'])) != $actionTmp && !in_array($actionTmp, ['add', 'edit', 'post']) && !strexists($actionTmp, '/add') && !strexists($actionTmp, '/edit') && !strexists($actionTmp, '/post')) {
@@ -253,7 +253,6 @@ class MenuWrapper
                                     if ($actionTmp == $return_menu_child['route']) {
                                         $return_menu_child['active'] = 1;
                                     }
-
                                 } else {
                                     $menuRouteTmp = str_replace("web.", "", $return_menu_child['route']);
                                     $menuRouteTmpArray = explode("/", $menuRouteTmp);
@@ -277,8 +276,8 @@ class MenuWrapper
                                         $return_menu_child['active'] = $parentMenuIsChange ? 0 : 1;
                                     }
                                 }
-                            }else{
-                                if( $return_menu_child['route'] == $actionTmp ){
+                            } else {
+                                if ($return_menu_child['route'] == $actionTmp) {
                                     $return_menu_child['active'] = 1;
                                 }
                             }
@@ -342,6 +341,12 @@ class MenuWrapper
 
                                 if (strexists($return_submenu_three['route'], $action)) {
                                     if (strexists(strtolower(str_replace("_", "", $return_submenu_three['route'])), $controller)) {
+                                        $return_submenu_three['active'] = 1; // 是否选中
+                                    }
+                                }
+
+                                if ($return_submenu_three['active'] == 0 && !empty($actionTmpArr) && in_array($actionTmpArr[1], ['add', 'edit', 'post'])) {
+                                    if ($actionTmpArr[0] . "/main" == $three['route'] ||  (strtolower($actionTmpArr[0]) . "/main" == strtolower($three['route'])) ) {
                                         $return_submenu_three['active'] = 1; // 是否选中
                                     }
                                 }
