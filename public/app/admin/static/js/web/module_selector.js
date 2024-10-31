@@ -18,11 +18,9 @@ define(["js/web/biz"], function(biz) {
         model.post_url = model.url('util/moduleSelector', merchid);
         model.platform = platform;
 
-
         // let condition = model.ele.find("where").text();
         console.log('model post_url',model.post_url);
         console.log('model api_url',api_url);
-
 
         let elename = 'moduleSelector';
         if (api_url && api_url.length > 0) {
@@ -382,7 +380,7 @@ define(["js/web/biz"], function(biz) {
     };
     model.put = function(id) {
         model.option_switch = $(model.ele).data("switch");
-        let url = "./index.php?c=site&a=entry&m=ewei_shopv2&do=web&r=util.goods_selector.op&id=" + id + "&column=" + encodeURI($("#goods-selected-list-" + model.name).attr("data-column"));
+        let url = "?id=" + id + "&column=" + encodeURI($("#goods-selected-list-" + model.name).attr("data-column"));
         if (model.option_switch === 0) {
             url += "&nooption=1"
         }

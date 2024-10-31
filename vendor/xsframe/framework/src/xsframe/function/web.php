@@ -267,7 +267,7 @@ if (!function_exists('pagination2')) {
 
                     while ($i <= $range['end']) {
                         if ($context['isajax']) {
-                            $aa = 'href="javascript:;" page="' . $i . '" ' . ($callbackfunc ? 'ng-click="' . $callbackfunc . '(\'' . $url . '\', \'' . $i . '\', this);"' : '');
+                            $aa = 'href="javascript:;" class="pager-nav" page="' . $i . '" ' . ($callbackfunc ? 'ng-click="' . $callbackfunc . '(\'' . $url . '\', \'' . $i . '\', this);"' : '');
                         } else {
                             if ($url) {
                                 $aa = 'href="?' . str_replace('*', $i, $url) . '"';
