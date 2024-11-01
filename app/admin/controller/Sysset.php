@@ -54,7 +54,11 @@ class Sysset extends Base
                     show_json(1, ['data' => $ret]);
                     break;
                 case 'upload_remote':
-                    $setting = $this->settingsController->getSysSettings(SysSettingsKeyEnum::ATTACHMENT_KEY);
+                    if (empty($uniacid)) {
+                        $setting = $this->settingsController->getSysSettings(SysSettingsKeyEnum::ATTACHMENT_KEY);
+                    } else {
+                        $setting = $this->settingsController->getAccountSettings($uniacid, 'settings');
+                    }
                     $attachmentController->fileDirRemoteUpload($setting, $attachmentPath, $attachmentPath . 'images' . ($uniacid > 0 ? '/' . $uniacid : ''));
                     show_json(1, "上传成功");
                     break;
