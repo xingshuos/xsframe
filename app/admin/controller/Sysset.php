@@ -50,8 +50,8 @@ class Sysset extends Base
                     show_json(1);
                     break;
                 case 'buckets':
-                    $attachmentController->buckets($this->params['key'], $this->params['secret']);
-                    show_json(1);
+                    $ret = $attachmentController->buckets($this->params['key'], $this->params['secret']);
+                    show_json(1, ['data' => $ret]);
                     break;
                 case 'upload_remote':
                     $setting = $this->settingsController->getSysSettings(SysSettingsKeyEnum::ATTACHMENT_KEY);
