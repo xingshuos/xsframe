@@ -87,7 +87,7 @@ trait AdminTraits
             }
 
             foreach ($this->params as $field => $value) {
-                if (array_key_exists($field, $fieldList) && !empty($value) && !array_key_exists($field, $condition)) {
+                if (array_key_exists($field, $fieldList) && (!empty($value) || is_numeric($value)) && !array_key_exists($field, $condition)) {
                     $condition[$field] = $value;
                 }
             }
