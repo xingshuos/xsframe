@@ -72,6 +72,8 @@ class Perm extends AdminBaseController
         $field = " pu.*,u.username,u.password,u.status ";
         $item = Db::name("sys_account_perm_user")->alias('pu')->field($field)->leftJoin("sys_users u", "u.id = pu.uid")->where(['pu.id' => $id])->find();
         $role = Db::name("sys_account_perm_role")->where(['id' => $item['roleid']])->find();
+        $memberInfo = Db::name('sys_member')->field("id,nickname,realname,realname realname1,avatar,mobile")->where(['id' => $item['mid']])->find();
+        $memberInfo['avatar'] = tomedia($memberInfo['avatar']);
 
         if ($this->request->isPost()) {
             $username = trim($this->params['username'] ?? '');
@@ -80,6 +82,7 @@ class Perm extends AdminBaseController
             $mobile = trim($this->params['mobile'] ?? '');
             $status = intval($this->params['status'] ?? 0);
             $roleId = trim($this->params['roleid'] ?? 0);
+            $mid = intval($this->params['mid'] ?? 0);
 
             if (empty($username)) {
                 $this->error('登录账号不能为空');
@@ -124,6 +127,7 @@ class Perm extends AdminBaseController
                 'mobile'   => $mobile,
                 'roleid'   => $roleId,
                 'status'   => $status,
+                'mid'      => $mid,
             ];
 
             $data['perms'] = trim($this->params['permsarray']);
@@ -213,6 +217,7 @@ class Perm extends AdminBaseController
             'accounts_perms' => $accountsPerms,
             'role_perms'     => $rolePerms,
             'user_perms'     => $userPerms,
+            'memberInfo'     => $memberInfo,
         ]);
     }
 

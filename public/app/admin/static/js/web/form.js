@@ -80,12 +80,19 @@ define(['jquery'], function ($) {
                         } else {
                             submit_button.val(tip.lang.processing)
                         }
+
                         var timeout = 1000 * 3600;
                         submit_button.attr('disabled', true);
                         $(form).ajaxSubmit({
                             timeout: timeout,
                             dataType: "json",
                             success: function (a) {
+
+                                setTimeout(() => {
+                                    submit_button.val(oldButtonVal)
+                                    submit_button.attr('disabled', false)
+                                },3000)
+
                                 if( a && parseInt(a.code) > 200 && !a.status ){
                                     tip.msgbox.err(a.msg || tip.lang.error)
                                 }else{
