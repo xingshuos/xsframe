@@ -74,6 +74,9 @@ class Perm extends AdminBaseController
         $role = Db::name("sys_account_perm_role")->where(['id' => $item['roleid']])->find();
         $memberInfo = Db::name('sys_member')->field("id,nickname,realname,realname realname1,avatar,mobile")->where(['id' => $item['mid']])->find();
         $memberInfo['avatar'] = tomedia($memberInfo['avatar']);
+        if (empty($memberInfo['realname1'])) {
+            $memberInfo['realname1'] = $memberInfo['nickname'];
+        }
 
         if ($this->request->isPost()) {
             $username = trim($this->params['username'] ?? '');
@@ -419,5 +422,34 @@ class Perm extends AdminBaseController
             'ds' => $ds
         ];
         return $this->template('perm/role/query', $result);
+    }
+
+    // 查询会员
+    public function memberQuery(): \think\response\View
+    {
+        $kwd = trim($this->params['keyword']);
+
+        $where = [
+            'is_deleted' => 0
+        ];
+
+        if (!empty($kwd)) {
+            $where[] = ['nickname|mobile|realname|username', 'like', '%' . $kwd . '%'];
+        }
+
+        $list = Db::name('sys_member')->field("id,avatar,nickname,mobile,realname,realname realname1,username")->where($where)->select()->toArray();
+        $list = set_medias($list, ['avatar']);
+
+        foreach ($list as &$row) {
+            if (empty($row['realname1'])) {
+                $row['realname1'] = $row['nickname'];
+            }
+        }
+
+        $result = [
+            'list' => $list
+        ];
+
+        return $this->template('perm/member/query', $result);
     }
 }
