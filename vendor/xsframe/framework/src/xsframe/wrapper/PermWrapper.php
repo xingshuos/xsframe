@@ -126,7 +126,7 @@ class PermWrapper
     public function allPerms($uniacid)
     {
         if (empty(self::$allPerms)) {
-            // 1.获取当前项目所有插件 TODO 需要缓存插件列表
+            // 1.获取当前商户所有应用 TODO 需要缓存插件列表
             $modules = $this->getModules($uniacid);
             // dump($modules);die;
 
@@ -167,6 +167,10 @@ class PermWrapper
                 ],
             ];
 
+            // if( $module == 'jrp_anjia' ){
+            //     dd($moduleMenus);
+            // }
+
             foreach ($moduleMenus as $key => $menu) {
 
                 // 子菜单权限
@@ -174,23 +178,52 @@ class PermWrapper
 
                 if (!empty($menu['items'])) {
                     foreach ((array)$menu['items'] as $item) {
-                        $perm = [];
-                        if (is_array($item['perm']) && !empty($item['perm']) || empty($item['perm'])) {
-                            $perm = $permDefault;
-                        }
 
-                        $routers = explode("/", $item['route']);
-                        $c = count($routers) > 1 ? "." . $routers[0] : '';
+                        if( !empty($item['items']) ){
+                            foreach ((array)$item['items'] as $item2) {
 
-                        $newModuleMenusItemText = ['text' => !empty($item['subtitle']) ? $item['subtitle'] : $item['title']];
-                        $newModuleMenusItem = array_merge($newModuleMenusItemText, $perm);
+                                // if( $module == 'jrp_anjia' ){
+                                //     dd($item2);
+                                // }
 
-                        if (empty($c)) {
-                            $itemModuleMenus[$item['route']] = $newModuleMenusItem;
-                        } else {
-                            $itemRoute = preg_replace('/^\./u', '', $c); // 去掉第一个字符是.的
-                            $itemRoute = preg_replace('/\bweb\..*?\b/u', '', $itemRoute);// 去掉第一个字符是web.的
-                            $itemModuleMenus[$itemRoute] = $newModuleMenusItem;
+                                $perm = [];
+                                if (is_array($item2['perm']) && !empty($item2['perm']) || empty($item2['perm'])) {
+                                    $perm = $permDefault;
+                                }
+
+                                $routers = explode("/", $item2['route']);
+                                $c = count($routers) > 1 ? "." . $routers[0] : '';
+
+                                $newModuleMenusItemText = ['text' => !empty($item2['subtitle']) ? $item2['subtitle'] : $item2['title']];
+                                $newModuleMenusItem = array_merge($newModuleMenusItemText, $perm);
+
+                                if (empty($c)) {
+                                    $itemModuleMenus[$item2['route']] = $newModuleMenusItem;
+                                } else {
+                                    $itemRoute = preg_replace('/^\./u', '', $c); // 去掉第一个字符是.的
+                                    $itemRoute = preg_replace('/\bweb\..*?\b/u', '', $itemRoute);// 去掉第一个字符是web.的
+                                    $itemModuleMenus[$itemRoute] = $newModuleMenusItem;
+                                }
+                            }
+                        }else{
+                            $perm = [];
+                            if (is_array($item['perm']) && !empty($item['perm']) || empty($item['perm'])) {
+                                $perm = $permDefault;
+                            }
+
+                            $routers = explode("/", $item['route']);
+                            $c = count($routers) > 1 ? "." . $routers[0] : '';
+
+                            $newModuleMenusItemText = ['text' => !empty($item['subtitle']) ? $item['subtitle'] : $item['title']];
+                            $newModuleMenusItem = array_merge($newModuleMenusItemText, $perm);
+
+                            if (empty($c)) {
+                                $itemModuleMenus[$item['route']] = $newModuleMenusItem;
+                            } else {
+                                $itemRoute = preg_replace('/^\./u', '', $c); // 去掉第一个字符是.的
+                                $itemRoute = preg_replace('/\bweb\..*?\b/u', '', $itemRoute);// 去掉第一个字符是web.的
+                                $itemModuleMenus[$itemRoute] = $newModuleMenusItem;
+                            }
                         }
                     }
                 }
@@ -222,6 +255,7 @@ class PermWrapper
         if (empty(self::$formatPerms)) {
 
             $perms = $this->allPerms($uniacid);
+            // dump($perms['jrp_anjia']);die;
 
             $array = [];
 

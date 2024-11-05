@@ -188,6 +188,7 @@ class Perm extends AdminBaseController
         }
 
         $perms = PermFacade::formatPerms($this->uniacid);
+        // dd($perms);
 
         $operatorPerms = []; // 当前用户权限
         $accountsPerms = []; // 排除系统应用

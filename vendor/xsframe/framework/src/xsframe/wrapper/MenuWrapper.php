@@ -128,6 +128,18 @@ class MenuWrapper
                 if (!empty($val['items'])) {
                     $itemsOneRoute = $val['items'][0]['route'] ?? null;
 
+                    if (empty($itemsOneRoute) && !empty($val['items'][0]['items'])) {
+                        $itemsOneRoute = $val['items'][0]['items'][0]['route'] ?? null;
+                        if ($itemsOneRoute) {
+                            $val['items'][0]['route'] = $itemsOneRoute;
+                        } else {
+                            $itemsOneRoute = $val['items'][0]['items'][0]['url'] ?? null;
+                            if ($itemsOneRoute) {
+                                $val['items'][0]['url'] = $itemsOneRoute;
+                            }
+                        }
+                    }
+
                     $itemsOneRouteIsChange = false; // 解决一级菜单默认访问url
                     if (empty($val['items'][0]['route'])) {
                         $itemsOneRoute = $val['items'][0]['url'] ?? null;
@@ -346,7 +358,7 @@ class MenuWrapper
                                 }
 
                                 if ($return_submenu_three['active'] == 0 && !empty($actionTmpArr) && in_array($actionTmpArr[1], ['add', 'edit', 'post'])) {
-                                    if ($actionTmpArr[0] . "/main" == $three['route'] ||  (strtolower($actionTmpArr[0]) . "/main" == strtolower($three['route'])) ) {
+                                    if ($actionTmpArr[0] . "/main" == $three['route'] || (strtolower($actionTmpArr[0]) . "/main" == strtolower($three['route']))) {
                                         $return_submenu_three['active'] = 1; // 是否选中
                                     }
                                 }
