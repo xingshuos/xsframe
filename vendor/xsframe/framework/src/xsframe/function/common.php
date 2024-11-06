@@ -271,9 +271,9 @@ if (!function_exists('getAttachmentUrl')) {
         if ($isAttachment) {
             if (empty($uniacid)) {
                 $module = app('http')->getName();
-                $uniacid = request()->param('uniacid') ?? ($_COOKIE['uniacid'] ?? 0);
+                $uniacid = request()->param('uniacid') ?? request()->param('i') ?? ($_COOKIE['uniacid'] ?? 0);
 
-                if ($module == 'admin' && empty(request()->param('module'))) {
+                if ($module == 'admin' && empty(request()->param('module')) && empty(request()->param('i'))) {
                     $uniacid = 0;
                 }
             }
