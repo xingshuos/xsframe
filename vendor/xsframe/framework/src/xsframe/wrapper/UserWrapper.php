@@ -15,6 +15,7 @@ namespace xsframe\wrapper;
 use think\facade\App;
 use xsframe\enum\SysSettingsKeyEnum;
 use xsframe\enum\UserRoleKeyEnum;
+use xsframe\facade\service\DbServiceFacade;
 use xsframe\util\ErrorUtil;
 use xsframe\util\StringUtil;
 use think\facade\Cache;
@@ -76,6 +77,7 @@ class UserWrapper
         }
 
         $url = self::getLoginReturnUrl($userInfo['role'], $userInfo['id'], $hostUrl);
+
         if (ErrorUtil::isError($url)) {
             show_json(-1, $url['msg']);
         }
@@ -97,7 +99,7 @@ class UserWrapper
     }
 
     // 获取当前应用第一个子菜单当做首页
-    public static function getModuleOneUrl($moduleName, $isAdmin = false)
+    public static function getModuleOneUrl($moduleName, $isAdmin = false, $role = null, $userId = null)
     {
         $rootPath = App::getRootPath();
         $modulePath = $rootPath . "app/" . $moduleName;
@@ -112,7 +114,35 @@ class UserWrapper
 
             if (is_file($moduleMenuConfigFile)) {
                 $menuConfig = include($moduleMenuConfigFile);
-                $oneMenus = array_slice($menuConfig, 0, 1);
+
+                // 根据操作员访问权限获取菜单 start
+                $oneMenus = [];
+                if ($role && $userId && $role == UserRoleKeyEnum::OPERATOR_KEY) {
+                    $permUserInfo = DbServiceFacade::name('sys_account_perm_user')->getInfo(['uid' => $userId]);
+                    $perms = $permUserInfo['perms'];
+
+                    // 使用逗号分割字符串
+                    $parts = explode(',', $perms);
+                    if (!empty($parts)) {
+                        $prefixToRemove = "{$moduleName}.web.";
+                        foreach ($parts as $part) {
+                            if (strpos($part, $prefixToRemove) !== false) {
+                                $key = substr($part, strlen($prefixToRemove));
+                                $menuInfo = $menuConfig[$key];
+                                if (!empty($menuInfo) && $menuInfo['items'] && $menuInfo['items'][0] && $menuInfo['items'][0]['items']) { // 如果是三级目录的情况
+                                    $oneMenus[$key] = $menuInfo['items'][0];
+                                } else {
+                                    $oneMenus[$key] = $menuInfo;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    $oneMenus = array_slice($menuConfig, 0, 1);
+                }
+                // 根据操作员访问权限获取菜单 end
+
                 $oneMenusKeys = array_keys($oneMenus);
 
                 $actionUrl = $oneMenus[$oneMenusKeys[0]]['items'][0]['route'];
@@ -206,7 +236,7 @@ class UserWrapper
                 return ErrorUtil::error(-1, "暂无管理功能权限");
             }
 
-            $realUrl = self::getModuleOneUrl($moduleName, true);
+            $realUrl = self::getModuleOneUrl($moduleName, true, $role, $userId);
             $url = webUrl(str_replace('.html', "", $realUrl), ['i' => $uniacid]);
         }
         return $url;
