@@ -104,7 +104,7 @@
         </li>
 
         {if $userInfo['role'] != 'operator'}
-        <li class="{if $action == 'user'}active{/if}">
+        <li class="{if in_array($action,['user','role','rolepost','userpost'])}active{/if}">
             <a href="{:url('admin/perm/user',['i' => $uniacid,'module' => $_GET['module']])}" class="wb-nav-item">
                 <i class="icon icon-key"></i>
                 <span class="wb-nav-title">权限</span>
