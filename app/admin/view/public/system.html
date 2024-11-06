@@ -95,7 +95,7 @@
             <span class="wb-nav-tip">应用列表</span>
         </li>
 
-        <li class="{if $action == 'member'}active{/if}">
+        <li class="{if in_array($action,['member','memberdetail'])}active{/if}">
             <a href="{:url('admin/system/member',['i' => $uniacid,'module' => $_GET['module']])}" class="wb-nav-item">
                 <i class="icon icon-user"></i>
                 <span class="wb-nav-title">用户</span>
