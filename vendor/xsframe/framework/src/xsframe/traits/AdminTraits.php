@@ -149,20 +149,43 @@ trait AdminTraits
     // 导出列表
     private function exportExcelData($list = [], $column = null, $keys = null, $title = null, $last = null)
     {
-        if (!empty($list) && !empty($column) && !empty($keys)) {
+        if (!empty($list)) {
             $title = ($title ?? "数据列表") . "_" . date('YmdHi');
-            $column = explode(",", $column);
-            $keys = explode(",", $keys);
-            $last = explode(",", $last);
+            if (!empty($column) && !empty($keys)) {
+                $column = explode(",", $column);
+                $keys = explode(",", $keys);
+                $last = explode(",", $last);
 
-            $setWidth = [];
-            for ($i = 0; $i < count($column); $i++) {
-                $setWidth[$i] = 30;
+                $setWidth = [];
+                for ($i = 0; $i < count($column); $i++) {
+                    $setWidth[$i] = 30;
+                }
+
+                ExcelUtil::export((string)$title, (array)$column, (array)$setWidth, (array)$list, (array)$keys, (array)$last, (string)$title);
+            } else {
+                $data = $this->setExportExcelData($list);
+                if (!empty($data)) {
+                    extract($data);
+
+                    if (!empty($column) && !empty($keys)) {
+                        ExcelUtil::export((string)$title, (array)$column, (array)$setWidth, (array)$list, (array)$keys, (array)$last, (string)$title);
+                    }
+                }
             }
-
-            $filename = $title;
-            ExcelUtil::export($title, $column, $setWidth, $list, $keys, $last, $filename);
         }
+    }
+
+    // 自定义导出数据格式
+    public function setExportExcelData(&$list)
+    {
+        return [
+            'list'     => $list,
+            'column'   => [],
+            'keys'     => [],
+            'setWidth' => [],
+            'last'     => [],
+            'title'    => "",
+        ];
     }
 
     public function edit()
