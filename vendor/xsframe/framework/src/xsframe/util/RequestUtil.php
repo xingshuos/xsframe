@@ -12,6 +12,8 @@
 
 namespace xsframe\util;
 
+use xsframe\exception\ApiException;
+
 class RequestUtil
 {
     // HTTP get 工具
@@ -43,6 +45,11 @@ class RequestUtil
 
         $res = curl_exec($ch);
         curl_close($ch);
+
+        if ($res === false) {
+            throw new ApiException('通信失败：' . curl_error($ch));
+        }
+
         return $res;
     }
 
@@ -180,7 +187,7 @@ class RequestUtil
         return $headers;
     }
 
-    public static function cloudHttpPost($url, array $postData = [])
+    public static function cloudHttpPost($url, array $postData = [], $extra = [])
     {
         if (is_array($postData)) {
             $postData['host_ip'] = $_SERVER['REMOTE_ADDR'];
@@ -189,7 +196,7 @@ class RequestUtil
             $postData['php_version'] = $postData['php_version'] ?? PHP_VERSION;
         }
 
-        $response = self::httpPost("https://www.xsframe.cn/cloud/api/" . $url, $postData);
+        $response = self::httpPost("https://www.xsframe.cn/cloud/api/" . $url, $postData, $extra);
         $result = @json_decode($response, true);
 
         if (!empty($result)) {
