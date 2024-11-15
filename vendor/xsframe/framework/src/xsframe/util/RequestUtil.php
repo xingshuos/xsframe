@@ -54,7 +54,7 @@ class RequestUtil
     }
 
     //HTTP post 工具
-    public static function httpPost($url, $postData, $extra = [], $isShowHeader = 0, $timeout = 30, $isShowHeaderOut = 0)
+    public static function httpPost($url, $postData, $extra = [], $isShowHeader = 0, $timeout = 3000, $isShowHeaderOut = 0)
     {
         // 模拟提交数据函数
         $ch = curl_init(); // 启动一个CURL会话
