@@ -90,6 +90,7 @@ class CloudWrapper
             $zip->extractTo($appPath);
             $zip->close();
         }
+        @unlink($outputFile);
 
         return true;
     }
