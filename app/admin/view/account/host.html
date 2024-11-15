@@ -12,7 +12,7 @@
 
             <div class="page-toolbar">
                 <div class="pull-left">
-                    <a class='btn btn-primary btn-sm' href="{:webUrl('admin/sysset/hostEdit')}"><i class='icon icon-plus'></i> 添加域名</a>
+                    <a class='btn btn-primary btn-sm' href="{:webUrl('admin/account/hostEdit')}"><i class='icon icon-plus'></i> 添加域名</a>
                 </div>
                 <div class="pull-right col-md-8">
                     <div class="input-group">
@@ -57,7 +57,7 @@
                         <input type='checkbox' value="{$row['id']}"/>
                     </td>
                     <td class='full'>
-                        <a href='javascript:;' data-toggle="ajaxEdit" data-href="{:webUrl('admin/sysset/hostChange',array('type'=>'displayorder','id'=>$row['id']))}">{$row['displayorder']}</a>
+                        <a href='javascript:;' data-toggle="ajaxEdit" data-href="{:webUrl('admin/account/hostChange',array('type'=>'displayorder','id'=>$row['id']))}">{$row['displayorder']}</a>
                         <i class="icon icon-pencil icon-weibiaoti-- " data-toggle="ajaxEdit2"></i>
                     </td>
                     <td>
@@ -73,12 +73,12 @@
                         {$row['default_module'] ? $row['default_module'] : '未设置'}（{$row['module']['name']}）
                     </td>
                     <td style="text-align:left;">
-                        <a href="{:webUrl('admin/sysset/hostEdit', array('id' => $row['id']))}" class="btn btn-op btn-operation">
+                        <a href="{:webUrl('admin/account/hostEdit', array('id' => $row['id']))}" class="btn btn-op btn-operation">
                             <span data-toggle="tooltip" data-placement="top" data-original-title="修改">
                                 <i class='icon icon-edit'></i>
                             </span>
                         </a>
-                        <a data-toggle='ajaxRemove' href="{:webUrl('admin/sysset/hostDelete', array('id' => $row['id']))}" class="btn btn-op btn-operation" data-confirm='确认要删除此域名吗?'>
+                        <a data-toggle='ajaxRemove' href="{:webUrl('admin/account/hostDelete', array('id' => $row['id']))}" class="btn btn-op btn-operation" data-confirm='确认要删除此域名吗?'>
                             <span data-toggle="tooltip" data-placement="top" data-original-title="删除">
                                 <i class='icon icon-trash'></i>
                             </span>
@@ -92,7 +92,7 @@
                     <td><input type="checkbox"></td>
                     <td colspan="2">
                         <div class="btn-group">
-                            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('admin/sysset/hostChange',array('type' => 'deleted','value'=>1))}">
+                            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('admin/account/hostChange',array('type' => 'deleted','value'=>1))}">
                                 <i class='icon icon-trash'></i> 删除
                             </button>
                         </div>
@@ -240,7 +240,7 @@
                     <label class="col-lg control-label"></label>
                     <div class="col-sm-9">
                         <input type="submit" class="btn btn-primary" value="保存">
-                        <a class="btn btn-default" href="{:webUrl('admin/sysset/host')}">返回列表</a>
+                        <a class="btn btn-default" href="{:webUrl('admin/account/host')}">返回列表</a>
                     </div>
                 </div>
 

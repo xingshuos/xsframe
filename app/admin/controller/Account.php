@@ -385,4 +385,136 @@ class Account extends Base
             }
         }
     }
+
+    // 域名设置
+    public function host()
+    {
+        $keyword = $this->params['keyword'] ?? '';
+        $uniacid = $this->params['uniacid'] ?? 0;
+
+        $condition = [];
+
+        if (!empty($uniacid)) {
+            $condition['uniacid'] = $uniacid;
+        }
+
+        if (!empty($keyword)) {
+            $condition[''] = Db::raw(" `host_url` like '%" . trim($keyword) . "%' ");
+        }
+
+        $list = Db::name("sys_account_host")->where($condition)->order('displayorder desc,id asc')->page($this->pIndex, $this->pSize)->select()->toArray();
+        $total = Db::name("sys_account_host")->where($condition)->count();
+        $pager = pagination2($total, $this->pIndex, $this->pSize);
+
+        $accountList = Db::name('sys_account')->where(['deleted' => 0])->order("displayorder desc")->select()->toArray();
+
+        foreach ($list as &$item) {
+            $item['account'] = Db::name('sys_account')->where(['uniacid' => $item['uniacid']])->find();
+            $item['module'] = Db::name('sys_modules')->where(['identifie' => $item['default_module']])->find();
+        }
+        unset($item);
+
+        $result = [
+            'list'        => $list,
+            'accountList' => $accountList,
+            'pager'       => $pager,
+            'total'       => $total,
+        ];
+
+        return $this->template('host', $result);
+    }
+
+    // 编辑
+    public function hostEdit()
+    {
+        $id = $this->params['id'];
+
+        if ($this->request->isPost()) {
+
+            $data = [
+                "uniacid"        => trim($this->params["uniacid"]),
+                "host_url"       => trim($this->params["host_url"]),
+                "default_module" => trim($this->params["default_module"] ?? ''),
+                "default_url"    => trim($this->params["default_url"]),
+                "displayorder"   => trim($this->params["displayorder"]),
+            ];
+
+            if (empty($data['default_module'])) {
+                $this->error("请选择默认应用");
+            }
+
+            if (!empty($id)) {
+                Db::name("sys_account_host")->where(["id" => $id])->update($data);
+            } else {
+                Db::name("sys_account_host")->insert($data);
+            }
+
+            $accountHost = new AccountHostWrapper();
+            $accountHost->reloadAccountHost();
+
+            $this->success(["url" => webUrl("admin/account/host")]);
+        }
+
+        $item = Db::name("sys_account_host")->where(['id' => $id])->find();
+
+        $accountList = Db::name('sys_account')->where(['deleted' => 0])->order("displayorder desc")->select()->toArray();
+
+        $modules = Db::name('sys_modules')->where(['identifie' => $item['default_module']])->select()->toArray();
+
+        foreach ($modules as &$module) {
+            $module['logo'] = !empty($module['logo']) ? tomedia($module['logo']) : $this->siteRoot . "/app/{$module['identifie']}/icon.png";
+        }
+
+        return $this->template('host', ['item' => $item, 'accountList' => $accountList, 'modules' => $modules]);
+    }
+
+    // public function hostDelete()
+    // {
+    //     $id = intval($this->params["id"]);
+    //
+    //     if (empty($id)) {
+    //         $id = $this->params["ids"];
+    //     }
+    //
+    //     if (empty($id)) {
+    //         $this->error("参数错误");
+    //     }
+    //
+    //     $items = Db::name('sys_account_host')->where(['id' => $id])->select();
+    //     foreach ($items as $item) {
+    //         Db::name('sys_account_host')->where(["id" => $item['id']])->delete();
+    //     }
+    //
+    //     $accountHost = new AccountHostWrapper();
+    //     $accountHost->reloadAccountHost();
+    //
+    //     $this->success(["url" => referer()]);
+    // }
+
+    // 更新域名
+    public function hostChange()
+    {
+        $id = intval($this->params["id"]);
+
+        if (empty($id)) {
+            $id = $this->params["ids"];
+        }
+
+        if (empty($id)) {
+            $this->error("参数错误");
+        }
+
+        $type = trim($this->params["type"]);
+        $value = trim($this->params["value"]);
+
+        $items = Db::name("sys_account_host")->where(['id' => $id])->select();
+        foreach ($items as $item) {
+            Db::name("sys_account_host")->where("id", '=', $item['id'])->update([$type => $value]);
+        }
+
+        $accountHost = new AccountHostWrapper();
+        $accountHost->reloadAccountHost();
+
+        $this->success();
+    }
 }

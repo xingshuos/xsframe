@@ -15,6 +15,16 @@ return [
         'title'    => '商户',
         'subtitle' => '商户管理',
         'icon'     => 'icon-archive',
+        'items'    => [
+            [
+                'title' => '商户管理',
+                'route' => 'list',
+            ],
+            [
+                'title' => '独立域名',
+                'route' => 'host',
+            ],
+        ]
     ],
     'app'     => [
         'title'    => '应用',
@@ -42,12 +52,12 @@ return [
         'icon'     => 'icon-desktop',
         'items'    => [
             [
-                'title' => '站点设置',
+                'title' => '基础配置',
                 'route' => 'site',
             ],
             [
-                'title' => '域名设置',
-                'route' => 'host',
+                'title' => '通信设置',
+                'route' => 'communication',
             ],
             [
                 'title' => '附件设置',

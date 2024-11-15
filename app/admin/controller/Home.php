@@ -34,6 +34,8 @@ class Home extends Base
             'moduleTotal'     => $moduleTotal,
             'userTotal'       => $userTotal,
             'userModuleTotal' => $userModuleTotal,
+            'version'         => IMS_VERSION,
+            'versionTime'     => IMS_VERSION_TIME,
         ];
         return $this->template('welcome', $result);
     }

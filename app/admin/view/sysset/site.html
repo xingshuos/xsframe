@@ -12,79 +12,59 @@
 
     <form action="" method="post" class="form-horizontal form-validate" enctype="multipart/form-data">
 
-        <div class="form-group">
-            <label class="col-lg control-label">站点信息</label>
-            <div class="col-sm-9 col-xs-12">
-                <div class="input-group">
-                    <span class="input-group-addon">通信密钥</span>
-                    <input type="text" name="data[token]" class="form-control" value="{$websiteSets['token']}" placeholder="请输入通信密钥" {if !empty($websiteSets['token'])}readonly ondblclick="this.readOnly=false" οnchange="this.readOnly=true" data-toggle="tooltip" data-placement="top" data-original-title="双击修改"{/if}/>
-                    <span class="input-group-addon btn btn-primary js-clip" data-url="{$websiteSets['token']}">复制</span>
-                    <span class="input-group-addon">站点ID</span>
-                    <input type="text" name="data[key]" class="form-control" value="{$websiteSets['key']}" placeholder="请输入站点ID" data-rule-required='false' {if !empty($websiteSets['key'])}readonly ondblclick="this.readOnly=false" οnchange="this.readOnly=true" data-toggle="tooltip" data-placement="top" data-original-title="双击修改"{/if}/>
-                    <span class="input-group-addon btn btn-primary js-clip" data-url="{$websiteSets['key']}">复制</span>
-                </div>
-                <div class="help-block">请查看您的站点ID和通信密钥, 需要保证与云商城平台记录的值一致, 否则不能正常使用云平台的各项服务. </div>
-            </div>
-        </div>
+        <!-- <div class="form-group"> -->
+        <!--     <label class="col-lg control-label">站点信息</label> -->
+        <!--     <div class="col-sm-9 col-xs-12"> -->
+        <!--         <div class="input-group"> -->
+        <!--             <span class="input-group-addon">通信密钥</span> -->
+        <!--             <input type="text" name="data[token]" class="form-control" value="{$websiteSets['token']}" placeholder="请输入通信密钥" {if !empty($websiteSets['token'])}readonly ondblclick="this.readOnly=false" οnchange="this.readOnly=true" data-toggle="tooltip" data-placement="top" data-original-title="双击修改"{/if}/> -->
+        <!--             <span class="input-group-addon btn btn-primary js-clip" data-url="{$websiteSets['token']}">复制</span> -->
+        <!--             <span class="input-group-addon">站点ID</span> -->
+        <!--             <input type="text" name="data[key]" class="form-control" value="{$websiteSets['key']}" placeholder="请输入站点ID" data-rule-required='false' {if !empty($websiteSets['key'])}readonly ondblclick="this.readOnly=false" οnchange="this.readOnly=true" data-toggle="tooltip" data-placement="top" data-original-title="双击修改"{/if}/> -->
+        <!--             <span class="input-group-addon btn btn-primary js-clip" data-url="{$websiteSets['key']}">复制</span> -->
+        <!--         </div> -->
+        <!--         <div class="help-block">请查看您的站点ID和通信密钥, 需要保证与云商城平台记录的值一致, 否则不能正常使用云平台的各项服务. </div> -->
+        <!--     </div> -->
+        <!-- </div> -->
 
-        <div class="form-group">
-            <label class="col-lg control-label">系统版本</label>
-            <div class="col-sm-9 col-xs-12">
-                <div class="form-control-static">v{$version}（{$versionTime}）</div>
-            </div>
-        </div>
+        <!-- <div class="form-group"> -->
+        <!--     <label class="col-lg control-label">系统版本</label> -->
+        <!--     <div class="col-sm-9 col-xs-12"> -->
+        <!--         <div class="form-control-static">v{$version}（{$versionTime}）</div> -->
+        <!--     </div> -->
+        <!-- </div> -->
 
-        <div class="form-group">
-            <label class="col-lg control-label">网站状态</label>
-            <div class="col-sm-9 col-xs-12">
-                <label class='radio-inline'><input type='radio' name='data[status]' value='1' {if $websiteSets['status']==1}checked{/if} /> 开启</label>
-                <label class='radio-inline'><input type='radio' name='data[status]' value='0' {if $websiteSets['status']==0}checked{/if} /> 关闭</label>
-            </div>
-        </div>
+        <!-- <div class="form-group"> -->
+        <!--     <label class="col-lg control-label">网站状态</label> -->
+        <!--     <div class="col-sm-9 col-xs-12"> -->
+        <!--         <label class='radio-inline'><input type='radio' name='data[status]' value='1' {if $websiteSets['status']==1}checked{/if} /> 开启</label> -->
+        <!--         <label class='radio-inline'><input type='radio' name='data[status]' value='0' {if $websiteSets['status']==0}checked{/if} /> 关闭</label> -->
+        <!--     </div> -->
+        <!-- </div> -->
 
-        <div class="form-group">
-            <label class="col-lg control-label">管理入口</label>
-            <div class="col-sm-9 col-xs-12">
-                <p class='form-control-static'><a href='javascript:;' class="js-clip" title='点击复制连接' data-url="{$siteRoot}/admin/index">{$siteRoot}/admin/login</a></p>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="col-lg control-label">默认商户</label>
-            <div class="col-sm-9 col-xs-12">
-                <select name="data[uniacid]" class="form-control" onchange="changeUniacid(this)">
-                    <option value="0" {if empty($websiteSets['uniacid'])}selected{/if}>未选择</option>
-                    {foreach $list as $key=>$row }
-                    <option value="{$row['uniacid']}" {if $row['uniacid'] == $websiteSets['uniacid']}selected{/if}>{$row['name']}</option>
-                    {/foreach}
-                </select>
-                <span class="help-block text-primary">解释：主域名没有绑定单独的商户时，且默认应用不是admin管理后台 此时会显示默认商户的应用数据。</span>
-            </div>
-        </div>
+        <!-- <div class="form-group"> -->
+        <!--     <label class="col-lg control-label">管理入口</label> -->
+        <!--     <div class="col-sm-9 col-xs-12"> -->
+        <!--         <p class='form-control-static'><a href='javascript:;' class="js-clip" title='点击复制连接' data-url="{$siteRoot}/admin/index">{$siteRoot}/admin/login</a></p> -->
+        <!--     </div> -->
+        <!-- </div> -->
 
         <!--<div class="form-group-title">网站基础设置</div>-->
 
         <div id="default-website-sets"><!--style="{if !empty($websiteSets['uniacid'])}display: none;{/if}"-->
-            <div class="form-group">
-                <label class="col-lg control-label">LOGO</label>
-                <div class="col-sm-9 col-xs-12">
-                    {:tpl_form_field_image('data[logo]', $websiteSets['logo'])}
-                    <span class='help-block'>建议尺寸:300px*300px</span>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-lg control-label">左侧宣传图</label>
-                <div class="col-sm-9 col-xs-12">
-                    {:tpl_form_field_image('data[poster]', $websiteSets['poster'])}
-                    <span class='help-block'>建议尺寸:500px*482px</span>
-                </div>
-            </div>
 
             <div class="form-group">
                 <label class="col-lg control-label">后台名称</label>
                 <div class="col-sm-9 col-xs-12">
                     <input type="text" name="data[name]" class="form-control" value="{$websiteSets['name']}" placeholder="XX登录后台"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-lg control-label">LOGO</label>
+                <div class="col-sm-9 col-xs-12">
+                    {:tpl_form_field_image('data[logo]', $websiteSets['logo'])}
+                    <span class='help-block'>建议尺寸:300px*300px</span>
                 </div>
             </div>
 
@@ -103,12 +83,34 @@
             </div>
 
             <div class="form-group">
+                <label class="col-lg control-label">登录页宣传图</label>
+                <div class="col-sm-9 col-xs-12">
+                    {:tpl_form_field_image('data[poster]', $websiteSets['poster'])}
+                    <span class='help-block'>建议尺寸:500px*482px</span>
+                </div>
+            </div>
+
+            <div class="form-group">
                 <label class="col-lg control-label">底部版权</label>
                 <div class="col-sm-9">
                     {:tpl_ueditor('data_copyright',$websiteSets['copyright'])}
                     <span class="help-block">例如:X ICP备2021010088号-1丨Copyright © 2020 {$_SERVER['HTTP_HOST']}.All Rights Reserved.丨X 公网安备 31010902003223号丨XX科技有限公司</span>
                 </div>
             </div>
+
+            <div class="form-group">
+                <label class="col-lg control-label">默认商户</label>
+                <div class="col-sm-9 col-xs-12">
+                    <select name="data[uniacid]" class="form-control" onchange="changeUniacid(this)">
+                        <option value="0" {if empty($websiteSets['uniacid'])}selected{/if}>未选择</option>
+                        {foreach $list as $key=>$row }
+                        <option value="{$row['uniacid']}" {if $row['uniacid'] == $websiteSets['uniacid']}selected{/if}>{$row['name']}</option>
+                        {/foreach}
+                    </select>
+                    <span class="help-block text-primary">解释：主域名没有绑定单独的商户时，且默认应用不是admin管理后台 此时会显示默认商户的应用数据。</span>
+                </div>
+            </div>
+
         </div>
 
         <div class="form-group">
