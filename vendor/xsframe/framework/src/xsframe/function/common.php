@@ -121,7 +121,7 @@ if (!function_exists('show_json')) {
     {
         $ret = [
             'status' => $status,
-            'result' => $status == 1 ? ['url' => referer()] : []
+            'result' => $status == 1 ? ['url' => (string)referer()] : []
         ];
         if (!is_array($return)) {
             if ($return) {
@@ -135,7 +135,7 @@ if (!function_exists('show_json')) {
         if (isset($return['url'])) {
             $ret['result']['url'] = (string)$return['url'];
         } else if ($status == 1) {
-            $ret['result']['url'] = referer();
+            $ret['result']['url'] = (string)referer();
         }
         die(json_encode($ret));
     }
