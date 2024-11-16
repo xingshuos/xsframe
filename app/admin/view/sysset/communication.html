@@ -10,7 +10,20 @@
 
 <div class="page-content">
 
+    <div class="alert alert-primary">
+        <p>系统通信介绍</p>
+        <p>1.为什么要通讯连接？授权后系统框架可以跟随官方版本在线升级，所购买的应用也能在后台直接升级</p>
+        <p>2.如何授权当前系统环境？<a href="" class="text text-primary" target="_blank">点击查看帮助文档</a></p>
+    </div>
+
     <form action="" method="post" class="form-horizontal form-validate" enctype="multipart/form-data">
+
+        <div class="form-group">
+            <label class="col-lg control-label">当前站点URL</label>
+            <div class="col-sm-9 col-xs-12">
+                <div class="form-control-static">{$siteRoot}</div>
+            </div>
+        </div>
 
         <div class="form-group">
             <label class="col-lg control-label">AppID</label>
@@ -23,6 +36,16 @@
             <label class="col-lg control-label">通信秘钥</label>
             <div class="col-sm-9 col-xs-12">
                 <input type="text" name="data[key]" class="form-control" value="{$websiteSets['key']}" placeholder="请输入授权域名通信秘钥" data-rule-required='false' {if !empty($websiteSets['key'])}readonly ondblclick="this.readOnly=false" οnchange="this.readOnly=true" data-toggle="tooltip" data-placement="top" data-original-title="双击修改"{/if}/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-lg control-label">通信状态</label>
+            <div class="col-sm-9 col-xs-12">
+                <div class="form-control-static">
+                    <!--<span class="text text-danger">通信失败，请设置正确的AppID或通信秘钥</span>-->
+                    <span class="text text-success">通信成功</span>
+                </div>
             </div>
         </div>
 

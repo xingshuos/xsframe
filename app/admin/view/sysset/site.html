@@ -83,6 +83,19 @@
             </div>
 
             <div class="form-group">
+                <label class="col-lg control-label">默认商户</label>
+                <div class="col-sm-9 col-xs-12">
+                    <select name="data[uniacid]" class="form-control" onchange="changeUniacid(this)">
+                        <option value="0" {if empty($websiteSets['uniacid'])}selected{/if}>未选择</option>
+                        {foreach $list as $key=>$row }
+                        <option value="{$row['uniacid']}" {if $row['uniacid'] == $websiteSets['uniacid']}selected{/if}>{$row['name']}</option>
+                        {/foreach}
+                    </select>
+                    <span class="help-block text-primary">解释：主域名没有绑定单独的商户时，且默认应用不是admin管理后台 此时会显示默认商户的应用数据。</span>
+                </div>
+            </div>
+
+            <div class="form-group">
                 <label class="col-lg control-label">登录页宣传图</label>
                 <div class="col-sm-9 col-xs-12">
                     {:tpl_form_field_image('data[poster]', $websiteSets['poster'])}
@@ -95,19 +108,6 @@
                 <div class="col-sm-9">
                     {:tpl_ueditor('data_copyright',$websiteSets['copyright'])}
                     <span class="help-block">例如:X ICP备2021010088号-1丨Copyright © 2020 {$_SERVER['HTTP_HOST']}.All Rights Reserved.丨X 公网安备 31010902003223号丨XX科技有限公司</span>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-lg control-label">默认商户</label>
-                <div class="col-sm-9 col-xs-12">
-                    <select name="data[uniacid]" class="form-control" onchange="changeUniacid(this)">
-                        <option value="0" {if empty($websiteSets['uniacid'])}selected{/if}>未选择</option>
-                        {foreach $list as $key=>$row }
-                        <option value="{$row['uniacid']}" {if $row['uniacid'] == $websiteSets['uniacid']}selected{/if}>{$row['name']}</option>
-                        {/foreach}
-                    </select>
-                    <span class="help-block text-primary">解释：主域名没有绑定单独的商户时，且默认应用不是admin管理后台 此时会显示默认商户的应用数据。</span>
                 </div>
             </div>
 
