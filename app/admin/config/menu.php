@@ -31,20 +31,7 @@ return [
             [
                 'title' => '系统升级',
                 'route' => 'upgrade',
-            ],
-            [
-                'title' => '常用工具',
-                'items' => [
-                    [
-                        'title' => '系统图标',
-                        'route' => '/icon',
-                    ],
-                    [
-                        'title' => '检测BOM',
-                        'route' => '/bom',
-                    ],
-                ]
-            ],
+            ]
         ]
     ],
     'app'     => [
@@ -54,23 +41,23 @@ return [
         'items'    => [
             [
                 'title' => '未安装应用',
-                'route' => '',
+                'route' => 'not_installed',
             ],
             [
                 'title' => '已安装应用',
-                'route' => '',
+                'route' => 'installed',
             ],
             [
                 'title' => '已停用的应用',
-                'route' => '',
+                'route' => 'recycle',
             ],
             [
                 'title' => '回收站',
-                'route' => '',
+                'route' => 'delete',
             ],
             [
                 'title' => '推荐的应用',
-                'route' => '',
+                'route' => 'recommend',
             ],
         ]
     ],
@@ -90,9 +77,9 @@ return [
         ]
     ],
     'users'   => [
-        'title'    => '管理员',
+        'title'    => '用户',
         'subtitle' => '管理员管理',
-        'icon'     => 'icon-user',
+        'icon'     => 'icon-user-secret',
         'items'    => [
             [
                 'title' => '账号设置',
@@ -107,42 +94,42 @@ return [
     'ops'     => [
         'title'    => '运维',
         'subtitle' => '运维管理',
-        'icon'     => 'icon-user',
+        'icon'     => 'icon-gears',
         'items'    => [
             [
-                'title' => '系统运行情况',
-                'route' => '',
+                'title' => '运行情况',
+                'route' => 'overview',
             ],
             [
                 'title' => '缓存处理',
-                'route' => '',
+                'route' => 'optimize',
             ],
             [
                 'title' => '操作日志',
-                'route' => '',
+                'route' => 'oplog',
             ],
             [
                 'title' => '检查BOM',
-                'route' => '',
+                'route' => 'bom',
             ],
             [
                 'title' => '数据库优化',
-                'route' => '',
+                'route' => 'database',
             ],
         ]
     ],
     'college' => [
         'title'    => '学院',
         'subtitle' => '星数学院',
-        'icon'     => 'icon-user',
+        'icon'     => 'icon-book',
         'items'    => [
             [
-                'title' => '发布文章',
-                'route' => '',
+                'title' => '文章管理',
+                'route' => 'article',
             ],
             [
                 'title' => '系统图标',
-                'route' => '',
+                'route' => 'icon',
             ],
         ]
     ],

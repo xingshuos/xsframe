@@ -37,14 +37,14 @@
 
 <div class="page-content">
 
-    <div class="nav-tabs-box">
-        <ul class="nav nav-tabs">
-            <li {if empty($do) || $do == 'installed'}class="active"{/if}><a href="{:url('admin/app/list',['do' => 'installed'])}">已安装应用 ({$total1})</a></li>
-            <li {if $do == 'not_installed'}class="active"{/if}><a href="{:url('admin/app/list',['do' => 'not_installed'])}">未安装应用 ({$total2})</a></li>
-            <li {if $do == 'recycle'}class="active"{/if}><a href="{:url('admin/app/list',['do' => 'recycle'])}">已停用应用 ({$total3})</a></li>
-            <li {if $do == 'delete'}class="active"{/if}><a href="{:url('admin/app/list',['do' => 'delete'])}">回收站 ({$total4})</a></li>
-        </ul>
-    </div>
+<!--    <div class="nav-tabs-box">-->
+<!--        <ul class="nav nav-tabs">-->
+<!--            <li {if empty($do) || $do == 'installed'}class="active"{/if}><a href="{:url('admin/app/list',['do' => 'installed'])}">已安装应用 ({$total1})</a></li>-->
+<!--            <li {if $do == 'not_installed'}class="active"{/if}><a href="{:url('admin/app/list',['do' => 'not_installed'])}">未安装应用 ({$total2})</a></li>-->
+<!--            <li {if $do == 'recycle'}class="active"{/if}><a href="{:url('admin/app/list',['do' => 'recycle'])}">已停用应用 ({$total3})</a></li>-->
+<!--            <li {if $do == 'delete'}class="active"{/if}><a href="{:url('admin/app/list',['do' => 'delete'])}">回收站 ({$total4})</a></li>-->
+<!--        </ul>-->
+<!--    </div>-->
 
     <form action="" method="get" class="form-horizontal table-search" role="form">
         <div class="page-toolbar">
@@ -212,7 +212,7 @@
                             {if $do == 'installed' || empty($do)}
                                 <a href="{:webUrl('admin/app/uninstall', array('identifie' => $row['identifie'],'id' => $row['id']))}" data-toggle="ajaxPost" data-confirm="卸载后将同时删除该应用所有数据,确认要卸载 “{$row['name']}” 么 ?" class="btn btn-op btn-operation">
                                     <span data-toggle="tooltip" data-placement="top" data-original-title="卸载">
-                                        <i class="icon icon-download"></i>
+                                        <i class="icon icon-trash"></i>
                                     </span>
                                 </a>
                             {/if}
@@ -220,14 +220,14 @@
                                 <a href="{:webUrl('admin/app/upgrade', array('identifie' => $row['identifie'],'id' => $row['id'],'is_cloud' => $row['is_cloud']))}" data-toggle="ajaxPost" data-confirm="升级前请备份好您的应用文件,确认要升级 “{$row['name']}” 到最新版本么 ?" class="btn btn-primary btn-op btn-operation">升级</a>
                             {/if}
                             <a href="{:webUrl('admin/app/edit', array('id' => $row['id']))}" class="btn btn-op btn-operation">
-                                <span data-toggle="tooltip" data-placement="top" data-original-title="修改">
+                                <span data-toggle="tooltip" data-placement="top" data-original-title="编辑">
                                     <i class='icon icon icon-edit'></i>
                                 </span>
                             </a>
                             {if ( $do == 'installed' || empty($do) ) && !$row['new_version']}
                                 <a href="{:webUrl('admin/app/upgrade', array('identifie' => $row['identifie'],'id' => $row['id'],'is_cloud' => $row['is_cloud']))}" data-toggle="ajaxPost" data-confirm="已经是最新版本，确认要再次更新 “{$row['name']}” 到最新版本么，更新前请做好备份 ?" class="btn btn-default btn-op btn-operation">
-                                    <span data-toggle="tooltip" data-placement="top" data-original-title="强制更新">
-                                       <i class='icon icon-refresh'></i>
+                                    <span data-toggle="tooltip" data-placement="top" data-original-title="强制升级">
+                                       <i class='icon icon-cloud-upload'></i>
                                     </span>
                                 </a>
                             {/if}

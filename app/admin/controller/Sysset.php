@@ -133,12 +133,6 @@ class Sysset extends Base
         return $this->template('communication', $result);
     }
 
-    // 图标
-    public function icon()
-    {
-        return $this->template('icon');
-    }
-
     // 表单
     public function form()
     {
@@ -159,39 +153,6 @@ class Sysset extends Base
         return $this->template('static');
     }
 
-    // 检测bom
-    public function bom()
-    {
-        $bomTree = Cache::get('bomTree');
-
-        if ($this->request->isPost()) {
-            $path = $this->iaRoot;
-            $trees = FileUtil::fileTree($path);
-            $bomTree = [];
-            foreach ($trees as $tree) {
-                $tree = str_replace($path, '', $tree);
-                $tree = str_replace('\\', '/', $tree);
-                if (strexists($tree, '.php')) {
-                    $fname = $path . $tree;
-                    $fp = fopen($fname, 'r');
-                    if (!empty($fp)) {
-                        $bom = fread($fp, 3);
-                        fclose($fp);
-                        if ($bom == "\xEF\xBB\xBF") {
-                            $bomTree[] = $tree;
-                        }
-                    }
-                }
-            }
-            Cache::set('bomTree', $bomTree);
-            show_json(1, ['url' => url('sysset/bom')]);
-        }
-
-        $result = [
-            'bomTree' => $bomTree
-        ];
-        return $this->template('bom', $result);
-    }
 
     // 监测更新
     public function checkVersion()

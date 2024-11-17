@@ -28,9 +28,36 @@ class App extends Base
         return redirect('/admin/app/list');
     }
 
-    public function list()
+    public function installed()
     {
-        $do = $this->params['do'] ?? '';
+        return $this->list('installed');
+    }
+
+    public function not_installed()
+    {
+        return $this->list('not_installed');
+    }
+
+    public function recycle()
+    {
+        return $this->list('recycle');
+    }
+
+    public function delete()
+    {
+        return $this->list('delete');
+    }
+
+    public function recommend()
+    {
+        return $this->template('recommend');
+    }
+
+    public function list($do = null)
+    {
+        if (empty($do)) {
+            $do = $this->params['do'] ?? '';
+        }
         $type = $this->params['type'] ?? '';
         $nameInitial = $this->params['letter'] ?? '';
 
