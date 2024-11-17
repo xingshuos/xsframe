@@ -124,8 +124,12 @@ return [
         'icon'     => 'icon-book',
         'items'    => [
             [
-                'title' => '文章管理',
+                'title' => '文章列表',
                 'route' => 'article',
+            ],
+            [
+                'title' => '文章分类',
+                'route' => 'category',
             ],
             [
                 'title' => '系统图标',

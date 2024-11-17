@@ -16,10 +16,16 @@ use xsframe\base\AdminBaseController;
 
 class College extends AdminBaseController
 {
-    // 系统图标
+    // 文章列表
     public function article()
     {
         return $this->template('article');
+    }
+
+    // 文章分类
+    public function category()
+    {
+        return $this->template('category');
     }
 
     // 系统图标
