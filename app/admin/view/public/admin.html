@@ -42,7 +42,7 @@
                 {if $isSystem}
                     {$userInfo['username']}
                 {else}
-                    {$account['name']}
+                    {$account['name']?:'星数引擎'}（{$userInfo['username']}）
                 {/if}
                 <span></span>
             </a>

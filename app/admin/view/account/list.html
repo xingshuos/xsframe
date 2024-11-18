@@ -75,12 +75,21 @@
                     {$row['uniacid']}
                 </td>
                 <td style="overflow: visible">
-                    <a data-toggle='ajaxHref' href="{:webUrl('account/manager', array('id' => $row['uniacid']))}" target="_blank" rel="pop" style="display: flex" data-content="">
-                        <img class="img-40" src="{:tomedia($row['logo'])}" style='border-radius:50%;border:1px solid #efefef;' onerror="this.src='__ADMIN_IMG__/noface.png'"/>
-                        <span data-toggle="tooltip" data-placement="top" data-original-title="{$row['name']}" style="display: flex;flex-direction: column;justify-content: center;align-items: flex-start;padding-left: 5px">
-                            <span class="nickname"> {$row['name']}</span>
-                        </span>
-                    </a>
+                    {if $isManager}
+                        <a data-toggle='ajaxHref' href="{:webUrl('account/manager', array('id' => $row['uniacid']))}" target="_blank" rel="pop" style="display: flex" data-content="">
+                            <img class="img-40" src="{:tomedia($row['logo'])}" style='border-radius:50%;border:1px solid #efefef;' onerror="this.src='__ADMIN_IMG__/noface.png'"/>
+                            <span data-toggle="tooltip" data-placement="top" data-original-title="{$row['name']}" style="display: flex;flex-direction: column;justify-content: center;align-items: flex-start;padding-left: 5px">
+                                <span> {$row['name']}</span>
+                            </span>
+                        </a>
+                    {else}
+                        <a style="display: flex">
+                            <img class="img-40" src="{:tomedia($row['logo'])}" style='border-radius:50%;border:1px solid #efefef;' onerror="this.src='__ADMIN_IMG__/noface.png'"/>
+                            <span data-toggle="tooltip" data-placement="top" data-original-title="{$row['name']}" style="display: flex;flex-direction: column;justify-content: center;align-items: flex-start;padding-left: 5px">
+                                <span> {$row['name']}</span>
+                            </span>
+                        </a>
+                    {/if}
                 </td>
                 <td>
                     {$row['memberTotal']}人
