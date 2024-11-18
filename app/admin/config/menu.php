@@ -124,12 +124,32 @@ return [
         'icon'     => 'icon-book',
         'items'    => [
             [
-                'title' => '文章列表',
-                'route' => 'article',
+                'title' => '文档教程',
+                'route' => 'document',
             ],
             [
-                'title' => '文章分类',
-                'route' => 'category',
+                'title' => '应用开发',
+                'route' => 'develop',
+            ],
+            [
+                'title' => '使用反馈',
+                'route' => 'feedback',
+            ],
+            [
+                'title' => '优化建议',
+                'route' => 'optimize',
+            ],
+            [
+                'title' => '开源交流',
+                'route' => 'exchange',
+            ],
+            [
+                'title' => '创客学堂',
+                'route' => 'affiliate',
+            ],
+            [
+                'title' => '应用玩法',
+                'route' => 'guide',
             ],
             [
                 'title' => '系统图标',

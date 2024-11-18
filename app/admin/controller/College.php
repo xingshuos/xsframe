@@ -16,16 +16,46 @@ use xsframe\base\AdminBaseController;
 
 class College extends AdminBaseController
 {
-    // 文章列表
-    public function article()
+    // 文档教程
+    public function document(): \think\response\View
     {
-        return $this->template('article');
+        return $this->template('document');
     }
 
-    // 文章分类
-    public function category()
+    // 应用开发
+    public function develop(): \think\response\View
     {
-        return $this->template('category');
+        return $this->template('develop');
+    }
+
+    // 使用反馈
+    public function feedback(): \think\response\View
+    {
+        return $this->template('feedback');
+    }
+
+    // 优化建议
+    public function optimize(): \think\response\View
+    {
+        return $this->template('optimize');
+    }
+
+    // 开源交流
+    public function exchange(): \think\response\View
+    {
+        return $this->template('exchange');
+    }
+
+    // 创客学堂
+    public function affiliate(): \think\response\View
+    {
+        return $this->template('affiliate');
+    }
+
+    // 应用玩法
+    public function guide(): \think\response\View
+    {
+        return $this->template('guide');
     }
 
     // 系统图标
