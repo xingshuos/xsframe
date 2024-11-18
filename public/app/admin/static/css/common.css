@@ -1357,8 +1357,8 @@ select, input:focus, input {
 }
 
 .multi-img-details .multi-item {
-    max-height: 100px;
-    max-width: 100px;
+    /*max-height: 100px;*/
+    /*max-width: 100px;*/
     position: relative;
     float: left;
     margin-right: 18px;
@@ -2952,8 +2952,8 @@ a.form-control-static {
 }
 
 .multi-img-details .multi-item {
-    max-height: 150px;
-    max-width: 150px;
+    height: 150px;
+    width: 150px;
     position: relative;
     float: left;
     margin-right: 18px;
@@ -2961,12 +2961,18 @@ a.form-control-static {
 
 .multi-img-details .multi-item img {
     width: 150px;
+    height: 150px;
+    object-fit: cover;
 }
 
 .multi-img-details .multi-item em {
     position: absolute;
     top: 0;
     right: 4px;
+}
+.multi-img-details .multi-item em.close{
+    color: #ff0808;
+    opacity: .4;
 }
 
 .modal-dialog .avatar-browser {
