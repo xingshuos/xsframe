@@ -102,7 +102,7 @@ abstract class BaseController extends Controller
             $this->siteRoot = str_replace("http:", "https:", $this->siteRoot);
         }
 
-        if( empty($this->module) ){
+        if (empty($this->module)) {
             $this->module = app('http')->getName(); // 获取的是真实应用名称不是别名
         }
 
@@ -228,23 +228,13 @@ abstract class BaseController extends Controller
     // 获取项目uniacid
     protected function getUniacid($checkUrl = false)
     {
-        if( empty($this->uniacid) ){
+        if (empty($this->uniacid)) {
             $uniacid = $this->params['uniacid'] ?? ($_GET['i'] ?? ($_COOKIE['uniacid'] ?? 0));
             $this->module = empty($this->module) ? app('http')->getName() : $this->module;
 
             # 支付回调 start
-            $isWechatPay = !empty($this->params['attach']);
-            $isAliPay = !empty($this->params['body']) && !empty($this->params['sign_type']) && !empty($this->params['app_id']) && !empty($this->params['out_trade_no']);
-            if ($isWechatPay || $isAliPay) {
-                $attachArr = $this->params['attach'] ?? $this->params['body'];
-                $attachArr = explode(":", $attachArr);
-                $uniacid = $attachArr[1] ?? 0;
-            }
-            $isWxRefund = !empty($this->params['appid']) && !empty($this->params['mch_id']) && !empty($this->params['nonce_str']) && !empty($this->params['req_info']);
-            if ($isWxRefund) {
-                $uniacid = 1;
-            }
-            # end
+            $uniacid = $this->notifyBackUniacid($uniacid);
+            # 支付回调 end
 
             if (!$isWechatPay && !$isAliPay) {
 
@@ -325,6 +315,37 @@ abstract class BaseController extends Controller
         }
 
         return $this->uniacid;
+    }
+
+    // 验证是否是异步回调
+    private function notifyBackUniacid($uniacid)
+    {
+        // 判断是微信支付
+        $isWechatPay = !empty($this->params['attach']);
+
+        // 1.判断是支付宝回调
+        $isAliPay = !empty($this->params['body']) && !empty($this->params['sign_type']) && !empty($this->params['app_id']) && !empty($this->params['out_trade_no']);
+        if ($isWechatPay || $isAliPay) {
+            $attachArr = $this->params['attach'] ?? $this->params['body'];
+            $attachArr = explode(":", $attachArr);
+            $uniacid = $attachArr[1] ?? 0;
+        } else {
+            // 2.判断是微信退款
+            $isWxRefund = !empty($this->params['appid']) && !empty($this->params['mch_id']) && !empty($this->params['nonce_str']) && !empty($this->params['req_info']);
+            if ($isWxRefund) {
+                $uniacid = 1;
+            } else {
+                // 3.判断是收钱吧退款
+                $isSqbPay = !empty($this->params['client_tsn']) && !empty($this->params['payer_login']) && !empty($this->params['payer_uid']) && !empty($this->params['trade_no']);
+                if ($isSqbPay) {
+                    $attachArr = $this->params['reflect'];
+                    $attachArr = explode(":", $attachArr);
+                    $uniacid = $attachArr[1] ?? 0;
+                }
+            }
+        }
+
+        return $uniacid;
     }
 
     // 校验插件路由
