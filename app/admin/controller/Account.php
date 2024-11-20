@@ -50,7 +50,7 @@ class Account extends Base
 
         // 更新uniacid列表
         $this->reloadUniacidList();
-        $admin_account_manager = env('ADMIN_ACCOUNT_MANAGER', 'false');
+        $admin_account_manager = env('ADMIN_ACCOUNT_MANAGER', false);
 
         $vars = [
             'hostUrl'   => $this->request->host(),
