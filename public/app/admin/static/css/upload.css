@@ -805,8 +805,8 @@
 }
 
 .material-content .material-pager {
-    padding: 20px;
-    height: 79px
+    padding: 0;
+    height: 30px
 }
 
 .material-content .tab-content {
@@ -4792,7 +4792,7 @@ a:hover {
 
 #newUploaderImg.image .category li input, .uploader-modal.image .category li input {
     display: inline-block;
-    width: 90px
+    width: 160px;
 }
 
 #newUploaderImg.image .category li .edit, .uploader-modal.image .category li .edit {
@@ -4827,7 +4827,7 @@ a:hover {
 }
 
 #newUploaderImg.image .category, .uploader-modal.image .category {
-    width: 220px;
+    width: 250px;
     height: 344px;
     overflow-y: auto;
     border-right: 1px solid #e8e9eb;

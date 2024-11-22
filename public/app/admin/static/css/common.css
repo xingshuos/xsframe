@@ -2709,7 +2709,7 @@ a.form-control-static {
 /*}*/
 
 .modal.in .modal-dialog, .modal-dialog {
-    min-width: 1020px !important;
+    min-width: 1320px !important;
     position: absolute;
     left: 0;
     right: 0;
@@ -2718,7 +2718,7 @@ a.form-control-static {
 }
 
 .modal-dialog .modal-body {
-    padding: 30px;
+    padding: 10px 10px 45px 0;
     overflow-y: auto;
     overflow-x: hidden;
     max-height: 700px;

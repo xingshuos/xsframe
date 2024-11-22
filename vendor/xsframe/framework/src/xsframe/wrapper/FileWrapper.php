@@ -22,10 +22,9 @@ use think\Image;
 class FileWrapper
 {
     // 上传文件 TODO 目前是只上传到了本地 需要兼容 第三方 例如 OSS 七牛云等
-    public function fileUpload($uniacid, $module, $userId, $type = 'image', $folder = '', $originName = '', $filename = '', $ext = '', $compress = false)
+    public function fileUpload($uniacid, $module, $userId, $type = 'image', $folder = '', $originName = '', $filename = '', $ext = '', $compress = false, $groupId = 0)
     {
         $clientName = ($_GET['client'] ?? $_POST['client']) ?? 'web';
-        $groupId = 0;
         $attachmentPath = IA_ROOT . "/public/attachment/";
         $harmType = ['asp', 'php', 'jsp', 'js', 'css', 'php3', 'php4', 'php5', 'ashx', 'aspx', 'exe', 'cgi'];
 
@@ -65,7 +64,6 @@ class FileWrapper
         ];
 
         $this->addFileLog($uniacid, $userId, $result['name'], $result['fileurl'], $result['type'], $result['filesize'], $module, $groupId, $clientName);
-
 
         return $result;
     }

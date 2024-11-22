@@ -50,7 +50,7 @@ class File extends AdminBaseController
     {
         $type = $this->params['upload_type'];
         $type = in_array($type, ['image', 'audio', 'video']) ? $type : 'image';
-
+        $groupId = $this->params['group_id'] ?? 0;
         $attachmentPath = IA_ROOT . "/public/attachment/";
 
         $file = request()->file('file');
@@ -81,7 +81,7 @@ class File extends AdminBaseController
 
         $this->fileController = new FileWrapper();
 
-        $result = $this->fileController->fileUpload($this->curUniacid, $this->curModule, $this->userId, $type, $folder, $originName, $filename, $ext);
+        $result = $this->fileController->fileUpload($this->curUniacid, $this->curModule, $this->userId, $type, $folder, $originName, $filename, $ext, false, $groupId);
         if (ErrorUtil::isError($result)) {
             $result['message'] = $result['msg'];
             die(json_encode($result));
@@ -270,8 +270,9 @@ class File extends AdminBaseController
                 if ($isLocal) {
                     // 增加缩略图 zhaoxin 2021-12-14
                     $meterial['url'] = tomedia($meterial['fileurl'], null, $uniacid);
-                    // $meterial['small_url'] = tomedia($meterial['fileurl'], "?x-oss-process=image/resize,w_200,m_lfit", $uniacid);
-                    $meterial['small_url'] = tomedia($meterial['fileurl'], null, $uniacid);
+                    // TODO 根据附件配置 判断是否使用oss
+                    $meterial['small_url'] = tomedia($meterial['fileurl'], "?x-oss-process=image/resize,w_200,m_lfit", $uniacid);
+                    // $meterial['small_url'] = tomedia($meterial['fileurl'], null, $uniacid);
                     unset($meterial['uid']);
                 } else {
                     $meterial['attach'] = tomedia($meterial['fileurl'], null, $uniacid);
