@@ -134,8 +134,6 @@ abstract class AdminBaseController extends BaseController
             $this->moduleInfo = array_merge(!empty($this->moduleInfo) ? $this->moduleInfo : [], $this->moduleSetting['basic']);
         }
 
-        $menusList = MenuWrapper::getMenusList($this->adminSession['role'], $this->module, $this->controller, $this->action);
-
         $var = [];
         $var['module'] = $this->module;
         $var['controller'] = $this->controller;
@@ -150,10 +148,15 @@ abstract class AdminBaseController extends BaseController
         $var['moduleAttachUrl'] = $this->moduleAttachUrl;
         $var['token'] = RandomUtil::random(8);
         $var['isSystem'] = $this->isSystem;
-        $var['menusList'] = $menusList;
-        $var['pageTitle'] = empty($menusList['pageTitle']) ? $this->websiteSets['name'] : $menusList['pageTitle'];
         $var['userInfo'] = $this->adminSession;
         $var['websiteSets'] = $this->websiteSets;
+
+        $menusList = [];
+        if (!empty($this->adminSession) && is_array($this->adminSession)) {
+            $menusList = MenuWrapper::getMenusList($this->adminSession['role'], $this->module, $this->controller, $this->action);
+        }
+        $var['menusList'] = $menusList;
+        $var['pageTitle'] = empty($menusList['pageTitle']) ? $this->websiteSets['name'] : $menusList['pageTitle'];
 
         # 收缩菜单
         $var['foldNav'] = intval($_COOKIE["foldnav"] ?? 0);
@@ -164,7 +167,7 @@ abstract class AdminBaseController extends BaseController
         $var['isLogin'] = $this->isLogin;
 
         # 选中系统菜单
-        $var['selSystemNav'] = intval($_COOKIE[$this->module . "_systemnav"]);
+        $var['selSystemNav'] = intval($_COOKIE[$this->module . "_systemnav"] ?? 0);
         $var['selSystemNavUrl'] = $this->getSelSystemNavUrl();
 
         # 菜单通知点
