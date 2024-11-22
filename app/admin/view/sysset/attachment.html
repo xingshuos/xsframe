@@ -16,7 +16,7 @@
 
         <ul class="nav nav-tabs" id="myTab">
             <li {if empty($_GET['tab']) || $_GET['tab']=='basic'}class="active"{/if}><a href="#tab_basic">全局设置</a></li>
-            <li {if $_GET['tab']=='remote'}class="active"{/if}><a href="#tab_remote">远程附件</a></li>
+            <li {if !empty($_GET['tab']) && $_GET['tab']=='remote'}class="active"{/if}><a href="#tab_remote">远程附件</a></li>
         </ul>
 
         <div class="tab-content">
@@ -24,7 +24,7 @@
                 <div class="panel-body">{include file='sysset/tab/basic'}</div>
             </div>
 
-            <div class="tab-pane {if $_GET['tab']=='remote'}active{/if}" id="tab_remote">
+            <div class="tab-pane {if !empty($_GET['tab']) && $_GET['tab']=='remote'}active{/if}" id="tab_remote">
                 {include file="../app/admin/view/public/sets/system/tabs/attachment.html" /}
             </div>
         </div>

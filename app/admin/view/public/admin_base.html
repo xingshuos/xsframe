@@ -46,7 +46,7 @@
             'uniacid': '{$isSystem ? 0 :$uniacid}',
             'uid': '{$uid}',
             'siteroot': '{$siteRoot}',
-            'siteurl': '{$iaRoot}',
+            'siteurl': '{$iaRoot?$iaRoot:""}',
             'attachurl': '{$attachUrl}',
             'module': '{$module}',
             'client': '{$clientServiceName}',
@@ -492,7 +492,7 @@
         let $form = $('.table-search');
         let inputExists = $form.find('input[type="hidden"][name="i"]').length > 0;
         if (!inputExists) {
-            $form.prepend('<input type="hidden" name="i" value="' + encodeURIComponent("{$_GET['i']}") + '"/>');
+            $form.prepend('<input type="hidden" name="i" value="' + encodeURIComponent("{$_GET['i']??0}") + '"/>');
         }
         // end
     })

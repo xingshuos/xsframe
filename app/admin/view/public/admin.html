@@ -167,7 +167,7 @@
             {if !empty($menusList['submenu']['items'])}
                 {php}$isActive = true;{/php}
                 {foreach $menusList['submenu']['items'] as $subKey => $submenu}
-                    {if is_array($submenu['items'])}
+                    {if !empty($submenu['items']) && is_array($submenu['items'])}
                         <!-- 这里是3级分类 -->
                         {if !empty($submenu['items'])}
                         <div class="menu-header {if $submenu['active'] && $isActive}active data-active{/if}"><div class="menu-icon icon icon-caret-{if $submenu['active']}down{else}right{/if}"></div><span class="wb-nav-title {if in_array($submenu['route'],$twoMenuNoticePoint??[])}point{/if}">{$submenu['title']}</span></div>

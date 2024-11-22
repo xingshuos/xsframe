@@ -79,6 +79,7 @@ class Sysset extends Base
             'accountSettings'     => $accountSettings,
             'local_attachment'    => $localAttachment,
             'uniacid'             => 0,
+            'postUrl'             => strval(url('sysset/attachment')),
         ];
         return $this->template('attachment', $result);
     }

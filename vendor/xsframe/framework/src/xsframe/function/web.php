@@ -138,8 +138,10 @@ if (!function_exists('webUrl')) {
         $url = url($url, array_filter($params), $suffix, $full);
 
         // 负载均衡下域名协议会被强制转成http协议，所以这里需要转成https的方式 start
-        if (StringUtil::strexists($_SERVER['HTTP_REFERER'], 'https')) {
-            $url = str_replace("http:", "https:", $url);
+        if (!empty($_SERVER['HTTP_REFERER'])) {
+            if (StringUtil::strexists($_SERVER['HTTP_REFERER'], 'https')) {
+                $url = str_replace("http:", "https:", $url);
+            }
         }
         // end
         return str_replace(".html.html", ".html", is_object($url) ? strval($url) : $url);
@@ -347,7 +349,7 @@ if (!function_exists('getScriptName')) {
  */
 function tpl_form_field_image(string $name, $value = '', $options = [])
 {
-    $default = $options['default'] ?: '/app/admin/static/images/nopic.png';
+    $default = !empty($options['default']) ? $options['default'] : '/app/admin/static/images/nopic.png';
 
     $val = $default;
     if (!empty($value)) {
@@ -419,7 +421,7 @@ function tpl_form_field_image(string $name, $value = '', $options = [])
 
     $s .= '
 <div class="input-group ' . $options['class_extra'] . '">
-	<input type="text" name="' . $name . '" value="' . $value . '"' . ($options['extras']['text'] ? $options['extras']['text'] : '') . ' class="form-control" autocomplete="off">
+	<input type="text" name="' . $name . '" value="' . $value . '"' . (!empty($options['extras']['text']) ? $options['extras']['text'] : '') . ' class="form-control" autocomplete="off">
 	<span class="input-group-btn">
 		<button class="btn btn-primary" type="button" onclick="showImageDialog(this, \'' . base64_encode(iserializer($options)) . '\', ' . str_replace('"', '\'', json_encode($options)) . ');">选择图片</button>
 	</span>
@@ -450,7 +452,7 @@ function tpl_form_field_image(string $name, $value = '', $options = [])
     if (!empty($options['tabs']['browser']) || !empty($options['tabs']['upload'])) {
         $s .=
             '<div class="input-group ' . $options['class_extra'] . '" style="margin-top:.5em;">
-				<img src="' . $val . '" onerror="this.src=\'' . $default . '\'; this.title=\'图片未找到.\'" class="img-responsive img-thumbnail" ' . ($options['extras']['image'] ? $options['extras']['image'] : '') . ' width="150" />
+				<img src="' . $val . '" onerror="this.src=\'' . $default . '\'; this.title=\'图片未找到.\'" class="img-responsive img-thumbnail" ' . (!empty($options['extras']['image']) ? $options['extras']['image'] : '') . ' width="150" />
 				<em class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片" onclick="deleteImage(this)">×</em>
 			</div>';
     }
@@ -667,7 +669,7 @@ function tpl_ueditor($id, $value = '', $options = [])
     $height = $options['height'];
     $audioLimit = 30 * 1024; // 音频大小
     $imageLimit = 20 * 1024; // 图片大小
-    $destDir = $options['dest_dir'] ? $options['dest_dir'] : '';
+    $destDir = !empty($options['dest_dir']) ? $options['dest_dir'] : '';
     $allowUploadVideo = $options['allow_upload_video'] ? true : false;
 
     $s .= "
