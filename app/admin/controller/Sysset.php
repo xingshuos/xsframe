@@ -120,10 +120,18 @@ class Sysset extends Base
         if ($this->request->isPost()) {
             $data = $this->params['data'];
 
+            // 监测通信状态是否成功 communication_status
+            $key = $data['key'] ?? '';
+            $token = $data['token'] ?? '';
+            $ret = RequestUtil::cloudHttpPost("frame/checkVersion", ['key' => $key, 'token' => $token]);
+            if ($ret['code'] == 404) {
+                $this->error($ret['msg']);
+            }
+            $data['communication_status'] = 1;
             $websiteSetsData = array_merge($websiteSets, $data);
 
             $this->settingsController->setSysSettings(SysSettingsKeyEnum::WEBSITE_KEY, $websiteSetsData);
-            show_json(1, ['url' => url('sysset/site')]);
+            show_json(1, ['url' => url('sysset/communication')]);
         }
 
         $websiteSets = $this->settingsController->getSysSettings(SysSettingsKeyEnum::WEBSITE_KEY);

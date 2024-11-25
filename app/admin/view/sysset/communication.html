@@ -39,15 +39,20 @@
             </div>
         </div>
 
+        {if !empty($websiteSets['communication_status'])}
         <div class="form-group">
             <label class="col-lg control-label">通信状态</label>
             <div class="col-sm-9 col-xs-12">
                 <div class="form-control-static">
-                    <!--<span class="text text-danger">通信失败，请设置正确的AppID或通信秘钥</span>-->
-                    <span class="text text-success">通信成功</span>
+                    {if empty($websiteSets['communication_status'])}
+                        <span class="text text-danger">通信失败，请设置正确的AppID或通信秘钥</span>
+                    {else}
+                        <span class="text text-success">通信成功</span>
+                    {/if}
                 </div>
             </div>
         </div>
+        {/if}
 
         <div class="form-group">
             <label class="col-lg control-label"></label>
