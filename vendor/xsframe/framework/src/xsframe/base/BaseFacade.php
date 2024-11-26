@@ -17,7 +17,7 @@ use think\Facade;
 /**
  * @method static name(string $tableName)
  * @method static getInfo(array $condition, string $field = '*', string $order = "")
- * @method static getList(array $condition, string $field = "*", string $order = "", int $pIndex = 1, int $pSize = 10)
+ * @method static getList(array $condition, string $field = "*", string $order = "", int $pIndex = 0, int $pSize = 10)
  * @method static getAll(array $condition, string $field = "*", string $order = "", $keyField = '')
  * @method static getTotal(array $condition, string $field = "*")
  * @method static deleteInfo(array $condition)

@@ -68,15 +68,16 @@ trait ServiceTraits
      * @param int $pSize
      * @return array
      */
-    public function getList(array $where = [], string $field = "*", $order = "", int $pIndex = 1, int $pSize = 10)
+    public function getList(array $where = [], string $field = "*", $order = "", int $pIndex = 0, int $pSize = 10)
     {
         try {
             extract(self::getWhere($where));
-            if ($pIndex == 1 && !empty($this->params['page']) && $this->params['page'] > 1)
+            if ($pIndex == 0 && !empty($this->params['page']) && $this->params['page'] > 1)
                 $pIndex = $this->params['page'];
             if ($pSize == 10 && !empty($this->params['size']) && $this->params['size'] != 10)
                 $pSize = $this->params['size'];
-
+            if ($pIndex == 0)
+                $pIndex = 1;
             $list = Db::name($this->tableName)->field($field)->where($where, $op, $condition)->order($order)->page($pIndex, $pSize)->select()->toArray();
         } catch (\Exception $exception) {
             $list = [];
