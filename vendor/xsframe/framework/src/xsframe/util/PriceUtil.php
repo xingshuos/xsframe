@@ -151,17 +151,17 @@ class PriceUtil
     /**
      * 通过类型计算金额
      */
-    public static function formatPrice(float $price = 0.00, int $precision = 2): string
+    public static function formatPrice(float $price = 0.00, int $precision = 2, $language = 'zh'): string
     {
-        if ($price >= 10000000000) {
+        if ($price >= 100000000) {
             // 亿
-            return self::numberFormat($price / 100000000, $precision) . '亿';
-        } elseif ($price >= 10000) {
+            return self::numberFormat($price / 100000000, $precision) . ($language == 'zh' ? '亿' : 'e');
+        } else if ($price >= 10000) {
             // 万
-            return self::numberFormat($price / 10000, $precision) . '万';
+            return self::numberFormat($price / 10000, $precision) . ($language == 'zh' ? '万' : 'w');
         } else {
             // 元
-            return self::numberFormat($price, $precision) . '元';
+            return self::numberFormat($price, $precision);
         }
         return $price;
     }
