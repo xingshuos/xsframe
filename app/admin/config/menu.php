@@ -40,12 +40,12 @@ return [
         'icon'     => 'icon-th-large',
         'items'    => [
             [
-                'title' => '未安装应用',
-                'route' => 'not_installed',
-            ],
-            [
                 'title' => '已安装应用',
                 'route' => 'installed',
+            ],
+            [
+                'title' => '未安装应用',
+                'route' => 'not_installed',
             ],
             [
                 'title' => '已停用的应用',

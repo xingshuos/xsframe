@@ -90,7 +90,7 @@ class App extends Base
             }
         }
 
-        if (in_array($do, ['installed', 'not_installed'])) {
+        if (in_array($do, ['not_installed'])) {
             $modulesController->buildLocalUnInstalledModule();
             $modulesController->buildCloudUnInstalledModule($key, $token);
         }
