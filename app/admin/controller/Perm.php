@@ -25,8 +25,9 @@ class Perm extends AdminBaseController
     // 用户列表
     public function user()
     {
-        $keyword = $this->params['keyword'];
-        $status = $this->params['status'];
+        $keyword = $this->params['keyword'] ?? '';
+        $status = $this->params['status'] ?? '';
+        $roleid = $this->params['roleid'] ?? '';
 
         $condition = [
             'pu.uniacid' => $this->uniacid,
@@ -35,6 +36,10 @@ class Perm extends AdminBaseController
 
         if (is_numeric($status)) {
             $condition['u.status'] = $status;
+        }
+
+        if (is_numeric($roleid)) {
+            $condition['pu.roleid'] = $roleid;
         }
 
         if (!empty($keyword)) {
@@ -149,7 +154,15 @@ class Perm extends AdminBaseController
                 }
                 Db::name('sys_users')->where(['id' => $item['uid']])->update($userUpdateData);
                 if (!empty($permsArray[0])) {
-                    Db::name('sys_account_users')->where(['user_id' => $item['uid'], 'uniacid' => $this->uniacid])->update(['module' => $permsArray[0]]);
+                    $isUpdate = Db::name('sys_account_users')->where(['user_id' => $item['uid'], 'uniacid' => $this->uniacid])->update(['module' => $permsArray[0]]);
+                    if (!$isUpdate) {
+                        $userAccountData = [
+                            'user_id' => $item['uid'],
+                            'uniacid' => $this->uniacid,
+                            'module'  => $permsArray[0],
+                        ];
+                        Db::name('sys_account_users')->insert($userAccountData);
+                    }
                 }
             } else {
                 $data['createtime'] = time();
@@ -179,6 +192,17 @@ class Perm extends AdminBaseController
                             'module'  => $permsArray[0],
                         ];
                         Db::name('sys_account_users')->insert($userAccountData);
+                    } else {
+                        if ($roleId > 0) {
+                            $roleInfo = Db::name("sys_account_perm_role")->field("perms")->where(['id' => $roleId])->find();
+                            $rolePerms = explode(',', $roleInfo['perms']);
+                            $userAccountData = [
+                                'user_id' => $userId,
+                                'uniacid' => $this->uniacid,
+                                'module'  => $rolePerms[0] ?? '',
+                            ];
+                            Db::name('sys_account_users')->insert($userAccountData);
+                        }
                     }
                 }
 

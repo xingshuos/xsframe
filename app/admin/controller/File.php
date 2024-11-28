@@ -229,7 +229,7 @@ class File extends AdminBaseController
 
         $condition = ['uniacid' => $uniacid, 'type' => 1];
 
-        if (empty($uniacid)) {
+        if (empty($uniacid) || $this->adminSession['role'] == 'operator') {
             $condition['uid'] = $this->userId;
         }
 
