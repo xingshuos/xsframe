@@ -17,6 +17,7 @@ trait AdminTraits
     protected $isBackMain = true; // post提交后是否返回到列表页 默认返回到列表页
     protected $deleteField = "deleted"; // 软删除字段
     protected $template = null; // 设置模板名称
+    protected $pageSize = 10; // 分页显示数量
 
     public function index()
     {
@@ -25,6 +26,9 @@ trait AdminTraits
 
     public function main()
     {
+        if ($this->pSize != $this->pageSize) {
+            $this->pSize = $this->pageSize;
+        }
         if (!empty($this->tableName)) {
             $fieldList = $this->getFiledList();
 
