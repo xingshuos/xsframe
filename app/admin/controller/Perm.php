@@ -434,8 +434,10 @@ class Perm extends AdminBaseController
     {
         $keyword = trim($this->params['keyword']);
 
-        $condition = [];
-        $condition['uniacid'] = $this->uniacid;
+        $condition = [
+            'uniacid' => $this->uniacid,
+            'deleted' => 0,
+        ];
 
         if (!empty($kwd)) {
             $condition[''] = Db::raw(" rolename like '%" . trim($keyword) . "%' ");
