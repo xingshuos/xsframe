@@ -30,6 +30,48 @@
     {block name='baseFont'}
     <link href="__ADMIN_FONTS__/awesome/font-awesome.min.css?v=4.7.0" rel="stylesheet">
     {/block}
+
+    <script type="text/javascript" src="__ADMIN_COMPONENT__/jquery/jquery-1.11.1.min.js"></script>
+
+    {block name='baseScript'}
+    <script>var require = {urlArgs: 'v=20211031'};</script>
+    <script type="text/javascript">
+        if (navigator.appName === 'Microsoft Internet Explorer') {
+            if (navigator.userAgent.indexOf("MSIE 5.0") > 0 || navigator.userAgent.indexOf("MSIE 6.0") > 0 || navigator.userAgent.indexOf("MSIE 7.0") > 0) {
+                alert('您使用的 IE 浏览器版本过低, 推荐使用 Chrome 浏览器或 IE8 及以上版本浏览器.');
+            }
+        }
+
+        window.sysinfo = {
+            'uniacid': '{$isSystem ? 0 :$uniacid}',
+            'uid': '{$uid}',
+            'siteroot': '{$siteRoot}',
+            'siteurl': '{$iaRoot?$iaRoot:""}',
+            'attachurl': '{$attachUrl}',
+            'module': '{$module}',
+            'client': '{$clientServiceName}',
+        };
+    </script>
+
+    <script type="text/javascript" src="__ADMIN_JS__/web/util.js"></script>
+    <script type="text/javascript" src="__ADMIN_COMPONENT__/bootstrap/bootstrap.min.js"></script>
+    <script type="text/javascript" src="__ADMIN_JS__/web/common.min.js"></script>
+    <script type="text/javascript" src="__ADMIN_JS__/require.js"></script>
+    <script src="__ADMIN_JS__/config.js"></script>
+
+    <script>
+        require(['jquery', 'jquery.gcjs', 'init', 'tip']);
+        // require(['jquery.gcjs', 'init', 'tip']);
+
+        // 加载tip提示组件
+        // require(['tip'], function () {
+        // tip.msgbox.suc("登录成功");
+        // tip.confirm("登录成功");
+        // util.message("验证错误", '', 'error')
+        // util.message("验证正确", '', 'success')
+        // });
+    </script>
+    {/block}
 </head>
 <style>
     .wb-container {
@@ -220,50 +262,6 @@
 </div>
 <!--图片放大 end-->
 
-<div class="modal fade" id="public_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
-
-<script type="text/javascript" src="__ADMIN_COMPONENT__/jquery/jquery-1.11.1.min.js"></script>
-
-{block name='baseScript'}
-<script>var require = {urlArgs: 'v=20211031'};</script>
-<script type="text/javascript">
-    if (navigator.appName === 'Microsoft Internet Explorer') {
-        if (navigator.userAgent.indexOf("MSIE 5.0") > 0 || navigator.userAgent.indexOf("MSIE 6.0") > 0 || navigator.userAgent.indexOf("MSIE 7.0") > 0) {
-            alert('您使用的 IE 浏览器版本过低, 推荐使用 Chrome 浏览器或 IE8 及以上版本浏览器.');
-        }
-    }
-
-    window.sysinfo = {
-        'uniacid': '{$isSystem ? 0 :$uniacid}',
-        'uid': '{$uid}',
-        'siteroot': '{$siteRoot}',
-        'siteurl': '{$iaRoot?$iaRoot:""}',
-        'attachurl': '{$attachUrl}',
-        'module': '{$module}',
-        'client': '{$clientServiceName}',
-    };
-</script>
-
-<script type="text/javascript" src="__ADMIN_JS__/web/util.js"></script>
-<script type="text/javascript" src="__ADMIN_COMPONENT__/bootstrap/bootstrap.min.js"></script>
-<script type="text/javascript" src="__ADMIN_JS__/web/common.min.js"></script>
-<script type="text/javascript" src="__ADMIN_JS__/require.js"></script>
-<script src="__ADMIN_JS__/config.js"></script>
-
-<script>
-    require(['jquery', 'jquery.gcjs', 'init', 'tip']);
-    // require(['jquery.gcjs', 'init', 'tip']);
-
-    // 加载tip提示组件
-    // require(['tip'], function () {
-    // tip.msgbox.suc("登录成功");
-    // tip.confirm("登录成功");
-    // util.message("验证错误", '', 'error')
-    // util.message("验证正确", '', 'success')
-    // });
-</script>
-{/block}
-
 <script type="text/javascript">
     $(() => {
         $('.magnifier img').each(function () {
@@ -275,10 +273,10 @@
             }
         });
         $(".overlay").click(() => {
-            $("#bg-bk").fadeOut();
+            $("#bg-bk").fadeOut()
             let body = document.querySelector('body');
             body.classList.remove('no-scroll');
-        });
+        })
 
         let isOwner = parseInt("{php}echo in_array($userInfo['role'],['owner']) ? 1 : 0;{/php}");
         let isSystem = parseInt("{$isSystem?1:0}");
@@ -313,18 +311,18 @@
 
         }
 
-    });
+    })
 
     // 图片放大
     $(window).keydown(function (e) {
         27 === e.which && ($("#bg-bk").fadeOut(), document.querySelector('body').classList.remove('no-scroll'))
-    });
+    })
 
     function showMagnifier(url, multiple = 2.0) {
         let isDown = false;
-        let closebk = $(".close-bk");
-        let rotateBtn = $(".rotate-btn");
-        let bg = $("#bg-bk");
+        let closebk = $(".close-bk")
+        let rotateBtn = $(".rotate-btn")
+        let bg = $("#bg-bk")
         let step = 1;
         let x, y;
         let l;
@@ -332,13 +330,13 @@
         let body = document.querySelector('body');
         let rotate = 0;
 
-        $("#enlarge-image").empty();
-        $("#enlarge-image").append("<img class='img' src='" + url + "'>");
+        $("#enlarge-image").empty()
+        $("#enlarge-image").append("<img class='img' src='" + url + "'>")
         let img = document.querySelectorAll(".img")[0];
 
         body.classList.add('no-scroll');
 
-        bg.fadeIn();
+        bg.fadeIn()
 
         /* zoom */
         document.onmousewheel = function (e) {
@@ -356,12 +354,12 @@
                     img.style.transform = "scale(" + step + ") " + (rotate > 0 ? `rotate(${rotate}deg)` : '');
                 }
             }
-        };
+        }
         /* zoom */
 
         img.onmousedown = function (e) {
-            e.preventDefault();
-            img.style.cursor = "move";
+            e.preventDefault()
+            img.style.cursor = "move"
             // console.log(e.offsetX);
             // console.log(img.offsetLeft);
             x = e.clientX;
@@ -369,7 +367,7 @@
             l = img.offsetLeft;
             t = img.offsetTop;
             isDown = true;
-        };
+        }
 
         document.onmousemove = function (e) {
             if (isDown == false) {
@@ -383,16 +381,16 @@
                 img.style.left = nl + 'px';
                 img.style.top = nt + 'px';
             }
-        };
+        }
 
         img.onmouseup = function () {
             // img.style.cursor = "default"
             isDown = false
-        };
+        }
 
         closebk.click(function () {
             bg.fadeOut()
-        });
+        })
         rotateBtn.click(function () {
             if (rotate >= 360) {
                 rotate = 0;
@@ -402,6 +400,9 @@
         })
     }
 </script>
+
+<div class="modal fade" id="public_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true"></div>
 
 <script>
     // 计算页面高度
@@ -467,7 +468,7 @@
                     $(this).children('.qrcode').append(`<div class="arrow" style="top: 50%;"></div>`)
                 }, function () {
                     $(this).children('.qrcode').hide();
-                });
+                })
 
                 $(".qrcode-info").each(function () {
                     $(this).children('.qrcode').show().html("").qrcode({
