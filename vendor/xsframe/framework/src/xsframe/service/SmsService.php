@@ -179,7 +179,7 @@ class SmsService extends BaseService
         try {
             return $this->customSendSMS($mobile, $tplId, $data, $smsSet);
         } catch (ApiException $e) {
-            return false;
+            throw new ApiException($e->getMessage());
         }
     }
 
