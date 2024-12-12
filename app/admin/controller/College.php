@@ -80,7 +80,9 @@ class College extends AdminBaseController
         $list = [];
         $total = 0;
 
-        $cloudResult = RequestUtil::cloudHttpPost("college/list", ['key' => $key, 'token' => $token, 'cateid' => $cateId, 'page' => $this->pIndex], null, "http://www.xsframe.com");
+        $testUrl = null;
+        // $testUrl = "http://www.xsframe.com";
+        $cloudResult = RequestUtil::cloudHttpPost("college/list", ['key' => $key, 'token' => $token, 'cateid' => $cateId, 'page' => $this->pIndex], null, $testUrl);
         if ($cloudResult['code'] == 200) {
             $list = $cloudResult['data']['list'];
             $total = $cloudResult['data']['total'];
