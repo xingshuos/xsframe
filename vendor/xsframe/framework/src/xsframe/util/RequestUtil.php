@@ -187,7 +187,7 @@ class RequestUtil
         return $headers;
     }
 
-    public static function cloudHttpPost($url, array $postData = [], $extra = [])
+    public static function cloudHttpPost($url, array $postData = [], $extra = [], $apiUrl = null)
     {
         if (is_array($postData)) {
             $postData['host_ip'] = $_SERVER['REMOTE_ADDR'];
@@ -195,8 +195,8 @@ class RequestUtil
             $postData['version'] = $postData['version'] ?? IMS_VERSION;
             $postData['php_version'] = $postData['php_version'] ?? PHP_VERSION;
         }
-
-        $response = self::httpPost("https://www.xsframe.cn/cloud/api/" . $url, $postData, $extra);
+        $apiUrl = $apiUrl ?? "https://www.xsframe.cn";
+        $response = self::httpPost("{$apiUrl}/cloud/api/" . $url, $postData, $extra);
         $result = @json_decode($response, true);
 
         if (!empty($result)) {
