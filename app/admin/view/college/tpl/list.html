@@ -177,7 +177,10 @@
 
 <form action="" method="get" class="form-horizontal table-search" role="form">
     <div class="page-toolbar">
-        <div class="col-md-12 input-group">
+        <div class="col-sm-3">
+            <a class="btn btn-primary btn-sm" href="{:webUrl('college/add')}"><i class="icon icon-plus"></i> 添加文章</a>
+        </div>
+        <div class="col-md-9 input-group">
             <div class="input-group-select">
                 <select name="type" class="form-control">
                     <option value="">选择排序方式</option>
@@ -249,6 +252,17 @@
                 </div>
 
                 <!----------------------columnFlex---------------------------------------------->
+                {if $isMine}
+                <div class="list-inner columnFlex" style="line-height:20px;text-align:center">
+                    <div>
+                        {if $row['enabled'] == 1}
+                        <span class="text-success">已发布</span>
+                        {else}
+                        <span class="text-danger">审核中</span>
+                        {/if}
+                    </div>
+                </div>
+                {/if}
 
                 <div class="ops list-inner columnFlex" style="line-height:20px;text-align:center">
                     <div>

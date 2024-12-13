@@ -152,6 +152,10 @@ return [
                 'route' => 'guide',
             ],
             [
+                'title' => '我的文章',
+                'route' => 'mine',
+            ],
+            [
                 'title' => '系统图标',
                 'route' => 'icon',
             ],

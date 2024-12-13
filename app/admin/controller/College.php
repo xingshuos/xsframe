@@ -18,12 +18,71 @@ use xsframe\util\RequestUtil;
 class College extends AdminBaseController
 {
     private $apiUrl = null;
+    // private $apiUrl = "http://www.xsframe.com";
+
+    public function post()
+    {
+        $key = $this->websiteSets['key'] ?? '';
+        $token = $this->websiteSets['token'] ?? '';
+
+        if ($this->request->isPost()) {
+            $categoryId = intval($this->params['cateid'] ?? 0);
+            $title = trim($this->params['title'] ?? '');
+            $tags = trim($this->params['tags'] ?? '');
+            $content = htmlspecialchars_decode($this->params['content'] ?? '');
+
+            if (empty($categoryId)) {
+                $this->error('请选择所属分类');
+            }
+            if (empty($title)) {
+                $this->error('请输入文章标题');
+            }
+            if (empty($tags)) {
+                $this->error('请输入文章标签');
+            }
+            if (empty($content)) {
+                $this->error('请输入文章内容');
+            }
+            $data = [
+                'key'     => $key,
+                'token'   => $token,
+                'cateid'  => $categoryId,
+                'title'   => $title,
+                'tags'    => $tags,
+                'content' => $content,
+            ];
+            $cloudResult = RequestUtil::cloudHttpPost("college/create", $data, null, $this->apiUrl);
+            if ($cloudResult['code'] != 200) {
+                $this->error($cloudResult['msg']);
+            }
+            $this->success();
+        }
+
+        $categoryList = [];
+
+        $cloudResult = RequestUtil::cloudHttpPost("college/category", ['key' => $key, 'token' => $token], null, $this->apiUrl);
+        if ($cloudResult['code'] == 200) {
+            $categoryList = $cloudResult['data']['list'];
+        }
+
+        $result = [
+            'categoryList' => $categoryList
+        ];
+        return $this->template('post', $result);
+    }
 
     public function view()
     {
         $id = intval($this->params['id'] ?? 0);
         $item = $this->getDetail($id);
         return $this->template('view', $item);
+    }
+
+    // 我的文章
+    public function mine(): \think\response\View
+    {
+        $result = $this->getList(0, true);
+        return $this->template('mine', $result);
     }
 
     // 文档教程
@@ -102,7 +161,7 @@ class College extends AdminBaseController
         ];
     }
 
-    private function getList($cateId): array
+    private function getList($cateId, $isMine = false): array
     {
         $keyword = trim($this->params['keyword'] ?? '');
         $type = trim($this->params['type'] ?? '');
@@ -119,6 +178,7 @@ class College extends AdminBaseController
             'cateid'     => $cateId,
             'keyword'    => $keyword,
             'order_type' => $type,
+            'is_mine'    => $isMine,
             'page'       => $this->pIndex
         ], null, $this->apiUrl);
 
@@ -136,9 +196,10 @@ class College extends AdminBaseController
         $pager = pagination2($total, $this->pIndex, $this->pSize);
 
         return [
-            'list'  => $list,
-            'total' => $total,
-            'pager' => $pager,
+            'list'   => $list,
+            'total'  => $total,
+            'pager'  => $pager,
+            'isMine' => $isMine,
         ];
     }
 }
