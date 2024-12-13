@@ -17,7 +17,7 @@ use xsframe\util\RequestUtil;
 
 class College extends AdminBaseController
 {
-    private $apiUrl = "http://www.xsframe.com";
+    private $apiUrl = null;
 
     public function view()
     {
