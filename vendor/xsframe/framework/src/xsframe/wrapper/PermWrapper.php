@@ -156,16 +156,18 @@ class PermWrapper
         $parentModuleMenus = [];
         if (!empty($moduleMenus)) {
 
-            $permDefault = [
-                'main'   => '查看列表',
-                'view'   => '查看详情',
-                'add'    => '添加-log',
-                'edit'   => '修改-log',
-                'delete' => '删除-log',
-                'xxx'    => [
-                    'status' => 'edit'
-                ],
-            ];
+            // $permDefault = [
+            //     'main'   => '查看列表',
+            //     'view'   => '查看详情',
+            //     'add'    => '添加-log',
+            //     'edit'   => '修改-log',
+            //     'delete' => '删除-log',
+            //     'xxx'    => [
+            //         'status' => 'edit'
+            //     ],
+            // ];
+
+            $permDefault = [];
 
             // if( $module == 'jrp_anjia' ){
             //     dd($moduleMenus);
@@ -179,16 +181,12 @@ class PermWrapper
                 if (!empty($menu['items'])) {
                     foreach ((array)$menu['items'] as $item) {
 
-                        if( !empty($item['items']) ){
+                        if (!empty($item['items'])) {
                             foreach ((array)$item['items'] as $item2) {
 
-                                // if( $module == 'jrp_anjia' ){
-                                //     dd($item2);
-                                // }
-
-                                $perm = [];
-                                if (is_array($item2['perm']) && !empty($item2['perm']) || empty($item2['perm'])) {
-                                    $perm = $permDefault;
+                                $perm = $permDefault;
+                                if (is_array($item2['perm']) && !empty($item2['perm'])) {
+                                    $perm = $item2['perm'];
                                 }
 
                                 $routers = explode("/", $item2['route']);
@@ -205,7 +203,7 @@ class PermWrapper
                                     $itemModuleMenus[$itemRoute] = $newModuleMenusItem;
                                 }
                             }
-                        }else{
+                        } else {
                             $perm = [];
                             if (is_array($item['perm']) && !empty($item['perm']) || empty($item['perm'])) {
                                 $perm = $permDefault;

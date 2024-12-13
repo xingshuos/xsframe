@@ -71,7 +71,7 @@
                     }
                 });
                 $(".overlay").click(() => {
-                    $("#bg-bk").fadeOut()
+                    $("#bg-bk").fadeOut();
                     let body = document.querySelector('body');
                     body.classList.remove('no-scroll');
                 })
@@ -84,13 +84,13 @@
         // 图片放大
         $(window).keydown(function (e) {
             27 === e.which && ($("#bg-bk").fadeOut(), document.querySelector('body').classList.remove('no-scroll'))
-        })
+        });
 
         function showMagnifier(url, multiple = 2.0) {
             let isDown = false;
-            let closebk = $(".close-bk")
-            let rotateBtn = $(".rotate-btn")
-            let bg = $("#bg-bk")
+            let closebk = $(".close-bk");
+            let rotateBtn = $(".rotate-btn");
+            let bg = $("#bg-bk");
             let step = 1;
             let x, y;
             let l;
@@ -98,13 +98,13 @@
             let body = document.querySelector('body');
             let rotate = 0;
 
-            $("#enlarge-image").empty()
-            $("#enlarge-image").append("<img class='img' src='" + url + "'>")
+            $("#enlarge-image").empty();
+            $("#enlarge-image").append("<img class='img' src='" + url + "'>");
             let img = document.querySelectorAll(".img")[0];
 
             body.classList.add('no-scroll');
 
-            bg.fadeIn()
+            bg.fadeIn();
 
             /* zoom */
             document.onmousewheel = function (e) {
@@ -122,12 +122,12 @@
                         img.style.transform = "scale(" + step + ") " + (rotate > 0 ? `rotate(${rotate}deg)` : '');
                     }
                 }
-            }
+            };
             /* zoom */
 
             img.onmousedown = function (e) {
-                e.preventDefault()
-                img.style.cursor = "move"
+                e.preventDefault();
+                img.style.cursor = "move";
                 // console.log(e.offsetX);
                 // console.log(img.offsetLeft);
                 x = e.clientX;
@@ -135,7 +135,7 @@
                 l = img.offsetLeft;
                 t = img.offsetTop;
                 isDown = true;
-            }
+            };
 
             document.onmousemove = function (e) {
                 if (isDown == false) {
@@ -149,16 +149,16 @@
                     img.style.left = nl + 'px';
                     img.style.top = nt + 'px';
                 }
-            }
+            };
 
             img.onmouseup = function () {
                 // img.style.cursor = "default"
                 isDown = false
-            }
+            };
 
             closebk.click(function () {
                 bg.fadeOut()
-            })
+            });
             rotateBtn.click(function () {
                 if (rotate >= 360) {
                     rotate = 0;
@@ -237,7 +237,7 @@
                     $(this).children('.qrcode').append(`<div class="arrow" style="top: 50%;"></div>`)
                 }, function () {
                     $(this).children('.qrcode').hide();
-                })
+                });
 
                 $(".qrcode-info").each(function () {
                     $(this).children('.qrcode').show().html("").qrcode({
