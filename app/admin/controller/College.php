@@ -17,6 +17,15 @@ use xsframe\util\RequestUtil;
 
 class College extends AdminBaseController
 {
+    private $apiUrl = "http://www.xsframe.com";
+
+    public function view()
+    {
+        $id = intval($this->params['id'] ?? 0);
+        $item = $this->getDetail($id);
+        return $this->template('view', $item);
+    }
+
     // 文档教程
     public function document(): \think\response\View
     {
@@ -72,29 +81,64 @@ class College extends AdminBaseController
         return $this->template('icon');
     }
 
+    private function getDetail($id): array
+    {
+        $key = $this->websiteSets['key'] ?? '';
+        $token = $this->websiteSets['token'] ?? '';
+
+        $item = [];
+        $cloudResult = RequestUtil::cloudHttpPost("college/detail", ['key' => $key, 'token' => $token, 'id' => $id], null, $this->apiUrl);
+        if ($cloudResult['code'] == 200) {
+            $item = $cloudResult['data']['item'];
+            if ($item) {
+                $item['labels'] = explode(',', $item['labels']);
+            }
+        }
+
+        // dd($item);
+
+        return [
+            'item' => $item,
+        ];
+    }
+
     private function getList($cateId): array
     {
+        $keyword = trim($this->params['keyword'] ?? '');
+        $type = trim($this->params['type'] ?? '');
+
         $key = $this->websiteSets['key'] ?? '';
         $token = $this->websiteSets['token'] ?? '';
 
         $list = [];
         $total = 0;
 
-        $testUrl = null;
-        // $testUrl = "http://www.xsframe.com";
-        $cloudResult = RequestUtil::cloudHttpPost("college/list", ['key' => $key, 'token' => $token, 'cateid' => $cateId, 'page' => $this->pIndex], null, $testUrl);
+        $cloudResult = RequestUtil::cloudHttpPost("college/list", [
+            'key'        => $key,
+            'token'      => $token,
+            'cateid'     => $cateId,
+            'keyword'    => $keyword,
+            'order_type' => $type,
+            'page'       => $this->pIndex
+        ], null, $this->apiUrl);
+
         if ($cloudResult['code'] == 200) {
             $list = $cloudResult['data']['list'];
             $total = $cloudResult['data']['total'];
+
+            foreach ($list as &$item) {
+                $item['labels'] = explode(',', $item['labels']);
+            }
         }
+
+        // dd($list[0]);
 
         $pager = pagination2($total, $this->pIndex, $this->pSize);
 
-        $result = [
+        return [
             'list'  => $list,
             'total' => $total,
             'pager' => $pager,
         ];
-        return $result;
     }
 }

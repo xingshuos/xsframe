@@ -1,100 +1,11 @@
 {extend name="../../admin/view/public/admin"}
 
-{block name='style'}
-
-{/block}
-
 {block name='content'}
 
 <div class="page-header">当前位置：<span class="text-primary">应用开发</span></div>
 
 <div class="page-content">
-
-
-    <form action="" method="get" class="form-horizontal table-search" role="form">
-        <div class="page-toolbar">
-            <div class="col-md-12 input-group">
-                <div class="input-group-select">
-                    <select name="type" class="form-control">
-                        <option value="">选择排序方式</option>
-                        <option value="new" {if $type== 'new'}selected{/if}>最新</option>
-                        <option value="hot" {if $type== 'hot'}selected{/if}>最热</option>
-                    </select>
-                </div>
-                <input type="hidden" class="form-control " name="do" value="{$do}">
-                <input type="text" class="form-control " name="keyword" value="{$_GPC['keyword']}" placeholder="搜索文章关键词信息查找">
-                <span class="input-group-btn">
-                    <button class="btn btn-primary" type="submit"> 搜索</button>
-                </span>
-            </div>
-        </div>
-    </form>
-
-    {if empty($list)}
-    <!-- <div class="panel panel-default"> -->
-    <!--     <div class="panel-body empty-data">未查询到相关数据</div> -->
-    <!-- </div> -->
-    {else}
-
-    {/if}
-
-    <div class="row">
-        <div class="col-md-12">
-
-            <div class="tables">
-
-                {foreach $list as $key => $item}
-                <div class="table-row" style="margin:0  20px;border-bottom: 1px solid #eee;">
-
-                    <div class="goods-des" style="flex: 3;text-align: left;border-right: unset;">
-
-                        <div style="display: -webkit-box;display: -webkit-flex;display: -ms-flexbox;display: flex;margin: 10px 0">
-
-                            <div style="width:60px;height: 60px;border:1px solid #efefef; padding:1px;" class="qa-rank">
-                                <div class="answers flex-column-center answered">
-                                    {$item['likenum']} <small> 点赞</small>
-                                </div>
-                            </div>
-
-                            <div style="-webkit-box-flex: 1;-webkit-flex: 1;-ms-flex: 1;flex: 1;margin-left: 10px;text-align: left;display: flex;align-items: center">
-                                <div class="flex-column-around" style="height: 60px;">
-                                    <div class="title flex-start-center">
-                                        <span class="category-title">【{$item['category_name']}】</span>
-                                        <a href="" style="margin-left: 6px;font-weight:normal;text-decoration:none;background-image: linear-gradient(90deg, #3f8cff 0%, #ff3f3f 100%);-webkit-background-clip: text;-webkit-text-fill-color: transparent;">{$item['title']}</a>
-                                        <div class="tags" style="margin-left: 20px;">
-                                            <a href="" class="tag"># 开源项目</a>
-                                            <a href="" class="tag"># 标准</a>
-                                        </div>
-                                    </div>
-                                    <div class="desc">
-                                        <span>{$item['showtime']|date='Y-m-d'}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <!----------------------columnFlex---------------------------------------------->
-
-                    <!-- <div class="ops list-inner columnFlex" style="line-height:20px;text-align:center"> -->
-                    <!--     <div> -->
-                    <!--         <span class="text-info">已付款</span> -->
-                    <!--     </div> -->
-                    <!-- </div> -->
-
-                </div>
-                {/foreach}
-
-                <div style="padding: 20px;text-align: right">
-                    {$pager|raw}
-                </div>
-
-            </div>
-
-        </div>
-    </div>
-
+    {include file='college/tpl/list'}
 </div>
 
 {/block}

@@ -1,0 +1,33 @@
+<form action="" method="post" class="form-horizontal form-validate" enctype="multipart/form-data">
+    <input type="hidden" name="id" value="{$_GET['id']}">
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button">×</button>
+                <h4 class="modal-title">查看详情</h4>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="tabs-container">
+
+                    <div class="tab-content">
+
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                {include file='college/tpl/detail'}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-lg" data-dismiss="modal">关闭</button>
+            </div>
+
+        </div>
+    </div>
+</form>

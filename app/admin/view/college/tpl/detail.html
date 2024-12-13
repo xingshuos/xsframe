@@ -1,0 +1,142 @@
+<style>
+    .article_detail_author {
+        line-height: 24px;
+        font-weight: 400;
+        color: #596178;
+        font-size: 12px;
+        margin-top: 15px;
+    }
+
+    .article_detail_author a {
+        color: #4183c4;
+        text-decoration: none;
+    }
+
+    .article_detail_time {
+        display: inline-block;
+        line-height: 24px;
+        font-size: 12px;
+        color: #596178;
+    }
+
+    .article_detail_scan-num {
+        display: inline-block;
+        line-height: 24px;
+        font-size: 12px;
+        color: #596178;
+    }
+
+    .article-detail .doc-content p {
+        line-height: 30px;
+        font-size: 14px;
+        color: #333;
+    }
+    .editormd-html-preview pre code, .editormd-preview-container pre code{
+        color: #660 !important;
+        line-height: 30px !important;
+        font-size: 15px !important;
+    }
+</style>
+
+<div class="article-detail">
+
+    <div class="title flex-start-center">
+        <h1 class="question-title" style="font-size: 24px; color: #191a24; letter-spacing: 0; line-height: 46px; font-weight: 600;padding: 0;"> {$item['title']} </h1>
+        <div class="tags" style="margin-left: 10px;">
+            {foreach $item['labels'] as $key1 => $label}
+            <a class="tag"># {$label}</a>
+            {/foreach}
+        </div>
+    </div>
+
+    <span class="article_detail_author" style="display: block;">作者：<a> {$item['author']}</a></span>
+
+    <span class="article_detail_time"> {$item['showtime']}</span>
+
+    <span class="article_detail_scan-num">浏览量： {$item['viewcount']}</span>
+
+    <div style="width: 100%;height: 1px;margin: 10px 0;background-color: #eee;"></div>
+
+    <div class="doc-content" id="doc-content">
+        {if $item['content_type'] == 0}
+            {$item['content'] | raw}
+        {else}
+            <link rel="stylesheet" href="__ADMIN_COMPONENT__/editormd/editormd.min.css">
+            <textarea style="display: none;" id="markdown-text">{$item.content}</textarea>
+            <div class="markdown-body editormd-preview-container" id="markdown-content"></div>
+            <script>
+                let markdownText = document.getElementById('markdown-text').innerHTML;
+                require(["__ADMIN_COMPONENT__/editormd/marked.min.js"], function (marked) {
+                    document.getElementById('markdown-content').innerHTML = marked(markdownText, {sanitize: true});
+                });
+            </script>
+        {/if}
+    </div>
+</div>
+
+<link type="text/css" rel="stylesheet" href="__ADMIN_COMPONENT__/jquery/fancybox/fancybox.min.css"/>
+<script src="__ADMIN_COMPONENT__/jquery/fancybox/fancybox.min.js"></script>
+
+<script>
+    // 解决引用微信文章图片不存在问题
+    addHeadMeta();
+
+    function addHeadMeta() {
+        // <meta name="referrer" content="never">
+        const meta = (name, content) => {
+            const meta = document.createElement('meta');
+            meta.content = content;
+            meta.name = name;
+            document.getElementsByTagName('head')[0].appendChild(meta);
+        };
+        meta(
+            'referrer',
+            'never'
+        );
+    }
+
+    $(() => {
+        let timer = setTimeout(() => {
+            clearTimeout(timer);
+            $('#doc-content img').each(function () {
+                let img = $(this);
+                let src = img.attr('src');
+                // let src = img.attr('data-original');
+                img.wrap('<a data-fancybox="gallery" href="' + src + '"></a>');
+            });
+        },500)
+
+        $('[data-fancybox="gallery"]').fancybox({
+            infobar: false,
+            thumbs: {
+                hideOnClose: false
+            },
+            touch: {
+                vertical: false
+            },
+            buttons: [
+                // "zoom",
+                // "share",
+                "slideShow",
+                // "fullScreen",
+                // "download",
+                "thumbs",
+                "close"
+            ],
+            arrows: true,
+            keyboard: true,
+            protect: false,
+            modal: false,
+            loop: true,
+            animationEffect: "fade",
+            transitionEffect: false,
+            idleTime: true,
+            gutter: 0,
+            // Customize caption area
+            caption: function (instance, item) {
+                return '<h3></h3>'; // 图片备注信息
+            },
+            preload: false,
+        });
+    })
+</script>
