@@ -132,7 +132,7 @@ define(['jquery'], function ($) {
             var html = "";
             if (type === 'image') {
                 html += '<div class="multi-item" data-' + key + '="' + data[key] + '" data-name="' + name + '">';
-                html += '<img class="img-responsive img-thumbnail" src="' + data[thumb] + '" onerror="this.src=\'/app/admin/static/images/nopic.png\'" style="width:100px;height:100px;">';
+                html += '<img class="img-responsive img-thumbnail" src="' + data[thumb] + '" onerror="this.src=\'/app/admin/static/images/nopic.png\'" style="width:150px;height:150px;">';
                 html += '<div class="img-nickname">' + data[text] + '</div>';
                 html += '<input type="hidden" value="' + data[key] + '" name="' + id + '">';
                 html += '<em onclick="biz.selector.remove(this,\'' + name + '\')"  class="close">×</em>';
@@ -303,7 +303,7 @@ define(['jquery'], function ($) {
                 html += '</div>'
             } else if (type === 'product') {
                 var optionurl = optionurl === '' ? 'sale.package.hasoption' : optionurl;
-                var url = "home.view.pc.index.php?c=site&a=entry&m=ewei_shopv2&do=web&r=" + optionurl + "&goodsid=" + data[key] + "&selectorid=" + selectorid;
+                var url = "home.view.pc.index.php?c=site&a=entry&m=shopv2&do=web&r=" + optionurl + "&goodsid=" + data[key] + "&selectorid=" + selectorid;
                 html += '<tr class="multi-product-item" data-' + key + '="' + data[key] + '" data-name="' + name + '">';
                 html += "<input type='hidden' name='" + id + "' value='" + data[key] + "'> ";
                 html += "<input type='hidden' class='form-control img-textname' value='" + data[text] + "'>";

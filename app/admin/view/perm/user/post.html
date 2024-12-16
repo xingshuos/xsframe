@@ -58,7 +58,7 @@
                     <div class="modal-dialog" style='width: 920px;'>
                         <div class="modal-content">
                             <div class="modal-header"><button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button><h3>选择角色</h3></div>
-                            <div class="modal-body" >
+                            <div class="modal-body" style="padding:30px;">
                                 <div class="row">
                                     <div class="input-group">
                                         <input type="text" class="form-control" name="keyword" value="" id="search-kwd1" placeholder="请输入角色名称" />
@@ -149,6 +149,36 @@
     function select_role(o) {
         $("#userid").val(o.id);
         $("#user").val( o.rolename );
+        console.log(o)
+        let perms = o.perms.split(',');
+        $(':checkbox').removeAttr('disabled').removeAttr('checked').each(function(){
+
+            var _this = $(this);
+            var perm = '';
+            if( _this.data('group') ){
+                perm+=_this.data('group');
+            }
+            if( _this.data('parent') ){
+                if (_this.data('parent') != 'text') {
+                    perm += "." + _this.data('parent');
+                }
+            }
+            if( _this.data('son') ){
+                if (_this.data('son') != 'text') {
+                    perm += "." + _this.data('son');
+                }
+            }
+            if( _this.data('grandson') ){
+                if (_this.data('grandson') != 'text') {
+                    perm += "." + _this.data('grandson');
+                }
+            }
+            if( $.arrayIndexOf(perms,perm)!=-1){
+                $(this).attr('disabled',true).get(0).checked =true;
+            }
+
+        });
+
         $(".close").click();
     }
 </script>

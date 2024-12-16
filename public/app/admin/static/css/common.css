@@ -2718,7 +2718,7 @@ a.form-control-static {
 }
 
 .modal-dialog .modal-body {
-    padding: 10px 10px 45px 0;
+    /*padding: 10px 10px 45px 0;*/
     overflow-y: auto;
     overflow-x: hidden;
     max-height: 700px;

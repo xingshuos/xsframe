@@ -99,8 +99,8 @@ if (!function_exists('tpl_selector')) {
         foreach ($options['items'] as $item) {
             if ($options['type'] == 'image') {
                 $html .= '<div class=\'multi-item\' data-' . $options['key'] . '=\'' . $item[$options['key']] . '\' data-name=\'' . $name . '\'>
-                                      <img class=\'img-responsive img-thumbnail\' src=\'' . tomedia($item[$options['thumb']]) . ('\' onerror=\'this.src="/app/admin/static/images/nopic.png"\' style=\'width:100px;height:100px;\'>
-                                      <div class=\'img-nickname\'>' . $item[$options['text']] . '</div>
+                                      <img class=\'img-responsive img-thumbnail\' src=\'' . tomedia($item[$options['thumb']]) . ('\' onerror=\'this.src="/app/admin/static/images/nopic.png"\' style=\'width:150px;height:150px;\'>
+                                      '.($item[$options['text']] ? '<div class=\'img-nickname\'>' . $item[$options['text']] . '</div>' : '').'
                                      <input type=\'hidden\' value=\'' . $item[$options['key']] . '\' name=\'' . $id . '\'>
                                      <em onclick=\'biz.selector.remove(this,"' . $name . '")\'  class=\'close\'>×</em>
                             <div style=\'clear:both;\'></div>

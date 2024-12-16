@@ -49,7 +49,7 @@ textarea:focus {
 .must::before {
     content: "*";
     position: absolute;
-    right: 0px;
+    right: 0;
     top: 10px;
     color: #ff2b1f;
     font-size: 12px
@@ -772,7 +772,7 @@ textarea:focus {
     margin-top: 4px;
     overflow: hidden;
     background-color: #ffffff;
-    border-radius: 0px;
+    border-radius: 0;
     box-shadow: none;
 }
 
@@ -879,8 +879,8 @@ textarea:focus {
 }
 
 .panel-heading {
-    border-top-left-radius: 0px;
-    border-top-right-radius: 0px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }
 
 .panel-default {
@@ -1365,7 +1365,7 @@ select.form-control.select-lg {
     -webkit-border-image: none;
     -o-border-image: none;
     border-image: none;
-    border-width: 4px 0px 0;
+    border-width: 4px 0 0;
     color: inherit;
     margin-bottom: 0;
     padding: 0 15px;
@@ -1400,7 +1400,7 @@ select.form-control.select-lg {
     -o-border-image: none;
     border-image: none;
     border-style: solid solid none;
-    border-width: 1px 0px;
+    border-width: 1px 0;
     margin: 0 15px;
 }
 
@@ -1461,7 +1461,7 @@ select.form-control.select-lg {
 .nav > li > a {
     padding: 0;
     padding: 10px 10px;
-    margin: 0px 15px;
+    margin: 0 15px;
     color: #666;
 }
 
@@ -1712,15 +1712,15 @@ table .dropdown-menu .active a:hover {
 }
 
 table .dropdown-menu {
-    -webkit-filter: drop-shadow(0 0px 5px rgba(0, 0, 0, 0.1));
-    -moz-filter: drop-shadow(0 0px 5px rgba(0, 0, 0, .1));
-    -o-filter: drop-shadow(0 0px 5px rgba(0, 0, 0, .1));
-    filter: drop-shadow(0 0px 5px rgba(0, 0, 0, 0.1));
+    -webkit-filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.1));
+    -moz-filter: drop-shadow(0 0 5px rgba(0, 0, 0, .1));
+    -o-filter: drop-shadow(0 0 5px rgba(0, 0, 0, .1));
+    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.1));
     border-radius: 0;
     padding: 0;
     /*width:100%; */
     min-width: 1px;
-    border: 0px;
+    border: 0;
 
 }
 
@@ -1824,9 +1824,9 @@ input[type=radio].large {
 }
 
 input[type=checkbox], input[type=checkbox].large {
-    -webkit-border-radius: 0px;
-    -moz-border-radius: 0px;
-    border-radius: 0px;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
 }
 
 input[type=checkbox]:checked, input[type=radio]:checked {
@@ -1952,20 +1952,19 @@ input[type=radio].danger:checked:before {
 /**切换**/
 .switchery.checked {
     border-color: var(--primary-color) !important;
-    box-shadow: var(--primary-color) 0px 0px 0px 16px inset !important;
+    box-shadow: var(--primary-color) 0 0 0 16px inset !important;
     background-color: var(--primary-color) !important;
 }
 
 .multi-img-details .img-nickname {
     position: absolute;
-    bottom: 0px;
     line-height: 25px;
     height: 25px;
     color: #fff;
     text-align: center;
-    width: 90px;
-    left: 5px;
-    bottom: 5px;
+    width: 100%;
+    left: 0;
+    bottom: 0;
     background: rgba(0, 0, 0, 0.8);
 }
 
@@ -2159,7 +2158,7 @@ modal
     border-top: 1px solid #efefef;
     display: block;
     margin-bottom: -1px;
-    padding: 25px 0px;
+    padding: 25px 0;
     position: relative;
 }
 
@@ -2260,8 +2259,8 @@ modal
     position: absolute;
     z-index: 10100;
     border-radius: 2px;
-    -webkit-box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.2);
-    box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.2)
+    -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2)
 }
 
 .fui-pop .fui-pop-inner {
@@ -2435,7 +2434,7 @@ modal
 }
 
 .fui-pop .fui-pop-btns button:first-child {
-    margin-left: 0px;
+    margin-left: 0;
 }
 
 .fui-pop .fui-pop-inner {
@@ -2514,7 +2513,7 @@ modal
     left: 0;
     top: 0;
     text-align: center;
-    padding: 0px 10px;
+    padding: 0 10px;
     z-index: 1000;
     line-height: 30px;
     border: 1px solid #e67300;

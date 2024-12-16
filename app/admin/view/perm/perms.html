@@ -7,7 +7,17 @@
 <!--     </div> -->
 <!-- </div> -->
 
+{if $action=='userpost'}
 <div class="form-group">
+    <label class="col-lg control-label">查看权限</label>
+    <div class="col-lg-10">
+        <label class="radio-inline"><input type="radio" name="look_switch" value="0" {if empty($item['look_switch'])}checked="true"{/if} /> 隐藏</label>
+        <label class="radio-inline"><input type="radio" name="look_switch" value="1" {if $item['look_switch'] == 1}checked="true"{/if}/> 查看</label>
+    </div>
+</div>
+{/if}
+
+<div class="form-group" id="role-perm" style="{if $action=='userpost'}display:none;{/if}">
     <label class="col-lg control-label">可用权限</label>
     <div class="col-sm-9 col-xs-12">
         <div id="accordion" class="panel-group">
@@ -89,7 +99,7 @@
                                                                      <input type='checkbox'  value='{$key}.{$ke}.{$k}.{$kk}' class='perm-item perms'
                                                                             data-group='{$key}' data-parent='{$parentKe}' data-son="{$k}" data-grandson="{$kk}"
                                                                             {if in_array($key.".".$ke.".".$k.".".$kk,$role_perms) || in_array($key.".".$ke.".".$k.".".$kk,$user_perms)} checked{/if}
-                                                                     {if in_array($key.".".$ke.".".$k.".".$kk,$role_perms)} disabled{/if}
+                                                                     {if in_array($key.".".$ke.".".$k.".".$kk,$role_perms)  && $action=='userpost'} disabled{/if}
                                                                      />  {:str_replace("-log", "", $vv)}
                                                                  </label>
                                                             {else}
@@ -97,7 +107,7 @@
                                                                      <input type='checkbox' value='{$key}.{$ke}.{$k}' class='perm-all-item perms groups-item'
                                                                             data-group='{$key}' data-parent='{$parentKe}' data-son="{$k}" data-grandson="{$kk}"
                                                                             {if in_array($key.".".$ke.".".$k,$role_perms) || in_array($key.".".$ke.".".$k,$user_perms)} checked{/if}
-                                                                     {if in_array($key.".".$ke.".".$k,$role_perms) } disabled{/if}
+                                                                     {if in_array($key.".".$ke.".".$k,$role_perms)  && $action=='userpost'} disabled{/if}
                                                                      />  <b>{:str_replace("-log", "", $vv)}</b>
                                                                  </label>
                                                             {/if}
@@ -207,6 +217,13 @@
             return true;
         });
 
+        $("input[name=look_switch]").click(function(){
+            if( $(this).val() == 1 ){
+                $("#role-perm").show()
+            }else{
+                $("#role-perm").hide()
+            }
+        })
     });
 
     function group_check(obj) {
