@@ -85,7 +85,7 @@
 <!-- 一级导航 -->
 <div class="wb-nav {if !empty($foldNav)}fold{/if}">
     <p class="wb-nav-fold"><i class="icon icon-outdent" style="font-size:14px;"></i></p>
-    <ul id="navheight">
+    <ul id="navheight" style="max-height: 100%;height: calc(100% - 70px);overflow-y: auto;">
 
         <li class="{if $action == 'index'}active{/if}">
             <a href="{:url('admin/system/index',['i' => $uniacid,'module' => $_GET['module']])}" class="wb-nav-item">

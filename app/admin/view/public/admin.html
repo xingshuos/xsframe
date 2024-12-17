@@ -117,7 +117,7 @@
 <!-- 一级导航 -->
 <div class="wb-nav {if !empty($foldNav)}fold{/if}">
     <p class="wb-nav-fold"><i class="icon icon-outdent" style="font-size:14px;"></i></p>
-    <ul id="navheight">
+    <ul id="navheight" style="max-height: 100%;height: calc(100% - 70px);overflow-y: auto;">
 
         {foreach $menusList['menu'] as $key => $sysmenu}
             <li {if $sysmenu['active'] && !$selSystemNav}class="active"{/if}>
