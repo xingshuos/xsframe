@@ -99,7 +99,7 @@
         </div>
         <div class="feed-activity-list">
             {foreach $cv as $plugin}
-                {if in_array($row['identifie'],$perms) || $userInfo['role'] != 'operator'}
+                {if in_array($plugin['identifie'],$perms) || $userInfo['role'] != 'operator'}
                 <a class="feed-element" style="cursor: pointer" onclick="windowOpen('{$plugin.identifie}','{$plugin.url}')" href="javascript:;" data-name="{$plugin['name']}">
                     <span class="pull-left">
                         {if !empty($plugin['logo'])}
