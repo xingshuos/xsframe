@@ -39,7 +39,7 @@
             </div>
         </div>
 
-        {if !empty($websiteSets['communication_status'])}
+        {if !empty($websiteSets['communication_status']) && !empty($websiteSets['token']) && !empty($websiteSets['key'])}
         <div class="form-group">
             <label class="col-lg control-label">通信状态</label>
             <div class="col-sm-9 col-xs-12">

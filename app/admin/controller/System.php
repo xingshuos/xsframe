@@ -487,7 +487,9 @@ class System extends AdminBaseController
                 Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'module' => $modulesIds[0]])->update(['is_default' => 1]);
             }
         } else {
-            Db::name('sys_account_modules')->where(['uniacid' => $uniacid])->update(['deleted' => 1]);
+            if ($this->adminSession['role'] == 'owner') {
+                Db::name('sys_account_modules')->where(['uniacid' => $uniacid])->update(['deleted' => 1]);
+            }
         }
 
         // 更新uniacid的应用列表
