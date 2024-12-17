@@ -98,6 +98,11 @@ if (!function_exists('cp')) {
     function cp($permUrl)
     {
         $appName = app('http')->getName();
+
+        if (!StringUtil::strexists($permUrl, 'web.') && app('http')->getName() != 'admin') {
+            $permUrl = "web." . $permUrl;
+        }
+
         return PermFacade::checkPerm($appName . "/" . $permUrl, 3);
     }
 }

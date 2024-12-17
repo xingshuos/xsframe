@@ -179,13 +179,15 @@
                         {/if}
                     {else}
                         <!-- 这里是2级分类 -->
-                        <ul class="single">
-                            <li class="{if $submenu['active'] && $isActive}active{/if}" style="position: relative" data-route="{$submenu['route']}">
-                                <a href="{:webUrl($submenu['url']?:$submenu['route'])}" style="cursor: pointer;" data-route="{:url($submenu['url']?:$submenu['route'])}"><span class="wb-nav-title {if in_array($submenu['route'],$twoMenuNoticePoint??[])}point{/if}">{$submenu['title']}</span></a>
-                            </li>
-                        </ul>
-                        {if $submenu['active'] && $isActive}
-                            {php}$isActive = false;{/php}
+                        {if !empty($submenu['route']) || !empty($submenu['url']) }
+                            <ul class="single">
+                                <li class="{if $submenu['active'] && $isActive}active{/if}" style="position: relative" data-route="{$submenu['route']}">
+                                    <a href="{:webUrl($submenu['url']?:$submenu['route'])}" style="cursor: pointer;" data-route="{:url($submenu['url']?:$submenu['route'])}"><span class="wb-nav-title {if in_array($submenu['route'],$twoMenuNoticePoint??[])}point{/if}">{$submenu['title']}</span></a>
+                                </li>
+                            </ul>
+                            {if $submenu['active'] && $isActive}
+                                {php}$isActive = false;{/php}
+                            {/if}
                         {/if}
                     {/if}
                 {/foreach}
