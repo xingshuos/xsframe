@@ -6,15 +6,28 @@ use xsframe\interfaces\MiddlewareInterface;
 
 class BaseMiddleware implements MiddlewareInterface
 {
+    protected $request = null;
+    protected $params = [];
+
     /**
      * 检测中间件
      * @param $request
      * @param \Closure $next
      * @return mixed
      */
-    protected function handle($request, \Closure $next)
+    public function handle($request, \Closure $next)
     {
+        $this->request = $request;
+        if (method_exists($this, '_initialize')) {
+            $this->_initialize();
+        }
         return $next($request);
+    }
+
+    // 初始化
+    protected function _initialize()
+    {
+        $this->params = $this->request->param();
     }
 
     /**
