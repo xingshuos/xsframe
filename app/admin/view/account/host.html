@@ -151,7 +151,7 @@
                                 <div class="input-group multi-img-details container ui-sortable goods_show">
                                     {if !empty($modules)}
                                         {foreach $modules as $k => $g}
-                                        <div class="multi-item" data-id="{$g['id']}" data-name="goodsid" id="{$g['id']}">
+                                        <div class="multi-item" data-id="{$g['id']}" data-name="goodsid" id="{$g['id']}" style="width: 100px;height: 100px;">
                                             <img class="img-responsive img-thumbnail" src="{$g['logo']}" onerror="this.src='/app/admin/static/images/nopic.png'" style="width:100px;height:100px;">
                                             <div class="img-nickname">{$g['name']}</div>
                                             <input type="hidden" value="{$g['identifie']}" name="default_module">
@@ -189,7 +189,7 @@
                                     function modules_show(data) {
                                         // console.log('data',data);
                                         if(data.act == 1){
-                                            var html = '<div class="multi-item" data-id="'+data.id+'" data-name="goodsid" id="'+data.id+'">'
+                                            var html = '<div class="multi-item" data-id="'+data.id+'" data-name="goodsid" id="'+data.id+'" style="width: 100px;height: 100px;">'
                                                 +'<img class="img-responsive img-thumbnail" src="'+data.logo+'" onerror="this.src=\'/app/admin/static/images/nopic.png\'" style="width:100px;height:100px;">'
                                                 +'<div class="img-nickname">'+data.name+'</div>'
                                                 +'<input type="hidden" value="'+data.identifie+'" name="default_module">'
