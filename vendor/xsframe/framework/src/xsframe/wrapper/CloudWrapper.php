@@ -40,9 +40,9 @@ class CloudWrapper
         $headers = get_headers($url, 1);
 
         if (isset($headers['Content-Length'])) {
-            $totalSize = intval($headers['Content-Length'][0]);
+            $totalSize = intval($headers['Content-Length']);
         } else if (isset($headers['Content-Range'])) {
-            [, $rangeInfo] = explode(' ', $headers['Content-Range'][0]);
+            [, $rangeInfo] = explode(' ', $headers['Content-Range']);
             [, $totalSize] = explode('-', $rangeInfo);
             $totalSize = intval($totalSize);
         }
@@ -69,9 +69,13 @@ class CloudWrapper
                 throw new ApiException("下载失败：" . curl_error($ch));
             }
 
-            $filePointer = fopen($outputFile, 'ab');
-            fwrite($filePointer, $data);
-            fclose($filePointer);
+            try {
+                $filePointer = fopen($outputFile, 'ab');
+                fwrite($filePointer, $data);
+                fclose($filePointer);
+            } catch (\Exception $e) {
+                throw new ApiException("写入文件失败：" . $e->getMessage());
+            }
 
             $downloadedSize += strlen($data);
 
@@ -85,13 +89,16 @@ class CloudWrapper
             // usleep(100000); // 100毫秒
         }
 
-        $zip = new \ZipArchive();
-        if ($zip->open($outputFile) === true) {
-            $zip->extractTo($appPath);
-            $zip->close();
+        try {
+            $zip = new \ZipArchive();
+            if ($zip->open($outputFile) === true) {
+                $zip->extractTo($appPath);
+                $zip->close();
+            }
+            @unlink($outputFile);
+        } catch (\Exception $e) {
+            throw new ApiException("解压文件失败：" . $e->getMessage());
         }
-        @unlink($outputFile);
-
         return true;
     }
 
