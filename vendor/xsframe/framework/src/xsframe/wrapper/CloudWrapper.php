@@ -29,7 +29,7 @@ class CloudWrapper
         $postData['version'] = $postData['version'] ?? IMS_VERSION;
         $postData['php_version'] = $postData['php_version'] ?? PHP_VERSION;
         $urlParams = http_build_query($postData);
-        $url = "https://www.xsframe.cn/cloud/api/app/download?" . $urlParams; // 替换为你的服务器上的下载脚本URL
+        $url = "https://www.xsyq.cn/cloud/api/app/download?" . $urlParams; // 替换为你的服务器上的下载脚本URL
         $outputFile = IA_ROOT . "/app/{$moduleName}/$moduleName.zip"; // 替换为你想要保存文件的路径
 
         $totalSize = 0; // 总文件大小，可以从服务器响应的Content-Length或Content-Range头部获取（如果需要的话）

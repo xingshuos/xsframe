@@ -195,7 +195,7 @@ class RequestUtil
             $postData['version'] = $postData['version'] ?? IMS_VERSION;
             $postData['php_version'] = $postData['php_version'] ?? PHP_VERSION;
         }
-        $apiUrl = $apiUrl ?? "https://www.xsframe.cn";
+        $apiUrl = $apiUrl ?? "https://www.xsyq.cn";
         $response = self::httpPost("{$apiUrl}/cloud/api/" . $url, $postData, $extra);
         $result = @json_decode($response, true);
 
