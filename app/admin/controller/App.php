@@ -312,29 +312,32 @@ class App extends Base
     }
 
     // 删除多余资源包
-    private function removePackages($identifie): bool
+    private function removePackages($identifier)
     {
-        $packagesPath = IA_ROOT . "/app/{$identifie}/packages";
-        $unFiles = [
-            $packagesPath . "/source",
-            $packagesPath . "/install.php",
-            $packagesPath . "/manifest.xml",
-            $packagesPath . "/uninstall.php",
-            $packagesPath . "/upgrade.php",
-            $packagesPath . "/icon.png",
-        ];
-        FileUtil::rmDirs($packagesPath, $unFiles);
-        return true;
+        if ($identifier) {
+            $packagesPath = IA_ROOT . "/app/{$identifier}/packages";
+            if (is_dir($packagesPath)) {
+                $unFiles = [
+                    $packagesPath . "/source",
+                    $packagesPath . "/install.php",
+                    $packagesPath . "/manifest.xml",
+                    $packagesPath . "/uninstall.php",
+                    $packagesPath . "/upgrade.php",
+                    $packagesPath . "/icon.png",
+                ];
+                FileUtil::rmDirs($packagesPath, $unFiles);
+            }
+        }
     }
 
     // 更新系统的应用列表
     private function updateSystemModuleList()
     {
-        return SystemWrapperFacade::reloadAllModuleList();
+        SystemWrapperFacade::reloadAllModuleList();
     }
 
     // 获取推荐应用列表
-    public function getRecommendAppList()
+    public function getRecommendAppList(): \think\response\Json
     {
         $key = $this->websiteSets['key'] ?? '';
         $token = $this->websiteSets['token'] ?? '';

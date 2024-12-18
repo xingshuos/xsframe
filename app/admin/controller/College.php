@@ -18,6 +18,7 @@ use xsframe\util\RequestUtil;
 class College extends AdminBaseController
 {
     private $apiUrl = null;
+
     // private $apiUrl = "http://www.xsframe.com";
 
     public function post()
@@ -200,6 +201,8 @@ class College extends AdminBaseController
             'total'  => $total,
             'pager'  => $pager,
             'isMine' => $isMine,
+
+            'communication_status' => ($this->websiteSets['communication_status'] && $this->websiteSets['key']) ?? 0,
         ];
     }
 }

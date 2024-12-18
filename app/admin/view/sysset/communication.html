@@ -26,16 +26,16 @@
         </div>
 
         <div class="form-group">
-            <label class="col-lg control-label">AppID</label>
+            <label class="col-lg control-label must">AppID</label>
             <div class="col-sm-9 col-xs-12">
-                <input type="text" name="data[token]" class="form-control" value="{$websiteSets['token']}" placeholder="请输入星数引擎AppID" {if !empty($websiteSets['token'])}readonly ondblclick="this.readOnly=false" οnchange="this.readOnly=true" data-toggle="tooltip" data-placement="top" data-original-title="双击修改"{/if}/>
+                <input type="text" name="data[token]" class="form-control" value="{$websiteSets['token']}" placeholder="请输入星数引擎AppID" data-rule-required='true' {if !empty($websiteSets['token'])}readonly ondblclick="this.readOnly=false" οnchange="this.readOnly=true" data-toggle="tooltip" data-placement="top" data-original-title="双击修改"{/if}/>
             </div>
         </div>
 
         <div class="form-group">
-            <label class="col-lg control-label">通信秘钥</label>
+            <label class="col-lg control-label must">通信秘钥</label>
             <div class="col-sm-9 col-xs-12">
-                <input type="text" name="data[key]" class="form-control" value="{$websiteSets['key']}" placeholder="请输入授权域名通信秘钥" data-rule-required='false' {if !empty($websiteSets['key'])}readonly ondblclick="this.readOnly=false" οnchange="this.readOnly=true" data-toggle="tooltip" data-placement="top" data-original-title="双击修改"{/if}/>
+                <input type="text" name="data[key]" class="form-control" value="{$websiteSets['key']}" placeholder="请输入授权域名通信秘钥" data-rule-required='true' {if !empty($websiteSets['key'])}readonly ondblclick="this.readOnly=false" οnchange="this.readOnly=true" data-toggle="tooltip" data-placement="top" data-original-title="双击修改"{/if}/>
             </div>
         </div>
 

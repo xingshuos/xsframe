@@ -178,7 +178,9 @@
 <form action="" method="get" class="form-horizontal table-search" role="form">
     <div class="page-toolbar">
         <div class="col-sm-3">
+            {if $communication_status == 1}
             <a class="btn btn-primary btn-sm" href="{:webUrl('college/add')}"><i class="icon icon-plus"></i> 添加文章</a>
+            {/if}
         </div>
         <div class="col-md-9 input-group">
             <div class="input-group-select">
