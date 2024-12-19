@@ -418,6 +418,55 @@ CREATE TABLE `#__sys_users`
     UNIQUE KEY `username` (`username`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
+CREATE TABLE `#__xs_form_data_basic`
+(
+    `id`           int(10) NOT NULL AUTO_INCREMENT,
+    `uniacid`      int(10) NOT NULL DEFAULT '0',
+    `name`         varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '名称',
+    `description`  varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '简介',
+    `displayorder` int(10) NOT NULL DEFAULT '0' COMMENT '排序',
+    `enabled`      tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否显示 0否 1是',
+    `createtime`   int(11) NOT NULL DEFAULT '0' COMMENT '添加时间',
+    `deleted`      tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否删除 0否 1是',
+    `isrecommand`  tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否推荐 0否 1是',
+    `isnew`        tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否最新 0否 1是',
+    `ishot`        tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否最热 0否 1是',
+    `type`         int(10) NOT NULL DEFAULT '0' COMMENT '类型',
+    `author_id`    int(10) NOT NULL DEFAULT '0' COMMENT '作者id',
+    `education`    varchar(50) COLLATE utf8_unicode_ci  NOT NULL DEFAULT '' COMMENT '学历多选',
+    PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='常用表单保存数据';
+
+CREATE TABLE `#__xs_form_data_module`
+(
+    `id`           int(10) NOT NULL AUTO_INCREMENT,
+    `uniacid`      int(10) NOT NULL DEFAULT '0',
+    `name`         varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '名称',
+    `displayorder` int(10) NOT NULL DEFAULT '0' COMMENT '排序',
+    `enabled`      tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否显示 0否 1是',
+    `createtime`   int(11) NOT NULL DEFAULT '0' COMMENT '添加时间',
+    `deleted`      tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否删除 0否 1是',
+    `date_time`    varchar(20) COLLATE utf8_unicode_ci  NOT NULL DEFAULT '' COMMENT '日期',
+    `start_time`   int(11) NOT NULL DEFAULT '0' COMMENT '开始时间',
+    `end_time`     int(11) NOT NULL DEFAULT '0' COMMENT '结束时间',
+    `year`         varchar(10) COLLATE utf8_unicode_ci  NOT NULL DEFAULT '' COMMENT '年',
+    `month`        varchar(10) COLLATE utf8_unicode_ci  NOT NULL DEFAULT '',
+    `day`          varchar(10) COLLATE utf8_unicode_ci           DEFAULT '',
+    `time_str`     varchar(20) COLLATE utf8_unicode_ci           DEFAULT '',
+    `province`     varchar(20) COLLATE utf8_unicode_ci           DEFAULT '',
+    `city`         varchar(20) COLLATE utf8_unicode_ci           DEFAULT '',
+    `area`         varchar(30) COLLATE utf8_unicode_ci           DEFAULT '',
+    `color`        varchar(20) COLLATE utf8_unicode_ci           DEFAULT '',
+    `thumb`        varchar(255) COLLATE utf8_unicode_ci          DEFAULT '',
+    `thumbs`       varchar(255) COLLATE utf8_unicode_ci          DEFAULT '',
+    `video_url`    varchar(255) COLLATE utf8_unicode_ci          DEFAULT '',
+    `audio_url`    varchar(255) COLLATE utf8_unicode_ci          DEFAULT '',
+    `content`      text COLLATE utf8_unicode_ci,
+    `longitude`    varchar(30) COLLATE utf8_unicode_ci           DEFAULT '',
+    `latitude`     varchar(30) COLLATE utf8_unicode_ci           DEFAULT '',
+    PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='常用组件表单保存数据';
+
 insert  into `#__sys_account`(`uniacid`,`name`,`logo`,`description`,`settings`,`createtime`,`displayorder`,`status`,`deleted`,`keywords`,`copyright`) values (1,'星数引擎','https://www.xsframe.cn/attachment/images/global/2024/06/qwO6ozAY6YzAoBoK.png','星数引擎','a:10:{s:5:\"wxpay\";a:3:{s:5:\"appid\";s:0:\"\";s:5:\"mchid\";s:0:\"\";s:6:\"apikey\";s:0:\"\";}s:6:\"alipay\";a:4:{s:5:\"appid\";s:0:\"\";s:10:\"public_key\";s:0:\"\";s:11:\"encrypt_key\";s:0:\"\";s:11:\"private_key\";s:0:\"\";}s:5:\"image\";a:5:{s:9:\"is_reduce\";s:1:\"0\";s:5:\"width\";s:0:\"\";s:7:\"quality\";s:3:\"100\";s:10:\"extentions\";s:0:\"\";s:5:\"limit\";s:0:\"\";}s:6:\"remote\";a:4:{s:4:\"type\";s:1:\"0\";s:6:\"alioss\";a:4:{s:3:\"key\";s:0:\"\";s:6:\"secret\";s:0:\"\";s:8:\"internal\";s:1:\"0\";s:3:\"url\";s:0:\"\";}s:5:\"qiniu\";a:4:{s:9:\"accesskey\";s:0:\"\";s:9:\"secretkey\";s:0:\"\";s:6:\"bucket\";s:0:\"\";s:3:\"url\";s:0:\"\";}s:3:\"cos\";a:6:{s:5:\"appid\";s:0:\"\";s:8:\"secretid\";s:0:\"\";s:9:\"secretkey\";s:0:\"\";s:6:\"bucket\";s:0:\"\";s:5:\"local\";s:0:\"\";s:3:\"url\";s:0:\"\";}}s:6:\"wechat\";a:2:{s:5:\"appid\";s:0:\"\";s:6:\"secret\";s:0:\"\";}s:5:\"wxapp\";a:2:{s:5:\"appid\";s:0:\"\";s:6:\"secret\";s:0:\"\";}s:6:\"weixin\";a:2:{s:5:\"appid\";s:0:\"\";s:10:\"corpsecret\";s:0:\"\";}s:3:\"sms\";a:12:{s:11:\"accessKeyId\";s:0:\"\";s:15:\"accessKeySecret\";s:0:\"\";s:4:\"sign\";s:0:\"\";s:10:\"login_code\";s:0:\"\";s:13:\"register_code\";s:0:\"\";s:11:\"update_code\";s:0:\"\";s:11:\"change_code\";s:0:\"\";s:9:\"auth_code\";s:0:\"\";s:15:\"auth_suc_notice\";s:0:\"\";s:15:\"auth_err_notice\";s:0:\"\";s:14:\"dev_suc_notice\";s:0:\"\";s:14:\"dev_err_notice\";s:0:\"\";}s:4:\"mind\";a:3:{s:6:\"appkey\";s:0:\"\";s:9:\"appsecret\";s:0:\"\";s:10:\"connect_no\";s:0:\"\";}s:4:\"smtp\";a:7:{s:6:\"server\";s:0:\"\";s:4:\"port\";s:0:\"\";s:8:\"authmode\";s:1:\"0\";s:8:\"username\";s:0:\"\";s:8:\"password\";s:0:\"\";s:6:\"sender\";s:0:\"\";s:9:\"signature\";s:0:\"\";}}',1734593500,0,1,0,'星数引擎','<p>星数引擎</p>');
 
 insert  into `#__sys_account_modules`(`id`,`uniacid`,`module`,`settings`,`is_default`,`deleted`,`displayorder`) values (1,1,'xs_form',NULL,1,0,1);

@@ -973,6 +973,7 @@ function db_config()
 APP_DEBUG = false
 DEFAULT_APP = admin
 AUTHKEY = {authkey}
+ADMIN_ACCOUNT_MANAGER = true
 
 [CACHE]
 driver=file
