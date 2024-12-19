@@ -1,0 +1,48 @@
+{extend name="../../admin/view/public/admin"}
+
+{block name='content'}
+
+<div class="page-header">当前位置：<span class="text-primary">应用设置</span></div>
+
+<style>
+    .tabs-container .form-group {overflow: hidden;}
+    .tabs-container .tabs-left > .nav-tabs {}
+    .tab-goods .nav li {float:left;}
+</style>
+
+<div class="page-content">
+
+    <form action="" method="post" class="form-horizontal form-validate" enctype="multipart/form-data">
+        <input type="hidden" id="tab" name="tab" value="{if empty($_GET['tab'])}#tab_basic{else}#tab_{$_GET['tab']}{/if}" />
+
+        <div class="tabs-container tab-goods">
+            <div class="tabs-left">
+                <ul class="nav nav-tabs" id="myTab">
+                    <li  {if empty($_GET['tab']) || $_GET['tab']=='basic'}class="active"{/if}><a href="#tab_basic">后台设置</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-content">
+
+                        <div class="tab-pane {if empty($_GET['tab']) || $_GET['tab']=='basic'}active{/if}" id="tab_basic">
+                            <div class="panel-body">{include file='web/sets/tab/basic'}</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-lg control-label"></label>
+            <div class="col-sm-9 col-xs-12">
+                <input type="submit" value="提交" class="btn btn-primary"/>
+            </div>
+        </div>
+
+    </form>
+
+
+
+</div>
+
+{/block}

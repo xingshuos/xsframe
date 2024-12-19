@@ -1,0 +1,29 @@
+<table class="table table-responsive table-hover">
+    <thead class="navbar-inner">
+    <tr>
+        <th>ID</th>
+        <th>名称</th>
+    </tr>
+    </thead>
+    <tbody>
+        {foreach $list as $key => $row}
+        <tr>
+            <td>
+                {$row['id']}
+            </td>
+            <td class='full'>
+                {$row['title']}
+            </td>
+        </tr>
+        {/foreach}
+    </tbody>
+    <tfoot>
+    <tr>
+        <td colspan="1">
+        </td>
+        <td colspan="1" style="text-align: right">
+            {$pager | raw}
+        </td>
+    </tr>
+    </tfoot>
+</table>

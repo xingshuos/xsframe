@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns="https://www.xsyq.cn" versionCode="1.0">
+    <application setting="true">
+        <name><![CDATA[表单案例]]></name>
+        <identifie><![CDATA[xs_form]]></identifie>
+        <version><![CDATA[1.0.2]]></version>
+        <type><![CDATA[tool]]></type>
+        <ability><![CDATA[常见表单案例]]></ability>
+        <description><![CDATA[后台常用表单案例管理]]></description>
+        <author><![CDATA[GuiHai]]></author>
+        <url><![CDATA[https://www.xsyq.cn]]></url>
+    </application>
+    <platform>
+        <supports>
+            <item type="pc" />
+        </supports>
+    </platform>
+    <install><![CDATA[install.php]]></install>
+    <uninstall><![CDATA[uninstall.php]]></uninstall>
+    <upgrade><![CDATA[upgrade.php]]></upgrade>
+</manifest>

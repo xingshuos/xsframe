@@ -50,6 +50,7 @@ public/*
 
 app/*
 !app/admin
+!app/xs_form
 config/appMap.php
 config/workerMap.php
 .gitmodules

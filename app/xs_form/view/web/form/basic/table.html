@@ -1,0 +1,42 @@
+<form action="" method="post" class="form-horizontal form-validate" enctype="multipart/form-data">
+    <input type="hidden" name="id" value="{$id}">
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button">×</button>
+                <h4 class="modal-title">查看列表数据</h4>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="tabs-container">
+
+                    <div class="row" style="padding:15px 0;">
+                        <div class="input-group">
+                            <input type="text" class="form-control search"	placeholder="请输入关键字">
+                            <span class="input-group-btn">
+							<button type="button" class="btn btn-default pager-nav" page="1">搜索</button>
+						</span>
+                        </div>
+                    </div>
+
+                    <div class="tab-content content">
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <input type="submit" value="确认" class="btn btn-primary btn-lg"/>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    require(['js/web/modal_selector'],function (Mselector) {
+        Mselector.init("{:webUrl('form.basic/getTableList')}");
+    });
+</script>
