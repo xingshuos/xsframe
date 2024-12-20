@@ -101,7 +101,7 @@ return [
                 'route' => 'overview',
             ],
             [
-                'title' => '缓存处理',
+                'title' => '性能优化',
                 'route' => 'optimize',
             ],
             [
@@ -115,6 +115,10 @@ return [
             [
                 'title' => '数据库优化',
                 'route' => 'database',
+            ],
+            [
+                'title' => '更新缓存',
+                'route' => 'cache',
             ],
         ]
     ],

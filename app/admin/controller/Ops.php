@@ -20,7 +20,7 @@ class Ops extends AdminBaseController
 {
 
     // 系统概况
-    public function overview()
+    public function overview(): \think\response\View
     {
         // if ($this->request->isPost()) {
         //
@@ -32,11 +32,11 @@ class Ops extends AdminBaseController
     }
 
     // 性能优化
-    public function optimize()
+    public function optimize(): \think\response\View
     {
-        // if ($this->request->isPost()) {
-        //
-        // }
+        if ($this->request->isPost()) {
+
+        }
 
         $result = [
         ];
@@ -44,7 +44,7 @@ class Ops extends AdminBaseController
     }
 
     // 操作日志
-    public function oplog()
+    public function oplog(): \think\response\View
     {
         // if ($this->request->isPost()) {
         //
@@ -56,7 +56,7 @@ class Ops extends AdminBaseController
     }
 
     // 数据库优化
-    public function database()
+    public function database(): \think\response\View
     {
         // if ($this->request->isPost()) {
         //
@@ -65,6 +65,18 @@ class Ops extends AdminBaseController
         $result = [
         ];
         return $this->template('database', $result);
+    }
+
+    // 更新缓存
+    public function cache(): \think\response\View
+    {
+        if ($this->request->isPost()) {
+            $this->success("更新缓存成功！");
+        }
+
+        $result = [
+        ];
+        return $this->template('cache', $result);
     }
 
     // 检测bom
