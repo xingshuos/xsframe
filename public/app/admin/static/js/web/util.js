@@ -662,8 +662,8 @@
     }; // end of map
 
     util.iconBrowser = function (callback) {
-        var footer = '<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>';
-        var modalobj = util.dialog('请选择图标', ["./index.php?s=/Admin/Icon/index/callback/selectIconComplete.html"], footer, {containerName: 'icon-container'});
+        let footer = '<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>';
+        let modalobj = util.dialog('请选择图标', ["/admin/college/selectIcon.html"], footer, {containerName: 'icon-container'});
         modalobj.modal({'keyboard': false});
         modalobj.find('.modal-dialog').css({'width': '70%'});
         modalobj.find('.modal-body').css({'height': '70%', 'overflow-y': 'scroll'});
@@ -678,8 +678,8 @@
     }; // end of icon dialog
 
     util.emojiBrowser = function (callback) {
-        var footer = '<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>';
-        var modalobj = util.dialog('请选择表情', ['./index.php?c=utility&a=emoji&callback=selectEmojiComplete'], footer, {containerName: 'icon-container'});
+        let footer = '<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>';
+        let modalobj = util.dialog('请选择表情', ['/admin/college/emoji.html'], footer, {containerName: 'icon-container'});
         modalobj.modal({'keyboard': false});
         modalobj.find('.modal-dialog').css({'width': '70%'});
         modalobj.find('.modal-body').css({'height': '70%', 'overflow-y': 'scroll'});
@@ -695,7 +695,7 @@
 
     util.linkBrowser = function (callback) {
         var footer = '<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>';
-        var modalobj = util.dialog('请选择链接', ['./index.php?c=utility&a=link&callback=selectLinkComplete'], footer, {containerName: 'link-container'});
+        var modalobj = util.dialog('请选择链接', ['/admin/college/selectLinkComplete.html'], footer, {containerName: 'link-container'});
         modalobj.modal({'keyboard': false});
         modalobj.find('.modal-body').css({'height': '300px', 'overflow-y': 'auto'});
         modalobj.modal('show');

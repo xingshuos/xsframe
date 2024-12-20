@@ -141,6 +141,18 @@ class College extends AdminBaseController
         return $this->template('icon');
     }
 
+    // 系统表情
+    public function emoji()
+    {
+        return $this->template('select_emoji');
+    }
+
+    // 系统图标
+    public function selectIcon()
+    {
+        return $this->template('select_icon');
+    }
+
     private function getDetail($id): array
     {
         $key = $this->websiteSets['key'] ?? '';

@@ -100,7 +100,7 @@ if (!function_exists('tpl_selector')) {
             if ($options['type'] == 'image') {
                 $html .= '<div class=\'multi-item\' data-' . $options['key'] . '=\'' . $item[$options['key']] . '\' data-name=\'' . $name . '\'>
                                       <img class=\'img-responsive img-thumbnail\' src=\'' . tomedia($item[$options['thumb']]) . ('\' onerror=\'this.src="/app/admin/static/images/nopic.png"\' style=\'width:150px;height:150px;\'>
-                                      '.($item[$options['text']] ? '<div class=\'img-nickname\'>' . $item[$options['text']] . '</div>' : '').'
+                                      ' . ($item[$options['text']] ? '<div class=\'img-nickname\'>' . $item[$options['text']] . '</div>' : '') . '
                                      <input type=\'hidden\' value=\'' . $item[$options['key']] . '\' name=\'' . $id . '\'>
                                      <em onclick=\'biz.selector.remove(this,"' . $name . '")\'  class=\'close\'>×</em>
                             <div style=\'clear:both;\'></div>
@@ -460,6 +460,104 @@ function tpl_form_field_image(string $name, $value = '', $options = [])
 }
 
 /**
+ * 单图上传2（没有历史数据）
+ * @param string $name 名称
+ * @param string $value
+ * @param array $options
+ * @return string
+ */
+function tpl_form_field_image2(string $name, $value = '', $options = [])
+{
+    $default = !empty($options['default']) ? $options['default'] : '/app/admin/static/images/nopic.png';
+
+    $val = $default;
+    if (!empty($value)) {
+        $val = tomedia($value);
+    }
+    if (empty($options['tabs'])) {
+        $options['tabs'] = ['upload' => 'active', 'browser' => '', 'crawler' => ''];
+    }
+    if (!empty($options['global'])) {
+        $options['global'] = true;
+    } else {
+        $options['global'] = false;
+    }
+    if (empty($options['class_extra'])) {
+        $options['class_extra'] = '';
+    }
+    if (isset($options['dest_dir']) && !empty($options['dest_dir'])) {
+        if (!preg_match('/^\w+([\/]\w+)?$/i', $options['dest_dir'])) {
+            exit('图片上传目录错误,只能指定最多两级目录,如: "picture","picture/1"');
+        }
+    }
+
+    $options['direct'] = true;
+    $options['multi'] = false;
+
+    if (isset($options['thumb'])) {
+        $options['thumb'] = !empty($options['thumb']);
+    }
+
+    $s = '';
+    if (!defined('TPL_INIT_IMAGE')) {
+        $s = '
+		<script type="text/javascript">
+			function showImageDialog2(elm, opts, options) {
+				require(["util"], function(util){
+					let btn = $(elm);
+					let ipt = btn.parent().prev();
+					let val = ipt.val();
+					let img = ipt.parent().next().children();
+            
+					console.log("btn",btn);
+					console.log("ipt",ipt);
+					console.log("val",val);
+					console.log("img",img);
+					
+					// util.image(val, function(url){
+					//     console.log("url",url)
+					// 	if(url.url){
+					// 		if(img.length > 0){
+					// 			img.get(0).src = url.url;
+					// 		}
+					// 		ipt.val(url.fileurl);
+					// 		ipt.attr("filename",url.filename);
+					// 		ipt.attr("url",url.url);
+					// 	}
+					// }, opts, options);
+				});
+			}
+			function deleteImage(elm){
+				require(["jquery"], function($){
+                    $(elm).prev().attr("src", "/app/admin/static/images/nopic.png");
+					$(elm).parent().prev().find("input").val("");
+				});
+			}
+		</script>';
+        define('TPL_INIT_IMAGE', true);
+    }
+
+    $s .= '
+<div class="input-group ' . $options['class_extra'] . '">
+	<input type="text" name="' . $name . '" value="' . $value . '"' . (!empty($options['extras']['text']) ? $options['extras']['text'] : '') . ' class="form-control" autocomplete="off">
+	<span class="input-group-btn">
+		<button class="btn btn-primary" type="button" onclick="showImageDialog2(this, \'' . base64_encode(iserializer($options)) . '\', ' . str_replace('"', '\'', json_encode($options)) . ');">选择图片</button>
+	</span>
+';
+
+    $s .= '</div>';
+
+    if (!empty($options['tabs']['browser']) || !empty($options['tabs']['upload'])) {
+        $s .=
+            '<div class="input-group ' . $options['class_extra'] . '" style="margin-top:.5em;">
+				<img src="' . $val . '" onerror="this.src=\'' . $default . '\'; this.title=\'图片未找到.\'" class="img-responsive img-thumbnail" ' . (!empty($options['extras']['image']) ? $options['extras']['image'] : '') . ' width="150" />
+				<em class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片" onclick="deleteImage(this)">×</em>
+			</div>';
+    }
+    return $s;
+}
+
+/**
  * 多图上传
  * @param string $name
  * @param array $value
@@ -747,6 +845,83 @@ function tpl_form_field_color($name, $value = '')
     return $s;
 }
 
+/**
+ * 系统图标选择器
+ * @param string $name 名称
+ * @param string $value
+ * @param array $options
+ * @return string
+ */
+function tpl_form_field_icon(string $name, $value = '', $options = [])
+{
+    $s = '';
+    if (!defined('TPL_INIT_ICON')) {
+        $s = '
+		<script type="text/javascript">
+			function showIconDialog(elm) {
+				require(["util"], function(util){
+					let btn = $(elm);
+					let ipt = btn.parent().prev();
+					let val = ipt.val();
+					
+					util.iconBrowser((res) => {
+					    ipt.val(res)
+					});
+				});
+			}
+		</script>';
+        define('TPL_INIT_ICON', true);
+    }
+
+    $s .= '
+<div class="input-group ' . $options['class_extra'] . '">
+	<input type="text" name="' . $name . '" value="' . $value . '" class="form-control" autocomplete="off">
+	<span class="input-group-btn">
+		<button class="btn btn-primary" type="button" onclick="showIconDialog(this)">选择图标</button>
+	</span>
+';
+    $s .= '</div>';
+    return $s;
+}
+
+/**
+ * 表情图标选择器
+ * @param string $name 名称
+ * @param string $value
+ * @param array $options
+ * @return string
+ */
+function tpl_form_field_emoji(string $name, $value = '', $options = [])
+{
+    $s = '';
+    if (!defined('TPL_INIT_ICON')) {
+        $s = '
+		<script type="text/javascript">
+			function showEmojiDialog(elm) {
+				require(["util"], function(util){
+					let btn = $(elm);
+					let ipt = btn.parent().prev();
+					let val = ipt.val();
+					
+					util.emojiBrowser((res) => {
+					    ipt.val($(res).find("span").text())
+					});
+				});
+			}
+		</script>';
+        define('TPL_INIT_ICON', true);
+    }
+
+    $s .= '
+<div class="input-group ' . $options['class_extra'] . '">
+	<input type="text" name="' . $name . '" value="' . $value . '" class="form-control" autocomplete="off">
+	<span class="input-group-btn">
+		<button class="btn btn-primary" type="button" onclick="showEmojiDialog(this)">选择表情</button>
+	</span>
+';
+    $s .= '</div>';
+    return $s;
+}
 
 function tpl_form_field_location_category($name, $values = [], $del = false)
 {
