@@ -51,6 +51,10 @@ class FileWrapper
             }
         }
 
+        $img_info = getimagesize($attachmentPath . $folder . $filename);
+        $width = $img_info[0] ?? 0;
+        $height = $img_info[1] ?? 0;
+
         $result = [
             'name'       => $originName,
             'ext'        => $ext,
@@ -60,7 +64,9 @@ class FileWrapper
             'url'        => tomedia($folder . $filename),
             'type'       => $type == 'image' ? 1 : ($type == 'video' ? 2 : ($type == 'audio' ? 3 : 0)),
             'filesize'   => $filesize,
-            'group_id'   => $groupId
+            'group_id'   => $groupId,
+            'width'      => $width,
+            'height'     => $height,
         ];
 
         $this->addFileLog($uniacid, $userId, $result['name'], $result['fileurl'], $result['type'], $result['filesize'], $module, $groupId, $clientName);

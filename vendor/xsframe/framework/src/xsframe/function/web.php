@@ -460,104 +460,6 @@ function tpl_form_field_image(string $name, $value = '', $options = [])
 }
 
 /**
- * 单图上传2（没有历史数据）
- * @param string $name 名称
- * @param string $value
- * @param array $options
- * @return string
- */
-function tpl_form_field_image2(string $name, $value = '', $options = [])
-{
-    $default = !empty($options['default']) ? $options['default'] : '/app/admin/static/images/nopic.png';
-
-    $val = $default;
-    if (!empty($value)) {
-        $val = tomedia($value);
-    }
-    if (empty($options['tabs'])) {
-        $options['tabs'] = ['upload' => 'active', 'browser' => '', 'crawler' => ''];
-    }
-    if (!empty($options['global'])) {
-        $options['global'] = true;
-    } else {
-        $options['global'] = false;
-    }
-    if (empty($options['class_extra'])) {
-        $options['class_extra'] = '';
-    }
-    if (isset($options['dest_dir']) && !empty($options['dest_dir'])) {
-        if (!preg_match('/^\w+([\/]\w+)?$/i', $options['dest_dir'])) {
-            exit('图片上传目录错误,只能指定最多两级目录,如: "picture","picture/1"');
-        }
-    }
-
-    $options['direct'] = true;
-    $options['multi'] = false;
-
-    if (isset($options['thumb'])) {
-        $options['thumb'] = !empty($options['thumb']);
-    }
-
-    $s = '';
-    if (!defined('TPL_INIT_IMAGE')) {
-        $s = '
-		<script type="text/javascript">
-			function showImageDialog2(elm, opts, options) {
-				require(["util"], function(util){
-					let btn = $(elm);
-					let ipt = btn.parent().prev();
-					let val = ipt.val();
-					let img = ipt.parent().next().children();
-            
-					console.log("btn",btn);
-					console.log("ipt",ipt);
-					console.log("val",val);
-					console.log("img",img);
-					
-					// util.image(val, function(url){
-					//     console.log("url",url)
-					// 	if(url.url){
-					// 		if(img.length > 0){
-					// 			img.get(0).src = url.url;
-					// 		}
-					// 		ipt.val(url.fileurl);
-					// 		ipt.attr("filename",url.filename);
-					// 		ipt.attr("url",url.url);
-					// 	}
-					// }, opts, options);
-				});
-			}
-			function deleteImage(elm){
-				require(["jquery"], function($){
-                    $(elm).prev().attr("src", "/app/admin/static/images/nopic.png");
-					$(elm).parent().prev().find("input").val("");
-				});
-			}
-		</script>';
-        define('TPL_INIT_IMAGE', true);
-    }
-
-    $s .= '
-<div class="input-group ' . $options['class_extra'] . '">
-	<input type="text" name="' . $name . '" value="' . $value . '"' . (!empty($options['extras']['text']) ? $options['extras']['text'] : '') . ' class="form-control" autocomplete="off">
-	<span class="input-group-btn">
-		<button class="btn btn-primary" type="button" onclick="showImageDialog2(this, \'' . base64_encode(iserializer($options)) . '\', ' . str_replace('"', '\'', json_encode($options)) . ');">选择图片</button>
-	</span>
-';
-
-    $s .= '</div>';
-
-    if (!empty($options['tabs']['browser']) || !empty($options['tabs']['upload'])) {
-        $s .=
-            '<div class="input-group ' . $options['class_extra'] . '" style="margin-top:.5em;">
-				<img src="' . $val . '" onerror="this.src=\'' . $default . '\'; this.title=\'图片未找到.\'" class="img-responsive img-thumbnail" ' . (!empty($options['extras']['image']) ? $options['extras']['image'] : '') . ' width="150" />
-				<em class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片" onclick="deleteImage(this)">×</em>
-			</div>';
-    }
-    return $s;
-}
-
-/**
  * 多图上传
  * @param string $name
  * @param array $value
@@ -616,7 +518,10 @@ if (!function_exists('tpl_form_field_multi_image')) {
 			$(elm).parent().remove();
 		});
 	}
-
+    
+	require([\'jquery.ui\'], function () {
+        $(\'.multi-img-details\').sortable({scroll: \'false\'});
+    });
 </script>';
             define('TPL_INIT_MULTI_IMAGE', true);
         }
@@ -636,6 +541,190 @@ if (!function_exists('tpl_form_field_multi_image')) {
 	<img src="' . tomedia($row) . '" onerror="this.src=\'/app/admin/static/images/nopic.png\'; this.title=\'图片未找到.\'" class="img-responsive img-thumbnail">
 	<input type="hidden" name="' . $name . '[]" value="' . $row . '" >
 	<em class="close" title="删除这张图片" onclick="deleteMultiImage(this)">×</em>
+</div>';
+            }
+        }
+
+        $s .= '</div>';
+        return $s;
+    }
+}
+
+/**
+ * 单图上传2（没有历史数据）
+ * @param string $name 名称
+ * @param string $value
+ * @param array $options
+ * @return string
+ */
+function tpl_form_field_image2(string $name, $value = '', $options = [])
+{
+    $default = !empty($options['default']) ? $options['default'] : '/app/admin/static/images/nopic.png';
+
+    $val = $default;
+    if (!empty($value)) {
+        $val = tomedia($value);
+    }
+    if (empty($options['tabs'])) {
+        $options['tabs'] = ['upload' => 'active', 'browser' => '', 'crawler' => ''];
+    }
+    if (!empty($options['global'])) {
+        $options['global'] = true;
+    } else {
+        $options['global'] = false;
+    }
+    if (empty($options['class_extra'])) {
+        $options['class_extra'] = '';
+    }
+    if (isset($options['dest_dir']) && !empty($options['dest_dir'])) {
+        if (!preg_match('/^\w+([\/]\w+)?$/i', $options['dest_dir'])) {
+            exit('图片上传目录错误,只能指定最多两级目录,如: "picture","picture/1"');
+        }
+    }
+
+    $options['direct'] = true;
+    $options['multi'] = false;
+
+    if (isset($options['thumb'])) {
+        $options['thumb'] = !empty($options['thumb']);
+    }
+
+    $s = '';
+    if (!defined('TPL_INIT_IMAGE2')) {
+        $s = '
+		<script type="text/javascript">
+			function showImageDialog2(elm, opts, options) {
+				require(["util"], function(util){
+					let btn = $(elm);
+					let ipt = btn.parent().prev();
+					let val = ipt.val();
+					let img = ipt.parent().parent().find("img");
+                    
+					util.image2(val, function(url){
+						if(url.url){
+							if(img.length > 0){
+								img.get(0).src = url.url;
+							}
+							ipt.val(url.fileurl);
+							ipt.attr("filename",url.filename);
+							ipt.attr("url",url.url);
+						}
+					}, opts, options);
+				});
+			}
+			function deleteImage(elm){
+				require(["jquery"], function($){
+                    $(elm).prev().attr("src", "/app/admin/static/images/nopic.png");
+					$(elm).parent().prev().find("input").val("");
+				});
+			}
+		</script>';
+        define('TPL_INIT_IMAGE2', true);
+    }
+
+    $s .= '
+<div class="input-group ' . $options['class_extra'] . '">
+	<input type="text" name="' . $name . '" value="' . $value . '"' . (!empty($options['extras']['text']) ? $options['extras']['text'] : '') . ' class="form-control" autocomplete="off">
+	<span class="input-group-btn">
+		<button class="btn btn-primary" type="button" onclick="showImageDialog2(this, \'' . base64_encode(iserializer($options)) . '\', ' . str_replace('"', '\'', json_encode($options)) . ');">选择图片</button>
+	</span>
+';
+
+    $s .= '</div>';
+
+    if (!empty($options['tabs']['browser']) || !empty($options['tabs']['upload'])) {
+        $s .=
+            '<div class="input-group ' . $options['class_extra'] . '" style="margin-top:.5em;">
+				<img src="' . $val . '" onerror="this.src=\'' . $default . '\'; this.title=\'图片未找到.\'" class="img-responsive img-thumbnail" ' . (!empty($options['extras']['image']) ? $options['extras']['image'] : '') . ' width="150" />
+				<em class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片" onclick="deleteImage(this)">×</em>
+			</div>';
+    }
+    return $s;
+}
+
+/**
+ * 多图上传
+ * @param string $name
+ * @param array $value
+ * @param array $options
+ * @return string
+ */
+if (!function_exists('tpl_form_field_multi_image2')) {
+    function tpl_form_field_multi_image2($name, $value = [], $options = [])
+    {
+        $options['multiple'] = true;
+        $options['multi'] = true;
+        $options['direct'] = false;
+        $options['fileSizeLimit'] = 10 * 1024;
+        if (isset($options['dest_dir']) && !empty($options['dest_dir'])) {
+            if (!preg_match('/^\\w+([\\/]\\w+)?$/i', $options['dest_dir'])) {
+                exit('图片上传目录错误,只能指定最多两级目录,如: "we7_store","we7_store/d1"');
+            }
+        }
+
+        $s = '';
+
+        if (!defined('TPL_INIT_MULTI_IMAGE2')) {
+            $s = '
+<script type="text/javascript">
+	function uploadMultiImage2(elm) {
+		moveImages2();
+		let name = $(elm).next().val();
+		util.image2( "", function(urls){
+			$.each(urls, function(idx, url){
+				$(elm).parent().parent().next().append(\'<div class="multi-item"><img onerror="this.src=\\\'/app/admin/static/images/nopic.png\\\'; this.title=\\\'图片未找到.\\\'" src="\'+url.url+\'" class="img-responsive img-thumbnail"><input type="hidden" name="\'+name+\'[]" value="\'+url.fileurl+\'"><em class="close" title="删除这张图片" onclick="deleteMultiImage2(this)">×</em></div>\');
+			});
+		}, ' . json_encode($options) . ');
+	}
+
+	function moveImages2(){
+		let isShow = false;
+        setTimeout(function(){
+            $(".dropdown-toggle").click(function(){
+                isShow = !isShow;
+                var _this = $(this);
+
+                if(isShow){
+                    $(this).parent().addClass("open").find(".dropdown-menu").show();
+                    $(this).parent().find(".dropdown-menu").hover(
+                        function(){$(this).show();$(this).parent().addClass("open")},
+                        function(){$(this).hide();$(this).parent().removeClass("open");}
+                    );
+                }else{
+                    $(this).parent().removeClass("open").find(".dropdown-menu").hide();
+                }
+            });
+        },500);
+	}
+
+	function deleteMultiImage2(elm){
+		require(["jquery"], function($){
+			$(elm).parent().remove();
+		});
+	}
+    
+	require([\'jquery.ui\'], function () {
+        $(\'.multi-img-details\').sortable({scroll: \'false\'});
+    });
+</script>';
+            define('TPL_INIT_MULTI_IMAGE2', true);
+        }
+
+        $s .= '<div class="input-group">
+	<input type="text" class="form-control" readonly="readonly" value="" placeholder="批量上传图片" autocomplete="off">
+	<span class="input-group-btn">
+		<button class="btn btn-primary" type="button" onclick="uploadMultiImage2(this);">选择图片</button>
+		<input type="hidden" value="' . $name . '" />
+	</span>
+</div>
+<div class="input-group multi-img-details">';
+        if (is_array($value) && 0 < count($value)) {
+            foreach ($value as $row) {
+                $s .= '
+<div class="multi-item">
+	<img src="' . tomedia($row) . '" onerror="this.src=\'/app/admin/static/images/nopic.png\'; this.title=\'图片未找到.\'" class="img-responsive img-thumbnail">
+	<input type="hidden" name="' . $name . '[]" value="' . $row . '" >
+	<em class="close" title="删除这张图片" onclick="deleteMultiImage2(this)">×</em>
 </div>';
             }
         }

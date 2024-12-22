@@ -55,8 +55,8 @@ let myConfig = {
         "jquery.ui": "components/jquery/jquery-ui-1.10.3.min",
 
         'webuploader': 'components/webuploader/webuploader.min',
-        // "fileUploader": "components/fileuploader/fileuploader",
         "fileUploader": "components/fileuploader/fileuploader_new.min",
+        "fileUploader2": "components/fileuploader/fileuploader",
 
         'biz': "js/web/biz",
         'form': "js/web/form",

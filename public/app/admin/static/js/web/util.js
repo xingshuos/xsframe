@@ -743,6 +743,34 @@
         });
     };
 
+    util.image2 = function (val, callback, base64options, options) {
+        let opts = {
+            type: 'image',
+            direct: false,
+            multiple: false,
+            path: val,
+            dest_dir: '',
+            global: false,
+            thumb: false,
+            width: 0
+        };
+
+        opts = $.extend({}, opts, base64options);
+        opts.type = 'image';
+
+        console.log('util.image2', opts);
+
+        require(['jquery', 'fileUploader2'], function ($, fileUploader) {
+            fileUploader.show(function (images) {
+                if (images) {
+                    if ($.isFunction(callback)) {
+                        callback(images);
+                    }
+                }
+            }, opts);
+        });
+    };
+
     // end of image
 
     util.wechat_image = function (val, callback, options) {

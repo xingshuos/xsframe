@@ -90,6 +90,8 @@ define(['bootstrap', 'webuploader', 'util', 'filestyle'], function ($, WebUpload
 
             this.options = $.extend({}, this.defaultoptions, options);
 
+            console.log('options',this.options)
+
             this.options.callback = callback;
 
             if (options.tabs) {
@@ -596,7 +598,7 @@ define(['bootstrap', 'webuploader', 'util', 'filestyle'], function ($, WebUpload
                     fileNumLimit: $this.options.multi ? 30 : 1,
                     fileSizeLimit: 200 * 1024 * 1024, // 200 M大小
                     fileSingleSizeLimit: 100 * 1024 * 1024 // 100 M大小
-                }
+                };
 
                 // 实例化
                 uploader = WebUploader.create(options);

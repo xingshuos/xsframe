@@ -290,7 +290,10 @@ class File extends AdminBaseController
         $this->returnData($result);
     }
 
-    // 提取 目前仅支持图片
+    /**
+     * 提取 目前仅支持图片
+     * @throws \xsframe\exception\ApiException
+     */
     public function fetch()
     {
         $url = trim($this->params['url']);
