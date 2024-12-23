@@ -51,7 +51,7 @@ class FileWrapper
             }
         }
 
-        $img_info = getimagesize($attachmentPath . $folder . $filename);
+        $img_info = @getimagesize($attachmentPath . $folder . $filename);
         $width = $img_info[0] ?? 0;
         $height = $img_info[1] ?? 0;
 
