@@ -77,21 +77,35 @@ class FileUtil
     // 加载所有应用的命令行对应路径
     public static function getAppCommands(): array
     {
-        $rootPath = str_replace("\\", "/", app()->getRootPath());
+        $iaPath = app()->getRootPath();
+        $rootPath = str_replace("\\", "/", $iaPath);
 
         $appPath = $rootPath . "app";
         $dirList = FileUtil::dirsOnes($appPath);
 
-        $commands = [];
+        $commands = [
+            "xsframe\\console\\command\\make\\Command",
+            "xsframe\\console\\command\\make\\Controller",
+            "xsframe\\console\\command\\make\\Event",
+            "xsframe\\console\\command\\make\\Listener",
+            "xsframe\\console\\command\\make\\Middleware",
+            "xsframe\\console\\command\\make\\Model",
+            "xsframe\\console\\command\\make\\Service",
+            "xsframe\\console\\command\\make\\Subscribe",
+            "xsframe\\console\\command\\make\\Validate",
+        ];
+
         foreach ($dirList as $key => $dirItem) {
             $appCommands = FileUtil::getDir($appPath . "/$dirItem/command");
             if (!empty($appCommands)) {
                 foreach ($appCommands as $commandItem) {
                     $commandPath = str_replace($rootPath, "", rtrim($commandItem['path'], ".php"));
-                    $commands[]  = str_replace("/", "\\", $commandPath);
+                    $commands[] = str_replace("/", "\\", $commandPath);
                 }
             }
         }
+
+        // dd($commands);
 
         return $commands;
     }
@@ -99,11 +113,11 @@ class FileUtil
     // 获取文件夹下一级文件夹列表
     public static function dirsOnes($path): array
     {
-        $files    = glob($path . '/*');
+        $files = glob($path . '/*');
         $newFiles = [];
         if (!empty($files)) {
             foreach ($files as $item) {
-                $item       = str_replace("\\", "/", $item);
+                $item = str_replace("\\", "/", $item);
                 $newFiles[] = substr($item, strripos($item, '/') + 1);
             }
         }
@@ -129,7 +143,7 @@ class FileUtil
         if (is_dir($path)) {
             $dp = dir($path);
             while ($file = $dp->read()) {
-                $tmpFile  = str_replace("//", "/", $path . "/" . $file);
+                $tmpFile = str_replace("//", "/", $path . "/" . $file);
                 $fileName = basename($tmpFile);
 
                 $isSvnPath = strpos($tmpFile, ".svn") !== false;
@@ -140,7 +154,7 @@ class FileUtil
                 }
 
                 if ($file != '.' && $file != '..') {
-                    $tmpPath  = str_replace("//", "/", $path . "/" . $file);
+                    $tmpPath = str_replace("//", "/", $path . "/" . $file);
                     $pathName = str_replace($oldPath, '', $tmpPath);
 
                     if (!empty($unSyncFolder)) {
@@ -163,7 +177,7 @@ class FileUtil
                         }
                         self::oldDirToNewDir($tmpPath, $newPath, $oldPath);
                     } else if (is_file($tmpPath)) {
-                        $pathName    = substr($pathName, 0, strrpos($pathName, "/"));
+                        $pathName = substr($pathName, 0, strrpos($pathName, "/"));
                         $newFilePath = str_replace("//", '/', $newPath . $pathName . "/" . $fileName);
 
                         if (!is_file($newFilePath) || md5_file($tmpFile) != md5_file($newFilePath)) {
@@ -209,7 +223,7 @@ class FileUtil
         $isGitPath = strpos($path, ".git") !== false;
 
         if (is_file($path) && !$isSvnPath && !$isGitPath) {
-            $path   = ltrim($path, ".");
+            $path = ltrim($path, ".");
             $data[] = [
                 'path'     => $path,
                 'checksum' => md5_file($path)
@@ -229,7 +243,7 @@ class FileUtil
     public static function getMd5files($files = null): array
     {
         $rootPath = str_replace("\\", "/", dirname(dirname(dirname(dirname(__file__)))));
-        $data     = [];
+        $data = [];
         foreach ($files as $item) {
             $data = self::getDir($rootPath . $item);
         }
@@ -247,7 +261,7 @@ class FileUtil
         }
         //获取远程文件数据
         if ($type === 0) {
-            $ch      = curl_init();
+            $ch = curl_init();
             $timeout = 5;
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -319,7 +333,7 @@ class FileUtil
     // 是否存在某个文件夹
     public static function fileDirExistImage($path): bool
     {
-        $rootPath       = str_replace("\\", "/", app()->getRootPath());
+        $rootPath = str_replace("\\", "/", app()->getRootPath());
         $attachmentPath = $rootPath . "public/attachment/";
         if (is_dir($path)) {
             if ($dir = opendir($path)) {
@@ -355,7 +369,7 @@ class FileUtil
         if (!parsePath($url)) {
             return false;
         }
-        $pathInfo  = pathinfo($url);
+        $pathInfo = pathinfo($url);
         $extension = strtolower($pathInfo['extension']);
         return !empty($extension) && in_array($extension, ['gif', 'jpg', 'jpeg', 'bmp', 'png', 'ico', 'heic']);
     }
@@ -399,7 +413,7 @@ class FileUtil
     // 删除本地文件
     public static function fileDelete($file): bool
     {
-        $rootPath       = str_replace("\\", "/", app()->getRootPath());
+        $rootPath = str_replace("\\", "/", app()->getRootPath());
         $attachmentPath = $rootPath . "public/attachment/";
 
         if (empty($file)) {
