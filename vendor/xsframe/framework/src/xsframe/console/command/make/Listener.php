@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------
 namespace xsframe\console\command\make;
 
-use think\console\command\Make;
+use xsframe\console\command\Make;
 
 class Listener extends Make
 {

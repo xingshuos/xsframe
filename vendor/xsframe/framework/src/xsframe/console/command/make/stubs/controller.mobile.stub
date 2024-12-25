@@ -1,0 +1,15 @@
+<?php
+declare (strict_types = 1);
+
+namespace {%namespace%};
+
+use xsframe\base\MobileBaseController;
+
+class {%className%} extends MobileBaseController
+{
+    public function index()
+    {
+        // $this->runMobile(); // 如果是移动端VUE打包项目，可以调用此方法 存储路径为:public/app/moduleName/mobile/version/1.0.1/index.html
+        return $this->template('index');
+    }
+}

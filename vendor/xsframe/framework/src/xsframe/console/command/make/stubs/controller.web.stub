@@ -1,0 +1,30 @@
+<?php
+declare (strict_types = 1);
+
+namespace {%namespace%};
+
+use xsframe\base\AdminBaseController;
+
+class {%className%} extends AdminBaseController
+{
+    protected $tableName = "{%tableName%}";
+    protected $orderBy = "id desc";
+
+    // 设置列表查询条件
+    public function setMainCondition(&$condition){}
+
+    // 设置列表页参数
+    public function afterMainResult(&$result){}
+
+    // 自定义导出数据格式
+    public function setExportExcelData(&$list){}
+
+    // 保存数据之前处理
+    public function beforeSetPostData(&$updateData){}
+
+    // 保存数据之后处理
+    public function afterSetPostData($id){}
+
+    // 设置表单页参数
+    public function afterPostResult(&$result){}
+}
