@@ -43,7 +43,6 @@ class Controller extends Make
             ->addOption('mobile', null, Option::VALUE_NONE, 'Generate an mobile controller class.')
             ->addOption('web', null, Option::VALUE_NONE, 'Generate an web controller class.')
             ->addOption('table', 't', Option::VALUE_REQUIRED, 'Set table name', "")
-            ->addOption('view', 'v', Option::VALUE_REQUIRED, 'Set view name', "")
             ->setDescription('Create a new resource controller class 2');
     }
 
@@ -72,7 +71,6 @@ class Controller extends Make
             mkdir(dirname($pathname), 0755, true);
         }
 
-        // $classname = $this->capitalizeLastFilename($classname, false);
         $pathname = $this->capitalizeLastFilename($pathname);
         file_put_contents($pathname, $this->buildClass($classname));
 

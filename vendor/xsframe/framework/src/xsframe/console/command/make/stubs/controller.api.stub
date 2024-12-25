@@ -1,64 +1,71 @@
 <?php
+
+// +----------------------------------------------------------------------
+// | 星数为来数字化开发引擎 [ WE CAN DO IT JUST THINK ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2023~2024 http://xsyq.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+// +----------------------------------------------------------------------
+// | Author: 星数为来(杭州)科技有限公司
+// +----------------------------------------------------------------------
+
 declare (strict_types = 1);
 
 namespace {%namespace%};
 
-use think\Request;
+use xsframe\base\ApiBaseController;
 
-class {%className%}
+class {%className%} extends ApiBaseController
 {
     /**
      * 显示资源列表
-     *
-     * @return \think\Response
      */
-    public function index{%actionSuffix%}()
+    public function index(): \think\response\Json
     {
-        //
+        $result = [];
+        return $this->success($result);
     }
 
     /**
      * 保存新建的资源
-     *
-     * @param  \think\Request  $request
-     * @return \think\Response
      */
-    public function save{%actionSuffix%}(Request $request)
+    public function save(): \think\response\Json
     {
-        //
+        $result = [];
+        return $this->success($result);
     }
 
     /**
      * 显示指定的资源
-     *
-     * @param  int  $id
-     * @return \think\Response
      */
-    public function read{%actionSuffix%}($id)
+    public function read(): \think\response\Json
     {
-        //
+        $id = intval($this->params['id'] ?? 0);
+
+        $result = [];
+        return $this->success($result);
     }
 
     /**
      * 保存更新的资源
-     *
-     * @param  \think\Request  $request
-     * @param  int  $id
-     * @return \think\Response
      */
-    public function update{%actionSuffix%}(Request $request, $id)
+    public function update(): \think\response\Json
     {
-        //
+        $id = intval($this->params['id'] ?? 0);
+
+        $result = [];
+        return $this->success($result);
     }
 
     /**
      * 删除指定资源
-     *
-     * @param  int  $id
-     * @return \think\Response
      */
-    public function delete{%actionSuffix%}($id)
+    public function delete(): \think\response\Json
     {
-        //
+        $id = intval($this->params['id'] ?? 0);
+
+        $result = [];
+        return $this->success($result);
     }
 }
