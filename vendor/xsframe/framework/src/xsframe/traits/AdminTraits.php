@@ -154,6 +154,9 @@ trait AdminTraits
     private function exportExcelData($list = [], $column = null, $keys = null, $title = null, $last = null)
     {
         if (!empty($list)) {
+            ini_set('memory_limit', '1024M'); // 根据需要调整内存大小
+            set_time_limit(0); // 设置为0表示无限制，但注意服务器配置可能限制此设置
+
             $title = ($title ?? "数据列表") . "_" . date('YmdHi');
             if (!empty($column) && !empty($keys)) {
                 $column = explode(",", $column);
