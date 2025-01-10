@@ -339,7 +339,7 @@ define(['bootstrap', 'webuploader', 'util', 'filestyle','jquery.ui'], function (
             $this = this;
 
             if (this.modalobj.find('#browser').length == 0) {
-                this.modalobj.find('.nav-pills').append('<li role="presentation"><a aria-controls="browser" role="tab" data-toggle="tab" href="#browser">浏览附件</a></li>');
+                // this.modalobj.find('.nav-pills').append('<li role="presentation"><a aria-controls="browser" role="tab" data-toggle="tab" href="#browser">浏览附件</a></li>');
                 this.modalobj.find('.modal-body').append(this.template().browser);
                 this.browser(this.type + 's');
             }

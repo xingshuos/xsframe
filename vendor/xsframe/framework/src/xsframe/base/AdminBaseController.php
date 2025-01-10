@@ -60,7 +60,10 @@ abstract class AdminBaseController extends BaseController
     {
         $clientName = $this->params['client'] ?? 'web';
         $isFileUpload = strtolower($this->controller) == 'file';
-        if ($clientName && $clientName != 'web' && $isFileUpload && $this->params['uid'] && $this->params['module'] != 'admin') {
+
+        /*$clientName && $clientName != 'web' TODO zhaoxin 注释图片限定参数 */
+
+        if ($isFileUpload && $this->params['uid'] && $this->params['module'] != 'admin') {
             $this->userId = intval($this->params['uid']);
             // 调用用户是否登录 TODO 这里是个漏洞，没有校验用户是否登录（1.每个应用重做上传 2.统一登录 3.提供调用登录的接口校验 推荐第三种方式）
         } else {
