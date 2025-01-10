@@ -1,5 +1,5 @@
 
-define(['bootstrap', 'webuploader', 'util', 'filestyle'], function ($, WebUploader, util) {
+define(['bootstrap', 'webuploader', 'util', 'filestyle','jquery.ui'], function ($, WebUploader, util) {
     /*
         'options' : {
             type     : '',     设置上传类型 image/audio
@@ -61,6 +61,7 @@ define(['bootstrap', 'webuploader', 'util', 'filestyle'], function ($, WebUpload
         'uploader': {},
         'modalobj': null,
         'images': [],
+        'uploadImages': [],
 
         /*上次控件的状态,tabname,active*/
         'historyOptions': '',
@@ -493,8 +494,12 @@ define(['bootstrap', 'webuploader', 'util', 'filestyle'], function ($, WebUpload
                         if (confirm("确定要删除文件吗？")) {
                             let attachment = $(this).parent().attr('attachment');
                             $.post('/admin/file/delete.html', {'uniacid': window.sysinfo.uniacid, 'module': window.sysinfo.module, 'file': attachment}, function (data) {
-                                $($this).parent().remove();
-                            });
+                                if( data.message.errno == 1 ){
+                                    alert(data.message.message);
+                                }else{
+                                    $($this).parent().remove();
+                                }
+                            },'json');
                         }
                         event.stopPropagation();
                     });
@@ -502,10 +507,25 @@ define(['bootstrap', 'webuploader', 'util', 'filestyle'], function ($, WebUpload
                     $browser.find('.img-item').off('click');
                     $browser.find('.img-item').on('click', function () {
                         $(this).toggleClass('img-item-selected');
-                        $this.images = [];
-                        $.each($('.img-item-selected'), function (idx, ele) {
-                            $this.images.push($this.browserfiles['file_' + $(ele).attr('attachid')]);
-                        });
+
+                        // 修改后按照先后顺讯存储
+                        let attachid = $(this).attr('attachid');
+                        let attachment = $(this).attr('attachment');
+
+                        if ($(this).hasClass('img-item-selected')) {
+                            $this.images.push($this.browserfiles['file_' +attachid]);
+                        } else {
+                            $this.images = $this.images.filter(function(item) {
+                                return item.fileurl !== attachment;
+                            });
+                        }
+
+                        // 未修改前不按照顺序
+                        // $this.images = [];
+                        // $.each($('.img-item-selected'), function (idx, ele) {
+                        //     $this.images.push($this.browserfiles['file_' + $(ele).attr('attachid')]);
+                        // });
+
                         $browser.find('.browser-info').text('已选中 ' + $this.images.length + ' 个文件.');
 
                         if (($this.options.direct || !$this.options.multi) && $(this).hasClass('img-item-selected')) {
@@ -570,6 +590,9 @@ define(['bootstrap', 'webuploader', 'util', 'filestyle'], function ($, WebUpload
 
                     uploader;
 
+                    // 更改排列顺序
+                    $('.filelist').sortable({scroll: 'false'});
+
                 let options = {
                     //auto: !$this.options.multi,
                     pick: {
@@ -577,8 +600,8 @@ define(['bootstrap', 'webuploader', 'util', 'filestyle'], function ($, WebUpload
                         label: '点击选择文件',
                         multiple: $this.options.multi
                     },
-                    dnd: '#dndArea',
-                    paste: '#uploader',
+                    dnd: '#dndArea', // 拖拽区域
+                    paste: '#uploader', // 粘贴上传
                     // swf文件路径
                     swf: './public/app/admin/static/components/webuploader/Uploader.swf',
                     // 文件接收服务端。
@@ -597,7 +620,7 @@ define(['bootstrap', 'webuploader', 'util', 'filestyle'], function ($, WebUpload
                     duplicate: true,
                     fileNumLimit: $this.options.multi ? 30 : 1,
                     fileSizeLimit: 200 * 1024 * 1024, // 200 M大小
-                    fileSingleSizeLimit: 100 * 1024 * 1024 // 100 M大小
+                    fileSingleSizeLimit: 100 * 1024 * 1024, // 100 M大小
                 };
 
                 // 实例化
@@ -647,10 +670,13 @@ define(['bootstrap', 'webuploader', 'util', 'filestyle'], function ($, WebUpload
 
                 // 当有文件添加进来时执行，负责view的创建
                 function addFile(file) {
+
+                    console.log('addFile',file)
+
                     let $li = $('<li id="' + file.id + '">' +
                         '<p class="title">' + file.name + '</p>' +
                         '<p class="imgWrap"></p>' +
-                        //'<p class="progress"><span></span></p>' +
+                        '<p class="progress"><span></span></p>' +
                         '</li>'),
                         $btns = $('<div class="file-panel">' +
                             '<span class="cancel">删除</span></div>').appendTo($li),
@@ -871,10 +897,23 @@ define(['bootstrap', 'webuploader', 'util', 'filestyle'], function ($, WebUpload
                         $statusBar.show();
                     }
 
+                    console.log('onFileQueued',file)
+
                     addFile(file);
                     setState('ready');
                     updateTotalProgress();
                 };
+
+                // 使用 uploadBeforeSend 钩子在每次上传前设置顺序
+                uploader.on('uploadBeforeSend', function(block, data) {
+                    console.log('uploadBeforeSend',block)
+                    $this.uploadImages.push(block.blob.name);
+                    // 使用当前块的序号来从 imageFiles 数组中获取正确的文件对象
+                    // let file = imageFiles[block.file.id];
+                    // 将正确的文件对象重新赋值到 block.file
+                    // block.file = file;
+                    // 如果有必要，可以修改 data 对象来包含额外的参数
+                });
 
                 uploader.onFileDequeued = function (file) {
                     fileCount--;
@@ -903,13 +942,14 @@ define(['bootstrap', 'webuploader', 'util', 'filestyle'], function ($, WebUpload
                         case 'stopUpload':
                             setState('paused');
                             break;
+                        case 'beforeFileQueued':
+                            break;
+                        case 'fileQueued':
+                            break;
                     }
                 });
 
                 uploader.on('uploadSuccess', function (file, result) {
-
-                    // console.log('uploadSuccess',result)
-
                     if (result == 'Access Denied') {
                         console.log(result);
                     }
@@ -933,12 +973,28 @@ define(['bootstrap', 'webuploader', 'util', 'filestyle'], function ($, WebUpload
                 });
 
                 uploader.on('uploadFinished', function () {
+                    // console.log("uploader.on uploadFinished uploadImages",$this.uploadImages);
+
+                    // 获取dom元素的排列顺序
+                    let newUploadImages = [];
+                    $.each($('.filelist li'), function (idx, ele) {
+                        newUploadImages.push($($(ele).children()[0]).text())
+                    });
+                    // console.log("uploader.on newUploadImages",newUploadImages);
+
+                    // 手动更改图片位置
+                    // $this.uploadImages = ['3.jpeg', '2.png', '1.png'];
+                    $this.images = $this.sortObjectArrayByNameArray(newUploadImages, $this.images);
+
+                    // console.log("uploader.on uploadFinished updated images",$this.images);
+
                     if ($this.images.length > 0) {
                         $this.modalobj.find('#upload').find('.btn.btn-primary').click();
                     }
                 });
 
                 uploader.onError = function (code) {
+                    console.log("uploader.on onError")
                     if (code == 'Q_EXCEED_SIZE_LIMIT') {
                         alert('错误信息: 文件大于 100M 无法上传.');
                         return
@@ -951,6 +1007,7 @@ define(['bootstrap', 'webuploader', 'util', 'filestyle'], function ($, WebUpload
                 };
 
                 $upload.on('click', function () {
+                    console.log("uploader.on click")
                     if ($(this).hasClass('disabled')) {
                         return false;
                     }
@@ -995,6 +1052,19 @@ define(['bootstrap', 'webuploader', 'util', 'filestyle'], function ($, WebUpload
                     alert('未选择任何文件.');
                 }
             });
+        },
+
+        'sortObjectArrayByNameArray' : function(nameArray, objectArray){
+            // 创建一个映射，将文件名映射到它们的索引位置
+            const nameToIndexMap = new Map();
+            nameArray.forEach((name, index) => {
+                nameToIndexMap.set(name, index);
+            });
+            // 根据映射中的索引对对象数组进行排序
+            objectArray.sort((a, b) => {
+                return nameToIndexMap.get(a.name) - nameToIndexMap.get(b.name);
+            });
+            return objectArray;
         },
 
         'reset_upload': function () {
@@ -1060,18 +1130,18 @@ define(['bootstrap', 'webuploader', 'util', 'filestyle'], function ($, WebUpload
             ;
 
             template['browser'] =
-                '<div role="tabpanel" class="tab-pane browser" id="browser">' +
-                '   <div class="breadcrumb" style="padding: 8px; background: #FFFFFF; margin-top: -10px; margin-bottom: 0px;">' +
+                '<div role="tabpanel" class="tab-pane browser" id="browser" style="margin-top: 0;">' +
+                '   <div class="breadcrumb" style="display: none;padding: 8px; background: #FFFFFF; margin-top: -10px; margin-bottom: 0px;">' +
                 '   </div>' +
                 '   <div class="clearfix file-browser">' +
                 '   </div>' +
-                '   <div class="modal-footer" style="padding: 12px 0px 0px;">' +
+                '   <div class="modal-footer" style="background: #fff;display:flex;justify-content: center;align-items: center;">' +
                 '        <div style="float: left;">' +
                 '             <span class="browser-info"><span>' +
                 '        </div>' +
                 '        <div style="float: right;">' +
                 '             <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>' +
-                '             <button type="button" class="btn btn-primary">确认</button>' +
+                '             <button type="button" class="btn btn-primary" style="margin-left:15px;">确认</button>' +
                 '        </div>' +
                 '   </div>' +
                 '</div>';
@@ -1105,7 +1175,7 @@ define(['bootstrap', 'webuploader', 'util', 'filestyle'], function ($, WebUpload
                 '             </div>' +
                 '        </form>' +
                 '   </div>' +
-                '   <div class="modal-footer" style="padding: 12px 0px 0px;">' +
+                '   <div class="modal-footer" style="background: #fff;">' +
                 '        <div style="float: left;">' +
                 '             <span class="browser-info"><span>' +
                 '        </div>' +
@@ -1135,7 +1205,7 @@ define(['bootstrap', 'webuploader', 'util', 'filestyle'], function ($, WebUpload
                 '             </div>' +
                 '        </form>' +
                 '   </div>' +
-                '   <div class="modal-footer" style="padding: 12px 0px 0px;">' +
+                '   <div class="modal-footer" style="background: #fff;">' +
                 '        <div style="float: left;">' +
                 '             <span class="browser-info"><span>' +
                 '        </div>' +

@@ -173,10 +173,10 @@
                     execCommand: function () {
                         fileUploader.show(function (images) {
 
-                            console.log('images', images);
+                            // console.log('images 111', images);
 
                             let isDeep = images => images.some(item => item instanceof Array);
-                            console.log('isDeep', isDeep);
+                            // console.log('isDeep', isDeep);
 
                             if (images) {
                                 if (!images.length) {
@@ -323,6 +323,7 @@
                 type: "image",
                 direct: !1,
                 multiple: !0,
+                multi: !0,
                 tabs: {
                     upload: "active",
                     browser: "",
@@ -339,6 +340,9 @@
                 e.registerCommand(t, {
                     execCommand: function () {
                         r.show(function (t) {
+
+                            // console.log('myinsertimage t',t)
+
                             if (0 != t.length)
                                 if (1 == t.length) e.execCommand("insertimage", {
                                     src: t[0].url,
@@ -410,7 +414,7 @@
                 }), $.isFunction(t.callback) && t.callback(e, d)
             }
         };
-        require(["ueditor", "fileUploader"], function (e, t) {
+        require(["ueditor", "fileUploader2"], function (e, t) {
             r(e, t)
         }, function (e) {
             var t = e.requireModules && e.requireModules[0];
@@ -427,7 +431,7 @@
                         }
                     }
                 }
-            }), require(["ueditor", "fileUploader"], function (e, t) {
+            }), require(["ueditor", "fileUploader2"], function (e, t) {
                 r(e, t)
             }))
         })
@@ -716,6 +720,7 @@
      **/
 
     util.image = function (val, callback, base64options, options) {
+
         let opts = {
             type: 'image',
             direct: false,
@@ -730,7 +735,7 @@
         opts = $.extend({}, opts, base64options);
         opts.type = 'image';
 
-        // console.log('util.image', opts);
+        // console.log('util.image 66', opts);
 
         require(['jquery', 'fileUploader'], function ($, fileUploader) {
             fileUploader.show(function (images) {
@@ -758,10 +763,9 @@
         opts = $.extend({}, opts, base64options);
         opts.type = 'image';
 
-        console.log('util.image2', opts);
-
         require(['jquery', 'fileUploader2'], function ($, fileUploader) {
             fileUploader.show(function (images) {
+                // console.log('jquery fileUploader2',images)
                 if (images) {
                     if ($.isFunction(callback)) {
                         callback(images);

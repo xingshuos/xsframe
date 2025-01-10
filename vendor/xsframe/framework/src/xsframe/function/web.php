@@ -671,6 +671,9 @@ if (!function_exists('tpl_form_field_multi_image2')) {
 		moveImages2();
 		let name = $(elm).next().val();
 		util.image2( "", function(urls){
+            
+            console.log("tpl_form_field_multi_image2 urls",urls)
+            
 			$.each(urls, function(idx, url){
 				$(elm).parent().parent().next().append(\'<div class="multi-item"><img onerror="this.src=\\\'/app/admin/static/images/nopic.png\\\'; this.title=\\\'图片未找到.\\\'" src="\'+url.url+\'" class="img-responsive img-thumbnail"><input type="hidden" name="\'+name+\'[]" value="\'+url.fileurl+\'"><em class="close" title="删除这张图片" onclick="deleteMultiImage2(this)">×</em></div>\');
 			});
