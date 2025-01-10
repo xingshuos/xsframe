@@ -615,7 +615,9 @@ define(['bootstrap', 'webuploader', 'util', 'filestyle','jquery.ui'], function (
                         dest_dir: escape(this.options.dest_dir),
                         global: escape(this.options.global),
                         thumb: escape(this.options.thumb),
-                        width: escape(this.options.width)
+                        width: escape(this.options.width),
+                        clent:window.sysinfo.clent,
+                        uid:window.sysinfo.uid
                     },
                     duplicate: true,
                     fileNumLimit: $this.options.multi ? 30 : 1,
