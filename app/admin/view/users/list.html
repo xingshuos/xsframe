@@ -23,7 +23,7 @@
                         <option value="">用户角色</option>
                         <option value='owner' {if $_GET['role']=='owner'}selected{/if}>超级管理员</option>
                         <option value='manager' {if $_GET['role']=='manager'}selected{/if}>商户管理员</option>
-                        <option value='role' {if $_GET['role']=='operator'}selected{/if}>普通管理员</option>
+                        <option value='operator' {if $_GET['role']=='operator'}selected{/if}>普通管理员</option>
                     </select>
                 </div>
                 <input type="text" class="form-control " name="keyword" value="{$_GPC['keyword']}" placeholder="可搜索用户名称/用户简介部分信息查询">

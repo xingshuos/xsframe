@@ -82,12 +82,16 @@ return [
         'icon'     => 'icon-user-secret',
         'items'    => [
             [
-                'title' => '账号设置',
-                'route' => 'profile',
+                'title' => '用户列表',
+                'route' => 'list',
             ],
             [
-                'title' => '用户管理',
-                'route' => 'list',
+                'title' => '添加用户',
+                'route' => 'add',
+            ],
+            [
+                'title' => '当前账号',
+                'route' => 'profile',
             ],
         ]
     ],

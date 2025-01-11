@@ -38,7 +38,13 @@ class Ops extends AdminBaseController
 
         }
 
+        $database = config('database');
+
         $result = [
+            'database'         => $database,
+            'redis_support'    => extension_loaded('redis'),
+            'memcache_support' => extension_loaded('memcache'),
+            'opcache_support'  => function_exists('opcache_get_configuration'),
         ];
         return $this->template('optimize', $result);
     }

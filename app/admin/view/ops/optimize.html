@@ -10,7 +10,97 @@
 
 <div class="page-content">
 
-    功能开发中...
+    <div class="alert alert-primary">
+        <p>
+            <i class="icon icon-info-circle text-primary" style="font-size: 15px;"></i>
+            <text> 启用内存优化功能将会大幅度提升程序性能和服务器的负载能力，内存优化功能需要服务器系统以及PHP扩展模块支持</text>
+        </p>
+        <p>
+            <i class="icon icon-info-circle text-primary" style="font-size: 15px;"></i>
+            <text> 目前支持的内存优化接口有 Memcache、Redis、opcache</text>
+        </p>
+        <p>
+            <i class="icon icon-info-circle text-primary" style="font-size: 15px;"></i>
+            <text> 内存接口的主要设置位于 config/cache.php 当中，您可以通过编辑 cache.php 进行高级设置</text>
+        </p>
+    </div>
+
+    <form action="" method="post" class="form-validate form-horizontal ">
+
+        <div class="form-group-title">缓存工作状态</div>
+        <table class="table table-responsive table-hover">
+            <thead class="navbar-inner">
+            <tr>
+                <th style='width:100px'>扩展名称</th>
+                <th style='width:100px'>PHP 扩展环境</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Redis</td>
+                <td>{if $redis_support}<label class="label label-success">支持</label>{else}<label class="label label-default">不支持</label>{/if}</td>
+            </tr>
+            <tr>
+                <td>memcache</td>
+                <td>{if $memcache_support}<label class="label label-success">支持</label>{else}<label class="label label-default">不支持</label>{/if}</td>
+            </tr>
+            <tr>
+                <td>opcache</td>
+                <td>{if $opcache_support}<label class="label label-success">支持</label>{else}<label class="label label-default">不支持</label>{/if}</td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="2">
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+
+        <div class="form-group-title">数据库状态</div>
+        <table class="table table-responsive table-hover">
+            <thead class="navbar-inner">
+            <tr>
+                <th style='width:100px'>服务名称</th>
+                <th style='width:100px'>服务状态</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>数据库类型</td>
+                <td>{$database['default']}</td>
+            </tr>
+            <tr>
+                <td>部署方式</td>
+                <td>{if $database['connections']['mysql']['deploy'] == 0}集中式(单一服务器){elseif $database['connections']['mysql']['deploy'] == 1}分布式(主从服务器){/if}</td>
+            </tr>
+            <tr>
+                <td>读写分离</td>
+                <td>{if $database['connections']['mysql']['rw_separate']}开启{else}关闭{/if}</td>
+            </tr>
+            {if $database['connections']['mysql']['rw_separate']}
+            <tr>
+                <td>主服务器数量</td>
+                <td>{$database['connections']['mysql']['master_num']}</td>
+            </tr>
+            <tr>
+                <td>从服务器序号</td>
+                <td>{$database['connections']['mysql']['slave_no']}</td>
+            </tr>
+            {/if}
+            <tr>
+                <td>断线重连</td>
+                <td>{if $database['connections']['mysql']['break_reconnect']}启用{else}关闭{/if}</td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="2">
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </form>
 
 </div>
 

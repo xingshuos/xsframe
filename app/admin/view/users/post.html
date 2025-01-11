@@ -27,20 +27,27 @@
                             <div class="panel-body">
 
                                 <div class="form-group">
-                                    <label class="col-lg control-label">角色</label>
+                                    <label class="col-lg control-label must">用户角色</label>
                                     <div class="col-sm-9 col-xs-12">
                                         <label class="radio-inline">
                                             <input type="radio" name="role" value="manager" {if $item['role']=='manager' || empty($item['role'])}checked="checked"{/if}> 商户管理员
                                         </label>
-                                        <!-- <label class="radio-inline"> -->
-                                        <!--     <input type="radio" name="role" value="operator" {if $item['role']=='operator'}checked="checked"{/if}> 普通管理员 -->
-                                        <!-- </label> -->
+                                        <label class="radio-inline">
+                                            <input type="radio" name="role" value="operator" {if $item['role']=='operator'}checked="checked"{/if}> 普通管理员
+                                        </label>
                                         <label class="radio-inline">
                                             <input type="radio" name="role" value="owner" {if $item['role']=='owner'}checked="checked"{/if}> 超级管理员
                                         </label>
                                         <span class='help-block'>超级管理员: 拥有所有权限，管理所有商户数据及权限、所有应用的安装与卸载、系统升级与维护等</span>
                                         <span class='help-block'>商户管理员:拥有指定商户的所有权限，管理商户应用、商户数据、商户员工，商户用户等</span>
-                                        <span class='help-block'>普通操作员:属于商户下的员工操作用户，员工访问权限需要商户管理员进行分配（请在商户管理界面添加）</span>
+                                        <span class='help-block'>普通操作员:属于商户下的员工操作用户，员工访问权限需要商户管理员进行分配（请在商户管理界面设置）</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="uniacid_selector">
+                                    <label class="col-lg control-label must">管理商户</label>
+                                    <div class="col-sm-9 col-xs-12">
+                                        {:tpl_selector('uniacid',array('text'=>'name','value'=>$item['name'],'preview'=>true,'readonly'=>true,'multi'=>0,'type'=>'image', 'required'=>false,  'thumb'=>'logo','placeholder'=>'商户名称','buttontext'=>'选择商户 ', 'items'=>$accountInfo,'url'=>webUrl('account/query')))}
                                     </div>
                                 </div>
 
@@ -56,13 +63,6 @@
                                     <div class="col-sm-9 col-xs-12">
                                         <input type="text" name="password" class="form-control" value=""/>
                                         <span class="help-block">不填写则为不修改密码</span>
-                                    </div>
-                                </div>
-
-                                <div class="form-group" id="uniacid_selector">
-                                    <label class="col-lg control-label must">选择商户</label>
-                                    <div class="col-sm-9 col-xs-12">
-                                        {:tpl_selector('uniacid',array('text'=>'name','value'=>$item['name'],'preview'=>true,'readonly'=>true,'multi'=>0,'type'=>'image', 'required'=>false,  'thumb'=>'logo','placeholder'=>'商户名称','buttontext'=>'选择商户 ', 'items'=>$accountInfo,'url'=>webUrl('account/query')))}
                                     </div>
                                 </div>
 
@@ -107,7 +107,7 @@
     $(() => {
         $("input[name='role']").on("click",function(){
             let type = $(this).val()
-            if( type === 'manager' ){
+            if( type !== 'owner' ){
                 $("#uniacid_selector").show()
             }else{
                 $("#uniacid_selector").hide()
