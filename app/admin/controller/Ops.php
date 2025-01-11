@@ -13,6 +13,7 @@
 namespace app\admin\controller;
 
 use think\facade\Cache;
+use think\facade\Db;
 use xsframe\base\AdminBaseController;
 use xsframe\util\FileUtil;
 
@@ -64,11 +65,27 @@ class Ops extends AdminBaseController
     // 数据库优化
     public function database(): \think\response\View
     {
+        $table = trim($this->params['table'] ?? '');
+        $type = intval($this->params['type'] ?? 1);
+
         // if ($this->request->isPost()) {
         //
         // }
 
+        $list = Db::query("SHOW TABLE STATUS");
+
+        if (empty($table)) {
+            $list = Db::query("SHOW TABLE STATUS");
+        } else {
+            if ($type) {
+                $list = Db::query("SHOW FULL COLUMNS FROM {$table}");
+            } else {
+                $list = Db::query("SHOW COLUMNS FROM {$table}");
+            }
+        }
+
         $result = [
+            'list' => $list
         ];
         return $this->template('database', $result);
     }
