@@ -208,9 +208,9 @@ define(['bootstrap', 'webuploader', 'util', 'filestyle','jquery.ui'], function (
                                 $this.modalobj.find('.crawler').find('button.btn-primary').click();
                             }
                             if ($this.options.type == 'image') {
-                                $this.modalobj.find('.crawler').find('.crawler-img-sizeinfo').text(result.width + 'x' + result.height);
+                                $this.modalobj.find('.crawler').find('.crawler-img-sizeinfo').show().text(result.width + 'x' + result.height);
                             } else {
-                                $this.modalobj.find('.crawler').find('.crawler-img-sizeinfo').text(result.size);
+                                $this.modalobj.find('.crawler').find('.crawler-img-sizeinfo').show().text(result.size);
                             }
                             $this.modalobj.find('.crawler').find('.crawler-img').css("background-image", "url(" + result.url + ")");
                         }
@@ -237,8 +237,8 @@ define(['bootstrap', 'webuploader', 'util', 'filestyle','jquery.ui'], function (
 
         'reset_crawler': function () {
             $('#crawlerUrl').val('');
-            this.modalobj.find('#crawler').find('.crawler-img-sizeinfo').text('');
-            this.modalobj.find('#crawler').find('.crawler-img').css("background-image", "url('../static/images/nopic.png')");
+            this.modalobj.find('#crawler').find('.crawler-img-sizeinfo').hide().text('');
+            this.modalobj.find('#crawler').find('.crawler-img').css("background-image", "url('/app/admin/static/images/nopic.png')");
         },
 
         'init_remoteImage': function () {
@@ -1119,12 +1119,12 @@ define(['bootstrap', 'webuploader', 'util', 'filestyle','jquery.ui'], function (
                 '                       </span>' +
                 '                  </div>' +
                 '                  <div class="crawler-img" style="background-image:url(\'../images/nopic.png\')">' +
-                '                       <span class="crawler-img-sizeinfo"></span>' +
+                '                       <span class="crawler-img-sizeinfo" style="display: none;"></span>' +
                 '                  </div>' +
                 '             </div>' +
                 '        </form>' +
                 '   </div>' +
-                '   <div class="modal-footer" style="padding: 30px 0 0;">' +
+                '   <div class="modal-footer">' +
                 '        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>' +
                 '        <button type="button" class="btn btn-primary">确认</button>' +
                 '   </div>' +
