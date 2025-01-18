@@ -590,8 +590,10 @@ define(['bootstrap', 'webuploader', 'util', 'filestyle','jquery.ui'], function (
 
                     uploader;
 
-                    // 更改排列顺序
+                // 更改排列顺序
+                if ($.fn.sortable) {
                     $('.filelist').sortable({scroll: 'false'});
+                }
 
                 let options = {
                     //auto: !$this.options.multi,
