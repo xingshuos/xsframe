@@ -76,7 +76,7 @@ class OpensslUtil
         return $decrypted;
     }
 
-    // 加密
+    // 加密 案例: OpensslUtil::encrypt($uuid, $authkey, substr(md5($authkey), 0, 16));
     public static function encrypt($string, $key, $iv = null, $expirationTime = null, $type = 'aes-128-cbc')
     {
         if (!$iv) {
@@ -91,7 +91,7 @@ class OpensslUtil
         return $retStr;
     }
 
-    // 解密
+    // 解密 案例: OpensslUtil::decrypt($idStr, $authkey, substr(md5($authkey), 0, 16));
     public static function decrypt($string, $key, $iv = null, $type = 'aes-128-cbc')
     {
         try {

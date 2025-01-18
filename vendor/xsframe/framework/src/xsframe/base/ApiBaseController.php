@@ -32,9 +32,9 @@ abstract class ApiBaseController extends BaseController
     protected function _api_initialize()
     {
         // 解决重复提交与跨域问题 start
-        header('Access-Control-Allow-Origin:*');
-        header("Access-Control-Allow-Headers: Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since, X-CSRF-TOKEN, X-Requested-With , X-Access-Token");
-        header('Access-Control-Allow-Methods: PUT,POST,GET,DELETE,OPTIONS');
+        header("Access-Control-Allow-Origin:" . config('cookie.header.Access-Control-Allow-Origin'));
+        header("Access-Control-Allow-Headers:" . config('cookie.header.Access-Control-Allow-Headers'));
+        header('Access-Control-Allow-Methods:' . config('cookie.header.Access-Control-Allow-Methods'));
 
         if ($this->request->method() === "OPTIONS") {
             exit();
