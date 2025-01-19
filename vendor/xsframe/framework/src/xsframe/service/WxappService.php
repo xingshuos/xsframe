@@ -59,7 +59,12 @@ class WxappService
             }
         }
 
-        return $result['phone_info'];
+        // 获取手机号信息失败
+        if (empty($result['phone_info'])) {
+            throw new ApiException($result['errmsg']);
+        }
+
+        return (array)$result['phone_info'];
     }
 
     // 发送模板消息通知

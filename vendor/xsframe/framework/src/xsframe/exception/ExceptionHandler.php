@@ -69,6 +69,7 @@ class ExceptionHandler extends Handle
 
             // 记录异常信息到日志 start
             $logData = [
+                'name'      => "基础错误",
                 'url'       => $request->url(),
                 'method'    => $request->method(),
                 'ip'        => $request->ip(),
@@ -83,6 +84,21 @@ class ExceptionHandler extends Handle
 
             return json($result, $code);
         }
+
+        // 记录异常信息到日志 start
+        $logData = [
+            'name'      => "其他错误",
+            'url'       => $request->url(),
+            'method'    => $request->method(),
+            'ip'        => $request->ip(),
+            'params'    => $request->param(),
+            'exception' => $e->getMessage(),
+            'code'      => $e->getCode(),
+            'file'      => $e->getFile(),
+            'line'      => $e->getLine(),
+        ];
+        LoggerUtil::error($logData);
+        // end
 
         // 其他错误交给系统处理
         return parent::render($request, $e);

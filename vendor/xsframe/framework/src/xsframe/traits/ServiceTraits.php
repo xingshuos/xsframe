@@ -78,7 +78,7 @@ trait ServiceTraits
                 $pSize = $this->params['size'];
             if ($pIndex == 0)
                 $pIndex = 1;
-            $list = Db::name($this->tableName)->field($field)->where($where, $op, $condition)->order($order)->page($pIndex, $pSize)->select()->toArray();
+            $list = Db::name($this->tableName)->field($field)->where($where, $op, $condition)->order($order)->page(intval($pIndex), intval($pSize))->select()->toArray();
         } catch (\Exception $exception) {
             $list = [];
         }
