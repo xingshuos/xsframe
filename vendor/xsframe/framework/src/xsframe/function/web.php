@@ -705,9 +705,55 @@ if (!function_exists('tpl_form_field_multi_image2')) {
 			$(elm).parent().remove();
 		});
 	}
+	
+	function showBigImages2(elm){
+	    const images = $(".show-big-images");
+	    const srcList = [];
+	    const value = $(elm).attr("src")
+	    images.each(key => {
+            srcList.push($(images[key]).attr("src"));
+        });
+	    
+        console.log("srcList",srcList)
+        console.log("value",value)
+	}
     
-	require([\'jquery.ui\'], function () {
+	require([\'jquery.ui\',\'jquery.img.enlarge\'], function () {
         $(\'.multi-img-details\').sortable({scroll: \'false\'});
+        
+        $(\'[data-magnify]\').Magnify({
+            Toolbar: [
+                \'prev\',
+                \'next\',
+                \'rotateLeft\',
+                \'rotateRight\',
+                \'zoomIn\',
+                \'actualSize\',
+                \'zoomOut\'
+            ],
+            keyboard:true,
+            draggable:true,
+            movable:true,
+            modalSize:[800,600],
+            beforeOpen:function (obj,data) {
+                // console.log(\'beforeOpen\',obj)
+            },
+            opened:function (obj,data) {
+                // console.log(\'opened\')
+            },
+            beforeClose:function (obj,data) {
+                // console.log(\'beforeClose\')
+            },
+            closed:function (obj,data) {
+                // console.log(\'closed\')
+            },
+            beforeChange:function (obj,data) {
+                // console.log(\'beforeChange\')
+            },
+            changed:function (obj,data) {
+                // console.log(\'changed\')
+            }
+        });
     });
 </script>';
             define('TPL_INIT_MULTI_IMAGE2', true);
@@ -725,7 +771,9 @@ if (!function_exists('tpl_form_field_multi_image2')) {
             foreach ($value as $row) {
                 $s .= '
 <div class="multi-item">
-	<img src="' . tomedia($row) . '" onerror="this.src=\'/app/admin/static/images/nopic.png\'; this.title=\'图片未找到.\'" class="img-responsive img-thumbnail">
+    <a href="javascript:void(0)" data-magnify="gallery" data-group="g1" data-src="' . tomedia($row) . '" data-caption="图片">
+        <img src="' . tomedia($row) . '" onerror="this.src=\'/app/admin/static/images/nopic.png\'; this.title=\'图片未找到.\'" class="img-responsive img-thumbnail show-big-images"><!--onclick="showBigImages2(this)"-->
+    </a>
 	<input type="hidden" name="' . $name . '[]" value="' . $row . '" >
 	<em class="close" title="删除这张图片" onclick="deleteMultiImage2(this)">×</em>
 </div>';
