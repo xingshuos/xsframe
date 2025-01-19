@@ -771,7 +771,7 @@ if (!function_exists('tpl_form_field_multi_image2')) {
             foreach ($value as $row) {
                 $s .= '
 <div class="multi-item">
-    <a href="javascript:void(0)" data-magnify="gallery" data-group="g1" data-src="' . tomedia($row) . '" data-caption="图片">
+    <a href="javascript:void(0)" data-magnify="gallery" data-group="g1" data-src="' . tomedia($row) . '" data-caption="查看大图" style="object-fit:contain;">
         <img src="' . tomedia($row) . '" onerror="this.src=\'/app/admin/static/images/nopic.png\'; this.title=\'图片未找到.\'" class="img-responsive img-thumbnail show-big-images"><!--onclick="showBigImages2(this)"-->
     </a>
 	<input type="hidden" name="' . $name . '[]" value="' . $row . '" >
