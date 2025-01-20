@@ -117,7 +117,7 @@ return [
                 'route' => 'bom',
             ],
             [
-                'title' => '数据库优化',
+                'title' => '数据维护',
                 'route' => 'database',
             ],
             [

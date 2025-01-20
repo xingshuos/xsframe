@@ -123,12 +123,22 @@ abstract class AdminBaseController extends BaseController
 
     protected function success($data = [], $code = 1)
     {
-        show_json($code, $data);
+        return show_json($code, $data);
     }
 
     protected function error($data = [], $code = 0)
     {
-        show_json($code, $data);
+        return show_json($code, $data);
+    }
+
+    protected function successMsg($message, $code = 1)
+    {
+        return $this->success(["message" => $message], $code);
+    }
+
+    protected function errorMsg($message, $code = 0)
+    {
+        return $this->error(["message" => $message], $code);
     }
 
     private function getDefaultVars($params = null): array

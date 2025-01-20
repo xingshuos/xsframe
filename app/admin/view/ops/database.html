@@ -6,11 +6,92 @@
 
 {block name='content'}
 
-<div class="page-header">当前位置：<span class="text-primary">数据库优化</span></div>
+<div class="page-header">当前位置：
+    <span class="text-primary">数据维护</span>
+    <span>共 <strong>{$total}</strong> 张表</span>
+    <span>/</span>
+    <span> <strong>{$totalSize}</strong> Mb</span>
+</div>
 
 <div class="page-content">
 
-    功能开发中...
+    <form action="" method="get" class="form-horizontal table-search" role="form">
+        <div class="page-toolbar">
+            <div class="col-sm-8 pull-left">
+                <a class="btn btn-info btn-sm" href=""><i class="icon icon-file-o"></i> 备份数据</a>
+                <a class="btn btn-info btn-sm" href=""><i class="icon icon-repeat"></i> 恢复数据</a>
+                <a class="btn btn-info btn-sm" href=""><i class="icon icon-gear"></i> 修复表</a>
+                <a class="btn btn-info btn-sm" href=""><i class="icon icon-star-o"></i> 优化表</a>
+            </div>
+            <div class="col-md-4 pull-right">
+            </div>
+        </div>
+    </form>
+
+    {if empty($list)}
+    <div class="panel panel-default">
+        <div class="panel-body empty-data">未查询到相关数据</div>
+    </div>
+    {else}
+    <form action="" method="post">
+        <div class="page-table-header">
+            <input type='checkbox'/>
+            <div class="btn-group" style="margin-left: 15px;">
+                <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('account/change',array('type' => 'status','value'=>1))}"><i class='icon icon-eye'></i> 启用</button>
+                <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('account/change',array('type' => 'status','value'=>0))}"><i class='icon icon-eye-close'></i> 禁用</button>
+                <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('account/change',['type' => 'deleted','value' => 1])}">
+                    <i class='icon icon-trash'></i> 删除
+                </button>
+            </div>
+        </div>
+        <table class="table table-responsive table-hover">
+            <thead class="navbar-inner">
+            <tr>
+                <th style="width:40px;"></th>
+                <th style='width:120px'>表名</th>
+                <th style='width:100px'>备注</th>
+                <th style='width:60px'>类型</th>
+                <th style='width:60px'>数据(Mb)</th>
+                <th style='width:60px'>索引(Mb)</th>
+                <th style='width:60px'>合计(Mb)</th>
+                <th style='width:60px'>记录数</th>
+                <th style='width:60px'>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {foreach $list as $key=>$row }
+            <tr>
+                <td>
+                    <input type='checkbox' value="{$row['uniacid']}"/>
+                </td>
+                <td>{$row['Name']}</td>
+                <td>{$row['Comment']}</td>
+                <td>{$row['Engine']}</td>
+                <td>{$row['Data_length']}</td>
+                <td>{$row['Index_length']}</td>
+                <td>{$row['Data_total']}</td>
+                <td>{$row['Rows']}</td>
+                <td>
+                    <a href="{:webUrl('account/edit', array('id' => $row['uniacid']))}" class="btn btn-op btn-operation">
+                        <span data-toggle="tooltip" data-placement="top" data-original-title="查看">
+                            <i class='icon icon-eye'></i> 查看字典
+                        </span>
+                    </a>
+                </td>
+            </tr>
+            {/foreach}
+            </tbody>
+            <tfoot>
+            <tr>
+                <td><input type="checkbox"></td>
+                <td colspan="8">
+
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </form>
+    {/if}
 
 </div>
 

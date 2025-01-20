@@ -72,8 +72,6 @@ class Ops extends AdminBaseController
         //
         // }
 
-        $list = Db::query("SHOW TABLE STATUS");
-
         if (empty($table)) {
             $list = Db::query("SHOW TABLE STATUS");
         } else {
@@ -84,10 +82,50 @@ class Ops extends AdminBaseController
             }
         }
 
+        $total = $total_size = 0;
+        foreach ($list as $k => $v) {
+            $list[$k]['Data_length'] = round($v['Data_length'] / 1024 / 1024, 3);  //数据大小
+            $list[$k]['Index_length'] = round($v['Index_length'] / 1024 / 1024, 3); //索引大小
+            $list[$k]['Data_free'] = round($v['Data_free'] / 1024 / 1024, 3);    //碎片大小
+            $list[$k]['Data_total'] = round($list[$k]['Data_length'] + $list[$k]['Index_length'], 3); //合计
+            $total_size += $list[$k]['Data_total'];
+            $total++;
+        }
+
         $result = [
-            'list' => $list
+            'total'     => $total,
+            'list'      => $list,
+            'totalSize' => round($total_size, 3),
         ];
         return $this->template('database', $result);
+    }
+
+    // 优化数据表
+    public function optimizeTable()
+    {
+        $table = $this->request->post("table", '', 'strip_sql');
+        if (!$table) return $this->errorMsg('请选择需要优化的数据表');
+
+        if (is_array($table)) {
+            $table = implode('`,`', $table);
+        }
+
+        Db::query("OPTIMIZE TABLE `{$table}`");
+        return $this->successMsg('优化成功');
+    }
+
+    // 修复数据表
+    public function repairTable()
+    {
+        $table = $this->request->post("table", '', 'strip_sql');
+        if (!$table) return $this->error('请选择需要修复的数据表');
+
+        if (is_array($table)) {
+            $table = implode('`,`', $table);
+        }
+
+        Db::query("REPAIR TABLE `{$table}`");
+        return $this->successMsg('修复成功');
     }
 
     // 更新缓存
