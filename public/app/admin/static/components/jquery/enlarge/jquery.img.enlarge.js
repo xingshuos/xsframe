@@ -657,8 +657,6 @@
             var ctrlKey = e.ctrlKey || e.metaKey;
             var altKey = e.altKey || e.metaKey;
 
-            console.log('keyboard',keyCode)
-
             switch (keyCode) {
                 case 27:
                     self.close();
