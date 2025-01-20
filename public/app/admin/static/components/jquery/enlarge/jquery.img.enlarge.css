@@ -56,23 +56,12 @@ body{background-color: #F5F5F5}
 }
 
 .magnify-modal {
-    /*position: fixed;*/
-    /*z-index: 9999;*/
-    /*width: 800px;*/
-    /*height: 600px;*/
-    /*background-color: #333;*/
-    /*background-color: rgba(0, 0, 0, 0.85);*/
-    /*-webkit-box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.3);*/
-    /*-moz-box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.3);*/
-    /*box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.3);*/
-    /*cursor: default;*/
-
     position: fixed;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
-    z-index: 2012;
+    z-index: 9991;
 }
 .magnify-mask{
     position: absolute;
