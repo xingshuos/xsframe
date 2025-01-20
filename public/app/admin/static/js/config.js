@@ -12,7 +12,7 @@ let myConfig = {
         'jquery.qrcode': 'components/jquery/jquery.qrcode.min',
         'jquery.img.enlarge': 'components/jquery/enlarge/jquery.img.enlarge',
         'jquery.tagsinput': 'components/jquery/tagsinput/jquery.tagsinput',
-
+        "viewer": "components/viewer/viewer.min",
         'bootstrap': 'components/bootstrap/bootstrap.min',
         'bootstrap.suggest': 'components/bootstrap/bootstrap-suggest.min',
         "filestyle": "components/bootstrap/bootstrap-filestyle.min",
@@ -111,6 +111,11 @@ let myConfig = {
         },
         'jquery-confirm': {
             deps: ["loadcss!components/jquery/confirm/jquery-confirm.css"]
+        },
+        viewer: {
+            deps: [
+                "loadcss!components/viewer/viewer.min.css",
+            ]
         },
         daterangepicker: {
             deps: ["moment", "loadcss!components/daterangepicker/daterangepicker.css"]

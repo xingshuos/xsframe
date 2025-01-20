@@ -731,10 +731,12 @@ if (!function_exists('tpl_form_field_multi_image2')) {
                 \'actualSize\',
                 \'zoomOut\'
             ],
+            title:false,
             keyboard:true,
-            draggable:true,
+            draggable:false,
             movable:true,
-            modalSize:[800,600],
+            modalSize:["100%","100%"],
+            modalOffset: [0, 0],
             beforeOpen:function (obj,data) {
                 // console.log(\'beforeOpen\',obj)
             },
@@ -742,10 +744,10 @@ if (!function_exists('tpl_form_field_multi_image2')) {
                 // console.log(\'opened\')
             },
             beforeClose:function (obj,data) {
-                // console.log(\'beforeClose\')
+                console.log(\'beforeClose\')
             },
             closed:function (obj,data) {
-                // console.log(\'closed\')
+                console.log(\'closed\')
             },
             beforeChange:function (obj,data) {
                 // console.log(\'beforeChange\')
