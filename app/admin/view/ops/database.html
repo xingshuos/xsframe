@@ -20,8 +20,8 @@
             <div class="col-sm-8 pull-left">
                 <a class="btn btn-info btn-sm" href=""><i class="icon icon-file-o"></i> 备份数据</a>
                 <a class="btn btn-info btn-sm" href=""><i class="icon icon-repeat"></i> 恢复数据</a>
-                <a class="btn btn-info btn-sm" href=""><i class="icon icon-gear"></i> 修复表</a>
-                <a class="btn btn-info btn-sm" href=""><i class="icon icon-star-o"></i> 优化表</a>
+                <button class="btn btn-info btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('ops/optimizeTable',array('type' => 'table','value'=>0))}"><i class="icon icon-gear"></i> 修复表</button>
+                <button class="btn btn-info btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('ops/repairTable',array('type' => 'table','value'=>0))}"><i class="icon icon-star-o"></i> 优化表</button>
             </div>
             <div class="col-md-4 pull-right">
             </div>
