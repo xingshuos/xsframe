@@ -544,12 +544,16 @@ trait AdminTraits
     }
 
     // 获取字段列表
-    public function getFiledList(): array
+    public function getFiledList($tableName = null): array
     {
-        if (!empty($this->tableName) && empty($this->fieldList)) {
-            $this->fieldList = Db::name($this->tableName)->getFields();
+        if (!empty($tableName)) {
+            $this->fieldList = Db::name($tableName)->getFields();
         } else {
-            $this->fieldList = [];
+            if (!empty($this->tableName) && empty($this->fieldList)) {
+                $this->fieldList = Db::name($this->tableName)->getFields();
+            } else {
+                $this->fieldList = [];
+            }
         }
         return $this->fieldList;
     }

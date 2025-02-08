@@ -1,0 +1,50 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
+            <h3>数据恢复</h3>
+        </div>
+
+        <div class="modal-body">
+            <table class="table table-responsive table-hover">
+                <thead class="navbar-inner">
+                <tr>
+                    <th style='width:100px'>备份系列</th>
+                    <th style='width:60px'>备份时间</th>
+                    <th style='width:60px'>数据大小(Mb)</th>
+                    <th style='width:60px'>卷数</th>
+                    <th style='width:120px'>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $list as $key => $row}
+                <tr>
+                    <td>{$row['filename']}</td>
+                    <td>{:date('Y-m-d H:i:s',$row['mtime'])}</td>
+                    <td>{$row['filesize']}</td>
+                    <td>{$row['number']}</td>
+                    <td>
+                        <a href="{:webUrl('ops/doImport', array('filename' => $row['filename']))}" data-toggle="ajaxPost" data-confirm="确认要导入 “{$row['filename']}” 么 ?" class="btn btn-info btn-xs btn-op btn-operation">导入</a>
+                        <a href="" data-toggle="ajaxPost" class="btn btn-default btn-xs btn-op btn-operation">下载</a>
+                    </td>
+                </tr>
+                {/foreach}
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td colspan="5">
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="modal-footer">
+            <a href="#" class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</a>
+        </div>
+    </div>
+</div>
+
+<script>
+
+</script>

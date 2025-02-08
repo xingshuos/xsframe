@@ -214,7 +214,7 @@ body.jconfirm-noscroll {
   text-shadow: none;
   -webkit-transition: background .1s;
           transition: background .1s;
-  color: white;
+  color: #333;
 }
 .jconfirm.jconfirm-white .jconfirm-box .buttons button.btn-default {
   box-shadow: none;

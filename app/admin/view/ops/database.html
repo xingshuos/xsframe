@@ -18,12 +18,17 @@
     <form action="" method="get" class="form-horizontal table-search" role="form">
         <div class="page-toolbar">
             <div class="col-sm-8 pull-left">
-                <a class="btn btn-info btn-sm" href=""><i class="icon icon-file-o"></i> 备份数据</a>
-                <a class="btn btn-info btn-sm" href=""><i class="icon icon-repeat"></i> 恢复数据</a>
+                <button class="btn btn-info btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('ops/doBack',array('type' => 'table','value'=>0))}"><i class="icon icon-file-o"></i> 备份数据</button>
+                <button class="btn btn-info btn-sm btn-operation" type="button" onclick="ajaxModel(this)" data-url="{:webUrl('ops/imports',array('type' => 'table','value'=>0))}"><i class="icon icon-repeat"></i> 恢复数据</button>
                 <button class="btn btn-info btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('ops/optimizeTable',array('type' => 'table','value'=>0))}"><i class="icon icon-gear"></i> 修复表</button>
                 <button class="btn btn-info btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('ops/repairTable',array('type' => 'table','value'=>0))}"><i class="icon icon-star-o"></i> 优化表</button>
             </div>
-            <div class="col-md-4 pull-right">
+            <div class="col-md-4 pull-right" style="text-align: right;">
+                <div class="row" style="line-height: 30px;">
+                    <span>共 <strong>{$total}</strong> 张表</span>
+                    <span>/</span>
+                    <span> <strong>{$totalSize}</strong> Mb</span>
+                </div>
             </div>
         </div>
     </form>
@@ -62,7 +67,7 @@
             {foreach $list as $key=>$row }
             <tr>
                 <td>
-                    <input type='checkbox' value="{$row['uniacid']}"/>
+                    <input type='checkbox' value="{$row['Name']},{$row['Data_length']}"/>
                 </td>
                 <td>{$row['Name']}</td>
                 <td>{$row['Comment']}</td>
@@ -72,7 +77,7 @@
                 <td>{$row['Data_total']}</td>
                 <td>{$row['Rows']}</td>
                 <td>
-                    <a href="{:webUrl('account/edit', array('id' => $row['uniacid']))}" class="btn btn-op btn-operation">
+                    <a data-url="{:webUrl('ops/dictionary', array('table' => $row['Name']))}" onclick="ajaxModel(this)" class="btn btn-op btn-operation">
                         <span data-toggle="tooltip" data-placement="top" data-original-title="查看">
                             <i class='icon icon-eye'></i> 查看字典
                         </span>
@@ -95,4 +100,10 @@
 
 </div>
 
+{/block}
+
+{block name='script'}
+<script>
+
+</script>
 {/block}
