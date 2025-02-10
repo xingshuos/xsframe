@@ -25,7 +25,8 @@
                     <td>{$row['number']}</td>
                     <td>
                         <a href="{:webUrl('ops/doImport', array('filename' => $row['filename']))}" data-toggle="ajaxPost" data-confirm="确认要导入 “{$row['filename']}” 么 ?" class="btn btn-info btn-xs btn-op btn-operation">导入</a>
-                        <a href="" data-toggle="ajaxPost" class="btn btn-default btn-xs btn-op btn-operation">下载</a>
+                        <a href="{:webUrl('ops/download', array('filename' => $row['filename']))}" class="btn btn-default btn-xs btn-op btn-operation">下载</a>
+                        <a href="{:webUrl('ops/del', array('filename' => $row['filename']))}" data-toggle="ajaxPost" data-confirm="确认要删除 “{$row['filename']}” 么 ?" class="btn btn-default btn-xs btn-op btn-operation">删除</a>
                     </td>
                 </tr>
                 {/foreach}

@@ -51,6 +51,7 @@ public/*
 app/*
 !app/admin
 !app/xs_form
+backup/*
 config/appMap.php
 config/workerMap.php
 .gitmodules
