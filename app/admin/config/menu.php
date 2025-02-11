@@ -93,6 +93,10 @@ return [
                 'title' => '当前账号',
                 'route' => 'profile',
             ],
+            [
+                'title' => '登录日志',
+                'route' => 'login_log',
+            ],
         ]
     ],
     'ops'     => [
@@ -107,10 +111,6 @@ return [
             [
                 'title' => '性能优化',
                 'route' => 'optimize',
-            ],
-            [
-                'title' => '操作日志',
-                'route' => 'oplog',
             ],
             [
                 'title' => '检查BOM',

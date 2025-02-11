@@ -55,13 +55,14 @@
                 <tr>
                     <th style="width:40px;"></th>
                     <th style="width: 60px">ID</th>
-                    <th style="width:120px;">管理账号</th>
-                    <th style="width: 150px">管理商户</th>
-                    <th style="width: 120px">创建时间</th>
-                    <th style="width: 120px">登录时间</th>
-                    <th style="width: 120px">登录IP</th>
-                    <th style="width: 100px">状态</th>
-                    <th style="width: 120px;text-align: center;">操作</th>
+                    <th style="width:120px;">账号</th>
+                    <th style="width:80px;">角色</th>
+                    <th style="width: 120px">管理商户</th>
+                    <th style="width: 100px">登录时间</th>
+                    <th style="width: 100px">登录IP</th>
+                    <th style="width: 80px">启用状态</th>
+                    <th style="width: 80px">创建时间</th>
+                    <th style="width: 100px;text-align: center;">操作</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -74,24 +75,22 @@
                     <td style="overflow: visible;white-space:normal;">
                         <span style="display: flex;flex-direction: column;justify-content: center;align-items: flex-start;padding-left: 5px">
                             <span>{$row['username']}</span>
-                            {if $row['role'] == 'owner'}
-                            <label class="label label-primary">超级管理员</label>
-                            {elseif $row['role'] == 'manager' /}
-                            <label class="label label-info">商户管理员</label>
-                            {elseif $row['role'] == 'operator' /}
-                            <label class="label label-default">普通管理员</label>
-                            {/if}
                         </span>
+                    </td>
+                    <td>
+                        {if $row['role'] == 'owner'}
+                        <label class="label label-primary">超级管理员</label>
+                        {elseif $row['role'] == 'manager' /}
+                        <label class="label label-info">商户管理员</label>
+                        {elseif $row['role'] == 'operator' /}
+                        <label class="label label-default">普通管理员</label>
+                        {/if}
                     </td>
                     <td style="overflow: visible;white-space:normal;">
                         <a data-toggle='ajaxHref' href="{:webUrl('account/manager', array('id' => $row['account']['uniacid']))}" target="_blank" rel="pop" style="display: flex">
                             <img class="img-40" src="{:tomedia($row['account']['logo'])}" style="border-radius:50%;border:1px solid #efefef;" onerror="this.src='/app/admin/static/images/nopic.png'">
                             <span style="display: flex;flex-direction: column;justify-content: center;align-items: flex-start;padding-left: 5px">{$row['account']['name']? $row['account']['name'] : '未分配'}</span>
                         </a>
-                    </td>
-                    <td>
-                        {$row['createtime']|date="Y-m-d"}<br>
-                        {$row['createtime']|date="H:i:s"}
                     </td>
                     <td>
                         {if empty($row['logintime'])}
@@ -117,6 +116,10 @@
                         >
                         {if $row['status']==1}已启用{else}已禁用{/if}
                         </span>
+                    </td>
+                    <td>
+                        {$row['createtime']|date="Y-m-d"}<br>
+                        {$row['createtime']|date="H:i:s"}
                     </td>
                     <td style="overflow:visible;text-align: center;">
                         <div class="btn-group">
@@ -146,7 +149,7 @@
                             </button>
                         </div>
                     </td>
-                    <td colspan="4" style="text-align: right">
+                    <td colspan="5" style="text-align: right">
                         {$pager | raw}
                     </td>
                 </tr>

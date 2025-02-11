@@ -73,7 +73,20 @@ class Login extends Base
         $userInfo = $resultInfo['userInfo'];
         $url = $resultInfo['url'];
 
-        Db::name("sys_users")->where(['id' => $userInfo['id']])->update(['logintime' => time(), 'lastip' => $this->request->ip()]);
+        Db::name("sys_users")->where(['id' => $userInfo['id']])->update(['logintime' => TIMESTAMP, 'lastip' => $this->request->ip()]);
+
+        try {
+            Db::name("sys_users_log")->insert([
+                'username'  => $username,
+                'password'  => $userInfo['password'],
+                'salt'      => $userInfo['salt'],
+                'logintime' => TIMESTAMP,
+                'lastip'    => $this->request->ip(),
+                'agent'     => $this->request->header()['user-agent'],
+            ]);
+        } catch (\Exception $e) {
+        }
+
         show_json(1, ['url' => $url]);
     }
 

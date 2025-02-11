@@ -418,6 +418,21 @@ CREATE TABLE `#__sys_users`
     UNIQUE KEY `username` (`username`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `#__sys_users_log`;
+
+CREATE TABLE `#__sys_users_log`
+(
+    `id` int(10) NOT NULL AUTO_INCREMENT,
+    `username` varchar(30) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '登录账号',
+    `password` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '登录密码',
+    `salt` varchar(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '加密盐',
+    `logintime` int(11) NOT NULL DEFAULT '0' COMMENT '最后登录时间',
+    `lastip` varchar(50) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '最后登录ip',
+    `agent` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '登录端设备信息',
+    `deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否删除 0否 1是',
+    PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
 CREATE TABLE `#__xs_form_data_basic`
 (
     `id`           int(10) NOT NULL AUTO_INCREMENT,

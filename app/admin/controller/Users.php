@@ -12,7 +12,9 @@
 
 namespace app\admin\controller;
 
+use app\xs_store\facade\service\ArticleAdvServiceFacade;
 use xsframe\enum\UserRoleKeyEnum;
+use xsframe\facade\service\DbServiceFacade;
 use xsframe\util\RandomUtil;
 use think\facade\Db;
 
@@ -26,13 +28,13 @@ class Users extends Base
     public function profile()
     {
         if ($this->request->isPost()) {
-            $username    = $this->params['username'];
-            $password    = $this->params['password'];
+            $username = $this->params['username'];
+            $password = $this->params['password'];
             $newPassword = $this->params['newPassword'];
 
             $adminSession = $this->adminSession;
-            $userInfo     = Db::name('sys_users')->field("id,username,password,salt")->where(['id' => $adminSession['uid']])->find();
-            $password     = md5($password . $userInfo['salt']);
+            $userInfo = Db::name('sys_users')->field("id,username,password,salt")->where(['id' => $adminSession['uid']])->find();
+            $password = md5($password . $userInfo['salt']);
             if (md5($password . $userInfo['salt']) != $adminSession['hash']) {
                 show_json(0, "原始密码错误，请重新输入");
             }
@@ -68,15 +70,15 @@ class Users extends Base
             $condition['role'] = $role;
         }
 
-        $list  = Db::name("sys_users")->where($condition)->order('id desc')->page($this->pIndex, $this->pSize)->select();
+        $list = Db::name("sys_users")->where($condition)->order('id desc')->page($this->pIndex, $this->pSize)->select();
         $total = Db::name("sys_users")->where($condition)->count();
         $pager = pagination2($total, $this->pIndex, $this->pSize);
 
         $list = $list->toArray();
         foreach ($list as &$item) {
             $usersAccountInfo = Db::name("sys_account_users")->field("uniacid")->where(['user_id' => $item['id']])->find();
-            $accountInfo      = Db::name("sys_account")->field("uniacid,name,logo")->where(['uniacid' => $usersAccountInfo['uniacid']])->find();
-            $item['account']  = $accountInfo;
+            $accountInfo = Db::name("sys_account")->field("uniacid,name,logo")->where(['uniacid' => $usersAccountInfo['uniacid']])->find();
+            $item['account'] = $accountInfo;
         }
 
         $var = [
@@ -98,24 +100,24 @@ class Users extends Base
 
     public function post()
     {
-        $id      = $this->params['id'];
+        $id = $this->params['id'];
         $uniacid = $this->params['uniacid'];
-        $role    = trim($this->params['role']);
-        $module  = $this->params['module'] ?? '';
+        $role = trim($this->params['role']);
+        $module = $this->params['module'] ?? '';
 
         if ($this->request->isPost()) {
-            $salt     = RandomUtil::random(6);
+            $salt = RandomUtil::random(6);
             $username = trim($this->params["username"]);
             $password = trim($this->params['password']);
 
-            $data = array(
+            $data = [
                 "username" => $username,
                 "role"     => $role,
                 "status"   => trim($this->params["status"]),
-            );
+            ];
 
             if (!empty($password)) {
-                $data['salt']     = $salt;
+                $data['salt'] = $salt;
                 $data['password'] = md5($password . $salt);
             }
             if (!empty($id)) {
@@ -133,7 +135,7 @@ class Users extends Base
 
             # 非超级管理员分配商户 start
             if ($role != UserRoleKeyEnum::OWNER_KEY && !empty($uniacid)) {
-                $usersAccount     = Db::name('sys_account_users')->where(['user_id' => $id])->count();
+                $usersAccount = Db::name('sys_account_users')->where(['user_id' => $id])->count();
                 $usersAccountData = [
                     'user_id' => $id,
                     'uniacid' => $uniacid,
@@ -149,15 +151,15 @@ class Users extends Base
             }
             # 非超级管理员分配商户 end
 
-            $this->success(array("url" => webUrl("users/list")));
+            $this->success(["url" => webUrl("users/list")]);
         }
 
-        $item        = Db::name('sys_users')->where(['id' => $id])->find();
+        $item = Db::name('sys_users')->where(['id' => $id])->find();
         $accountInfo = [];
 
         if (!empty($item)) {
-            $usersAccount        = Db::name('sys_account_users')->field("id,uniacid,module")->where(['user_id' => $id])->find();
-            $accountInfo         = Db::name('sys_account')->where(['uniacid' => $usersAccount['uniacid']])->find();
+            $usersAccount = Db::name('sys_account_users')->field("id,uniacid,module")->where(['user_id' => $id])->find();
+            $accountInfo = Db::name('sys_account')->where(['uniacid' => $usersAccount['uniacid']])->find();
             $accountInfo['logo'] = tomedia($accountInfo['logo']);
         }
         $var = [
@@ -185,17 +187,80 @@ class Users extends Base
             $id = $this->params["ids"];
         }
         if (empty($id)) {
-            show_json(0, array("message" => "ID参数错误"));
+            show_json(0, ["message" => "ID参数错误"]);
         }
 
-        $type  = trim($this->params["type"]);
+        $type = trim($this->params["type"]);
         $value = trim($this->params["value"]);
 
         $item = Db::name('sys_users')->where(['id' => $id])->find();
         if (empty($item)) {
-            show_json(0, array("message" => "参数错误"));
+            show_json(0, ["message" => "参数错误"]);
         }
         Db::name('sys_users')->where(["id" => $id])->update([$type => $value]);
+
+        $this->success();
+    }
+
+    // 登录日志
+    public function login_Log()
+    {
+        $keyword = trim($this->params['keyword']);
+        if (empty($starttime) || empty($endtime)) {
+            $starttime = strtotime("-1 month");
+            $endtime = time();
+        }
+
+        $condition = [
+            'deleted' => 0,
+        ];
+
+        $orderBy = "logintime";
+        $searchTime = trim($this->params["searchtime"]);
+        if (!empty($searchTime) && is_array($this->params["time"]) && in_array($searchTime, ["login"])) {
+            $starttime = strtotime($this->params["time"]["start"]);
+            $endtime = strtotime($this->params["time"]["end"]);
+            $condition[''] = Db::raw($searchTime . "time >= {$starttime} AND " . $searchTime . "time <= {$endtime} ");
+            $orderBy = $searchTime . "time";
+        }
+
+        if (!empty($keyword)) {
+            $condition[''] = Db::raw(" username like '%" . trim($keyword) . "%' or lastip like '%" . trim($keyword) . "%' ");
+        }
+
+        $list = DbServiceFacade::name('sys_users_log')->getList($condition, "*", "{$orderBy} desc");
+        $total = DbServiceFacade::getTotal($condition);
+        $pager = pagination2($total, $this->pIndex, $this->pSize);
+
+        $result = [
+            'list'      => $list,
+            'total'     => $total,
+            'pager'     => $pager,
+            'starttime' => $starttime,
+            'endtime'   => $endtime,
+        ];
+
+        return $this->template('log', $result);
+    }
+
+    // 删除日志
+    public function logDel()
+    {
+        $id = trim($this->params["id"]);
+
+        if (empty($id)) {
+            $id = $this->params["ids"];
+        }
+
+        if (empty($id)) {
+            show_json(0, ["message" => "参数错误"]);
+        }
+
+
+        $items = DbServiceFacade::name('sys_users_log')->getAll(['id' => $id]);
+        foreach ($items as $item) {
+            DbServiceFacade::name('sys_users_log')->updateInfo(['deleted' => 1], ['id' => $item['id']]);
+        }
 
         $this->success();
     }

@@ -1,0 +1,113 @@
+{extend name="../../admin/view/public/admin"}
+
+{block name='content'}
+
+<div class="page-header">
+    <span>
+        当前位置：<span class="text-primary">用户列表</span>
+    </span>
+    <span>
+        全用户数:  <span class='text-danger'>{$total}</span>
+    </span>
+</div>
+<div class="page-content">
+
+    <form action="" method="get" class="form-horizontal table-search" role="form">
+        <div class="page-toolbar">
+            <div class="col-md-12 input-group">
+                <span class="input-group-select">
+                    <select name='searchtime' class='form-control' style="width:100px;padding:0 5px;" id="searchtime">
+                        <option value=''>不按时间</option>
+                        <option value='login' {if $_GET['searchtime']=='login'}selected{/if}>登录时间</option>
+                    </select>
+                </span>
+                <span class="input-group-btn">
+                    {:tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
+                </span>
+                <input type="text" class="form-control " name="keyword" value="{$_GPC['keyword']}" placeholder="请输入关键词搜索">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit"> 搜索</button>
+                </span>
+            </div>
+        </div>
+    </form>
+
+    {if empty($list)}
+    <div class="panel panel-default">
+        <div class="panel-body empty-data">未查询到相关数据</div>
+    </div>
+    {else/}
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-responsive">
+                <thead>
+                <tr>
+                    <th style="width:40px;"></th>
+                    <th style="width: 80px">ID</th>
+                    <th style="width:100px;">账号</th>
+                    <th style="width: 120px">时间</th>
+                    <th style="width: 120px">IP</th>
+                    <th>终端</th>
+                    <th style="width: 120px;text-align: center;">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $list as $key=>$row }
+                <tr>
+                    <td style="position: relative; ">
+                        <input type='checkbox' value="{$row['id']}" class="checkone"/>
+                    </td>
+                    <td>{$row['id']}</td>
+                    <td style="overflow: visible;white-space:normal;">
+                        <span style="display: flex;flex-direction: column;justify-content: center;align-items: flex-start;padding-left: 5px">
+                            <span>{$row['username']}</span>
+                        </span>
+                    </td>
+                    <td>
+                        {$row['logintime']|date="Y-m-d"}<br>
+                        {$row['logintime']|date="H:i:s"}
+                    </td>
+                    <td>
+                        {$row['lastip']}
+                    </td>
+                    <td>
+                        {$row['agent']}
+                    </td>
+                    <td style="overflow:visible;text-align: center;">
+                        <div class="btn-group">
+                            <a class="btn btn-op btn-operation" data-toggle='ajaxRemove' href="{:url('users/logDel',array('type'=> 'deleted','value' => 1,'id' => $row['id']));}" data-confirm="确定要删除该记录吗？">
+                                 <span data-toggle="tooltip" data-placement="top" title="" data-original-title="删除记录">
+                                   <i class='icon icon-trash'></i>
+                                </span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {/foreach}
+
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td colspan="3">
+                        <div class="btn-group">
+                            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:url('users/logDel',['type'=> 'deleted','value' => 1])}">
+                                <i class="icon icon-trash"></i> 批量删除
+                            </button>
+                        </div>
+                    </td>
+                    <td colspan="3" style="text-align: right">
+                        {$pager | raw}
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    {/if}
+</div>
+
+<script language="javascript">
+
+</script>
+{/block}
