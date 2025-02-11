@@ -602,28 +602,31 @@ class Ops extends AdminBaseController
      */
     private function getBackFile()
     {
-        $dbak = $dbaks = [];
-        $path = realpath($this->config['path']) . DIRECTORY_SEPARATOR;
-        $sqlfiles = glob($path . '*');
-        if (is_array($sqlfiles)) {
-            foreach ($sqlfiles as $id => $sqlfile) {
-                $tmp = basename($sqlfile);
-                if (is_dir($sqlfile)) {
-                    $size = $number = 0;
-                    $fsql = glob($path . $tmp . '/*.sql*');
-                    foreach ($fsql as $f) {
-                        $size += filesize($f);
-                        $number++;
+        $dbAks = [];
+        if (realpath($this->config['path'])) {
+            $dbAk = [];
+            $path = realpath($this->config['path']) . DIRECTORY_SEPARATOR;
+            $sqlFiles = glob($path . '*');
+            if (is_array($sqlFiles)) {
+                foreach ($sqlFiles as $id => $sqlfile) {
+                    $tmp = basename($sqlfile);
+                    if (is_dir($sqlfile)) {
+                        $size = $number = 0;
+                        $fSql = glob($path . $tmp . '/*.sql*');
+                        foreach ($fSql as $f) {
+                            $size += filesize($f);
+                            $number++;
+                        }
+                        $dbAk['filename'] = $tmp;
+                        $dbAk['number'] = $number;
+                        $dbAk['mtime'] = filectime($sqlfile);
+                        $dbAk['filesize'] = round($size / (1024 * 1024), 2);
+                        $dbAks[] = $dbAk;
                     }
-                    $dbak['filename'] = $tmp;
-                    $dbak['number'] = $number;
-                    $dbak['mtime'] = filectime($sqlfile);
-                    $dbak['filesize'] = round($size / (1024 * 1024), 2);
-                    $dbaks[] = $dbak;
                 }
             }
         }
-        return $dbaks;
+        return $dbAks;
     }
 
     /**

@@ -39,20 +39,10 @@
     </div>
     {else}
     <form action="" method="post">
-        <div class="page-table-header">
-            <input type='checkbox'/>
-            <div class="btn-group" style="margin-left: 15px;">
-                <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('account/change',array('type' => 'status','value'=>1))}"><i class='icon icon-eye'></i> 启用</button>
-                <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('account/change',array('type' => 'status','value'=>0))}"><i class='icon icon-eye-close'></i> 禁用</button>
-                <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('account/change',['type' => 'deleted','value' => 1])}">
-                    <i class='icon icon-trash'></i> 删除
-                </button>
-            </div>
-        </div>
         <table class="table table-responsive table-hover">
             <thead class="navbar-inner">
             <tr>
-                <th style="width:40px;"></th>
+                <th style="width:40px;"><input type='checkbox'/></th>
                 <th style='width:120px'>表名</th>
                 <th style='width:100px'>备注</th>
                 <th style='width:60px'>类型</th>
