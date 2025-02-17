@@ -132,12 +132,12 @@ class RequestUtil
         curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
 
         // 设置header
-        $headers = [
-            'Content-Type: application/json; charset=utf-8',
-            'Expect: ', //解决内容体过大问题
-            'Content-Length: ' . strlen($dataString),
-        ];
         if (!empty($extra)) {
+            $headers = [
+                'Content-Type: application/json; charset=utf-8',
+                'Expect: ', //解决内容体过大问题
+                'Content-Length: ' . strlen($dataString),
+            ];
             if (is_array($extra)) {
                 foreach ($extra as $opt => $value) {
                     if (StringUtil::strexists($opt, 'CURLOPT_')) {
@@ -149,9 +149,9 @@ class RequestUtil
                     }
                 }
             }
-        }
-        if (!empty($headers)) {
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            if (!empty($headers)) {
+                curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            }
         }
 
         ob_start();
