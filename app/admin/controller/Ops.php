@@ -17,6 +17,7 @@ use think\facade\Db;
 use xsframe\base\AdminBaseController;
 use xsframe\util\FileUtil;
 use xsframe\util\RandomUtil;
+use xsframe\util\StringUtil;
 
 class Ops extends AdminBaseController
 {
@@ -132,7 +133,7 @@ class Ops extends AdminBaseController
     public function dictionary(): \think\response\View
     {
         $table = trim($this->params['table'] ?? '');
-        $table = ltrim($table, config('database.connections.mysql.prefix'));
+        $table = StringUtil::removePrefixIfExists($table, config('database.connections.mysql.prefix'));
         $fields = $this->getFiledList($table);
 
         $result = [

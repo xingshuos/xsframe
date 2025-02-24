@@ -498,4 +498,18 @@ class StringUtil
         // 如果所有部分都相等，返回0表示版本相同
         return 0;
     }
+
+    // 移除字符串前缀
+    public static function removePrefixIfExists($string, $prefix)
+    {
+        // 使用 strpos 检查前缀是否存在
+        $prefixLength = strlen($prefix);
+        if (strpos($string, $prefix) === 0) {
+            // 如果前缀存在，使用 substr 截取掉前缀
+            return substr($string, $prefixLength);
+        } else {
+            // 如果前缀不存在，返回原始字符串
+            return $string;
+        }
+    }
 }
