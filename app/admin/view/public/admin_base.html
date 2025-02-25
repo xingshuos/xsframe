@@ -524,8 +524,16 @@
     // 模态框
     function ajaxModel(obj) {
         let url = $(obj).data('url');
+        let keyboard = $(obj).data('keyboard');
+        if (keyboard === undefined) {
+            keyboard = true;
+        }
+        let backdrop = $(obj).data('backdrop');
+        if (backdrop === undefined) {
+            backdrop = 'static';
+        }
         $.get(url, {}, function (html) {
-            $("#public_modal").html(html).modal('show');
+            $("#public_modal").html(html).modal({backdrop: backdrop, keyboard: keyboard, show: true});
         });
     }
 
