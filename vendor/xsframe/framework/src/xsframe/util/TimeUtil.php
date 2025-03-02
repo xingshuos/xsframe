@@ -484,4 +484,25 @@ class TimeUtil
         ];
         return $result;
     }
+
+    // 将秒数转换为天、小时、分钟、秒
+    public static function convertSeconds($seconds)
+    {
+        $days = floor($seconds / (60 * 60 * 24));
+        $seconds %= (60 * 60 * 24); // 剩余秒数
+
+        $hours = floor($seconds / (60 * 60));
+        $seconds %= (60 * 60); // 剩余秒数
+
+        $minutes = floor($seconds / 60);
+        $seconds %= 60; // 剩余秒数
+
+        return [
+            'days'    => $days,
+            'hours'   => $hours,
+            'minutes' => $minutes,
+            'seconds' => $seconds,
+            'timeStr' => $days . '天' . $hours . '小时' . $minutes . '分钟' . $seconds . '秒'
+        ];
+    }
 }
