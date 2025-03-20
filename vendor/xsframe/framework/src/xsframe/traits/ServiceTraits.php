@@ -144,6 +144,17 @@ trait ServiceTraits
      * @param string $field
      * @return int|mixed
      */
+    public function count($where, string $field = "*")
+    {
+        return $this->getTotal($where, $field);
+    }
+
+    /**
+     * 获取数据数量
+     * @param $where
+     * @param string $field
+     * @return int|mixed
+     */
     public function getCount($where, string $field = "*")
     {
         return $this->getTotal($where, $field);

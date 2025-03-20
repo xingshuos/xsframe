@@ -412,6 +412,30 @@ trait AdminTraits
         $this->success(["url" => referer()]);
     }
 
+    public function update()
+    {
+        if (!empty($this->tableName)) {
+            $id = intval($this->params["id"]);
+            $updateData = $this->params["data"] ?? [];
+
+            if (empty($id)) {
+                $id = $this->params["ids"];
+            }
+
+            if (empty($id)) {
+                $this->error("参数错误");
+            }
+
+            if (!empty($updateData)) {
+                $items = Db::name($this->tableName)->where(['id' => $id])->select();
+                foreach ($items as $item) {
+                    Db::name($this->tableName)->where(['uniacid' => $this->uniacid, "id" => $item['id']])->update($updateData);
+                }
+            }
+        }
+        $this->success(["url" => referer()]);
+    }
+
     // 真实删除
     public function destroy()
     {
