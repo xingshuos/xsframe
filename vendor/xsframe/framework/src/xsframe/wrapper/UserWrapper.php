@@ -13,18 +13,26 @@
 namespace xsframe\wrapper;
 
 use think\facade\App;
+use think\facade\Cache;
+use think\facade\Config;
+use think\facade\Db;
 use xsframe\enum\SysSettingsKeyEnum;
 use xsframe\enum\UserRoleKeyEnum;
 use xsframe\facade\service\DbServiceFacade;
 use xsframe\util\ErrorUtil;
 use xsframe\util\StringUtil;
-use think\facade\Cache;
-use think\facade\Config;
-use think\facade\Db;
 
 class UserWrapper
 {
     private static $session_key = SysSettingsKeyEnum::ADMIN_USER_KEY;
+
+    // 校验登录操作（设定一个操作时长，如果长时间不操作就登出）
+    public static function checkLogin()
+    {
+        if (!empty($noOpTime)) {
+
+        }
+    }
 
     // 校验登录
     public static function checkUser($url = null)
