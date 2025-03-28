@@ -55,7 +55,8 @@
     "qiniu/php-sdk": "^7.12",
     "qcloud/cos-sdk-v5": "^2.6",
     "xsframe/think-qrcode": "^1.0",
-    "xsframe/framework": "^1.0"
+    "xsframe/framework": "^1.0",
+    "ext-fileinfo": "*"
   },
   "require-dev": {
     "symfony/var-dumper": "^4.2",

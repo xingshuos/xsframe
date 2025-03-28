@@ -74,7 +74,7 @@ class RequestUtil
 
         if (!empty($postData)) {
             curl_setopt($ch, CURLOPT_POST, 1); // 发送一个常规的Post请求
-            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData)); // Post提交的数据包
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $postData); // Post提交的数据包
         }
 
         curl_setopt($ch, CURLOPT_TIMEOUT, $timeout); // 设置超时限制防止死循环
