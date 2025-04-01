@@ -3,6 +3,7 @@
 namespace xsframe\traits;
 
 use think\db\exception\DbException;
+use think\Exception;
 use think\facade\Db;
 use think\Model;
 
@@ -54,7 +55,7 @@ trait ServiceTraits
             extract(self::getWhere($where));
             $info = Db::name($this->tableName)->field($field)->where($where, $op, $condition)->order($order)->find();
         } catch (\Exception $exception) {
-            $info = [];
+            throw new Exception($exception->getMessage());
         }
         return $info;
     }
@@ -80,7 +81,7 @@ trait ServiceTraits
                 $pIndex = 1;
             $list = Db::name($this->tableName)->field($field)->where($where, $op, $condition)->order($order)->page(intval($pIndex), intval($pSize))->select()->toArray();
         } catch (\Exception $exception) {
-            $list = [];
+            throw new Exception($exception->getMessage());
         }
         return $list;
     }
@@ -114,7 +115,7 @@ trait ServiceTraits
                 $list = $rs;
             }
         } catch (\Exception $exception) {
-            $list = [];
+            throw new Exception($exception->getMessage());
         }
         return $list;
     }
@@ -132,7 +133,7 @@ trait ServiceTraits
         try {
             $total = Db::name($this->tableName)->where($where, $op, $condition)->count($field);
         } catch (\Exception $exception) {
-            $total = 0;
+            throw new Exception($exception->getMessage());
         }
 
         return intval($total);
@@ -174,7 +175,7 @@ trait ServiceTraits
         try {
             $value = Db::name($this->tableName)->where($where, $op, $condition)->order($orderBy)->value($field);
         } catch (\Exception $exception) {
-            $value = null;
+            throw new Exception($exception->getMessage());
         }
 
         return $value;
@@ -193,7 +194,7 @@ trait ServiceTraits
         try {
             $isUpdate = Db::name($this->tableName)->where($where, $op, $condition)->update($updateData);
         } catch (\Exception $exception) {
-            $isUpdate = 0;
+            throw new Exception($exception->getMessage());
         }
 
         return (int)$isUpdate;
@@ -210,7 +211,7 @@ trait ServiceTraits
         try {
             $isDelete = Db::name($this->tableName)->where($where, $op, $condition)->delete();
         } catch (\Exception $exception) {
-            $isDelete = 0;
+            throw new Exception($exception->getMessage());
         }
         return (int)$isDelete;
     }
@@ -222,7 +223,12 @@ trait ServiceTraits
      */
     public function insertInfo($data)
     {
-        return Db::name($this->tableName)->insertGetId($data);
+        try {
+            $id = Db::name($this->tableName)->insertGetId($data);
+        } catch (\Exception $exception) {
+            throw new Exception($exception->getMessage());
+        }
+        return $id;
     }
 
     /**
@@ -232,7 +238,11 @@ trait ServiceTraits
      */
     public function insertAll($data)
     {
-        return Db::name($this->tableName)->insertAll($data);
+        try {
+            return Db::name($this->tableName)->insertAll($data);
+        } catch (\Exception $exception) {
+            throw new Exception($exception->getMessage());
+        }
     }
 
     // 获取查询条件
@@ -255,49 +265,69 @@ trait ServiceTraits
     // 表是否存在
     public function hasTable($tableName = null)
     {
-        if (empty($tableName)) {
-            $tables = Db::query("SHOW TABLES LIKE '" . tablename($this->tableName, false) . "'");
-        } else {
-            $tables = Db::query("SHOW TABLES LIKE '" . tablename($tableName, false) . "'");
+        try {
+            if (empty($tableName)) {
+                $tables = Db::query("SHOW TABLES LIKE '" . tablename($this->tableName, false) . "'");
+            } else {
+                $tables = Db::query("SHOW TABLES LIKE '" . tablename($tableName, false) . "'");
+            }
+            return !empty($tables);
+        } catch (\Exception $e) {
+            throw new Exception($exception->getMessage());
         }
-        return !empty($tables);
     }
 
     // 字段是否存在
     public function hasField($field)
     {
-        $fields = Db::name($this->tableName)->getTableFields();
-        return in_array($field, $fields);
+        try {
+            $fields = Db::name($this->tableName)->getTableFields();
+            return in_array($field, $fields);
+        } catch (\Exception $e) {
+            throw new Exception($exception->getMessage());
+        }
     }
 
     // 添加字段
     public function addField($field, $type = 'varchar', $length = 255, $default = '', $isNull = 1, $comment = '')
     {
-        if ($this->hasField($field)) {
-            return true;
+        try {
+            if ($this->hasField($field)) {
+                return true;
+            }
+            $sql = "ALTER TABLE " . tablename($this->tableName) . " ADD COLUMN `{$field}` {$type}({$length}) " . ($default ? "DEFAULT '{$default}'" : '') . ($isNull ? 'NULL' : 'NOT NULL') . " COMMENT '{$comment}' ";
+            return Db::execute($sql);
+        } catch (\Exception $e) {
+            throw new Exception($exception->getMessage());
         }
-        $sql = "ALTER TABLE " . tablename($this->tableName) . " ADD COLUMN `{$field}` {$type}({$length}) " . ($default ? "DEFAULT '{$default}'" : '') . ($isNull ? 'NULL' : 'NOT NULL') . " COMMENT '{$comment}' ";
-        return Db::execute($sql);
     }
 
     // 删除字段
     public function delField($field)
     {
-        if (!$this->hasField($field)) {
-            return true;
+        try {
+            if (!$this->hasField($field)) {
+                return true;
+            }
+            $sql = "ALTER TABLE " . tablename($this->tableName) . " DROP COLUMN `{$field}`";
+            return Db::execute($sql);
+        } catch (\Exception $e) {
+            throw new Exception($exception->getMessage());
         }
-        $sql = "ALTER TABLE " . tablename($this->tableName) . " DROP COLUMN `{$field}`";
-        return Db::execute($sql);
     }
 
     // 修改字段
     public function updateField($oldFiled, $field, $type = 'varchar', $length = 255, $default = '', $isNull = 1, $comment = '')
     {
-        if (!$this->hasField($field)) {
-            return true;
+        try {
+            if (!$this->hasField($field)) {
+                return true;
+            }
+            $sql = "ALTER TABLE " . tablename($this->tableName) . " CHANGE `{$oldFiled}` `{$field}` {$type}({$length}) " . ($default ? "DEFAULT '{$default}'" : '') . ($isNull ? 'NULL' : 'NOT NULL') . " COMMENT '{$comment}' ";
+            return Db::execute($sql);
+        } catch (\Exception $e) {
+            throw new Exception($exception->getMessage());
         }
-        $sql = "ALTER TABLE " . tablename($this->tableName) . " CHANGE `{$oldFiled}` `{$field}` {$type}({$length}) " . ($default ? "DEFAULT '{$default}'" : '') . ($isNull ? 'NULL' : 'NOT NULL') . " COMMENT '{$comment}' ";
-        return Db::execute($sql);
     }
 
     /**

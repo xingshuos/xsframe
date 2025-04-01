@@ -407,9 +407,15 @@ trait AdminTraits
                     $this->error("默认项不能被删除");
                 }
                 Db::name($this->tableName)->where(['uniacid' => $this->uniacid, "id" => $item['id']])->update($updateData);
+
+                $this->afterDeleteData($item);
             }
         }
         $this->success(["url" => referer()]);
+    }
+
+    public function afterDeleteData(&$item)
+    {
     }
 
     public function update()
