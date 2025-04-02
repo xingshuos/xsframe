@@ -80,7 +80,7 @@ abstract class AdminBaseController extends BaseController
                     $_COOKIE['uniacid'] = $uniacid;
                 }
 
-                if (!empty($_GET['i']) && $_GET['i'] != $uniacid) {
+                if ($this->adminSession['role'] != 'owner' && !empty($_GET['i']) && $_GET['i'] != $uniacid) {
                     if ($this->request->isAjax()) {
                         throw new ApiException("暂无该商户的访问权限，请联系管理员!", 403);
                     } else {
