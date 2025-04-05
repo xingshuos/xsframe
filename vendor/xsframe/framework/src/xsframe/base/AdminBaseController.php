@@ -12,16 +12,16 @@
 
 namespace xsframe\base;
 
+use think\App;
 use think\facade\Cache;
-use xsframe\exception\ApiException;
-use xsframe\wrapper\MenuWrapper;
-use xsframe\wrapper\UserWrapper;
+use think\facade\View;
+use think\Request;
 use xsframe\enum\SysSettingsKeyEnum;
+use xsframe\exception\ApiException;
 use xsframe\traits\AdminTraits;
 use xsframe\util\RandomUtil;
-use think\App;
-use think\Request;
-use think\facade\View;
+use xsframe\wrapper\MenuWrapper;
+use xsframe\wrapper\UserWrapper;
 
 abstract class AdminBaseController extends BaseController
 {
@@ -70,6 +70,17 @@ abstract class AdminBaseController extends BaseController
             $this->adminSession = $loginResult['adminSession'];
             $this->userId = $this->adminSession['uid'];
             $uniacid = $this->adminSession['uniacid'];
+
+            // 记录操作时间，超过10分钟未操作则退出登录
+            $lastOpTime = $_COOKIE['LAST_OP_TIME'] ?? 0;
+            if (!empty($lastOpTime) && $lastOpTime < time() - 900) {
+                setcookie('LAST_OP_TIME', '', time() - 3600, '/');
+                UserWrapper::logout();
+                header('location: ' . url('/admin/login'));
+                exit();
+            } else {
+                setcookie('LAST_OP_TIME', time(), time() + 600, '/');
+            }
         }
 
         if ($isFileUpload && $this->params['uid'] && $this->params['module'] != 'admin') {
