@@ -75,14 +75,17 @@ CREATE TABLE `#__sys_account_perm_user`
     `perms`        text,
     `mid`          int(10) DEFAULT '0',
     `status`       tinyint(1) DEFAULT '0',
+    `avatar`   varchar(255) DEFAULT '' COMMENT '头像',
     `createtime`   int(11) DEFAULT '0',
     `deleted`      tinyint(3) DEFAULT '0',
     `displayorder` int(10) DEFAULT '0',
+    `nickname` varchar(100) DEFAULT '' COMMENT '昵称',
     PRIMARY KEY (`id`),
     KEY            `idx_uniacid` (`uniacid`),
     KEY            `idx_uid` (`uid`),
     KEY            `idx_deleted` (`deleted`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 
 DROP TABLE IF EXISTS `#__sys_account_users`;
 
