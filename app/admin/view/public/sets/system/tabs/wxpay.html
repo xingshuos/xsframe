@@ -1,7 +1,23 @@
+<div class="alert alert-info">
+    <p>微信支付的接口说明如下：</p>
+    <p>
+        你必须向微信公众平台提交企业信息以及银行账户资料，审核通过并签约后才能使用微信支付功能, <a target="_blank" href="https://pay.weixin.qq.com/static/applyment_guide/applyment_detail_public.shtml">申请及详情请查看这里</a>
+    </p>
+    <p>
+        JS API网页支付参数
+        支付授权目录: {$siteRoot}/
+    </p>
+    <p>
+        Native原生支付
+        支付回调URL: {$siteRoot}/wechat/notify
+    </p>
+</div>
+
 <div class="form-group">
     <label class="col-sm-2 control-label must">服务商公众号(AppId)</label>
     <div class="col-sm-9 col-xs-12">
         <input type='text' value="{$accountSettings['wxpay']['appid']}" name='data[wxpay][appid]' class="form-control" {if !empty($accountSettings['wxpay']['appid'])}readonly ondblclick="this.readOnly=false" οnchange="this.readOnly=true" data-toggle="tooltip" data-placement="top" data-original-title="双击修改"{/if} data-rule-required='true'/>
+        <span class="help-block">【公众账号ID】APPID是微信开放平台(移动应用)或微信公众平台(小程序、公众号)为开发者的应用程序提供的唯一标识。此处，可以填写这三种类型中的任意一种APPID，但请确保该appid与mchid有绑定关系。</span>
     </div>
 </div>
 
@@ -16,6 +32,7 @@
     <label class="col-sm-2 control-label must">支付密钥(APIKEY)</label>
     <div class="col-sm-9 col-xs-12">
         <input type='text' value="{$accountSettings['wxpay']['apikey']}" name='data[wxpay][apikey]' class="form-control" {if !empty($accountSettings['wxpay']['apikey'])}readonly ondblclick="this.readOnly=false" οnchange="this.readOnly=true" data-toggle="tooltip" data-placement="top" data-original-title="双击修改"{/if} data-rule-required='true'/>
+        <span class="help-block">【API密钥】商户平台设置的API密钥，商户平台-账户设置-安全设置-API密钥（32位）。</span>
     </div>
 </div>
 

@@ -1,44 +1,44 @@
 let version = +new Date();
 
 let myConfig = {
-    baseUrl: '/app/admin/static/',
-    path: '/app/admin/static/',
+    baseUrl: "/app/admin/static/",
+    path: "/app/admin/static/",
     paths: {
-        'jquery': 'components/jquery/jquery-1.11.1.min',
-        'jquery.form': 'components/jquery/jquery.form',
-        'jquery.gcjs': 'components/jquery/jquery.gcjs',
-        'jquery.validate': 'components/jquery/jquery.validate.min',
-        'jquery.nestable': 'components/jquery/nestable/jquery.nestable',
-        'jquery.qrcode': 'components/jquery/jquery.qrcode.min',
-        'jquery.img.enlarge': 'components/jquery/enlarge/jquery.img.enlarge',
-        'jquery.tagsinput': 'components/jquery/tagsinput/jquery.tagsinput',
+        "jquery": "components/jquery/jquery-1.11.1.min",
+        "jquery.form": "components/jquery/jquery.form",
+        "jquery.gcjs": "components/jquery/jquery.gcjs",
+        "jquery.validate": "components/jquery/jquery.validate.min",
+        "jquery.nestable": "components/jquery/nestable/jquery.nestable",
+        "jquery.qrcode": "components/jquery/jquery.qrcode.min",
+        "jquery.img.enlarge": "components/jquery/enlarge/jquery.img.enlarge",
+        "jquery.tagsinput": "components/jquery/tagsinput/jquery.tagsinput",
         "viewer": "components/viewer/viewer.min",
-        'bootstrap': 'components/bootstrap/bootstrap.min',
-        'bootstrap.suggest': 'components/bootstrap/bootstrap-suggest.min',
+        "bootstrap": "components/bootstrap/bootstrap.min",
+        "bootstrap.suggest": "components/bootstrap/bootstrap-suggest.min",
         "filestyle": "components/bootstrap/bootstrap-filestyle.min",
         "bootstrap.switch": "components/switch/bootstrap-switch.min",
 
-        'bootbox': 'components/bootbox/bootbox.min',
-        'sweet': 'components/sweetalert/sweetalert.min',
-        'select2': 'components/select2/select2.min',
-        'jquery.confirm': 'components/jquery/confirm/jquery-confirm',
+        "bootbox": "components/bootbox/bootbox.min",
+        "sweet": "components/sweetalert/sweetalert.min",
+        "select2": "components/select2/select2.min",
+        "jquery.confirm": "components/jquery/confirm/jquery-confirm",
         "jquery.jplayer": "components/jplayer/jquery.jplayer.min",
-        'jquery.contextMenu': 'components/jquery/contextMenu/jquery.contextMenu',
-        'switchery': 'components/switchery/switchery',
-        'echarts': 'components/echarts/echarts-all',
-        'echarts.min': 'components/echarts/echarts.min',
-        'toast': 'components/jquery/toastr.min',
-        'clipboard': 'components/clipboard/clipboard.min',
-        'tpl': 'components/tmodjs/tmodjs',
-        'datetimepicker': 'components/datetimepicker/jquery.datetimepicker',
-        'daterangepicker': 'components/daterangepicker/daterangepicker',
-        'clockpicker': "components/clockpicker/clockpicker.min",
-        'moment': 'components/daterangepicker/moment',
-        'tooltipbox': 'components/tooltipbox/tooltipbox',
-        'tip': 'components/tip/tip',
-        'district': "components/district/district",
+        "jquery.contextMenu": "components/jquery/contextMenu/jquery.contextMenu",
+        "switchery": "components/switchery/switchery",
+        "echarts": "components/echarts/echarts-all",
+        "echarts.min": "components/echarts/echarts.min",
+        "toast": "components/jquery/toastr.min",
+        "clipboard": "components/clipboard/clipboard.min",
+        "tpl": "components/tmodjs/tmodjs",
+        "datetimepicker": "components/datetimepicker/jquery.datetimepicker",
+        "daterangepicker": "components/daterangepicker/daterangepicker",
+        "clockpicker": "components/clockpicker/clockpicker.min",
+        "moment": "components/daterangepicker/moment",
+        "tooltipbox": "components/tooltipbox/tooltipbox",
+        "tip": "components/tip/tip",
+        "district": "components/district/district",
 
-        'ueditor': 'components/ueditor/ueditor.all.min',
+        "ueditor": "components/ueditor/ueditor.all.min",
 
         // angular
         "angular": "components/angular/angular.min",
@@ -48,28 +48,28 @@ let myConfig = {
         // we7
         "loadjs": "components/load/loadjs",
         "loadcss": "components/load/loadcss.min",
-        'fontawesome': "components/fontawesome/fontawesome",
-        'emoji': "components/emoji/emoji",
-        'colorpicker': "components/colorpicker/spectrum",
-        'swiper': 'components/swiper/swiper.min',
+        "fontawesome": "components/fontawesome/fontawesome",
+        "emoji": "components/emoji/emoji",
+        "colorpicker": "components/colorpicker/spectrum",
+        "swiper": "components/swiper/swiper.min",
 
         "jquery.ui": "components/jquery/jquery-ui-1.10.3.min",
 
-        'webuploader': 'components/webuploader/webuploader.min',
+        "webuploader": "components/webuploader/webuploader.min",
         "fileUploader": "components/fileuploader/fileuploader_new.min",
         "fileUploader2": "components/fileuploader/fileuploader",
 
-        'biz': "js/web/biz",
-        'form': "js/web/form",
-        'funbar': "js/web/funbar",
-        'init': "js/web/init",
-        'table': "js/web/table",
-        'util': "js/web/util",
+        "biz": "js/web/biz",
+        "form": "js/web/form",
+        "funbar": "js/web/funbar",
+        "init": "js/web/init",
+        "table": "js/web/table",
+        "util": "js/web/util",
 
-        'vue': 'components/vue/vue.min',
-        'axios': 'components/vue/axios.min',
-        'h7.axios': 'components/vue/h7.axios',
-        'sweetalert': 'components/sweetalert2/sweetalert2.min',
+        "vue": "components/vue/vue.min",
+        "axios": "components/vue/axios.min",
+        "h7.axios": "components/vue/h7.axios",
+        "sweetalert": "components/sweetalert2/sweetalert2.min",
     },
     // shim配置项中的每个条目都代表一个非AMD模块，并包含以下两个关键属性：
     // deps：这是一个数组，列出了该模块所依赖的其他模块。这些依赖模块将首先被加载，然后才会加载当前模块。
@@ -109,7 +109,7 @@ let myConfig = {
                 "loadcss!components/sweetalert2/sweetalert2.css",
             ]
         },
-        'jquery-confirm': {
+        "jquery-confirm": {
             deps: ["loadcss!components/jquery/confirm/jquery-confirm.css"]
         },
         viewer: {
@@ -174,10 +174,10 @@ let myConfig = {
             deps: ["loadcss!components/swiper/swiper.min.css"]
         },
         webuploader: {
-            deps: ['loadcss!components/webuploader/webuploader.css', 'loadcss!components/webuploader/style.css']
+            deps: ["loadcss!components/webuploader/webuploader.css", "loadcss!components/webuploader/style.css"]
         },
         select2: {
-            deps: ['loadcss!components/select2/select2.css', 'loadcss!components/select2/select2-bootstrap.css']
+            deps: ["loadcss!components/select2/select2.css", "loadcss!components/select2/select2-bootstrap.css"]
         },
 
         angular: {
