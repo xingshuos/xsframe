@@ -352,7 +352,9 @@ class MenuWrapper
                                 }
 
                                 if (strexists($return_submenu_three['route'], $action)) {
-                                    if (strexists(strtolower(str_replace("_", "", $return_submenu_three['route'])), $controller)) {
+                                    $currentRoute = strtolower(str_replace("_", "", $return_submenu_three['route']));
+                                    $currentRouteArray = explode("/", $currentRoute) ?? [];
+                                    if (in_array($controller, $currentRouteArray)) {
                                         $return_submenu_three['active'] = 1; // 是否选中
                                     }
                                 }
