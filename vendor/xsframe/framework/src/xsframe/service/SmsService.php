@@ -239,7 +239,7 @@ class SmsService extends BaseService
 
         Cache::set($key, $code, 10 * 60);
         Cache::set($keyTime, TIMESTAMP, 10 * 60);
-        return intval($code);
+        return strval($code);
     }
 
     // 校验验证码 过期时间默认一个小时
