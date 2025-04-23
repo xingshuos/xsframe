@@ -191,7 +191,7 @@ abstract class AdminBaseController extends BaseController
             $menusList = MenuWrapper::getMenusList($this->adminSession['role'], $this->module, $this->controller, $this->action);
         }
         $var['menusList'] = $menusList;
-        $var['pageTitle'] = empty($menusList['pageTitle']) ? $this->websiteSets['name'] : $menusList['pageTitle'];
+        $var['pageTitle'] = strip_tags(empty($menusList['pageTitle']) ? $this->websiteSets['name'] : $menusList['pageTitle']);
 
         # 收缩菜单
         $var['foldNav'] = intval($_COOKIE["foldnav"] ?? 0);
