@@ -130,6 +130,7 @@ class Account extends Base
         $item = Db::name('sys_account')->where(['uniacid' => $uniacid])->find();
         $identifies = Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'deleted' => 0])->order('displayorder asc,id asc')->column('module');
         $hostList = Db::name('sys_account_host')->where(['uniacid' => $uniacid])->order('id asc')->select();
+
         $modules = Db::name('sys_modules')->where(['identifie' => $identifies])->orderRaw("FIELD(identifie," . "'" . implode("','", $identifies) . "'" . ")")->select()->toArray();
 
         $accountUserInfo = DbServiceFacade::name('sys_account_users')->getInfo(['uniacid' => $uniacid]);
