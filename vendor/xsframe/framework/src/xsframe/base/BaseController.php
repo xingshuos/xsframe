@@ -13,6 +13,7 @@
 namespace xsframe\base;
 
 use think\App;
+use think\facade\Config;
 use think\Request;
 use think\route\dispatch\Controller;
 use xsframe\enum\SysSettingsKeyEnum;
@@ -259,8 +260,10 @@ abstract class BaseController extends Controller
                     if ($this->module && $this->module != 'admin') { // 2、判定商户是否有应用权限
                         $systemModuleList = SystemWrapperFacade::getAllModuleList();
                         $accountModuleList = SystemWrapperFacade::getAccountModuleList($uniacid);
-                        if (empty($accountModuleList) || empty($systemModuleList) || !in_array($this->module, $accountModuleList) || !in_array($this->module, $systemModuleList)) {
-                            if (env('DEFAULT_APP') == $this->module) {
+                        // 应该获取到真实的应用标识
+                        $realModule = $this->realModuleName($this->module);
+                        if (empty($accountModuleList) || empty($systemModuleList) || !in_array($realModule, $accountModuleList) || !in_array($realModule, $systemModuleList)) {
+                            if (env('DEFAULT_APP') == $realModule) {
                                 $uniacid = $this->websiteSets['uniacid'] ?? 0; // 当访问系统默认应用且没有访问权限时，默认跳转到系统默认商户
                             } else {
                                 if ($this->request->isAjax()) {
@@ -291,6 +294,13 @@ abstract class BaseController extends Controller
         }
 
         return $this->uniacid;
+    }
+
+    // 获取应用真实文件夹名称匹配权限
+    private function realModuleName($moduleName)
+    {
+        $appMaps = config('app.app_map') ?? [];
+        return $appMaps[$moduleName] ?? $moduleName;
     }
 
     // 校验uniacid是否被禁用或删除
