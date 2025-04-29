@@ -71,17 +71,18 @@ class File extends AdminBaseController
 
         $filename = FileUtil::fileRandomName($attachmentPath . $folder, $ext);
 
-        # 上传本地
-        $fileInfo = $file->move($attachmentPath . $folder, $filename);
+        // $tmpPath = $file->getFileInfo()->getPathname();
 
-        if (!$fileInfo) {
-            $result['message'] = '本地文件上传失败';
-            die(json_encode($result));
-        }
+        # 上传本地
+        // $fileInfo = $file->move($attachmentPath . $folder, $filename);
+        // if (!$fileInfo) {
+        //     $result['message'] = '本地文件上传失败';
+        //     die(json_encode($result));
+        // }
 
         $this->fileController = new FileWrapper();
 
-        $result = $this->fileController->fileUpload($this->curUniacid, $this->curModule, $this->userId, $type, $folder, $originName, $filename, $ext, false, $groupId);
+        $result = $this->fileController->fileUpload($this->curUniacid, $this->curModule, $this->userId, $type, $folder, $originName, $filename, $ext, false, $groupId, $file);
         if (ErrorUtil::isError($result)) {
             $result['message'] = $result['msg'];
             die(json_encode($result));

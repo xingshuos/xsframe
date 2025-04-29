@@ -214,7 +214,7 @@ class AttachmentWrapper
     }
 
     // 服务器上传文件
-    public function fileRemoteUpload($setting, $attachmentPath, $filename, $auto_delete_local = true)
+    public function fileRemoteUpload($setting, $filePath, $filename, $auto_delete_local = true)
     {
         if (empty($setting['remote']['type'])) {
             return false;
@@ -230,7 +230,7 @@ class AttachmentWrapper
 
             try {
                 $ossClient = new OssClient($setting['remote']['alioss']['key'], $setting['remote']['alioss']['secret'], $endpoint);
-                $ossClient->uploadFile($bucket, $filename, $attachmentPath . $filename);
+                $ossClient->uploadFile($bucket, $filename, $filePath);
             } catch (OssException $e) {
                 show_json(-1, $e->getMessage());
             }
@@ -248,7 +248,7 @@ class AttachmentWrapper
                 // 初始化UploadManager对象并进行文件上传
                 $uploadMgr = new UploadManager();
 
-                [$ret, $err] = $uploadMgr->putFile($token, $filename, $attachmentPath . $filename);
+                [$ret, $err] = $uploadMgr->putFile($token, $filename, $filePath);
 
                 if ($err !== null) {
                     $err = (array)$err;
@@ -282,7 +282,7 @@ class AttachmentWrapper
                 $cosClient->putObject([
                     'Bucket' => $bucket,
                     'Key'    => $filename,
-                    'Body'   => fopen($attachmentPath . $filename, 'rb')
+                    'Body'   => fopen($filePath, 'rb')
                 ]);
             } catch (Exception $e) {
                 throw new ApiException($e->getMessage());

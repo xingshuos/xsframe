@@ -41,10 +41,12 @@ class FileWrapper
             return ErrorUtil::error(0, "不允许上传此类文件");
         }
 
-        $filesize = @filesize($attachmentPath . $folder . $filename) ?? 0;
+        $file = request()->file('file');
+        $tmpPath = $file->getFileInfo()->getPathname();
+        $filesize = @filesize($tmpPath) ?? 0;
 
         # 文件上传处理
-        $filename = $this->fileRemoteUpload($uniacid, $type, $attachmentPath . $folder, $filename, $ext);
+        $filename = $this->fileRemoteUpload($uniacid, $type, $attachmentPath . $folder, $filename, $ext, $file);
         if (ErrorUtil::isError($filename)) {
             return ErrorUtil::error(0, $filename['msg']);
         }
@@ -113,6 +115,7 @@ class FileWrapper
     // 上传附件
     private function fileRemoteUpload($uniacid, $type, $filePath = null, $fileName = null, $ext = '')
     {
+        $file = request()->file('file');
         if (empty($filePath)) {
             return false;
         }
@@ -127,59 +130,64 @@ class FileWrapper
             $setting = $settingsController->getSysSettings(SysSettingsKeyEnum::ATTACHMENT_KEY);
         }
 
-        if (!empty($setting)) {
 
-            // 图片处理
-            if ($type == 'image' && !empty($setting['image'])) {
-                $ext = strtolower($ext);
+        // 图片处理
+        if ($type == 'image' && !empty($setting['image'])) {
+            $ext = strtolower($ext);
 
-                // 启用压缩
-                if ($setting['image']['is_reduce'] == 1) {
+            // 启用压缩
+            if ($setting['image']['is_reduce'] == 1) {
 
-                    if (!empty($setting['image']['extentions'])) {
-                        $extentions = explode("|", $setting['image']['extentions']);
-                        if (!empty($extentions) && !in_array($ext, $extentions)) {
-                            @unlink($filePath . $fileName);// 删除源图
-                            return ErrorUtil::error(0, "不支持此文件类型（" . $ext . "）");
-                        }
+                if (!empty($setting['image']['extentions'])) {
+                    $extentions = explode("|", $setting['image']['extentions']);
+                    if (!empty($extentions) && !in_array($ext, $extentions)) {
+                        @unlink($filePath . $fileName);// 删除源图
+                        return ErrorUtil::error(0, "不支持此文件类型（" . $ext . "）");
                     }
-
-                    if ($setting['image']['limit'] > 0) {
-                        if (@filesize($filePath . $fileName) > $setting['image']['limit'] * 1024) {
-                            @unlink($filePath . $fileName);// 删除源图
-                            return ErrorUtil::error(0, "文件大小超过限制（" . $setting['image']['limit'] . "KB" . "）");
-                        }
-                    }
-
-                    if ($setting['image']['width'] > 0) {
-                        $newFileName = FileUtil::fileRandomName($filePath, $ext);
-
-                        $maxWidth = $setting['image']['width'];
-                        $maxQuality = min(intval($setting['image']['quality'] ?? 100), 100);
-
-                        try {
-                            if (is_file($filePath . $fileName)) {
-                                $image = Image::open($filePath . $fileName);
-                                $image->thumb($maxWidth, $maxWidth)->save($filePath . $newFileName, null, $maxQuality); // 清晰度100
-                                @unlink($filePath . $fileName);// 删除源图
-                            }
-                        } catch (\Exception $e) {
-                            throw new ApiException($e->getMessage());
-                        }
-                    }
-
                 }
-            }
 
-            // 视频处理
-            if ($type == 'video' && !empty($setting['video'])) {
-            }
+                if ($setting['image']['limit'] > 0) {
+                    if (@filesize($filePath . $fileName) > $setting['image']['limit'] * 1024) {
+                        @unlink($filePath . $fileName);// 删除源图
+                        return ErrorUtil::error(0, "文件大小超过限制（" . $setting['image']['limit'] . "KB" . "）");
+                    }
+                }
 
-            // 上传附件
-            $filename = str_replace($attachmentPath, '', $filePath . $newFileName);
-            if (!empty($setting['remote']) && $setting['remote']['type'] > 0) {
-                $attachmentController = new AttachmentWrapper();
-                $attachmentController->fileRemoteUpload($setting, $attachmentPath, $filename);
+                if ($setting['image']['width'] > 0) {
+                    $newFileName = FileUtil::fileRandomName($filePath, $ext);
+
+                    $maxWidth = $setting['image']['width'];
+                    $maxQuality = min(intval($setting['image']['quality'] ?? 100), 100);
+
+                    try {
+                        if (is_file($filePath . $fileName)) {
+                            $image = Image::open($filePath . $fileName);
+                            $image->thumb($maxWidth, $maxWidth)->save($filePath . $newFileName, null, $maxQuality); // 清晰度100
+                            @unlink($filePath . $fileName);// 删除源图
+                        }
+                    } catch (\Exception $e) {
+                        throw new ApiException($e->getMessage());
+                    }
+                }
+
+            }
+        }
+
+        // 视频处理
+        if ($type == 'video' && !empty($setting['video'])) {
+        }
+
+        // 上传附件
+        $filename = str_replace($attachmentPath, '', $filePath . $newFileName);
+        if (!empty($setting['remote']) && $setting['remote']['type'] > 0) { // 上传云服务
+            $attachmentController = new AttachmentWrapper();
+            $tmpPath = $file->getFileInfo()->getPathname();
+            $attachmentController->fileRemoteUpload($setting, $tmpPath, $filename);
+        } else { // 上传本地
+            $file = request()->file('file');
+            $fileInfo = $file->move($filePath, $filename);
+            if (!$fileInfo) {
+                return ErrorUtil::error(0, "上传失败");
             }
         }
 
