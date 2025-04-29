@@ -43,12 +43,10 @@ class FileWrapper
 
         $filesize = @filesize($attachmentPath . $folder . $filename) ?? 0;
 
-        # 图片压缩/上传处理
-        if ($type == 'image') {
-            $filename = $this->fileRemoteUpload($uniacid, $attachmentPath . $folder, $filename, $ext);
-            if (ErrorUtil::isError($filename)) {
-                return ErrorUtil::error(0, $filename['msg']);
-            }
+        # 文件上传处理
+        $filename = $this->fileRemoteUpload($uniacid, $type, $attachmentPath . $folder, $filename, $ext);
+        if (ErrorUtil::isError($filename)) {
+            return ErrorUtil::error(0, $filename['msg']);
         }
 
         $img_info = @getimagesize($attachmentPath . $folder . $filename);
@@ -113,7 +111,7 @@ class FileWrapper
     }
 
     // 上传附件
-    private function fileRemoteUpload($uniacid, $filePath = null, $fileName = null, $ext = '')
+    private function fileRemoteUpload($uniacid, $type, $filePath = null, $fileName = null, $ext = '')
     {
         if (empty($filePath)) {
             return false;
@@ -132,7 +130,7 @@ class FileWrapper
         if (!empty($setting)) {
 
             // 图片处理
-            if (!empty($setting['image'])) {
+            if ($type == 'image' && !empty($setting['image'])) {
                 $ext = strtolower($ext);
 
                 // 启用压缩
@@ -171,6 +169,10 @@ class FileWrapper
                     }
 
                 }
+            }
+
+            // 视频处理
+            if ($type == 'video' && !empty($setting['video'])) {
             }
 
             // 上传附件
