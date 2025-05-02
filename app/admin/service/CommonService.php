@@ -50,4 +50,26 @@ class CommonService extends BaseService
         }
         return $areas;
     }
+
+    public function getProvinceNameByCode($areaCode = '')
+    {
+        $areas = $this->getAreas(true);
+        foreach ($areas['province'] as $k => $v) {
+            if ($v['@attributes']['code'] == $areaCode) {
+                return $v['@attributes']['name'];
+            }
+        }
+        return '';
+    }
+
+    public function getProvinceCodeByName($proviceName = '')
+    {
+        $areas = $this->getAreas(true);
+        foreach ($areas['province'] as $k => $v) {
+            if ($v['@attributes']['name'] == $proviceName) {
+                return $v['@attributes']['code'];
+            }
+        }
+        return '';
+    }
 }
