@@ -59,6 +59,7 @@ abstract class ApiBaseController extends BaseController
             'msg'  => $message,
             'data' => $data
         ];
+        $retData = $this->utf8ize($retData);
         return json($retData);
     }
 
@@ -78,6 +79,7 @@ abstract class ApiBaseController extends BaseController
             'msg'  => $message,
             'data' => [],
         ];
+        $retData = $this->utf8ize($retData);
         die(json_encode($retData));
     }
 
@@ -86,5 +88,18 @@ abstract class ApiBaseController extends BaseController
     {
         $this->userId = SysMemberServiceFacade::getUserId();
         return $this->userId;
+    }
+
+    // 在返回 JSON 前对数据进行编码转换
+    public function utf8ize($data)
+    {
+        if (is_array($data)) {
+            foreach ($data as $key => $value) {
+                $data[$key] = $this->utf8ize($value);
+            }
+        } else if (is_string($data)) {
+            return mb_convert_encoding($data, 'UTF-8', 'UTF-8,GBK,ASCII');
+        }
+        return $data;
     }
 }
