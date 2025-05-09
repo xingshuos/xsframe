@@ -17,6 +17,6 @@ return [
     'select'     => env('redis.select', '0'),
     'timeout'    => 0,
     'expire'     => 0,
-    'persistent' => false,
+    'persistent' => env('redis.persistent', false),
     'prefix'     => env('redis.prefix', ''),
 ];

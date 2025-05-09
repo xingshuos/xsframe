@@ -29,16 +29,18 @@ return [
         // redis缓存
         'redis' => [
             // 驱动方式
-            'type'     => 'redis',
+            'type'       => 'redis',
             // 缓存前缀
-            'prefix'   => env('cache.prefix', 'xsframe'),
+            'prefix'     => env('cache.prefix', 'xsframe'),
             // 缓存有效期 0表示永久缓存
-            'expire'   => '0',
+            'expire'     => '0',
             // 服务器信息
-            'host'     => env('cache.host', '127.0.0.1'),
-            'port'     => env('cache.port', '6379'),
-            'password' => env('cache.password', ''),
-            'db'       => env('cache.select', '0'),
+            'host'       => env('cache.host', '127.0.0.1'),
+            'port'       => env('cache.port', '6379'),
+            'password'   => env('cache.password', ''),
+            'db'         => env('cache.select', '0'),
+            'persistent' => env('redis.persistent', false),
+            'timeout'    => 0,
         ],
     ],
 ];
