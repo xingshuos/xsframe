@@ -7,6 +7,8 @@ use app\admin\service\CommonService;
 
 /**
  * @method static getAreas()
+ * @method static getProvinceNameByCode(string $string)
+ * @method static getProvinceCodeByName(string $string)
  */
 class CommonServiceFacade extends BaseFacade
 {
