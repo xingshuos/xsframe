@@ -4201,6 +4201,49 @@
             "install-path": "../topthink/think-worker"
         },
         {
+            "name": "workerman/channel",
+            "version": "v1.0.6",
+            "version_normalized": "1.0.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/walkor/channel.git",
+                "reference": "bf6d837705738d875162a7344818e1bf02e8cef2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/walkor/channel/zipball/bf6d837705738d875162a7344818e1bf02e8cef2",
+                "reference": "bf6d837705738d875162a7344818e1bf02e8cef2",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "workerman/workerman": ">=3.3.0"
+            },
+            "time": "2020-10-19T02:04:29+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Channel\\": "./src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "homepage": "http://www.workerman.net",
+            "support": {
+                "issues": "https://github.com/walkor/channel/issues",
+                "source": "https://github.com/walkor/channel/tree/v1.0.6"
+            },
+            "install-path": "../workerman/channel"
+        },
+        {
             "name": "workerman/gateway-worker",
             "version": "v3.0.22",
             "version_normalized": "3.0.22.0",

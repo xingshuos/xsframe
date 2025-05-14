@@ -93,6 +93,7 @@ class FileUtil
             "xsframe\\console\\command\\make\\Service",
             "xsframe\\console\\command\\make\\Subscribe",
             "xsframe\\console\\command\\make\\Validate",
+            "xsframe\\console\\command\\make\\WebSocket",
         ];
 
         foreach ($dirList as $key => $dirItem) {

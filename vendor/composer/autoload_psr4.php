@@ -51,6 +51,7 @@ return array(
     'Darabonba\\OpenApi\\' => array($vendorDir . '/alibabacloud/darabonba-openapi/src'),
     'Darabonba\\GatewaySpi\\' => array($vendorDir . '/alibabacloud/gateway-spi/src'),
     'Complex\\' => array($vendorDir . '/markbaker/complex/classes/src'),
+    'Channel\\' => array($vendorDir . '/workerman/channel/src'),
     'Carbon\\Doctrine\\' => array($vendorDir . '/carbonphp/carbon-doctrine-types/src/Carbon/Doctrine'),
     'Carbon\\' => array($vendorDir . '/nesbot/carbon/src/Carbon'),
     'AntCloudSDKCore\\' => array($vendorDir . '/tinywan/antfin-php-sdk/src'),
