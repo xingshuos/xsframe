@@ -52,7 +52,9 @@ class WebSocket extends Command
             $output->writeln('Starting XsWorker server...');
         }
 
+        #  需要配活操作（在config/websocket.php中配置多个服务） TODO
         $className = "app\\{$app}\\service\\" . ucfirst($service) . 'WebSocketWorker';
+        // $classSSLName = "app\\{$app}\\service\\" . ucfirst($service) . 'SSLWebSocketWorker';
 
         // 验证类是否存在
         if (!class_exists($className)) {
@@ -66,6 +68,7 @@ class WebSocket extends Command
         }
 
         $worker = new $className();
+        // $workerSSL = new $classSSLName();
 
         // 启动服务
         Worker::runAll();
