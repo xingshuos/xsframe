@@ -210,7 +210,7 @@ CREATE TABLE `#__sys_member`
     `credit4`       decimal(10, 2) DEFAULT '0.00' COMMENT '赠送余额（所有方式赠送,支付可以抵扣使用,不是真实金额）',
     `credit5`       decimal(10, 2) DEFAULT '0.00' COMMENT '预留业务扩展使用',
     `realname`      varchar(20)    DEFAULT '' COMMENT '姓名',
-    `email`         varchar(30)    DEFAULT '' COMMENT '邮箱',
+    `email`         varchar(100)   DEFAULT '' COMMENT '邮箱',
     `mobile`        varchar(11)    DEFAULT '' COMMENT '手机号',
     `idcard`        varchar(30)    DEFAULT '' COMMENT '身份证号',
     `is_real`       tinyint(1) DEFAULT '0' COMMENT '是否实名认证 0否  1是 2认证通过',
