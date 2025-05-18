@@ -453,6 +453,16 @@
                         }
                     }, 100);
                 });
+
+                // 防止bootstrap自带的tooltip和popover在模态框中失效
+                if( typeof require != 'undefined'){
+                    $('[data-toggle="tooltip"]').tooltip("destroy").tooltip({
+                        container: $(document.body)
+                    });
+                    $('[data-toggle="popover"]').popover("destroy").popover({
+                        container: $(document.body)
+                    });
+                }
             });
         }
 
@@ -536,16 +546,6 @@
             $("#public_modal").html(html).modal({backdrop: backdrop, keyboard: keyboard, show: true});
         });
     }
-
-    // 防止bootstrap自带的tooltip和popover在模态框中失效
-    if( typeof require != 'undefined'){
-        $('[data-toggle="tooltip"]').tooltip("destroy").tooltip({
-            container: $(document.body)
-        });
-        $('[data-toggle="popover"]').popover("destroy").popover({
-            container: $(document.body)
-        });
-    }
 </script>
 
 {block name='script'}{/block}
@@ -555,12 +555,24 @@
         window.formInited = true;
     }
 
+    // 定义定时器和超时器的引用
     window.formInitTimer = setInterval(function () {
-        if (typeof (window.formInited) !== 'undefined') {
-            $('#page-loading').remove();
-            clearInterval(window.formInitTimer);
+        if (typeof window.formInited !== 'undefined') {
+            closeLoading();
         }
     }, 1);
+
+    // 添加 5 秒超时关闭逻辑-
+    window.formInitTimeout = setTimeout(function () {
+        closeLoading();
+    }, 3000);
+
+    // 统一关闭 loading 并清理定时器
+    function closeLoading() {
+        $('#page-loading').remove();
+        clearInterval(window.formInitTimer);
+        clearTimeout(window.formInitTimeout);
+    }
 </script>
 
 </body>

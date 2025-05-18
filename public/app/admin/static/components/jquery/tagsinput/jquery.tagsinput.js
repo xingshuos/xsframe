@@ -254,7 +254,7 @@
 								$('#'+id).addTag(data[0] + "",{focus:true,unique:(settings.unique)});
 							}
 					  	});
-					} else if (jQuery.ui.autocomplete !== undefined) {
+					} else if (jQuery.ui && jQuery.ui.autocomplete !== undefined) {
 						$(data.fake_input).autocomplete(autocomplete_options);
 						$(data.fake_input).bind('autocompleteselect',data,function(event,ui) {
 							$(event.data.real_input).addTag(ui.item.value,{focus:true,unique:(settings.unique)});
