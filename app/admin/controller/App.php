@@ -100,7 +100,7 @@ class App extends Base
         }
 
         if (!empty($this->params['keyword'])) {
-            $condition['name'] = Db::raw("like '%" . trim($this->params['keyword']) . "%'");
+            $condition['name|identifie|author|ability|description'] = Db::raw("like '%" . trim($this->params['keyword']) . "%'");
         }
         if (!empty($nameInitial)) {
             $condition['name_initial'] = strtoupper($nameInitial);
