@@ -192,6 +192,9 @@ trait ServiceTraits
         extract(self::getWhere($where));
 
         try {
+            if (empty($where)) {
+                throw new Exception("参数错误");
+            }
             $isUpdate = Db::name($this->tableName)->where($where, $op, $condition)->update($updateData);
         } catch (\Exception $exception) {
             throw new Exception($exception->getMessage());

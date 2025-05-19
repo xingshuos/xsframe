@@ -68,8 +68,22 @@ class WeixinService extends BaseService
                     throw new ApiException("访问企业微信接口错误, 错误代码: {$result['errcode']}, 错误信息: {$result['errmsg']}");
                 }
 
-                $departmentList = $result['department'];
-                Cache::set($departmentListCacheKey, $departmentList, $expireTime);
+                $departmentList = $result['department'] ?? [];
+                if (!empty($departmentList)) {
+                    // 根据 parentid 从小到大排序
+                    usort($departmentList, function ($a, $b) {
+                        return $a['parentid'] - $b['parentid']; // 升序排序
+                    });
+
+                    // 1. 构建 id => item 的索引映射
+                    $idNewMap = [];
+                    foreach ($departmentList as $item) {
+                        $idNewMap[$item['id']] = $item;
+                    }
+                    $departmentList = $idNewMap;
+
+                    Cache::set($departmentListCacheKey, $idNewMap, $expireTime);
+                }
             }
         }
 
