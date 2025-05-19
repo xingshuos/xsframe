@@ -52,7 +52,7 @@ class WebSocket extends Command
             $output->writeln('Starting XsWorker server...');
         }
 
-        #  需要配活操作（在config/websocket.php中配置多个服务） TODO
+        #  需要配活操作（在config/websocket.php中配置多个服务） TODO linux支持多进程执行，windows只支持单进程执行
         $className = "app\\{$app}\\service\\" . ucfirst($service) . 'WebSocketWorker';
         // $classSSLName = "app\\{$app}\\service\\" . ucfirst($service) . 'SSLWebSocketWorker';
 

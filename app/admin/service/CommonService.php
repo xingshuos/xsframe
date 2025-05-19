@@ -26,6 +26,7 @@ class CommonService extends BaseService
 
         $file_str = file_get_contents($file);
         $areas = json_decode(json_encode(simplexml_load_string($file_str)), true);
+
         if (!empty($new_area) && !empty($areas['province'])) {
             foreach ($areas['province'] as $k => &$row) {
                 if (0 < $k) {
@@ -62,12 +63,29 @@ class CommonService extends BaseService
         return '';
     }
 
-    public function getProvinceCodeByName($proviceName = '')
+    // type = province|city|area
+    public function getProvinceCodeByName($name = '', $type = '')
     {
         $areas = $this->getAreas(true);
         foreach ($areas['province'] as $k => $v) {
-            if ($v['@attributes']['name'] == $proviceName) {
+            if ($v['@attributes']['name'] == $name) {
                 return $v['@attributes']['code'];
+            } else {
+                if ($type != 'province') {
+                    foreach ($v['city'] as $k1 => $v1) {
+                        if ($v1['@attributes']['name'] == $name) {
+                            return $v1['@attributes']['code'];
+                        } else {
+                            if ($type != 'city') {
+                                foreach ($v['city'] as $k2 => $v2) {
+                                    if ($v2['@attributes']['name'] == $name) {
+                                        return $v2['@attributes']['code'];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
         return '';
