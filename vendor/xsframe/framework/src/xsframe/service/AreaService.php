@@ -52,19 +52,36 @@ class AreaService
         return $areas;
     }
 
-    public function getProvinceNameByCode($areaCode = '')
+    // 通过code获取名称 type = province|city|area
+    public function getNameByCode($areaCode = '', $type = '')
     {
         $areas = $this->getAreas(true);
         foreach ($areas['province'] as $k => $v) {
             if ($v['@attributes']['code'] == $areaCode) {
                 return $v['@attributes']['name'];
+            } else {
+                if ($type != 'province') {
+                    foreach ($v['city'] as $k1 => $v1) {
+                        if ($v1['@attributes']['code'] == $areaCode) {
+                            return $v1['@attributes']['name'];
+                        } else {
+                            if ($type != 'city') {
+                                foreach ($v['city'] as $k2 => $v2) {
+                                    if ($v2['@attributes']['code'] == $areaCode) {
+                                        return $v2['@attributes']['name'];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
         return '';
     }
 
-    // type = province|city|area
-    public function getProvinceCodeByName($name = '', $type = '')
+    // 通过名称获取code type = province|city|area
+    public function getCodeByName($name = '', $type = '')
     {
         $areas = $this->getAreas(true);
         foreach ($areas['province'] as $k => $v) {
@@ -89,5 +106,64 @@ class AreaService
             }
         }
         return '';
+    }
+
+    // 格式化地址信息
+    public function formatAreas($areas = []): array
+    {
+        $newAreas = [];
+
+        foreach ($areas['province'] as $key => $item) {
+            $nweCity = [];
+            $level = 2;
+
+            foreach ($item['city'] as $cityKey => $cityItem) {
+                $nweCity[$cityKey]['name'] = $cityItem["@attributes"]['name'];
+                $nweCity[$cityKey]['label'] = $cityItem["@attributes"]['name'];
+                $nweCity[$cityKey]['code'] = $cityItem["@attributes"]['code'];
+                $nweCity[$cityKey]['value'] = $cityKey + 1;
+
+                foreach ($cityItem['county'] as $countyKey => $countyItem) {
+                    if (!empty($countyItem["@attributes"]['name'])) {
+                        $nweCity[$cityKey]['areas'][$countyKey]['name'] = $countyItem["@attributes"]['name'];
+                        $nweCity[$cityKey]['areas'][$countyKey]['label'] = $countyItem["@attributes"]['name'];
+                        $nweCity[$cityKey]['areas'][$countyKey]['code'] = $countyItem["@attributes"]['code'];
+                        $nweCity[$cityKey]['areas'][$countyKey]['value'] = $countyKey + 1;
+                        $level = 3;
+                    }
+                }
+
+                if (!empty($nweCity[$cityKey]['areas'])) {
+                    array_unshift($nweCity[$cityKey]['areas'], [
+                        'name'  => '不限',
+                        'label' => '不限',
+                        'code'  => 0,
+                        'value' => 0,
+                    ]);
+                }
+            }
+
+            if (!empty($nweCity)) {
+                array_unshift($nweCity, [
+                    'name'  => '不限',
+                    'label' => '不限',
+                    'code'  => 0,
+                    'value' => 0,
+                ]);
+            }
+
+            $provinceItem = [
+                'name'   => $item["@attributes"]['name'],
+                'label'  => $item["@attributes"]['name'],
+                'code'   => $item["@attributes"]['code'],
+                'value'  => $key,
+                'level'  => $level,
+                'cities' => $nweCity,
+            ];
+
+            $newAreas['province'][] = $provinceItem;
+        }
+
+        return $newAreas;
     }
 }

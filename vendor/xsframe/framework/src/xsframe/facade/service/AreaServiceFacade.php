@@ -17,8 +17,9 @@ use xsframe\service\AreaService;
 
 /**
  * @method static getAreas(bool $street = false)
- * @method static getProvinceNameByCode(string $areaCode)
- * @method static getProvinceCodeByName(string $name = '', string $type = '')
+ * @method static formatAreas(array $areas = [])
+ * @method static getNameByCode(string $areaCode = '')
+ * @method static getCodeByName(string $name = '', string $type = '')
  */
 class AreaServiceFacade extends Facade
 {
