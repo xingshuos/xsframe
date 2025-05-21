@@ -63,6 +63,16 @@
         </div>
 
         <div class="form-group">
+            <label class="col-lg control-label must">区域选择</label>
+            <div class="col-sm-9 col-xs-12">
+                <div id="areas" class="form-control-static">{$item['areas']?$item['areas']:'暂无'}</div>
+                <a href="javascript:;" class="btn btn-default" onclick="selectAreas()">选择区域</a>
+                <input type="hidden" id='selectedareas' name="areas" value="{$item['areas']}"/>
+                <input type="hidden" id='selectedareas_code' name="areas_code" value="{$item['areas_code']}"/>
+            </div>
+        </div>
+
+        <div class="form-group">
             <label class="col-lg control-label">选择颜色</label>
             <div class="col-sm-9 col-xs-12">
                 {:tpl_form_field_color('color',$item['color'])}
@@ -70,16 +80,33 @@
         </div>
 
         <div class="form-group">
-            <label class="col-lg control-label">轮播图片(单图)</label>
+            <label class="col-lg control-label">单图样式一</label>
             <div class="col-sm-9 col-xs-12">
                 {:tpl_form_field_image('thumb', $item['thumb'])}
+                <span class="help-block">可以展示历史图片，点击图片可删除</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg control-label">单图样式二</label>
+            <div class="col-sm-9 col-xs-12">
+                {:tpl_form_field_image2('thumb2', $item['thumb2'])}
+                <span class="help-block">无历史图片</span>
             </div>
         </div>
 
         <div class="form-group">
-            <label class="col-lg control-label">轮播图片(多图)</label>
+            <label class="col-lg control-label">多图样式一</label>
             <div class="col-sm-9 col-xs-12">
-                {:tpl_form_field_multi_image2('thumbs', $item['thumbs'])}
+                {:tpl_form_field_multi_image('thumbs', $item['thumbs'])}
+                <span class="help-block">可以展示历史图片，点击图片可删除</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-lg control-label">多图样式二</label>
+            <div class="col-sm-9 col-xs-12">
+                {:tpl_form_field_multi_image2('thumbs2', $item['thumbs2'])}
+                <span class="help-block">无历史图片，可进行排序显示</span>
             </div>
         </div>
 
@@ -141,5 +168,7 @@
     </form>
 </div>
 
+
+{include file="../app/admin/view/public/form/selectareasNew.html" /}
 
 {/block}
