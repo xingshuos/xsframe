@@ -31,8 +31,11 @@ abstract class BaseWorker extends Worker
             Config::get('websocket.' . static::class)
         );
 
+        $host = empty($config['host']) ? "0.0.0.0" : $config['host'];
+        $port = $config['port'];
+
         // 构造监听地址
-        $socket = "{$config['protocol']}://0.0.0.0:{$config['port']}";
+        $socket = "{$config['protocol']}://{$host}:{$port}";
         parent::__construct($socket, $config['context']);
         $this->initWorker();
     }
