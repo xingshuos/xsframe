@@ -10,11 +10,11 @@
 // | Author: 星数为来(杭州)科技有限公司
 // +----------------------------------------------------------------------
 
-namespace app\admin\service;
+namespace xsframe\service;
 
 use xsframe\base\BaseService;
 
-class CommonService extends BaseService
+class AreaService
 {
     public function getAreas($new_area = false)
     {

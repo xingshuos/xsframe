@@ -2,8 +2,8 @@
 
 namespace app\xs_form\controller\web\form;
 
-use app\admin\facade\service\CommonServiceFacade;
 use xsframe\base\AdminBaseController;
+use xsframe\facade\service\AreaServiceFacade;
 
 class Module extends AdminBaseController
 {
@@ -41,7 +41,7 @@ class Module extends AdminBaseController
             'day'   => $result['item']['day'],
         ];
 
-        $areas = CommonServiceFacade::getAreas(true);
+        $areas = AreaServiceFacade::getAreas(true);
         $result['areas'] = $areas;
     }
 
