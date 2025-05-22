@@ -505,4 +505,113 @@ class TimeUtil
             'timeStr' => $days . '天' . $hours . '小时' . $minutes . '分钟' . $seconds . '秒'
         ];
     }
+
+
+    /**
+     * 将消息按时间分组（自然日+2小时间隔）
+     * @param array $messages 消息列表，需包含timestamp字段
+     * @return array 分组后的结构
+     */
+    public static function groupMessages(array $messages)
+    {
+        // 按时间戳升序排序
+        usort($messages, function ($a, $b) {
+            return $a['createtime'] <=> $b['createtime'];
+        });
+
+        $groups = [];
+        $currentGroup = null;
+        $timezone = new \DateTimeZone('Asia/Shanghai');
+
+        foreach ($messages as $msg) {
+            // 创建消息时间对象
+            $msgTime = \DateTime::createFromFormat('U', $msg['createtime']);
+            $msgTime->setTimezone($timezone);
+
+            // 获取分组标题（今天/昨天/日期）
+            $groupTitle = self::getGroupTitle($msgTime, $timezone);
+
+            // 判断是否需要创建新组
+            $createNewGroup = false;
+            if ($currentGroup === null) {
+                $createNewGroup = true;
+            } else {
+                // 日期不同或超过2小时间隔
+                $lastTime = $currentGroup['last_time'];
+                $diff = $msgTime->getTimestamp() - $lastTime->getTimestamp();
+                if ($groupTitle !== $currentGroup['title'] || $diff > 7200) {
+                    $createNewGroup = true;
+                }
+            }
+
+            if ($createNewGroup) {
+                $timeRange = self::buildTimeRange($msgTime, $groupTitle);
+                $currentGroup = [
+                    'title'      => $groupTitle,
+                    'time_range' => $timeRange,
+                    'messages'   => [$msg],
+                    'last_time'  => $msgTime
+                ];
+                $groups[] = $currentGroup;
+            } else {
+                $currentGroup['messages'][] = $msg;
+                $currentGroup['time_range'] = self::updateTimeRange(
+                    $currentGroup['time_range'],
+                    $msgTime,
+                    $groupTitle
+                );
+                $currentGroup['last_time'] = $msgTime;
+                // 更新数组最后一个元素
+                array_splice($groups, count($groups) - 1, 1, [$currentGroup]);
+            }
+        }
+
+        // 清理临时字段并转换DateTime对象
+        foreach ($groups as &$group) {
+            unset($group['last_time']);
+            $group['time_range'] = (string)$group['time_range'];
+        }
+
+        return ['groups' => $groups];
+    }
+
+    /**
+     * 生成友好日期标题
+     */
+    public static function getGroupTitle(\DateTime $date, \DateTimeZone $tz)
+    {
+        $now = new \DateTime('now', $tz);
+        $dateClone = clone $date;
+        $dateClone->setTime(0, 0, 0);
+        $nowClone = clone $now;
+        $nowClone->setTime(0, 0, 0);
+
+        $diff = $dateClone->diff($nowClone)->days;
+
+        if ($diff === 0) return '今天';
+        if ($diff === 1) return '昨天';
+        return $date->format('m月d日');
+    }
+
+    /**
+     * 生成时间范围描述
+     */
+    public static function buildTimeRange(\DateTime $time, $title)
+    {
+        $format = ($title === '今天' || $title === '昨天') ? 'H:i' : 'H:i';
+        $start = $time->format($format);
+        return "{$start} ~ {$start}";
+    }
+
+    /**
+     * 更新时间范围
+     */
+    public static function updateTimeRange($currentRange, \DateTime $newTime, $title)
+    {
+        $format = ($title === '今天' || $title === '昨天') ? 'H:i' : 'H:i';
+        $parts = explode(' ~ ', $currentRange);
+        $parts[1] = $newTime->format($format);
+        return implode(' ~ ', $parts);
+    }
+
 }
