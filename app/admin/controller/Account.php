@@ -105,6 +105,26 @@ class Account extends Base
             ];
             $data['settings'] = serialize($settingsData);
 
+            // 账号验证
+            $username = trim($this->params['username'] ?? '');
+            if (!empty($username)) {
+                $userInfo = DbServiceFacade::name('sys_users')->getInfo(['username' => $username]);
+                if (!empty($userInfo)) {
+                    if (empty($uniacid)) {
+                        $this->error("该账号已被占用");
+                    } else {
+                        $accountUserInfo = DbServiceFacade::name('sys_account_users')->getInfo(['uniacid' => $uniacid, 'user_id' => $userInfo['id']]);
+                        if (empty($accountUserInfo)) {
+                            $this->error("该账号已被占用");
+                        }
+                    }
+                } else {
+                    if (empty($this->params['password'])) {
+                        $this->error("请输入管理员密码");
+                    }
+                }
+            }
+
             if (!empty($uniacid)) {
                 Db::name('sys_account')->where(['uniacid' => $uniacid])->update($data);
             } else {
@@ -126,6 +146,7 @@ class Account extends Base
 
             $this->success(["url" => webUrl("account/edit", ['id' => $uniacid, 'tab' => str_replace("#tab_", "", $this->params['tab'])])]);
         }
+
 
         $item = Db::name('sys_account')->where(['uniacid' => $uniacid])->find();
         $identifies = Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'deleted' => 0])->order('displayorder asc,id asc')->column('module');
@@ -364,9 +385,10 @@ class Account extends Base
 
             if (!empty($userInfo)) {
                 $accountUserInfo = DbServiceFacade::name('sys_account_users')->getInfo(['user_id' => $userInfo['id']]);
+
                 if (!empty($accountUserInfo)) {
                     if ($accountUserInfo['uniacid'] == $uniacid) {
-                        DbServiceFacade::name('sys_users')->updateInfo(['id' => $userInfo['id'], 'salt' => $salt, 'password' => $newPassword]);
+                        DbServiceFacade::name('sys_users')->updateInfo(['salt' => $salt, 'password' => $newPassword], ['id' => $userInfo['id']]);
                     }
                 }
             } else {

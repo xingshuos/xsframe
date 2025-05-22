@@ -53,12 +53,19 @@ if (!function_exists('tablename')) {
 
 // 验证系统是否有使用应用的权限
 if (!function_exists('m')) {
-    function m($moduleName): bool
+    function m($moduleName, $uniacid = 0): bool
     {
         $isModule = false;
         $systemModuleList = SystemWrapperFacade::getAllModuleList();
         if (in_array($moduleName, $systemModuleList) && is_dir(IA_ROOT . "/app/" . $moduleName)) {
-            $isModule = true;
+            if (empty($uniacid)) {
+                $isModule = true;
+            } else {
+                $accountModuleList = SystemWrapperFacade::getAccountModuleList($uniacid);
+                if (in_array($moduleName, $accountModuleList)) {
+                    $isModule = true;
+                }
+            }
         }
         return $isModule;
     }

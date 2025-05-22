@@ -343,6 +343,27 @@ class System extends AdminBaseController
             ];
             $data['settings'] = serialize($settingsData);
 
+            // 账号验证
+            $username = trim($this->params['username'] ?? '');
+            if (!empty($username)) {
+                $userInfo = DbServiceFacade::name('sys_users')->getInfo(['username' => $username]);
+                if (!empty($userInfo)) {
+                    if (empty($uniacid)) {
+                        $this->error("该账号已被占用");
+                    } else {
+                        $accountUserInfo = DbServiceFacade::name('sys_account_users')->getInfo(['uniacid' => $uniacid, 'user_id' => $userInfo['id']]);
+                        if (empty($accountUserInfo)) {
+                            $this->error("该账号已被占用");
+                        }
+                    }
+                } else {
+                    if (empty($this->params['password'])) {
+                        $this->error("请输入管理员密码");
+                    }
+                }
+            }
+
+
             Db::name('sys_account')->where(['uniacid' => $uniacid])->update($data);
 
             if (!empty($settingsData)) {
@@ -354,6 +375,12 @@ class System extends AdminBaseController
 
             # 分配应用
             $this->setAccountModules($uniacid);
+
+            # 重新加载商户配置信息
+            $this->settingsController->reloadAccountSettings($uniacid);
+
+            # 管理员账号
+            $this->accountUser($uniacid);
 
             $this->success(["url" => webUrl("account", ['module' => $this->params['module'], 'tab' => str_replace("#tab_", "", $this->params['tab'])])]);
         }
@@ -368,6 +395,12 @@ class System extends AdminBaseController
         $modules = Db::name('sys_modules')->where(['identifie' => $identifies])->orderRaw("FIELD(identifie," . "'" . implode("','", $identifies) . "'" . ")")->select()->toArray();
         foreach ($modules as &$module) {
             $module['logo'] = !empty($module['logo']) ? tomedia($module['logo']) : $this->siteRoot . "/app/{$module['identifie']}/icon.png";
+        }
+
+        $accountUserInfo = DbServiceFacade::name('sys_account_users')->getInfo(['uniacid' => $uniacid]);
+        if (!empty($accountUserInfo)) {
+            $userInfo = DbServiceFacade::name('sys_users')->getInfo(['id' => $accountUserInfo['user_id']]);
+            $item['username'] = $userInfo['username'];
         }
 
         $result = [
@@ -496,6 +529,45 @@ class System extends AdminBaseController
         SystemWrapperFacade::reloadAccountModuleList($uniacid);
 
         return true;
+    }
+
+    // 管理员管理
+    private function accountUser($uniacid)
+    {
+        $username = $this->params['username'] ?? '';
+        $password = $this->params['password'] ?? '';
+
+        if (!empty($username) && !empty($password)) {
+            $salt = RandomUtil::random(6);
+            $newPassword = md5($password . $salt);
+
+            $userInfo = DbServiceFacade::name('sys_users')->getInfo(['username' => $username]);
+
+            if (!empty($userInfo)) {
+                $accountUserInfo = DbServiceFacade::name('sys_account_users')->getInfo(['user_id' => $userInfo['id']]);
+                if (!empty($accountUserInfo)) {
+                    if ($accountUserInfo['uniacid'] == $uniacid) {
+                        DbServiceFacade::name('sys_users')->updateInfo(['salt' => $salt, 'password' => $newPassword], ['id' => $userInfo['id']]);
+                    }
+                }
+            } else {
+                $userData = [
+                    "username"   => $username,
+                    "password"   => $newPassword,
+                    "salt"       => $salt,
+                    "role"       => 'manager',
+                    "createtime" => TIMESTAMP,
+                    "status"     => 1,
+                ];
+                $userId = DbServiceFacade::name('sys_users')->insertInfo($userData);
+                $accountUserData = [
+                    "uniacid" => $uniacid,
+                    "user_id" => $userId,
+                    "module"  => '',
+                ];
+                DbServiceFacade::name('sys_account_users')->insertInfo($accountUserData);
+            }
+        }
     }
 
 }

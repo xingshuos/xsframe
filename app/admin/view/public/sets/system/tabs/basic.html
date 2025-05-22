@@ -6,6 +6,18 @@
 </div>
 
 <div class="form-group">
+    <label class="col-lg control-label">商户端登录地址</label>
+    <div class="col-sm-9 col-xs-12">
+        <div class="form-control-static">
+            <a class="js-clip" data-url="{:url('/admin/login',[],true,true)}">
+                {:url("/admin/login",[],true,true)}
+                <span><i class="text text-danger icon icon-question-circle" style="margin-left:6px;font-size:14px;cursor:pointer;" data-toggle="tooltip" data-placement="top" title="" data-original-title="如果当前已登录管理账号,请先退出登录再访问登录地址"></i></span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
     <label class="col-lg control-label must">商户名称</label>
     <div class="col-sm-9 col-xs-12">
         <input type="text" name="name" class="form-control" value="{$item['name']}" data-rule-required='true'/>
@@ -20,21 +32,23 @@
     </div>
 </div>
 
-<div class="form-group">
-    <label class="col-lg control-label">管理员账号</label>
-    <div class="col-sm-9 col-xs-12">
-        <input type="text" name="username" class="form-control" value="{$item['username']}" placeholder="请输入管理员账号" data-rule-required='false'/>
-        <span class="help-block">默认管理员账号,如不需要可以留空。也可以在管理员中添加商户管理员账号</span>
+{if $userInfo['role'] == 'owner'}
+    <div class="form-group">
+        <label class="col-lg control-label must">管理员账号</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type="text" name="username" class="form-control" value="{$item['username']}" placeholder="请输入管理员账号" data-rule-required='true'/>
+            <span class="help-block">默认管理员账号,如不需要可以留空。也可以在管理员中添加商户管理员账号</span>
+        </div>
     </div>
-</div>
 
-<div class="form-group">
-    <label class="col-lg control-label">管理员密码</label>
-    <div class="col-sm-9 col-xs-12">
-        <input type="text" name="password" class="form-control" value="" placeholder="请输入管理员密码" data-rule-required='false'/>
-        <span class="help-block">存在账号的情况下，留空则不修改密码</span>
+    <div class="form-group">
+        <label class="col-lg control-label">管理员密码</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type="text" name="password" class="form-control" value="" placeholder="请输入管理员密码" data-rule-required='false'/>
+            <span class="help-block">存在账号的情况下，留空则不修改密码</span>
+        </div>
     </div>
-</div>
+{/if}
 
 <div class="form-group">
     <label class="col-lg control-label">关键词</label>
