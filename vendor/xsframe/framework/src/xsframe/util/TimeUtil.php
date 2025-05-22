@@ -572,7 +572,7 @@ class TimeUtil
             $group['time_range'] = (string)$group['time_range'];
         }
 
-        return ['groups' => $groups];
+        return $groups;
     }
 
     /**
