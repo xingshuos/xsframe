@@ -590,7 +590,7 @@ class TimeUtil
 
         if ($diff === 0) return '今天';
         if ($diff === 1) return '昨天';
-        return $date->format('m月d日');
+        return $date->format('Y年m月d日');
     }
 
     /**
@@ -600,7 +600,8 @@ class TimeUtil
     {
         $format = ($title === '今天' || $title === '昨天') ? 'H:i' : 'H:i';
         $start = $time->format($format);
-        return "{$start} ~ {$start}";
+        // return "{$start} ~ {$start}";
+        return "{$start}";
     }
 
     /**
@@ -611,7 +612,8 @@ class TimeUtil
         $format = ($title === '今天' || $title === '昨天') ? 'H:i' : 'H:i';
         $parts = explode(' ~ ', $currentRange);
         $parts[1] = $newTime->format($format);
-        return implode(' ~ ', $parts);
+        // return implode(' ~ ', $parts);
+        return $parts[0];
     }
 
 }
