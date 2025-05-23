@@ -42,7 +42,21 @@
                 <thead>
                 <tr>
                     <th style="width:40px;"></th>
-                    <th style='width:100px'>排序</th>
+                    <th style='width:80px;'>
+                        <div class="btn-group sort-group">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                综合排序 <span class="icon icon-filter"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li class="sort-li {if $_GET['sort'] == 'displayorder' && $_GET['order'] == 'asc'}active{/if}" onclick="tableFieldSort('displayorder','asc')">
+                                    <a><span class="icon icon-long-arrow-up"></span> 升序</a></li>
+                                <li class="sort-li {if $_GET['sort'] == 'displayorder' && $_GET['order'] == 'desc'}active{/if}" onclick="tableFieldSort('displayorder','desc')">
+                                    <a><span class="icon icon-long-arrow-down"></span> 降序</a></li>
+                                <li class="sort-li" onclick="tableFieldSort()"><a><span class="icon icon-remove"></span> 清除</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </th>
                     <th style='width:140px'>表单名称</th>
                     <th style="width: 80px;">状态</th>
                     <th style="width: 180px;">操作</th>

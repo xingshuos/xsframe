@@ -38,6 +38,8 @@ trait AdminTraits
             $status = trim($this->params['status']) ?? '';
             $enabled = trim($this->params['enabled']) ?? 0;
             $searchTime = trim($this->params["searchtime"]) ?? '';
+            $sort = trim($this->params["sort"] ?? '');
+            $order = trim($this->params["order"] ?? '');
 
             $export = trim($this->params['export']);
             $exportTitle = trim($this->params['export_title']);
@@ -107,6 +109,10 @@ trait AdminTraits
                 } else {
                     $this->orderBy = "id desc";
                 }
+            }
+
+            if (!empty($sort) && !empty($order)) {
+                $this->orderBy = "{$sort} {$order}";
             }
 
             if ($export) {

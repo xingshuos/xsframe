@@ -575,6 +575,61 @@
     }
 </script>
 
+<script>
+    // 字段排序
+    function tableFieldSort(type, order) {
+        let sortType = getUrlQueryVariable('sort');
+        let url = location.href;
+
+        url = removeUrlQueryParam(url, 'sort');
+        url = removeUrlQueryParam(url, 'order');
+
+        if (type) {
+            url = url + '&sort=' + type + '&order=' + order
+        }
+        location.href = url
+    }
+
+    // 获取url地址参数
+    function getUrlQueryVariable(variable) {
+        let query = window.location.search.substring(1);
+        let vars = query.split("&");
+        for (let i = 0; i < vars.length; i++) {
+            let pair = vars[i].split("=");
+            if (pair[0] === variable) {
+                return pair[1];
+            }
+        }
+        return false;
+    }
+
+    // 删除指定参数
+    function removeUrlQueryParam(url, param) {
+        const queryString = url.split('?')[1];
+
+        if (!queryString) {
+            // 如果没有查询字符串，直接返回当前URL
+            return url;
+        }
+        // 使用 URLSearchParams 对象解析查询字符串
+        const params = new URLSearchParams(queryString);
+
+        // 删除指定的参数
+        params.delete(param);
+
+        // 构造新的查询字符串
+        const newQueryString = params.toString();
+
+        // 如果查询字符串为空，返回没有查询字符串的URL
+        if (newQueryString === '') {
+            return url.split('?')[0];
+        }
+
+        // 否则返回新的URL
+        return url.split('?')[0] + `?${newQueryString}`;
+    }
+</script>
+
 </body>
 
 </html>

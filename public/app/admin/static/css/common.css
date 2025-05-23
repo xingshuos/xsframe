@@ -2998,3 +2998,31 @@ a.form-control-static {
 .browser .pagination {
     margin: 0;
 }
+
+/*table列表排序*/
+.sort-group {
+    position: relative;
+}
+
+.sort-group .dropdown-toggle {
+    border: none !important;
+    padding: 0;
+    color: #333 !important;
+    font-size: 14px;
+    box-shadow: unset !important;
+    display: flex;
+    align-items: center;
+}
+
+.sort-group .dropdown-menu {
+    margin-top: 10px;
+}
+
+.sort-group .dropdown-menu > li > a:focus, .sort-group .dropdown-menu > li > a:hover {
+    color: #0062ff !important;
+    cursor:pointer;
+}
+
+.sort-group .dropdown-menu .icon {
+    width: 10px;
+}
