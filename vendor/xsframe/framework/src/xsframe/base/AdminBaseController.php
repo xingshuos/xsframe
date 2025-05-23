@@ -119,8 +119,17 @@ abstract class AdminBaseController extends BaseController
     }
 
     // 引入后端模板
-    protected function template($name, $var = null)
+    protected function template($name = null, $var = null)
     {
+        if (is_array($name)) {
+            $var = $name;
+            $name = $this->action;
+        } else {
+            if (empty($name)) {
+                $name = $this->action;
+            }
+        }
+
         # 解决 使用门面调用会报 未定义数组索引 的错误警告
         error_reporting(E_ALL ^ E_NOTICE);
         $var = $this->getDefaultVars($var);
