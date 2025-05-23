@@ -539,7 +539,7 @@ class TimeUtil
                 // 日期不同或超过2小时间隔
                 $lastTime = $currentGroup['last_time'];
                 $diff = $msgTime->getTimestamp() - $lastTime->getTimestamp();
-                if ($groupTitle !== $currentGroup['title'] || $diff > 7200) {
+                if ($groupTitle !== $currentGroup['title'] || $diff > 60) {
                     $createNewGroup = true;
                 }
             }
