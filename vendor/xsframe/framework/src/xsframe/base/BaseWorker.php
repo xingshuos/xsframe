@@ -17,6 +17,8 @@ use think\facade\Config;
 
 abstract class BaseWorker extends Worker
 {
+    protected static $heartbeatTime = 50; // 心跳时间
+
     // 应用配置模板
     protected $appConfig = [
         'port'     => 2345,

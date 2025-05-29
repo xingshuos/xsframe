@@ -69,6 +69,14 @@ class AreaService
                                 foreach ($v['city'] as $k2 => $v2) {
                                     if ($v2['@attributes']['code'] == $areaCode) {
                                         return $v2['@attributes']['name'];
+                                    } else {
+                                        if ($type != 'county') {
+                                            foreach ($v2['county'] as $k3 => $v3) {
+                                                if ($v3['@attributes']['code'] == $areaCode) {
+                                                    return $v3['@attributes']['code'];
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -97,6 +105,14 @@ class AreaService
                                 foreach ($v['city'] as $k2 => $v2) {
                                     if ($v2['@attributes']['name'] == $name) {
                                         return $v2['@attributes']['code'];
+                                    } else {
+                                        if ($type != 'county') {
+                                            foreach ($v2['county'] as $k3 => $v3) {
+                                                if ($v3['@attributes']['name'] == $name) {
+                                                    return $v3['@attributes']['code'];
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
