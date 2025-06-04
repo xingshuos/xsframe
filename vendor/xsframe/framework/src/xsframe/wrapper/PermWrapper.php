@@ -77,7 +77,11 @@ class PermWrapper
 
         $field = " u.uid,u.status as userstatus,r.status as rolestatus,u.perms as userperms,r.perms as roleperms,u.roleid ";
 
-        $user = Db::name("sys_account_perm_user")->alias('u')->field($field)->leftJoin("sys_account_perm_role r", "r.id = u.roleid")->where(['u.uid' => $uid])->find();
+        $where = ['u.uid' => $uid];
+        if( !empty($userInfo['uniacid']) ){
+            $where['u.uniacid'] = $userInfo['uniacid'];
+        }
+        $user = Db::name("sys_account_perm_user")->alias('u')->field($field)->leftJoin("sys_account_perm_role r", "r.id = u.roleid")->where($where)->find();
 
         if (empty($user) || empty($user['userstatus'])) {
             return false;
@@ -156,18 +160,18 @@ class PermWrapper
         $parentModuleMenus = [];
         if (!empty($moduleMenus)) {
 
-            // $permDefault = [
-            //     'main'   => '查看列表',
-            //     'view'   => '查看详情',
-            //     'add'    => '添加-log',
-            //     'edit'   => '修改-log',
-            //     'delete' => '删除-log',
-            //     'xxx'    => [
-            //         'status' => 'edit'
-            //     ],
-            // ];
+            $permDefault = [
+                'main'   => '查看列表',
+                'view'   => '查看详情',
+                'add'    => '添加-log',
+                'edit'   => '修改-log',
+                'delete' => '删除-log',
+                'xxx'    => [
+                    'status' => 'edit'
+                ],
+            ];
 
-            $permDefault = [];
+            // $permDefault = [];
 
             // if( $module == 'jrp_anjia' ){
             //     dd($moduleMenus);

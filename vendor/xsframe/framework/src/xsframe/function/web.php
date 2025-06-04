@@ -123,16 +123,8 @@ if (!function_exists('tpl_selector')) {
 if (!function_exists('webUrl')) {
     function webUrl($url = null, $params = [], $full = true, $suffix = true)
     {
-        if (empty($url)) {
-            $url = "main";
-        } else {
-            if( $url == "/" ){
-                $url = "";
-            }else{
-                if (!StringUtil::strexists($url, 'web.') && app('http')->getName() != 'admin') {
-                    $url = "web." . $url;
-                }
-            }
+        if (!StringUtil::strexists($url, 'web.') && app('http')->getName() != 'admin') {
+            $url = "web." . $url;
         }
 
         if (empty($params['page']) && StringUtil::strexists($url, '/edit') && !empty($_GET['page'])) {
