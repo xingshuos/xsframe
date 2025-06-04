@@ -1,6 +1,6 @@
 {extend name="../../admin/view/public/system"}
 
-{block name='title'}操作员权限管理-系统管理-{$account['name']}{/block}
+{block name='title'}员工权限管理-系统管理-{$account['name']}{/block}
 
 {block name='content'}
 
@@ -29,10 +29,10 @@
 
 <div class="page-header">
     <span>
-        当前位置：<span class="text-primary">操作员管理</span>
+        当前位置：<span class="text-primary">员工管理</span>
     </span>
     <span>
-        全操作员数:  <span class='text-danger'>{$total}</span>
+        全员工数:  <span class='text-danger'>{$total}</span>
     </span>
 </div>
 <div class="page-content">
@@ -42,7 +42,7 @@
         <div class="page-toolbar">
             <div class="col-sm-6">
                 <span class="">
-                    <a class='btn btn-primary btn-sm' href="{:webUrl('perm/userPost',['module' => $_GET['module']])}"><i class="icon icon-plus"></i> 添加新操作员</a>
+                    <a class='btn btn-primary btn-sm' href="{:webUrl('perm/userPost',['module' => $_GET['module']])}"><i class="icon icon-plus"></i> 添加新员工</a>
                     <a class="btn btn-default btn-sm" href="{:webUrl('perm/role',['module' => $_GET['module']])}">&nbsp;&nbsp;角色管理&nbsp;&nbsp;</a>
                 </span>
             </div>
@@ -63,7 +63,7 @@
                             <option value="0" {if $_GPC['status'] == '0'} selected{/if}>禁用</option>
                         </select>
                     </span>
-                    <input type="text" class="form-control " name="keyword" value="{$_GPC['keyword']}" placeholder="可搜索操作员关键词">
+                    <input type="text" class="form-control " name="keyword" value="{$_GPC['keyword']}" placeholder="可搜索员工关键词">
                     <span class="input-group-btn">
                         <button class="btn btn-primary" type="submit"> 搜索</button>
                     </span>
@@ -125,7 +125,7 @@
                             <i class="icon icon-pencil"></i>
                         </span>
                     </a>
-                    <a class='btn btn-default btn-sm btn-op btn-operation' data-toggle='ajaxRemove'  href="{:webUrl('perm/userDelete', array('id' => $row['id'],'module' => $_GET['module']))}" data-confirm="确认删除此操作员吗？">
+                    <a class='btn btn-default btn-sm btn-op btn-operation' data-toggle='ajaxRemove'  href="{:webUrl('perm/userDelete', array('id' => $row['id'],'module' => $_GET['module']))}" data-confirm="确认删除此员工吗？">
                         <span data-toggle="tooltip" data-placement="top" title="" data-original-title="删除">
                             <i class='icon icon-trash'></i>
                        </span>
@@ -157,7 +157,7 @@
     {else}
         <div class='panel panel-default'>
             <div class='panel-body' style='text-align: center;padding:30px;'>
-                暂时没有任何操作员!
+                暂时没有任何员工!
             </div>
         </div>
     {/if}

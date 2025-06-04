@@ -26,6 +26,7 @@ use think\Facade;
  * @method static sendUpdateCode(string $mobile, string $tplId = null, array $smsSet = null)
  * @method static sendChangeCode(string $mobile, string $tplId = null, array $smsSet = null)
  * @method static sendAuthCode(string $mobile, string $tplId = null, array $smsSet = null)
+ * @method static getMobileCode(string $mobile)
  * @method static sendEmail(string $email, string $subject = null, string $body = null, array $smsSet = null)
  */
 class SmsServiceFacade extends Facade

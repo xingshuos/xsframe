@@ -24,7 +24,12 @@
             <div class="modal-header"><button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button><h3>选择区域</h3></div>
             <div class="modal-body">
                 <div class="row row-title">
-                    <b class="col-sm-4">省份</b>
+                    <b class="col-sm-4">
+                        <span>省份</span>
+                        <label class="checkbox-inline pull-right"  style="margin-top: 5px;left:4px;">
+                            <input type="checkbox" class="country_all" title="全国" />
+                        </label>
+                    </b>
                     <b class="col-sm-4">城市</b>
                     <b class="col-sm-4">地区</b>
                 </div>
@@ -94,64 +99,106 @@
 
     $(function(){
 
-        $(".child:not(.a-group)").unbind('click').click(function () {
-            $(this).addClass('active').siblings().removeClass('active');
-        });
+        require(['tip'], function () {
 
-        $('.province').mouseover(function(){
-            $(this).find('ul').show();
-        }).mouseout(function(){
-            $(this).find('ul').hide();
-        });
+            $(".child:not(.a-group)").unbind('click').click(function () {
+                $(this).addClass('active').siblings().removeClass('active');
+            });
 
-        $('.p-group').click(function(){
-            var province_code = $(this).find('input').attr('data-value');
+            $('.province').mouseover(function(){
+                $(this).find('ul').show();
+            }).mouseout(function(){
+                $(this).find('ul').hide();
+            });
 
-            load_city(2, province_code, 0, 0);
-        });
+            $('.p-group').click(function(){
+                var province_code = $(this).find('input').attr('data-value');
 
-        $('.c-group').click(function(){
-            var city_code = $(this).find('input').attr('data-value');
-            load_city(2, 0, city_code, 0);
-        });
+                load_city(2, province_code, 0, 0);
+            });
 
-        $('.a-group').click(function(){
-            var area_code = $(this).find('input').attr('data-value');
-            load_city(2, 0, 0, area_code);
-        });
+            $('.c-group').click(function(){
+                var city_code = $(this).find('input').attr('data-value');
+                load_city(2, 0, city_code, 0);
+            });
 
-        $('.provinceall').click(function(){
-            var province_code = $(this).attr('data-value');
-            var checked = $(this).get(0).checked;
-            var flag = 0;
+            $('.a-group').click(function(){
+                var area_code = $(this).find('input').attr('data-value');
+                load_city(2, 0, 0, area_code);
+            });
 
-            if(checked){
-                flag = 1;
-            }
-            load_city(flag, province_code, 0, 0);
-        });
+            $('.country_all').click(function(){
+                var checked = $(this).get(0).checked;
+                var flag = 0;
+
+                tip.loading();
+
+                if(checked){
+                    flag = 1;
+                }
+
+                // 使用requestAnimationFrame分块执行
+                let provinceList = {:json_encode($provinceList)};
+                const totalIterations = provinceList.length;
+                let i = 0;
+
+                // 解决js堵塞css渲染问题
+                function processChunk() {
+                    const start = performance.now();
+                    // 每次执行一小块任务
+                    while(i < totalIterations && performance.now() - start < 16) {
+                        // 模拟计算密集型任务
+                        $("#ch_pcode" + provinceList[i]).get(0).checked = !!flag;
+                        load_city(flag, provinceList[i], 0, 0);
+                        load_city(2, provinceList[i], 0, 0);
+                        i++;
+                    }
+
+                    if(i < totalIterations) {
+                        // 继续下一块
+                        requestAnimationFrame(processChunk);
+                    } else {
+                        // "结束运行";
+                        tip.loading(false);
+                    }
+                }
+                processChunk()
+            });
+
+            $('.provinceall').click(function(){
+                var province_code = $(this).attr('data-value');
+                var checked = $(this).get(0).checked;
+                var flag = 0;
+
+                if(checked){
+                    flag = 1;
+                }
+                load_city(flag, province_code, 0, 0);
+            });
 
 
-        $('.cityall').click(function(){
-            var city_code = $(this).attr('data-value');
-            var checked = $(this).get(0).checked;
-            var flag = 0;
+            $('.cityall').click(function(){
+                var city_code = $(this).attr('data-value');
+                var checked = $(this).get(0).checked;
+                var flag = 0;
 
-            if(checked){
-                flag = 1;
-            }
+                if(checked){
+                    flag = 1;
+                }
 
-            load_city(flag, 0, city_code, 0);
-        });
+                load_city(flag, 0, city_code, 0);
+            });
 
-        $('.areaall').click(function(){
-            var area_code = $(this).attr('data-value');
-            var checked = $(this).get(0).checked;
-            var flag = 0;
-            if(checked){
-                flag = 1;
-            }
-            load_city(flag, 0, 0, area_code);
+            $('.areaall').click(function(){
+                var area_code = $(this).attr('data-value');
+                var checked = $(this).get(0).checked;
+                var flag = 0;
+                if(checked){
+                    flag = 1;
+                }
+                load_city(flag, 0, 0, area_code);
+            });
+
         });
     });
 
@@ -183,7 +230,7 @@
                     var scode = street.getAttribute("code");
 
                     html +='<div class="col-sm-12 slist pcode_s'+province_code+' ccode_s'+city_code+' acode_s'+county_code+'" style="padding:0;display: none;">';
-                    html +='<input type="checkbox" class="streetall checkbox_pcode'+province_code+' checkbox_ccode'+city_code+' checkbox_acode'+county_code+'" value="'+sname+'" data-value="'+scode+'" style="margin-top:12px;" />';
+                    html +='<input type="checkbox" class="streetall checkbox_pcode'+province_code+' checkbox_ccode'+city_code+' checkbox_acode'+county_code+'" value="'+sname+'" data-value="'+scode+'" style="margin-top:12px;;" />';
                     html +='<span class="a-group">'+sname+'</span></div>';
                 }
             }
@@ -192,6 +239,8 @@
     }
 
     function load_city(flag, province_code, city_code, area_code){
+
+        // console.log('load_city',  flag, province_code, city_code, area_code)
 
         if (province_code >0 ) {
             $('.clist').hide();

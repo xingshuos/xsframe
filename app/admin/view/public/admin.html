@@ -23,13 +23,13 @@
     <ul>
         {if $isSystem}
             <li>
-                <a href="{:url('home/welcome')}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="系统概况"><i class="icon icon-home"></i></a>
+                <a href="{:url('home/welcome')}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="系统概况"><i class="icow icow-homeL" style="font-size: 16px;"></i></a>
             </li>
         {else}
-            {if in_array($userInfo['role'],['owner','manager']) }
-            <!-- <li class="sysset wb-nav-system" data-module="{$module}" style="padding: 0;width: 60px;">
-                <a href="" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="系统概况"><i class="icon icon-home" style="font-size: 16px;"></i></a>
-            </li> -->
+            {if in_array($userInfo['role'],['owner','manager','operator']) }
+            <li class="sysset" data-module="{$module}">
+                <a href="{:url('admin/system/index',['i' => $_GET['i']])}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="返回应用列表切换应用"><i class="icon icon-exchange" style="font-size: 14px;"></i> 切换应用</a>
+            </li>
             {/if}
         {/if}
     </ul>
@@ -37,6 +37,31 @@
     <div class="wb-header-flex"></div>
 
     <ul>
+        {if $isSystem}
+            <li data-toggle="tooltip" data-placement="bottom" title="" data-original-title="">
+                <a href="{:url('admin/sysset/site')}">
+                    系统设置
+                </a>
+            </li>
+            <li data-toggle="tooltip" data-placement="bottom" title="" data-original-title="">
+                <a href="{:url('admin/sysset/upgrade')}">
+                    系统升级
+                </a>
+            </li>
+        {else}
+            {if in_array($userInfo['role'],['owner','manager']) && !$isSystem}
+            <li data-toggle="tooltip" data-placement="bottom" title="" data-original-title="">
+                <a href="{:url('admin/system/account',['i' => $_GET['i']])}">
+                    系统设置
+                </a>
+            </li>
+            <li data-toggle="tooltip" data-placement="bottom" title="" data-original-title="">
+                <a href="{:url('admin/perm/user',['i' => $_GET['i']])}">
+                    权限管理
+                </a>
+            </li>
+            {/if}
+        {/if}
         <li class="dropdown ellipsis">
             <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                 {if $isSystem}
@@ -51,13 +76,13 @@
 
                 {if $isSystem}
                     <li>
-                        <a href="{:url('admin/sysset/upgrade')}">
-                            <i class="icon icon-cloud-upload" style="font-size: 22px;"></i>
-                            <span style="display: block">系统升级</span>
+                        <a href="{:url('admin/users/login_log')}">
+                            <i class="icon icon-list-alt" style="font-size: 22px;"></i>
+                            <span style="display: block">登录日志</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{:url('admin/users/profile')}" target="_blank">
+                        <a href="{:url('admin/users/profile')}">
                             <i class="icon icon-lock " style="font-size: 22px;"></i>
                             <span style="display: block">修改密码</span>
                         </a>
@@ -71,18 +96,18 @@
                     </li>
 
                     {if in_array($userInfo['role'],['owner','manager']) && !$isSystem}
-                        <li class="wb-nav-system"><!-- data-href="{:url('admin/system/account')}" data-module="{$module}" -->
-                            <a href="{:url('admin/system/account',['i' => $_GET['i']])}">
-                                <i class="icon icon-cog" style="font-size: 22px;"></i>
-                                <span style="display: block">系统设置</span>
-                            </a>
-                        </li>
-                        <li class="wb-nav-system"><!-- data-href="{:url('admin/perm/user')}" data-module="{$module}" -->
-                            <a href="{:url('admin/perm/user',['i' => $_GET['i']])}">
-                                <i class="icon icon-tasks" style="font-size: 22px;"></i>
-                                <span style="display: block">权限管理</span>
-                            </a>
-                        </li>
+                        <!-- <li class="wb-nav-system">&lt;!&ndash; data-href="{:url('admin/system/account')}" data-module="{$module}" &ndash;&gt; -->
+                        <!--     <a href="{:url('admin/system/account',['i' => $_GET['i']])}"> -->
+                        <!--         <i class="icon icon-cog" style="font-size: 22px;"></i> -->
+                        <!--         <span style="display: block">系统设置</span> -->
+                        <!--     </a> -->
+                        <!-- </li> -->
+                        <!-- <li class="wb-nav-system">&lt;!&ndash; data-href="{:url('admin/perm/user')}" data-module="{$module}" &ndash;&gt; -->
+                        <!--     <a href="{:url('admin/perm/user',['i' => $_GET['i']])}"> -->
+                        <!--         <i class="icon icon-tasks" style="font-size: 22px;"></i> -->
+                        <!--         <span style="display: block">权限管理</span> -->
+                        <!--     </a> -->
+                        <!-- </li> -->
                     {/if}
 
                     <li class="wb-nav-system"><!-- data-href="{:url('admin/system/profile')}" data-module="{$module}" -->
@@ -95,18 +120,18 @@
 
                 {if $userInfo['role'] == 'owner' && $module != 'admin'}
                     <li>
-                        <a href="{:url('admin/home/welcome')}"><i class="icon icon-cog"></i> 返回系统 </a>
+                        <a href="{:url('admin/home/welcome')}"> 返回超级管理员后台 </a>
                     </li>
                 {else}
                     <li data-href="{:url('admin/login/logout')}" class="wb-header-logout">
-                        <a><i class="icon icon-off"></i> 退出系统</a>
+                        <a><i class="icow icow-exit"></i> 退出系统</a>
                     </li>
                 {/if}
 
             </ul>
         </li>
         <li data-toggle="tooltip" data-placement="bottom" title="" data-href="{:url('admin/login/logout')}" data-original-title="退出" class="wb-header-logout">
-            <a><i class="icon icon-off"></i></a>
+            <a><i class="icow icow-exit"></i></a>
         </li>
     </ul>
 </div>

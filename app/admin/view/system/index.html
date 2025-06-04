@@ -143,7 +143,7 @@
 <script>
     function windowOpen(module,url) {
         $.post("{:webUrl('system/setAccountDefaultModule')}",{uniacid:"{$uniacid}",module:module}, function (json) {
-            window.open(url);
+            window.location.href = url;
         }, 'json')
     }
 

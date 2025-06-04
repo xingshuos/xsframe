@@ -12,6 +12,27 @@ const tipFun = () => {
     $("body", top.window.document).append('<div id="tip-msgbox" class="msgbox"></div>');
     window.msgbox = $("#tip-msgbox", top.window.document);
 
+    tip.loading = function (flag = true){
+        if( flag ){
+            tip.hideLoading();
+            $("body").append('<div id="tip-loading">\n' +
+                '        <div class="page-loading-inner" style="z-index:9999999;">\n' +
+                '            <div class="sk-three-bounce">\n' +
+                '                <div class="sk-child sk-bounce1"></div>\n' +
+                '                <div class="sk-child sk-bounce2"></div>\n' +
+                '                <div class="sk-child sk-bounce3"></div>\n' +
+                '            </div>\n' +
+                '        </div>\n' +
+                '    </div>');
+        }else{
+            tip.hideLoading();
+        }
+    }
+
+    tip.hideLoading = function (){
+        $("#tip-loading").remove();
+    }
+
     tip.confirm = function (msg, callback, cancel_callback) {
         msg = msg.replace(/&lt;/g, "<");
         msg = msg.replace(/&gt;/g, ">");

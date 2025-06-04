@@ -205,6 +205,13 @@ class SmsService extends BaseService
         return self::send($this->smsSet['accessKeyId'], $this->smsSet['accessKeySecret'], $this->smsSet['sign'], $mobile, $tplId, $data);
     }
 
+    // 获取手机号验证码
+    public function getMobileCode($mobile): string
+    {
+        $code = Cache::get($this->getKey($this->codeKey . $mobile));
+        return empty($code) ? "" : strval($code);
+    }
+
     // 清除验证码
     private function clearCode($obj): bool
     {

@@ -12,12 +12,12 @@
     <ul>
         {if $isSystem}
             <li>
-                <a href="{:url('home/welcome')}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="系统概况"><i class="icon icon-home"></i></a>
+                <a href="{:url('home/welcome')}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="系统概况"><i class="icow icow-homeL" style="font-size: 16px;"></i></a>
             </li>
         {else}
             {if in_array($userInfo['role'],['owner','manager']) }
                 <!-- <li class="sysset wb-nav-system" data-module="{$module}" style="padding: 0;width: 60px;">
-                    <a href="" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="系统概况"><i class="icon icon-home" style="font-size: 16px;"></i></a>
+                    <a href="" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="系统概况"><i class="icow icow-homeL" style="font-size: 16px;"></i></a>
                 </li> -->
             {/if}
         {/if}
@@ -64,17 +64,17 @@
 
                 {if $userInfo['role'] == 'owner'}
                     <li>
-                        <a href="{:url('admin/home/welcome')}"><i class="icon icon-reply-all"></i> 返回超级管理员后台 </a>
+                        <a href="{:url('admin/home/welcome')}"> 返回超级管理员后台 </a>
                     </li>
                 {else}
                     <li data-href="{:url('admin/login/logout')}" class="wb-header-logout">
-                        <a><i class="icon icon-off"></i> 退出登录</a>
+                        <a><i class="icow icow-exit"></i> 退出登录</a>
                     </li>
                 {/if}
             </ul>
         </li>
         <li data-toggle="tooltip" data-placement="bottom" title="" data-href="{:url('admin/login/logout')}" data-original-title="退出" class="wb-header-logout">
-            <a><i class="icon icon-off"></i></a>
+            <a><i class="icow icow-exit"></i></a>
         </li>
     </ul>
 </div>

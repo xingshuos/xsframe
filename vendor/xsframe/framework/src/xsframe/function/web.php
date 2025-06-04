@@ -123,8 +123,16 @@ if (!function_exists('tpl_selector')) {
 if (!function_exists('webUrl')) {
     function webUrl($url = null, $params = [], $full = true, $suffix = true)
     {
-        if (!StringUtil::strexists($url, 'web.') && app('http')->getName() != 'admin') {
-            $url = "web." . $url;
+        if (empty($url)) {
+            $url = "main";
+        } else {
+            if( $url == "/" ){
+                $url = "";
+            }else{
+                if (!StringUtil::strexists($url, 'web.') && app('http')->getName() != 'admin') {
+                    $url = "web." . $url;
+                }
+            }
         }
 
         if (empty($params['page']) && StringUtil::strexists($url, '/edit') && !empty($_GET['page'])) {
@@ -135,7 +143,7 @@ if (!function_exists('webUrl')) {
             $params['i'] = $_GET['i'];
         }
 
-        $url = url($url, array_filter($params), $suffix, $full);
+        $url = strval(url($url, array_filter($params), $suffix, $full));
 
         // 负载均衡下域名协议会被强制转成http协议，所以这里需要转成https的方式 start
         if (!empty($_SERVER['HTTP_REFERER'])) {
