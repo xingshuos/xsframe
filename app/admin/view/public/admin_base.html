@@ -628,6 +628,26 @@
         // 否则返回新的URL
         return url.split('?')[0] + `?${newQueryString}`;
     }
+
+    function tokenGen(This,length=32) {
+        let letters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        let token = '';
+        for(let i = 0; i < length; i++) {
+            let j = parseInt(Math.random() * (31 + 1));
+            token += letters[j];
+        }
+        $(This).prev().val(token);
+    }
+
+    function EncodingAESKeyGen(This,length=43) {
+        let letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let token = '';
+        for(let i = 0; i < length; i++) {
+            let j = parseInt(Math.random() * 61 + 1);
+            token += letters[j];
+        }
+        $(This).prev().val(token);
+    }
 </script>
 
 </body>

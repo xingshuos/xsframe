@@ -15,8 +15,11 @@ class WebSocket extends Command
     protected static $defaultName = 'xs:worker';
 
     // php think xs:worker start  启动全部
+    // php think xs:worker start xs_kefu chat 指定启动
     // php think xs:worker start --app=xs_kefu --service=chat 指定启动
     // php think xs:worker start -a xs_kefu -s chat 别名启动
+    // php think xs:worker stop xs_kefu chat 指定关闭
+
     protected function configure()
     {
         $this->setName(self::$defaultName)

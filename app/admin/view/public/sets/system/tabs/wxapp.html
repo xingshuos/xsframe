@@ -1,3 +1,5 @@
+<div class="form-group-title">一、填写小程序信息</div>
+
 <div class="form-group">
     <label class="col-lg control-label must">AppID</label>
     <div class="col-sm-9 col-xs-12">
@@ -9,5 +11,96 @@
     <label class="col-lg control-label must">AppSecret</label>
     <div class="col-sm-9 col-xs-12">
         <input type='text' value="{$accountSettings['wxapp']['secret']}" name='data[wxapp][secret]' class="form-control"/>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-lg control-label">小程序名称</label>
+    <div class="col-sm-9 col-xs-12">
+        <input type='text' value="{$accountSettings['wxapp']['name']}" name='data[wxapp][name]' class="form-control"/>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-lg control-label">小程序头像</label>
+    <div class="col-sm-9 col-xs-12">
+        {:tpl_form_field_image2('data[wxapp][logo]', $accountSettings['wxapp']['logo'])}
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-lg control-label">小程序码</label>
+    <div class="col-sm-9 col-xs-12">
+        {:tpl_form_field_image2('data[wxapp][qrcode]', $accountSettings['wxapp']['qrcode'])}
+    </div>
+</div>
+
+<div class="form-group-title">二、配置服务器域名</div>
+<div class="alert alert-info">
+    <p>登录小程序公众平台(mp.weixin.qq.com)在[开发]-[开发管理]-[开发设置]-[服务器域名]，配置以下信息：</p>
+</div>
+<div class="form-group">
+    <label class="col-lg control-label">request</label>
+    <div class="col-sm-9 col-xs-12">
+        <div class="form-control-static js-clip" data-url="https://{$_SERVER['HTTP_HOST']}">https://{$_SERVER['HTTP_HOST']}</div>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-lg control-label">socket</label>
+    <div class="col-sm-9 col-xs-12">
+        <div class="form-control-static js-clip" data-url="wss://{$_SERVER['HTTP_HOST']}">wss://{$_SERVER['HTTP_HOST']}</div>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-lg control-label">uploadFile</label>
+    <div class="col-sm-9 col-xs-12">
+        <div class="form-control-static js-clip" data-url="https://{$_SERVER['HTTP_HOST']}">https://{$_SERVER['HTTP_HOST']}</div>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-lg control-label">downloadFile</label>
+    <div class="col-sm-9 col-xs-12">
+        <div class="form-control-static js-clip" data-url="https://{$_SERVER['HTTP_HOST']}">https://{$_SERVER['HTTP_HOST']}</div>
+    </div>
+</div>
+
+<div class="form-group-title">三、配置消息推送</div>
+<div class="alert alert-info">
+    <p>登录小程序公众平台(mp.weixin.qq.com)在[开发]-[开发管理]-[开发设置]-[消息推送]，配置以下信息：</p>
+</div>
+<div class="form-group">
+    <label class="col-lg control-label">服务器地址</label>
+    <div class="col-sm-9 col-xs-12">
+        <div class="form-control-static js-clip" data-url="https://{$_SERVER['HTTP_HOST']}/api/wxapp/notify">https://{$_SERVER['HTTP_HOST']}/api/wxapp/notify</div>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-lg control-label">Token</label>
+    <div class="col-sm-9 col-xs-12">
+        <div class="input-group">
+            <input type='text' value="{$accountSettings['wxapp']['token']}" name='data[wxapp][token]' class="form-control"/>
+            <span class="input-group-addon" style="cursor:pointer" onclick="tokenGen(this);">生成新的</span>
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-lg control-label">EncodingAESKey</label>
+    <div class="col-sm-9 col-xs-12">
+        <div class="input-group">
+            <input type='text' value="{$accountSettings['wxapp']['encodingaeskey']}" name='data[wxapp][encodingaeskey]' class="form-control"/>
+            <span class="input-group-addon" style="cursor:pointer" onclick="EncodingAESKeyGen(this);">生成新的</span>
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-lg control-label">消息加解密方式</label>
+    <div class="col-sm-9 col-xs-12">
+        <div class="form-control-static">安全模式</div>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-lg control-label">数据格式</label>
+    <div class="col-sm-9 col-xs-12">
+        <div class="form-control-static">XML</div>
     </div>
 </div>

@@ -19,6 +19,7 @@ use xsframe\wrapper\PayWechatNotifyWrapper;
 use xsframe\wrapper\PayWechatRefundNotifyWrapper;
 use xsframe\wrapper\SiteMapWrapper;
 use xsframe\wrapper\WechatWrapper;
+use xsframe\wrapper\WxappWrapper;
 use think\facade\Request;
 
 /**
@@ -54,6 +55,11 @@ class RouteBindMiddleware
         # 微信公众号服务
         if ($pathInfo == 'wechat/service') {
             exit(new WechatWrapper($request));
+        }
+
+        # 微信小程序消息推送
+        if ($pathInfo == 'wxapp/notify') {
+            exit(new WxappWrapper($request));
         }
 
         # 网站收录
