@@ -14,7 +14,6 @@ namespace app\admin\controller;
 
 use think\Exception;
 use think\facade\Db;
-use xsframe\facade\service\DbServiceFacade;
 use xsframe\facade\wrapper\SystemWrapperFacade;
 use xsframe\util\FileUtil;
 use xsframe\util\PinYinUtil;

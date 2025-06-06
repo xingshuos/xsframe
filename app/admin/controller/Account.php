@@ -144,6 +144,9 @@ class Account extends Base
             # 管理员账号
             $this->accountUser($uniacid);
 
+            # 重新加载配置
+            $this->reloadUniacidList();
+
             $this->success(["url" => webUrl("account/edit", ['id' => $uniacid, 'tab' => str_replace("#tab_", "", $this->params['tab'])])]);
         }
 
@@ -164,7 +167,7 @@ class Account extends Base
             $module['logo'] = !empty($module['logo']) ? tomedia($module['logo']) : $this->siteRoot . "/app/{$module['identifie']}/icon.png";
         }
 
-        // 更新uniacid列表
+        # 重新加载配置
         $this->reloadUniacidList();
 
         $attachmentPath = IA_ROOT . "/public/attachment/";
@@ -202,7 +205,7 @@ class Account extends Base
         foreach ($items as $item) {
             $uniacid = $item['uniacid'];
             Db::name('sys_account')->where(['uniacid' => $item['uniacid']])->update([$type => $value]);
-            // 更新uniacid列表
+            # 重新加载配置
             $this->reloadUniacidList();
             // 更新uniacid的应用列表
             SystemWrapperFacade::reloadAccountModuleList($item['uniacid']);
@@ -214,10 +217,12 @@ class Account extends Base
     // 删除域名
     public function hostDelete()
     {
-        $uniacid = intval($this->params["uniacid"]);
         $id = intval($this->params["id"]);
+        Db::name('sys_account_host')->where(['id' => $id])->delete();
 
-        Db::name('sys_account_host')->where(['id' => $id, 'uniacid' => $uniacid])->delete();
+        # 重新加载配置
+        $this->reloadUniacidList();
+
         $this->success();
     }
 
