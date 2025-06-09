@@ -54,4 +54,5 @@ app/*
 backup/*
 config/appMap.php
 config/workerMap.php
+config/websocket.php
 .gitmodules
