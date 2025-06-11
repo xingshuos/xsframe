@@ -541,6 +541,7 @@ class ArrayUtil
         return $item;
     }
 
+    // 数组中字符串强制转换为int类型
     public static function checkStrVal($item)
     {
         if (is_array($item)) {
@@ -550,11 +551,13 @@ class ArrayUtil
         }
     }
 
+    // 序列化
     public static function iSerializer($value)
     {
         return serialize($value);
     }
 
+    // 反序列化
     public static function iUnSerializer($value)
     {
         if (empty($value)) {
@@ -574,6 +577,7 @@ class ArrayUtil
         }
     }
 
+    // 判断是否序列化
     public static function isSerialized($data, $strict = true)
     {
         if (!is_string($data)) {
@@ -650,6 +654,86 @@ class ArrayUtil
                 $result = $array;
             }
         }
+        return $result;
+    }
+
+    /**
+     * 递归构建树形结构
+     * @param array $data 所有分类数据
+     * @param array $tree 生成的树结构
+     * @param int $parentId 当前父ID
+     * @param string $prefix 当前名称前缀
+     * @param string $symbol 拼接符号
+     */
+    public static function buildTree($data, &$tree, $parentId = 0, $prefix = '', string $symbol = " > ")
+    {
+        foreach ($data as $item) {
+            if ($item['parentid'] == $parentId) {
+                // 拼接完整名称
+                $fullName = $prefix ? $prefix . $symbol . $item['name'] : $item['name'];
+
+                // 添加到结果树
+                $tree[] = [
+                    'id'        => $item['id'],
+                    'name'      => $item['name'],
+                    'parentid'  => $item['parentid'],
+                    'full_name' => $fullName
+                ];
+
+                // 递归处理子节点
+                self::buildTree($data, $tree, $item['id'], $fullName);
+            }
+        }
+    }
+
+    /**
+     * 获取所有子节点
+     * @param int $startId 父节点ID
+     * @param array $allData 所有数据
+     * @return array
+     */
+    public static function getAllChildren(int $startId, array $allData, string $parentIdField = 'parentid')
+    {
+        // 1. 一次性查询所有数据
+
+        // 2. 构建父->子映射关系
+        $treeMap = [];
+        foreach ($allData as $item) {
+            $treeMap[$item[$parentIdField]][] = $item;
+        }
+
+        // 3. 递归查找所有子节点
+        $result = [];
+        $queue = [$startId];  // 初始队列
+
+        while (!empty($queue)) {
+            $currentId = array_shift($queue);  // 取出当前节点
+
+            if (isset($treeMap[$currentId])) {
+                foreach ($treeMap[$currentId] as $child) {
+                    $result[$child['id']] = $child;  // 添加到结果
+                    $queue[] = $child['id'];         // 添加到队列继续遍历
+                }
+            }
+        }
+
+        return array_values($result);
+    }
+
+    // 二维数组根据key去重
+    public static function uniqueByField(array $array, string $field): array
+    {
+        $uniqueKeys = [];
+        $result = [];
+
+        foreach ($array as $item) {
+            $keyValue = $item[$field] ?? null;
+            if (!in_array($keyValue, $uniqueKeys, true)) {
+                $uniqueKeys[] = $keyValue;
+                $result[] = $item;
+            }
+        }
+
         return $result;
     }
 }
