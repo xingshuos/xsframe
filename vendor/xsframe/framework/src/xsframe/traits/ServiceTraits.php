@@ -253,15 +253,17 @@ trait ServiceTraits
     {
         $op = null;
         $condition = null;
-        if (is_array($where) && is_string($where[0]) && is_array($where[1])) {
-            $op = $where[1];
-            $where = $where[0];
+
+        if (is_numeric($where)) {
+            $condition['id'] = $where;
+            $where = ['id' => $where];
         } else {
-            if (is_numeric($where)) {
-                $condition['id'] = $where;
-                $where = ['id' => $where];
+            if (is_array($where) && !empty($where[0]) && !empty($where[1]) && is_string($where[0]) && is_array($where[1])) {
+                $op = $where[1];
+                $where = $where[0];
             }
         }
+
         return ['where' => $where, 'op' => $op, 'condition' => $condition];
     }
 
