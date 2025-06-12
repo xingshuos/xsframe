@@ -115,6 +115,8 @@ trait AdminTraits
                 $this->orderBy = "{$sort} {$order}";
             }
 
+            $this->beforeMainResult();
+
             if ($export) {
                 $list = Db::name($this->tableName)->field($field)->where($condition)->order($this->orderBy)->select()->toArray();
             } else {
@@ -146,17 +148,22 @@ trait AdminTraits
         return $this->template($this->template ?: 'list', $this->result);
     }
 
-    // 设置查询条件
+    // 设置列表页查询条件
     public function setMainCondition(&$condition)
     {
     }
 
-    // 主题返回以后执行
+    // 列表返回以前执行
+    public function beforeMainResult()
+    {
+    }
+
+    // 列表返回以后执行
     public function afterMainResult(&$result)
     {
     }
 
-    // 导出列表
+    // 列表页导出Excel
     private function exportExcelData($list = [], $column = null, $keys = null, $title = null, $last = null)
     {
         if (!empty($list)) {
@@ -201,16 +208,19 @@ trait AdminTraits
         ];
     }
 
+    // 编辑数据
     public function edit()
     {
         return $this->post();
     }
 
+    // 添加数据
     public function add()
     {
         return $this->post();
     }
 
+    // 更新数据
     public function post()
     {
         if (!empty($this->tableName)) {
@@ -344,11 +354,12 @@ trait AdminTraits
     {
     }
 
-    // 获取数据之后处理
+    // 渲染视图页参数
     public function afterPostResult(&$result)
     {
     }
 
+    // 改变字段数据
     public function change()
     {
         if (!empty($this->tableName)) {
@@ -367,13 +378,26 @@ trait AdminTraits
 
             $items = Db::name($this->tableName)->where(['id' => $id])->select();
             foreach ($items as $item) {
+                $this->beforeChangeData($item);
                 Db::name($this->tableName)->where("id", '=', $item['id'])->update([$type => $value]);
+                $this->afterChangeData($item);
             }
         }
 
         $this->success();
     }
 
+    // 修改数据之前处理
+    public function beforeChangeData(&$item)
+    {
+    }
+
+    // 修改数据之后处理
+    public function afterChangeData(&$item)
+    {
+    }
+
+    // 删除数据
     public function delete()
     {
         if (!empty($this->tableName)) {
@@ -393,12 +417,11 @@ trait AdminTraits
                 $updateData[$this->deleteField] = 1;
 
                 $type = explode('(', $fieldList[$this->deleteField]['type'])[0];
-                if ($type == 'tinyint') {
+                if ($type == 'tinyint' || $type == 'int') {
                     $updateData[$this->deleteField] = 1;
                 } else {
                     $updateData[$this->deleteField] = TIMESTAMP;
                 }
-
             }
             if (array_key_exists('delete_time', $fieldList)) {
                 $updateData['delete_time'] = TIMESTAMP;
@@ -412,6 +435,9 @@ trait AdminTraits
                 if (!empty($item['is_default'])) {
                     $this->error("默认项不能被删除");
                 }
+
+                $this->beforeDeleteData($item);
+
                 Db::name($this->tableName)->where(['uniacid' => $this->uniacid, "id" => $item['id']])->update($updateData);
 
                 $this->afterDeleteData($item);
@@ -420,10 +446,17 @@ trait AdminTraits
         $this->success(["url" => referer()]);
     }
 
+    // 删除数据之前处理
+    public function beforeDeleteData(&$item)
+    {
+    }
+
+    // 删除数据之后处理
     public function afterDeleteData(&$item)
     {
     }
 
+    // 更新数据
     public function update()
     {
         if (!empty($this->tableName)) {
