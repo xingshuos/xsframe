@@ -44,12 +44,15 @@ class RequestUtil
         }
 
         $res = curl_exec($ch);
-        curl_close($ch);
 
+        // 先检查执行结果，再关闭资源
         if ($res === false) {
-            throw new ApiException('通信失败：' . curl_error($ch));
+            $errorMsg = curl_error($ch); // 此时 $ch 仍然有效
+            curl_close($ch);             // 关闭资源
+            throw new ApiException('通信失败：' . $errorMsg);
         }
 
+        curl_close($ch); // 执行成功时关闭资源
         return $res;
     }
 
@@ -127,7 +130,7 @@ class RequestUtil
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0); //解决内容体过大问题
-        curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4); //解决内容体过大问题
+        curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4); //解决内容体过大问题 强制使用IPv4避免IPv6问题
         curl_setopt($ch, CURLOPT_TIMEOUT, 30); // 设置超时限制防止死循环
         curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
 
