@@ -23,6 +23,10 @@ $menu = [
                 'title' => '组件表单',
                 'route' => 'module/main',
             ],
+            [
+                'title' => '系统图标',
+                'route' => 'icon/main',
+            ],
         ]
     ],
     'sets' => [
