@@ -26,6 +26,7 @@ use xsframe\service\SysMemberService;
  * @method static register(mixed|string $username, string $code = null, int $testCode = null, array $updateData = [])
  * @method static logout(int $memberId = null)
  * @method static setMember(array $updateData = [], array $where = [])
+ * @method static getUserInfo(array $where = [])
  */
 class SysMemberServiceFacade extends BaseFacade
 {

@@ -23,6 +23,16 @@ class SysMemberService extends BaseService
         return md5($this->uniacid . "_" . env('authkey') . "_sysMemberInfo") . ($key ? '_' . $key : '');
     }
 
+    // 获取用户ID通过手机号
+    public function getUserInfo($where = [], $filed = "*")
+    {
+        try {
+            return $this->getInfo($where, $filed);
+        } catch (ApiException $e) {
+            return [];
+        }
+    }
+
     // 获取用户ID
     public function getUserId($token = null)
     {
@@ -324,7 +334,7 @@ class SysMemberService extends BaseService
             ];
             $memberInfo = array_merge($memberInfo, $updateData);
             $memberInfo['id'] = self::insertInfo($memberInfo);
-        }else{
+        } else {
             $memberInfo = array_merge($memberInfo, $updateData);
             self::updateInfo($memberInfo, $where);
         }

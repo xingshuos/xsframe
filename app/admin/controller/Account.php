@@ -14,7 +14,9 @@ namespace app\admin\controller;
 
 use think\facade\Db;
 use xsframe\facade\service\DbServiceFacade;
+use xsframe\facade\service\ZiShuAiServiceFacade;
 use xsframe\facade\wrapper\SystemWrapperFacade;
+use xsframe\service\ZiShuAiService;
 use xsframe\util\ArrayUtil;
 use xsframe\util\FileUtil;
 use xsframe\util\RandomUtil;
@@ -26,6 +28,21 @@ class Account extends Base
     public function index()
     {
         return redirect('/admin/account/list');
+    }
+
+    public function registerAiDrive()
+    {
+        $uniacid = intval($this->params['uniacid'] ?? 0);
+
+        $result = [
+            'nickname'        => '星数_xingshu_00000006',
+            'accessKeyId'     => '3030303030303036',
+            'accessKeySecret' => '28ed6deb751528a9819394a77d2fc260',
+            'balance'         => '10',
+            'status'          => 'NORMAL',
+        ];
+
+        return $this->success($result);
     }
 
     public function list()
@@ -150,7 +167,6 @@ class Account extends Base
             $this->success(["url" => webUrl("account/edit", ['id' => $uniacid, 'tab' => str_replace("#tab_", "", $this->params['tab'])])]);
         }
 
-
         $item = Db::name('sys_account')->where(['uniacid' => $uniacid])->find();
         $identifies = Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'deleted' => 0])->order('displayorder asc,id asc')->column('module');
         $hostList = Db::name('sys_account_host')->where(['uniacid' => $uniacid])->order('id asc')->select();
@@ -173,6 +189,15 @@ class Account extends Base
         $attachmentPath = IA_ROOT . "/public/attachment/";
         $localAttachment = FileUtil::fileDirExistImage($attachmentPath . 'images/' . $uniacid);
 
+        # 查询紫薯AI用户信息
+        $aiDriveStatus = "";
+        $aiDriveBalance = "";
+        if (!empty($accountSettings) && !empty($accountSettings['aidrive']) && !empty($accountSettings['aidrive']['accessKeyId'])) {
+            $zishuUserInfo = (new ZiShuAiService($uniacid))->getUser();
+            $aiDriveStatus = $zishuUserInfo['status'];
+            $aiDriveBalance = $zishuUserInfo['balance'];
+        }
+
         $result = [
             'item'             => $item,
             'uniacid'          => $uniacid,
@@ -182,6 +207,8 @@ class Account extends Base
             'postUrl'          => strval(url('sysset/attachment')),
             'upload'           => (array)$accountSettings['attachment'],
             'local_attachment' => $localAttachment,
+            'aiDriveStatus'    => $aiDriveStatus,
+            'aiDriveBalance'   => $aiDriveBalance,
         ];
         return $this->template('post', $result);
     }

@@ -1,0 +1,121 @@
+<div class="alert alert-primary">
+    <p>紫薯AI通信介绍</p>
+    <p>如何接入AI开发？<a href="" class="text text-primary" target="_blank">点击查看帮助文档</a></p>
+</div>
+
+{if empty($accountSettings['aidrive'])}
+<div class="form-group aidrive-register-box">
+    <label class="col-lg control-label">紫薯AI</label>
+    <div class="col-sm-9 col-xs-12">
+        <div class="btn btn-info" onclick="registerAiDrive()">立即注册</div>
+    </div>
+</div>
+{/if}
+
+<div class="aidrive-box">
+
+    {if !empty($accountSettings['aidrive'])}
+
+    <div class="form-group">
+        <label class="col-lg control-label must">AccessKeyId</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['aidrive']['accessKeyId']}" name='data[aidrive][accessKeyId]' class="form-control" data-rule-required='true'/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label must">AccessKeySecret</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['aidrive']['accessKeySecret']}" name='data[aidrive][accessKeySecret]' class="form-control" data-rule-required='true'/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">通信状态</label>
+        <div class="col-sm-9 col-xs-12">
+            <div class="form-control-static">
+                {if $aiDriveStatus == 'NORMAL'}
+                <span class="text text-success" data-value="NORMAL">通信成功</span>
+                {elseif $aiDriveStatus == 'DEACTIVATE'}
+                <span class="text text-warning" data-value="DEACTIVATE">停用</span>
+                {elseif $aiDriveStatus == 'DISABLE'}
+                <span class="text text-danger" data-value="DISABLE">禁用</span>
+                {elseif $aiDriveStatus == 'UNKNOWN'}
+                <span class="text text-default" data-value="UNKNOWN">未知</span>
+                {/if}
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">账号余额</label>
+        <div class="col-sm-9 col-xs-12">
+            <div class="form-control-static">{$aiDriveBalance}元
+                <a href="" class="text text-danger" style="margin-left:10px;">立即充值</a>
+            </div>
+        </div>
+    </div>
+
+    {/if}
+
+</div>
+
+<script>
+    require(['tip'], function () {
+        // tip.msgbox.suc("登录成功");
+        // tip.confirm("登录成功");
+        // util.message("验证错误", '', 'error')
+        // util.message("验证正确", '', 'success')
+    });
+
+    function registerAiDrive() {
+        let url = "{:webUrl('account/registerAiDrive')}"
+        $.post(url, {uniacid: "{$uniacid}"}, function (res) {
+            let result = res.result
+            if (res.status === 1) {
+                let statusHtml = `<span class="text text-success" data-value="NORMAL">通信成功</span>`
+                if (result.status === 'DEACTIVATE') {
+                    statusHtml = `<span class="text text-warning" data-value="DEACTIVATE">停用</span>`
+                } else if (result.status === 'DISABLE') {
+                    statusHtml = `<span class="text text-danger" data-value="DISABLE">禁用</span>`
+                } else if (result.status === 'UNKNOWN') {
+                    statusHtml = `<span class="text text-default" data-value="UNKNOWN">未知</span>`
+                }
+
+                let html = `
+                    <div class="form-group">
+                        <label class="col-lg control-label must">AccessKeyId</label>
+                        <div class="col-sm-9 col-xs-12">
+                            <input type='text' value="${result.accessKeyId}" name='data[aidrive][accessKeyId]' class="form-control" data-rule-required='true'/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-lg control-label must">AccessKeySecret</label>
+                        <div class="col-sm-9 col-xs-12">
+                            <input type='text' value="${result.accessKeySecret}" name='data[aidrive][accessKeySecret]' class="form-control" data-rule-required='true'/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-lg control-label">通信状态</label>
+                        <div class="col-sm-9 col-xs-12">
+                            <div class="form-control-static">${statusHtml}</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-lg control-label">账号余额</label>
+                        <div class="col-sm-9 col-xs-12">
+                            <div class="form-control-static">${result.balance}元</div>
+                        </div>
+                    </div>
+                `
+                $('.aidrive-box').html(html)
+                $('.aidrive-register-box').remove()
+            } else {
+                tip.msgbox.err(result.message);
+            }
+        }, 'json')
+    }
+</script>

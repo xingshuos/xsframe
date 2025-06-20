@@ -184,7 +184,6 @@ class PermWrapper
 
                 if (!empty($menu['items'])) {
                     foreach ((array)$menu['items'] as $item) {
-
                         if (!empty($item['items'])) {
                             foreach ((array)$item['items'] as $item2) {
 
@@ -209,7 +208,10 @@ class PermWrapper
                             }
                         } else {
                             $perm = [];
-                            if (is_array($item['perm']) && !empty($item['perm']) || empty($item['perm'])) {
+
+                            if (is_array($item['perm']) && !empty($item['perm'])) {
+                                $perm = $item['perm'];
+                            }else{
                                 $perm = $permDefault;
                             }
 
