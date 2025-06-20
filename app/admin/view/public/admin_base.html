@@ -54,7 +54,7 @@
     </script>
 
     <script type="text/javascript" src="__ADMIN_JS__/web/util.js"></script>
-    <script type="text/javascript" src="__ADMIN_COMPONENT__/bootstrap/bootstrap.min.js"></script>
+    <!-- <script type="text/javascript" src="__ADMIN_COMPONENT__/bootstrap/bootstrap.min.js"></script> -->
     <script type="text/javascript" src="__ADMIN_JS__/web/common.min.js"></script>
     <script type="text/javascript" src="__ADMIN_JS__/require.js"></script>
     <script src="__ADMIN_JS__/config.js"></script>
@@ -548,8 +548,6 @@
     }
 </script>
 
-{block name='script'}{/block}
-
 <script>
     if ($('form.form-validate').length <= 0) {
         window.formInited = true;
@@ -649,6 +647,8 @@
         $(This).prev().val(token);
     }
 </script>
+
+{block name='script'}{/block}
 
 </body>
 
