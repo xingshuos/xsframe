@@ -34,12 +34,18 @@ class Account extends Base
     {
         $uniacid = intval($this->params['uniacid'] ?? 0);
 
+        try {
+            $ret = (new ZiShuAiService($uniacid))->generateUser();
+        }catch (\Exception $e){
+            return $this->error($e->getMessage());
+        }
+
         $result = [
-            'nickname'        => '星数_xingshu_00000006',
-            'accessKeyId'     => '3030303030303036',
-            'accessKeySecret' => '28ed6deb751528a9819394a77d2fc260',
-            'balance'         => '10',
-            'status'          => 'NORMAL',
+            'nickname'        => $ret['nickname'] ?? '',
+            'accessKeyId'     => $ret['accessKeyId'] ?? '',
+            'accessKeySecret' => $ret['accessKeySecret'] ?? '',
+            'balance'         => $ret['balance'] ?? '',
+            'status'          => $ret['status'] ?? '',
         ];
 
         return $this->success($result);
@@ -92,6 +98,8 @@ class Account extends Base
     public function post()
     {
         $uniacid = $this->params['id'];
+
+        // $zishuUserInfo = (new ZiShuAiService($uniacid))->translate();
 
         # 配置
         $accountSettings = $this->settingsController->getAccountSettings($uniacid, 'settings');
@@ -193,9 +201,13 @@ class Account extends Base
         $aiDriveStatus = "";
         $aiDriveBalance = "";
         if (!empty($accountSettings) && !empty($accountSettings['aidrive']) && !empty($accountSettings['aidrive']['accessKeyId'])) {
-            $zishuUserInfo = (new ZiShuAiService($uniacid))->getUser();
-            $aiDriveStatus = $zishuUserInfo['status'];
-            $aiDriveBalance = $zishuUserInfo['balance'];
+            try {
+                $zishuUserInfo = (new ZiShuAiService($uniacid))->getUser();
+                $aiDriveStatus = $zishuUserInfo['status'];
+                $aiDriveBalance = $zishuUserInfo['balance'];
+            } catch (\Exception $e) {
+
+            }
         }
 
         $result = [
@@ -211,6 +223,25 @@ class Account extends Base
             'aiDriveBalance'   => $aiDriveBalance,
         ];
         return $this->template('post', $result);
+    }
+
+    // 紫薯AI支付
+    public function aiDrivePay()
+    {
+        $price = floatval($this->params['price'] ?? 0) * 100;
+        $payType = strval($this->params['payType'] ?? 1);
+        $uniacid = intval($this->params['uniacid'] ?? 0);
+
+        $result = [];
+
+        $ret = (new ZiShuAiService($uniacid))->initiatePay($price, $payType == 2 ? 'ALI_PAY' : 'WX_PAY');
+
+        if ($payType == 1) {
+            $result['payUrl'] = $ret['qrCodeUrl'];
+        } else {
+            $result['payUrl'] = $ret['code'];
+        }
+        return $this->success($result);
     }
 
     // 通用更新数据
