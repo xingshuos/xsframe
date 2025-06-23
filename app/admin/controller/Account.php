@@ -99,7 +99,7 @@ class Account extends Base
     {
         $uniacid = $this->params['id'];
 
-        // $zishuUserInfo = (new ZiShuAiService($uniacid))->translate();
+        // $zishuUserInfo = (new ZiShuAiService($uniacid))->translate("你好");
 
         # 配置
         $accountSettings = $this->settingsController->getAccountSettings($uniacid, 'settings');

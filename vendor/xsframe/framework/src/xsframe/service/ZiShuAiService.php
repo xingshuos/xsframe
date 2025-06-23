@@ -15,6 +15,7 @@ namespace xsframe\service;
 use think\facade\Env;
 use xsframe\base\BaseService;
 use xsframe\exception\ApiException;
+use xsframe\util\RandomUtil;
 use xsframe\util\RequestUtil;
 use xsframe\wrapper\SettingsWrapper;
 
@@ -71,45 +72,50 @@ class ZiShuAiService
         return $this->doHttpPostJson('/ai/user/getUser', $postData);
     }
 
-    // 翻译
-    public function translate()
+    /**
+     * @param $content
+     * @param $targetLang
+     * @return mixed
+     * "promptTokens": 30,
+     * "promptMoney": 0.00006,
+     * "completionTokens": 10,
+     * "completionMoney": 0.00008,
+     * "totalTokens": 40,
+     * "totalMoney": 0.00014,
+     * "type": "ASSISTANT",
+     * "contentText": "I didn't laugh after watching this video. ",
+     * "createTime": "2025-06-23 09:32:39",
+     * "params": "",
+     * "finished": true
+     * @throws ApiException
+     */
+    public function translate($content, $targetLang = "English")
     {
         $postData = [
-            "translationModelParams" => [
-                "params"        => [],
-                "callbackUrl"   => "ullamco in esse",
-                "modelPlatform" => "aliyun",
-                "sessionId"     => "003"
-            ],
             "authParams"             => [
-                "username"        => "zishuai",
-                "accessKeyId"     => "3030303030303131",
-                "accessKeySecret" => "f42e3017f6e53bca3fcd924fcf0d837b",
-                "password"        => "fb860f536151057762df854d35465cf3"
+                "accessKeyId"     => $this->accessKeyId,
+                "accessKeySecret" => $this->accessKeySecret,
+            ],
+            "translationModelParams" => [
+                "sessionId"     => "XS" . RandomUtil::random(10),
+                "modelPlatform" => "aliyun",
+                "callbackUrl"   => "",
             ],
             "translationParams"      => [
+                "model"               => "qwen-mt-turbo",
                 "messages"            => [
                     [
                         "role"    => "user",
-                        "content" => "看完这个视频我没有笑"
+                        "content" => $content
                     ],
-                    [
-                        "content" => "看完这个视频我没有笑",
-                        "role"    => "user"
-                    ],
-                    [
-                        "role"    => "user",
-                        "content" => "看完这个视频我没有笑"
-                    ]
                 ],
-                "model"               => "qwen-mt-turbo",
                 "translation_options" => [
-                    "source_lang" => "tempor magna",
-                    "target_lang" => "voluptate"
+                    "source_lang" => "auto",
+                    "target_lang" => "English"
                 ]
             ]
         ];
-        // dd(json_encode($postData));
+        // dd($this->doHttpPostJson('/ai/tool/generate', $postData));
         return $this->doHttpPostJson('/ai/tool/generate', $postData);
     }
 
