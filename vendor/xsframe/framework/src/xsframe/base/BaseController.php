@@ -240,7 +240,9 @@ abstract class BaseController extends Controller
 
             if (!empty($notifyUniacid)) {
                 $uniacid = $notifyUniacid;
-                $this->checkDisabledUniacid($uniacid);
+                if ($this->module != 'admin') {
+                    $this->checkDisabledUniacid($uniacid);
+                }
             } else {
                 # 获取独立域名绑定的uniacid
                 if (empty($uniacid) && $this->module != 'admin' && !empty($_SERVER['HTTP_HOST'])) {
@@ -255,7 +257,9 @@ abstract class BaseController extends Controller
             if (!empty($uniacid)) {
                 $uniacidList = SystemWrapperFacade::getUniacidList();
                 if ($uniacidList && !in_array($uniacid, $uniacidList)) { // 1、判定是否存在uniacid，如果不存在就按照域名获取uniacid
-                    $this->throwDisabledException();
+                    if ($this->module != 'admin') {
+                        $this->throwDisabledException();
+                    }
                 } else {
                     if ($this->module && $this->module != 'admin') { // 2、判定商户是否有应用权限
                         $systemModuleList = SystemWrapperFacade::getAllModuleList();

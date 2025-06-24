@@ -14,7 +14,6 @@ namespace app\admin\controller;
 
 use think\facade\Db;
 use xsframe\facade\service\DbServiceFacade;
-use xsframe\facade\service\ZiShuAiServiceFacade;
 use xsframe\facade\wrapper\SystemWrapperFacade;
 use xsframe\service\ZiShuAiService;
 use xsframe\util\ArrayUtil;
@@ -36,7 +35,7 @@ class Account extends Base
 
         try {
             $ret = (new ZiShuAiService($uniacid))->generateUser();
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             return $this->error($e->getMessage());
         }
 
@@ -200,13 +199,16 @@ class Account extends Base
         # 查询紫薯AI用户信息
         $aiDriveStatus = "";
         $aiDriveBalance = "";
+        $errorMessage = "";
         if (!empty($accountSettings) && !empty($accountSettings['aidrive']) && !empty($accountSettings['aidrive']['accessKeyId'])) {
             try {
                 $zishuUserInfo = (new ZiShuAiService($uniacid))->getUser();
                 $aiDriveStatus = $zishuUserInfo['status'];
                 $aiDriveBalance = $zishuUserInfo['balance'];
             } catch (\Exception $e) {
-
+                $aiDriveStatus = "UNKNOWN";
+                $aiDriveBalance = "0";
+                $errorMessage = $e->getMessage();
             }
         }
 
@@ -221,6 +223,7 @@ class Account extends Base
             'local_attachment' => $localAttachment,
             'aiDriveStatus'    => $aiDriveStatus,
             'aiDriveBalance'   => $aiDriveBalance,
+            'errorMessage'          => $errorMessage,
         ];
         return $this->template('post', $result);
     }

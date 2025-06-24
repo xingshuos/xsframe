@@ -85,11 +85,11 @@
     <p>如何接入AI开发？<a href="" class="text text-primary" target="_blank">点击查看帮助文档</a></p>
 </div>
 
-{if empty($accountSettings['aidrive'])}
+{if empty($accountSettings['aidrive']) || $aiDriveStatus != 'NORMAL'}
 <div class="form-group aidrive-register-box">
     <label class="col-lg control-label">紫薯AI</label>
     <div class="col-sm-9 col-xs-12">
-        <div class="btn btn-info" onclick="registerAiDrive()">立即注册</div>
+        <div class="btn btn-info" onclick="registerAiDrive()">{if !empty($accountSettings['aidrive'])}重新注册{else}立即注册{/if}</div>
     </div>
 </div>
 {/if}
@@ -123,7 +123,7 @@
                 {elseif $aiDriveStatus == 'DISABLE'}
                 <span class="text text-danger" data-value="DISABLE">禁用</span>
                 {elseif $aiDriveStatus == 'UNKNOWN'}
-                <span class="text text-default" data-value="UNKNOWN">未知</span>
+                <span class="text text-danger" data-value="UNKNOWN">{$errorMessage}</span>
                 {/if}
             </div>
         </div>
