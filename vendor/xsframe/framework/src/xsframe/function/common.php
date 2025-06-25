@@ -438,7 +438,7 @@ if (!function_exists('videoTomedia')) {
 
 // 设置图片完整路径
 if (!function_exists('set_medias')) {
-    function set_medias($list = [], $fields = null, $suffix = null)
+    function set_medias($list = [], $fields = null, $suffix = null, $uniacid = null)
     {
         if (empty($list)) {
             return [];
@@ -446,7 +446,7 @@ if (!function_exists('set_medias')) {
 
         if (empty($fields)) {
             foreach ($list as &$row) {
-                $row = tomedia($row, $suffix);
+                $row = tomedia($row, $suffix, $uniacid);
             }
 
             return $list;
@@ -466,16 +466,16 @@ if (!function_exists('set_medias')) {
                     if (strexists($field, ".")) {
                         $str = explode(".", $field);
                         if (isset($value[$str[0]][$str[1]])) {
-                            $value[$str[0]][$str[1]] = tomedia($value[$str[0]][$str[1]], $suffix);
+                            $value[$str[0]][$str[1]] = tomedia($value[$str[0]][$str[1]], $suffix, $uniacid);
                         }
                     }
 
                     if (isset($list[$field])) {
-                        $list[$field] = tomedia($list[$field], $suffix);
+                        $list[$field] = tomedia($list[$field], $suffix, $uniacid);
                     }
 
                     if (is_array($value) && isset($value[$field])) {
-                        $value[$field] = tomedia($value[$field], $suffix);
+                        $value[$field] = tomedia($value[$field], $suffix, $uniacid);
                     }
                 }
             }
@@ -485,7 +485,7 @@ if (!function_exists('set_medias')) {
 
         foreach ($fields as $field) {
             if (isset($list[$field])) {
-                $list[$field] = tomedia($list[$field], $suffix);
+                $list[$field] = tomedia($list[$field], $suffix, $uniacid);
             }
         }
 
