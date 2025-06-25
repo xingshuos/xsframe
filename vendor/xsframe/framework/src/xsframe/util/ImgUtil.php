@@ -65,7 +65,7 @@ class ImgUtil
 
                 /*将字体处理逻辑优化 start*/
                 $draw = new \ImagickDraw();
-                $rootPath = str_replace("\\", "/", dirname(dirname(dirname(dirname(__file__)))));
+                $rootPath = str_replace("\\", "/", dirname(dirname(dirname(dirname(dirname(dirname(dirname(__file__))))))));
                 $defaultFont = $d['font'] ?? $rootPath . "/public/app/admin/static/fonts/msyh.ttf";
                 $defaultFontSize = 16; // 假设默认字体大小
                 $textColor = '#000000';
@@ -251,7 +251,7 @@ class ImgUtil
      */
     public static function mergeText($target, $text, $size, $color, $left, $top)
     {
-        $rootPath = str_replace("\\", "/", dirname(dirname(dirname(dirname(__file__)))));
+        $rootPath = str_replace("\\", "/", dirname(dirname(dirname(dirname(dirname(dirname(dirname(__file__))))))));
         $font = $rootPath . "/public/app/admin/static/fonts/msyh.ttf";
 
         $colors = self::hex2rgb($color);
