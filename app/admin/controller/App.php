@@ -246,7 +246,7 @@ class App extends Base
             $modulesController = new ModulesWrapper();
             $modulesController->runInstalledModule($identifie, $key, $token);
 
-            Db::name('sys_modules')->where(['id' => $id])->update(['is_install' => 1, 'status' => 1]);
+            Db::name('sys_modules')->where(['id' => $id])->update(['is_install' => 1, 'status' => 1, 'update_time' => time()]);
             Db::name('sys_account_modules')->where(['module' => $identifie])->update(['deleted' => 0]);
 
             $modulesController->moveDirToPublic($identifie);

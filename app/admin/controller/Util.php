@@ -40,10 +40,10 @@ class Util extends Base
 
         $keywords = trim($this->params['keywords']);
         if (!empty($keywords)) {
-            $where['name'] = Db::raw("like '%" . trim($keywords) . "%'");
+            $where[] = ['name|identifie|author|version|ability|description', 'like', '%' . trim($keywords) . '%'];
         }
 
-        $list = Db::name('sys_modules')->where($where)->order('id desc')->limit($page_start, $page_size)->select();
+        $list = Db::name('sys_modules')->where($where)->order('update_time desc,id desc')->limit($page_start, $page_size)->select();
         $count = Db::name('sys_modules')->where($where)->count();
 
         if (!empty($list)) {
