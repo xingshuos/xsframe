@@ -192,15 +192,25 @@
     <div class="col-sm-9 col-xs-12">
         <select class="form-control" name="data[remote][cos][local]">
             <option value="" {if $accountSettings['remote']['cos']['local'] == ''}selected{/if}>无</option>
-            <option value="tj" {if $accountSettings['remote']['cos']['local'] == 'tj'}selected{/if}>华北</option>
-            <option value="sh" {if $accountSettings['remote']['cos']['local'] == 'sh'}selected{/if}>华东</option>
-            <option value="gz" {if $accountSettings['remote']['cos']['local'] == 'gz'}selected{/if}>华南</option>
-            <option value="cd" {if $accountSettings['remote']['cos']['local'] == 'cd'}selected{/if}>西南</option>
-            <option value="bj" {if $accountSettings['remote']['cos']['local'] == 'bj'}selected{/if}>北京</option>
-            <option value="sgp" {if $accountSettings['remote']['cos']['local'] == 'sgp'}selected{/if}>新加坡</option>
-            <option value="hk" {if $accountSettings['remote']['cos']['local'] == 'hk'}selected{/if}>香港</option>
-            <option value="ca" {if $accountSettings['remote']['cos']['local'] == 'ca'}selected{/if}>多伦多</option>
-            <option value="ger" {if $accountSettings['remote']['cos']['local'] == 'ger'}selected{/if}>法兰克福</option>
+            <option value="ap-nanjing" {if $accountSettings['remote']['cos']['local'] == 'ap-nanjing'}selected{/if}>南京</option>
+            <option value="ap-guangzhou" {if $accountSettings['remote']['cos']['local'] == 'ap-guangzhou'}selected{/if}>广州</option>
+            <option value="ap-chengdu" {if $accountSettings['remote']['cos']['local'] == 'ap-chengdu'}selected{/if}>成都</option>
+            <option value="ap-hongkong" {if $accountSettings['remote']['cos']['local'] == 'ap-hongkong'}selected{/if}>香港</option>
+            <option value="ap-beijing" {if $accountSettings['remote']['cos']['local'] == 'ap-beijing'}selected{/if}>北京</option>
+            <option value="ap-shanghai" {if $accountSettings['remote']['cos']['local'] == 'ap-shanghai'}selected{/if}>上海</option>
+            <option value="ap-chongqing" {if $accountSettings['remote']['cos']['local'] == 'ap-chongqing'}selected{/if}>重庆</option>
+            <option value="ap-singapore" {if $accountSettings['remote']['cos']['local'] == 'ap-singapore'}selected{/if}>新加坡</option>
+            <option value="ap-seoul" {if $accountSettings['remote']['cos']['local'] == 'ap-seoul'}selected{/if}>韩国首尔</option>
+            <option value="ap-bangkok" {if $accountSettings['remote']['cos']['local'] == 'ap-bangkok'}selected{/if}>泰国曼谷</option>
+            <option value="ap-tokyo" {if $accountSettings['remote']['cos']['local'] == 'ap-tokyo'}selected{/if}>日本东京</option>
+            <option value="ap-jakarta" {if $accountSettings['remote']['cos']['local'] == 'ap-jakarta'}selected{/if}>印尼雅加达</option>
+            <option value="eu-frankfurt" {if $accountSettings['remote']['cos']['local'] == 'eu-frankfurt'}selected{/if}>德国法兰克福</option>
+            <option value="na-ashburn" {if $accountSettings['remote']['cos']['local'] == 'na-ashburn'}selected{/if}>美东弗吉尼亚</option>
+            <option value="na-siliconvalley" {if $accountSettings['remote']['cos']['local'] == 'na-siliconvalley'}selected{/if}>美西硅谷</option>
+            <option value="sa-saopaulo" {if $accountSettings['remote']['cos']['local'] == 'sa-saopaulo'}selected{/if}>巴西圣保罗</option>
+            <option value="ap-shenzhen-fsi" {if $accountSettings['remote']['cos']['local'] == 'ap-shenzhen-fsi'}selected{/if}>深圳金融</option>
+            <option value="ap-shanghai-fsi" {if $accountSettings['remote']['cos']['local'] == 'ap-shanghai-fsi'}selected{/if}>上海金融</option>
+            <option value="ap-beijing-fsi" {if $accountSettings['remote']['cos']['local'] == 'ap-beijing-fsi'}selected{/if}>北京金融</option>
         </select>
         <span class="help-block">选择bucket对应的区域，如果没有选择无</span>
         <span class="help-block">备注:中国香港(港澳台地区),北京(华北地区),上海(华东地区),南京(华东地区),广州(华南地区),硅谷(美国西部),成都(西南地区),重庆(西南地区),曼谷(亚太东南),雅加达(亚太东南);</span>
