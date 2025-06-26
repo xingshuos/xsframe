@@ -258,12 +258,13 @@ trait ServiceTraits
             $condition['id'] = $where;
             $where = ['id' => $where];
         } else {
-            if (is_array($where) && !empty($where[0]) && !empty($where[1]) && is_string($where[0]) && is_array($where[1])) {
-                $op = $where[1];
+            if (is_array($where) && !empty($where[0]) && is_string($where[0])) {
+                if ((!empty($where[1]) && is_array($where[1])) || empty($where[1])) {
+                    $op = (array)$where[1];
+                }
                 $where = $where[0];
             }
         }
-
         return ['where' => $where, 'op' => $op, 'condition' => $condition];
     }
 
