@@ -112,6 +112,9 @@ let myConfig = {
         "jquery-confirm": {
             deps: ["loadcss!components/jquery/confirm/jquery-confirm.css"]
         },
+        "jquery.contextMenu": {
+            deps: ["loadcss!components/jquery/contextMenu/jquery.contextMenu.css"]
+        },
         viewer: {
             deps: [
                 "loadcss!components/viewer/viewer.min.css",

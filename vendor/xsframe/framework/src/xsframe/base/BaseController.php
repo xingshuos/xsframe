@@ -119,6 +119,7 @@ abstract class BaseController extends Controller
 
         $this->ip = $this->request->ip();
 
+        $this->attachUrl = $this->siteRoot . "/attachment";
         $this->moduleSiteRoot = $this->siteRoot . "/" . $this->module;
         $this->moduleAttachUrl = $this->siteRoot . "/app/" . $this->module;
         $this->moduleIaRoot = $this->iaRoot . "/app/" . $this->module;
