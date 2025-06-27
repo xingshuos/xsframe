@@ -232,7 +232,7 @@ class AttachmentWrapper
                 $ossClient = new OssClient($setting['remote']['alioss']['key'], $setting['remote']['alioss']['secret'], $endpoint);
                 $ossClient->uploadFile($bucket, $filename, $filePath);
             } catch (OssException $e) {
-                show_json(-1, $e->getMessage());
+                throw new ApiException($e->getMessage());
             }
         }
 

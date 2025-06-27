@@ -105,6 +105,7 @@ class OssService extends BaseService
             if (!empty($bucket)) {
                 if (is_file($path)) {
                     $this->client->uploadFile($bucket, $filename, $path);
+
                     @unlink($path); // 上传成功后 删除本地文件
                 }
             }
