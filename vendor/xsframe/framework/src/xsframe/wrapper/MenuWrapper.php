@@ -258,8 +258,7 @@ class MenuWrapper
                                 'url'    => $child['url'] ?? null,
                             ];
 
-                            if (!$submenuIsActive && strexists(strtolower(str_replace("_", "", $return_menu_child['route'])), $actionTmpArr[0]) || (strexists($return_menu_child['route'], 'main') && in_array($actionTmp, ['add', 'edit', 'post']))) {
-
+                            if (!$submenuIsActive && strexists(strtolower(str_replace("_", "", $return_menu_child['route'])), $actionTmpArr[0]) || ((strexists($return_menu_child['route'], 'main') || strpos($return_menu_child['route'], '/') === false) && in_array($actionTmp, ['add', 'edit', 'post']))) {
                                 if (strtolower(str_replace("_", "", $return_menu_child['route'])) != $actionTmp && !in_array($actionTmp, ['add', 'edit', 'post']) && !strexists($actionTmp, '/add') && !strexists($actionTmp, '/edit') && !strexists($actionTmp, '/post')) {
                                     $return_menu_child['active'] = 0;
                                     if ($actionTmp == $return_menu_child['route']) {
@@ -286,6 +285,10 @@ class MenuWrapper
 
                                     if (strtolower($controllerNameTmp) == $actionTmpArr[0]) {
                                         $return_menu_child['active'] = $parentMenuIsChange ? 0 : 1;
+                                    } else {
+                                        if (in_array($controllerNameTmp, ['list', 'main', 'index']) && in_array($actionTmpArr[0], ['add', 'post', 'edit'])) {
+                                            $return_menu_child['active'] = 1;
+                                        }
                                     }
                                 }
                             } else {
