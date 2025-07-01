@@ -153,7 +153,6 @@ class SiteMapWrapper
         if (!is_file("./robots.txt")) {
             $txt = "User-agent: *\n";
             $txt .= "Disallow: /app/admin\n";
-            $txt .= "Disallow: /index.php\n";
             $txt .= "Disallow: /install\n";
             $txt .= "Sitemap: {$this->site}/sitemap.xml\n";
 
