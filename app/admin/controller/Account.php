@@ -20,6 +20,7 @@ use xsframe\util\ArrayUtil;
 use xsframe\util\FileUtil;
 use xsframe\util\RandomUtil;
 use xsframe\wrapper\AccountHostWrapper;
+use xsframe\wrapper\AttachmentWrapper;
 use xsframe\wrapper\UserWrapper;
 
 class Account extends Base
@@ -114,6 +115,15 @@ class Account extends Base
                 if ($_FILES['wxpay_key_file']['name']) {
                     $settingsData['wxpay']['key_file'] = $this->upload_cert('wxpay_key_file');
                 }
+            }
+
+            if (!empty($settingsData['remote']) && $settingsData['remote']['type'] == 2 && !empty($settingsData['remote']['alioss']) && empty($settingsData['remote']['alioss']['url'])) {
+                $attachmentController = new AttachmentWrapper();
+                [$bucket, $url] = explode('@@', $settingsData['remote']['alioss']['bucket']);
+                $buckets = $attachmentController->attachmentAliossBuctkets($settingsData['remote']['alioss']['key'], $settingsData['remote']['alioss']['secret']);
+                $host_name = $settingsData['remote']['alioss']['internal'] ? '-internal.aliyuncs.com' : '.aliyuncs.com';
+                $endpoint = 'http://' . $buckets[$bucket]['location'] . $host_name;
+                $settingsData['remote']['alioss']['url'] = $endpoint;
             }
 
             $settingsData = ArrayUtil::customMergeArrays($accountSettings, $settingsData);
@@ -223,7 +233,7 @@ class Account extends Base
             'local_attachment' => $localAttachment,
             'aiDriveStatus'    => $aiDriveStatus,
             'aiDriveBalance'   => $aiDriveBalance,
-            'errorMessage'          => $errorMessage,
+            'errorMessage'     => $errorMessage,
         ];
         return $this->template('post', $result);
     }

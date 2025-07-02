@@ -171,7 +171,7 @@ class AttachmentWrapper
     }
 
     // 获取oss数据中心
-    private function attachmentAliossDataCenters()
+    public function attachmentAliossDataCenters()
     {
         $bucketDataCenter = [
             'oss-cn-hangzhou' => '杭州数据中心',
@@ -186,7 +186,7 @@ class AttachmentWrapper
     }
 
     // 获取alioss仓库
-    private function attachmentAliossBuctkets($key, $secret)
+    public function attachmentAliossBuctkets($key, $secret)
     {
         $url = 'http://oss-cn-beijing.aliyuncs.com';
 
