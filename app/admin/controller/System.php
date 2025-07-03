@@ -55,7 +55,11 @@ class System extends AdminBaseController
             $condition['am.module'] = $filtered;
         }
 
-        $list = Db::name('sys_account_modules')->alias('am')->field($field)->leftJoin("sys_modules m", "m.identifie = am.module")->where($condition)->order("am.displayorder asc")->page($this->pIndex, $this->pSize)->select()->toArray();
+        $category = AppCategoryKeyEnum::getEnumsText();
+
+        $list = Db::name('sys_account_modules')->fetchSql(false)->alias('am')->field($field)->leftJoin("sys_modules m", "m.identifie = am.module")->where($condition)
+            ->orderRaw("FIELD(m.type," . "'" . implode("','", array_keys($category)) . "'" . ")")->order("am.displayorder asc")->page($this->pIndex, $this->pSize)->select();
+        $list = $list->toArray();
         $total = Db::name('sys_account_modules')->alias('am')->field($field)->leftJoin("sys_modules m", "m.identifie = am.module")->where($condition)->count();
         $pager = pagination2($total, $this->pIndex, $this->pSize);
 
@@ -90,8 +94,6 @@ class System extends AdminBaseController
         $role_perms = explode(',', $user['roleperms']);
         $user_perms = explode(',', $user['userperms']);
         $perms = array_merge($role_perms, $user_perms);
-
-        $category = AppCategoryKeyEnum::getEnumsText();
 
         $newList = [];
         foreach ($list as $item) {

@@ -37,6 +37,9 @@ class AppTypesKeyEnum extends BaseEnum
     # 抖音小程序
     const DYAPP_CODE = 'dyapp';
 
+    # ai应用
+    const AI_CODE = 'aiapp';
+
     // 获取全部名称
     public static function getEnumsText()
     {
@@ -83,6 +86,7 @@ class AppTypesKeyEnum extends BaseEnum
             self::UNIAPP_CODE    => 'uni-app',
             self::HARMONYOS_CODE => '鸿蒙OS',
             self::DYAPP_CODE     => '抖音小程序',
+            self::AI_CODE        => 'AI应用',
         ];
         return array_key_exists($type, $list) ? $list[$type] : '';
     }

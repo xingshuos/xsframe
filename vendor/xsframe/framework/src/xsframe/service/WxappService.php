@@ -12,6 +12,7 @@
 
 namespace xsframe\service;
 
+use xsframe\base\BaseService;
 use xsframe\exception\ApiException;
 use xsframe\util\ErrorUtil;
 use xsframe\util\RandomUtil;
@@ -20,8 +21,52 @@ use think\facade\Cache;
 
 // 如遇到接口可能不起作用，请尝试改为post json方式试试看
 
-class WxappService
+class WxappService extends BaseService
 {
+    private $wxappSet = null;
+
+    protected function _service_initialize()
+    {
+        parent::_service_initialize();
+
+        if (empty($this->smsSet)) {
+            $this->wxappSet = $this->accountSetting['wxapp'] ?? [];
+        }
+    }
+
+    // 获取小程序openid
+    public function msgSecCheck($checkData = [], $appId = null, $secret = null, $isReload = false)
+    {
+        if (empty($appId)) {
+            $appId = $this->wxappSet['appid'];
+            $secret = $this->wxappSet['secret'];
+        }
+
+        $token = $this->getAccessToken($appId, $secret, 7000, $isReload);
+
+        $postData = [];
+        $postData['content'] = $checkData['content'] ?? ''; // 是 需检测的文本内容，文本字数的上限为2500字，需使用UTF-8编码
+        $postData['version'] = $checkData['version'] ?? '2'; // 是 接口版本号，2.0版本为固定值2
+        $postData['scene'] = $checkData['scene'] ?? '2'; // 是 场景枚举值（1 资料；2 评论；3 论坛；4 社交日志）
+        $postData['openid'] = $checkData['openid'] ?? ''; // 是 用户的openid（用户需在近两小时访问过小程序）
+        $postData['title'] = $checkData['title'] ?? ''; // 否 文本标题，需使用UTF-8编码
+        $postData['nickname'] = $checkData['nickname'] ?? ''; // 否 用户昵称，需使用UTF-8编码
+        $postData['signature'] = $checkData['signature'] ?? ''; // 否 个性签名，该参数仅在资料类场景有效(scene=1)，需使用UTF-8编码
+
+        $data = json_encode($postData);
+        $response = RequestUtil::httpPost("https://api.weixin.qq.com/wxa/msg_sec_check?access_token={$token}", $data);
+        $result = json_decode($response, true);
+
+        if (!empty($result['errcode'])) {
+            throw new ApiException("数据校验失败:" . $result['errmsg']);
+        }
+
+        return [
+            'detail' => $result['detail'],
+            'result' => $result['result'],
+        ];
+    }
+
     // 获取小程序openid
     public function getOpenid($appId, $secret, $code)
     {
@@ -113,21 +158,28 @@ class WxappService
         $accessTokenCache = json_decode($accessTokenCache, true);
 
         if (empty($accessTokenCache) || empty($accessTokenCache['expire_time']) || $accessTokenCache['expire_time'] <= time() || $isReload) {
-            // if ($isReload) {
-            //     $url = "https://api.weixin.qq.com/cgi-bin/stable_token";  // 该接口调用频率限制为 1万次 每分钟，每天限制调用 50万 次
-            //     $data = [
-            //         'grant_type'    => 'client_credential',
-            //         'appid'         => $appId,
-            //         'secret'        => $secret,
-            //         'force_refresh' => false,
-            //     ];
-            //     $res = RequestUtil::httpPostJson($url, $data);
-            //     $accessTokenCache = json_decode($res, true);
-            // } else {
-            $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" . $appId . "&secret=" . $secret;
-            $res = RequestUtil::httpGet($url);
-            $accessTokenCache = json_decode($res, true);
-            // }
+            if ($isReload) {
+                $url = "https://api.weixin.qq.com/cgi-bin/stable_token";  // 该接口调用频率限制为 1万次 每分钟，每天限制调用 50万 次
+                $data = [
+                    'grant_type'    => 'client_credential',
+                    'appid'         => $appId,
+                    'secret'        => $secret,
+                    'force_refresh' => $isReload,
+                ];
+                $res = RequestUtil::httpPostJson($url, $data);
+                $accessTokenCache = json_decode($res, true);
+                if ($accessTokenCache['errcode'] == '45009') {
+                    $res = RequestUtil::httpPost("https://api.weixin.qq.com/cgi-bin/clear_quota/v2", ['appid' => $appId, 'appsecret' => $secret]);
+                    $resArr = json_decode($res, true);
+                    if ($resArr['errcode'] == 0) {
+                        $this->getAccessToken($appId, $secret, $expire, $isReload);
+                    }
+                }
+            } else {
+                $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" . $appId . "&secret=" . $secret;
+                $res = RequestUtil::httpGet($url);
+                $accessTokenCache = json_decode($res, true);
+            }
 
             $accessToken = $accessTokenCache['access_token'] ?? '';
 
