@@ -48,31 +48,26 @@ class ZiShuAiService
         }
     }
 
-    // 生成用户
-    public function generateUser()
+    // 获取模型和平台
+    public function getModelAndPlatform()
     {
-        $postData = [
-            'authParams' => [
-                'username' => $this->username,
-                'password' => $this->password
-            ]
-        ];
-        return $this->doHttpPostJson('/ai/user/generateUser', $postData);
+        return $this->doHttpGet("/ai/getModelPlatform");
     }
 
-    // 获取用户基本信息
-    public function getUser()
+    // 获取平台列表
+    public function getPlatformList()
     {
-        $postData = [
-            'authParams' => [
-                'accessKeyId'     => $this->accessKeyId,
-                'accessKeySecret' => md5($this->accessKeyId . $this->accessKeySecret)
-            ]
-        ];
-        return $this->doHttpPostJson('/ai/user/getUser', $postData);
+        return $this->doHttpGet("/ai/getPlatform");
+    }
+
+    // 根据平台获取模型
+    public function getModelByPlatform($platform = null)
+    {
+        return $this->doHttpGet("/ai/getModelByPlatform/{$platform}");
     }
 
     /**
+     * 翻译
      * @param $content
      * @param $targetLang
      * @return mixed
@@ -94,7 +89,7 @@ class ZiShuAiService
         $postData = [
             "authParams"             => [
                 "accessKeyId"     => $this->accessKeyId,
-                "accessKeySecret" => $this->accessKeySecret,
+                "accessKeySecret" => md5($this->accessKeyId . $this->accessKeySecret),
             ],
             "translationModelParams" => [
                 "sessionId"     => "XS" . RandomUtil::random(10),
@@ -133,6 +128,31 @@ class ZiShuAiService
         return $this->doHttpPostJson('/ai/pay/initiatePay', $postData);
     }
 
+    // 生成用户
+    public function generateUser()
+    {
+        $postData = [
+            'authParams' => [
+                'username' => $this->username,
+                'password' => $this->password
+            ]
+        ];
+        return $this->doHttpPostJson('/ai/user/generateUser', $postData);
+    }
+
+    // 获取用户基本信息
+    public function getUser()
+    {
+        $postData = [
+            'authParams' => [
+                'accessKeyId'     => $this->accessKeyId,
+                'accessKeySecret' => md5($this->accessKeyId . $this->accessKeySecret)
+            ]
+        ];
+        return $this->doHttpPostJson('/ai/user/getUser', $postData);
+    }
+
+    // 发送http post json请求
     private function doHttpPostJson($url, $postData)
     {
         $response = RequestUtil::httpPostJson((!$this->isTest ? $this->clientUrl : $this->testClientUrl) . $url, $postData, true);
@@ -143,4 +163,14 @@ class ZiShuAiService
         return $result['data'];
     }
 
+    // 发送http get 请求
+    private function doHttpGet($url, $extra = [])
+    {
+        $response = RequestUtil::httpGet((!$this->isTest ? $this->clientUrl : $this->testClientUrl) . $url, $extra);
+        $result = json_decode($response, true);
+        if ($result['code'] != '0000') {
+            throw new ApiException($result['message']);
+        }
+        return $result['data'];
+    }
 }

@@ -16,19 +16,40 @@
     <input type="hidden" name="id" value="{$uniacid}"/>
 
     <ul class="nav nav-tabs" id="myTab">
-        <li class="{if empty($_GET['tab']) || $_GET['tab'] == 'basic'}active{/if}"><a href="#tab_basic">基础信息</a></li>
+        <li class="{if empty($_GET['tab']) || $_GET['tab'] == 'basic'}active{/if}"><a href="#tab_basic">基础信息</a>
+        </li>
         {if $userInfo['role'] == 'owner'}
-            <!-- <li class="{if $_GET['tab'] == 'host'}active{/if}"><a href="#tab_host">域名设置</a></li> -->
-            {if m('xs_wechat',$uniacid)}<li class="{if $_GET['tab']=='wechat'}active{/if}"><a href="#tab_wechat">微信公众号</a></li>{/if}
-            {if m('xs_wxapp',$uniacid)}<li class="{if $_GET['tab']=='wxapp'}active{/if}"><a href="#tab_wxapp">微信小程序</a></li>{/if}
-            {if m('xs_weixin',$uniacid)}<li class="{if $_GET['tab']=='weixin'}active{/if}"><a href="#tab_weixin">企业微信</a></li>{/if}
-            {if m('xs_wxpay',$uniacid)}<li class="{if $_GET['tab']=='wechatPay'}active{/if}"><a href="#tab_wechatPay">微信支付</a></li>{/if}
-            {if m('xs_alipay',$uniacid)}<li class="{if $_GET['tab']=='aliPay'}active{/if}"><a href="#tab_aliPay">支付宝支付</a></li>{/if}
-            {if m('xs_attachment',$uniacid)}<li class="{if $_GET['tab'] == 'attachment'}active{/if}"><a href="#tab_attachment">附件设置</a></li>{/if}
-            {if m('xs_sms',$uniacid)}<li class="{if $_GET['tab']=='sms'}active{/if}"><a href="#tab_sms">短信设置</a></li>{/if}
-            {if m('xs_smtp',$uniacid)}<li class="{if $_GET['tab']=='smtp'}active{/if}"><a href="#tab_smtp">SMTP服务器</a></li>{/if}
-            {if m('xs_mind',$uniacid)}<li class="{if $_GET['tab']=='mind'}active{/if}"><a href="#tab_mind">传播大脑</a></li>{/if}
-            {if m('xs_aidrive',$uniacid)}<li class="{if $_GET['tab']=='aidrive'}active{/if}"><a href="#tab_aidrive">紫薯AI引擎</a></li>{/if}
+        <!-- <li class="{if $_GET['tab'] == 'host'}active{/if}"><a href="#tab_host">域名设置</a></li> -->
+        {if m('xs_wechat',$uniacid)}
+        <li class="{if $_GET['tab']=='wechat'}active{/if}"><a href="#tab_wechat">微信公众号</a></li>
+        {/if}
+        {if m('xs_wxapp',$uniacid)}
+        <li class="{if $_GET['tab']=='wxapp'}active{/if}"><a href="#tab_wxapp">微信小程序</a></li>
+        {/if}
+        {if m('xs_weixin',$uniacid)}
+        <li class="{if $_GET['tab']=='weixin'}active{/if}"><a href="#tab_weixin">企业微信</a></li>
+        {/if}
+        {if m('xs_wxpay',$uniacid)}
+        <li class="{if $_GET['tab']=='wechatPay'}active{/if}"><a href="#tab_wechatPay">微信支付</a></li>
+        {/if}
+        {if m('xs_alipay',$uniacid)}
+        <li class="{if $_GET['tab']=='aliPay'}active{/if}"><a href="#tab_aliPay">支付宝支付</a></li>
+        {/if}
+        {if m('xs_attachment',$uniacid)}
+        <li class="{if $_GET['tab'] == 'attachment'}active{/if}"><a href="#tab_attachment">附件设置</a></li>
+        {/if}
+        {if m('xs_sms',$uniacid)}
+        <li class="{if $_GET['tab']=='sms'}active{/if}"><a href="#tab_sms">短信设置</a></li>
+        {/if}
+        {if m('xs_smtp',$uniacid)}
+        <li class="{if $_GET['tab']=='smtp'}active{/if}"><a href="#tab_smtp">SMTP服务器</a></li>
+        {/if}
+        {if m('xs_mind',$uniacid)}
+        <li class="{if $_GET['tab']=='mind'}active{/if}"><a href="#tab_mind">传播大脑</a></li>
+        {/if}
+        {if m('xs_aidrive',$uniacid)}
+        <li class="{if $_GET['tab']=='aidrive'}active{/if}"><a href="#tab_aidrive">紫薯AI引擎</a></li>
+        {/if}
         {/if}
     </ul>
 
@@ -73,9 +94,9 @@
         <div class="tab-pane {if $_GET['tab']=='sms'}active{/if}" id="tab_sms">
             {include file="../app/admin/view/public/sets/system/tabs/sms.html" /}
         </div>
-        
-        
-          <div class="tab-pane {if $_GET['tab']=='mind'}active{/if}" id="tab_mind">
+
+
+        <div class="tab-pane {if $_GET['tab']=='mind'}active{/if}" id="tab_mind">
             {include file="../app/admin/view/public/sets/system/tabs/mind.html" /}
         </div>
 

@@ -99,7 +99,12 @@ class Account extends Base
     {
         $uniacid = $this->params['id'];
 
-        // $zishuUserInfo = (new ZiShuAiService($uniacid))->translate("你好");
+        // $modelList = (new ZiShuAiService($uniacid))->getModelByPlatform('aliyun');
+        // $platformList = (new ZiShuAiService($uniacid))->getPlatformList();
+        // $modelAndPlatformList = (new ZiShuAiService($uniacid))->getModelAndPlatform();
+
+        $zishuUserInfo = (new ZiShuAiService($uniacid))->translate("你好");
+        dd($zishuUserInfo);
 
         # 配置
         $accountSettings = $this->settingsController->getAccountSettings($uniacid, 'settings');
@@ -117,6 +122,7 @@ class Account extends Base
                 }
             }
 
+            // 阿里云oss
             if (!empty($settingsData['remote']) && $settingsData['remote']['type'] == 2 && !empty($settingsData['remote']['alioss']) && empty($settingsData['remote']['alioss']['url'])) {
                 $attachmentController = new AttachmentWrapper();
                 [$bucket, $url] = explode('@@', $settingsData['remote']['alioss']['bucket']);
@@ -125,6 +131,13 @@ class Account extends Base
                 $endpoint = 'http://' . $buckets[$bucket]['location'] . $host_name;
                 $settingsData['remote']['alioss']['url'] = $endpoint;
             }
+
+            // 紫薯AI配置
+            // if (!empty($settingsData['aidrive']) && !empty($settingsData['aidrive']['modelType'])) {
+            //     $modelTypeArr = explode('-', $settingsData['aidrive']['modelType']);
+            //     $settingsData['aidrive']['providerName'] = $modelTypeArr[0];
+            //     $settingsData['aidrive']['modelType'] = $modelTypeArr[1];
+            // }
 
             $settingsData = ArrayUtil::customMergeArrays($accountSettings, $settingsData);
 
@@ -221,19 +234,22 @@ class Account extends Base
                 $errorMessage = $e->getMessage();
             }
         }
+        $modelAndPlatformList = (new ZiShuAiService($uniacid))->getModelAndPlatform();
+        // dd($modelAndPlatformList);
 
         $result = [
-            'item'             => $item,
-            'uniacid'          => $uniacid,
-            'hostList'         => $hostList,
-            'accountSettings'  => $accountSettings,
-            'modules'          => $modules,
-            'postUrl'          => strval(url('sysset/attachment')),
-            'upload'           => (array)$accountSettings['attachment'],
-            'local_attachment' => $localAttachment,
-            'aiDriveStatus'    => $aiDriveStatus,
-            'aiDriveBalance'   => $aiDriveBalance,
-            'errorMessage'     => $errorMessage,
+            'item'                 => $item,
+            'uniacid'              => $uniacid,
+            'hostList'             => $hostList,
+            'accountSettings'      => $accountSettings,
+            'modules'              => $modules,
+            'postUrl'              => strval(url('sysset/attachment')),
+            'upload'               => (array)$accountSettings['attachment'],
+            'local_attachment'     => $localAttachment,
+            'aiDriveStatus'        => $aiDriveStatus,
+            'aiDriveBalance'       => $aiDriveBalance,
+            'errorMessage'         => $errorMessage,
+            'modelAndPlatformList' => $modelAndPlatformList,
         ];
         return $this->template('post', $result);
     }
