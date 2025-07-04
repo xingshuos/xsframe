@@ -26,7 +26,7 @@ class ZiShuAiService
 
     private $testClientUrl = "https://19002-frp.wang1278.top/api/admin";
     private $clientUrl = "https://ai.zishuju.cn/newAi";
-    private $isTest = true;
+    private $isTest = false;
 
     private $uniacid = null;
     private $settingsController;
