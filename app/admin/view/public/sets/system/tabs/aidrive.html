@@ -85,6 +85,27 @@
     <p>如何接入AI开发？<a href="" class="text text-primary" target="_blank">点击查看帮助文档</a></p>
 </div>
 
+
+<div class="form-group">
+    <label class="col-lg control-label">接口环境</label>
+    <div class="col-sm-9 col-xs-12">
+        <label class="radio-inline">
+            <input type="radio" name="data[aidrive][isDevelop]" value="1" {if $accountSettings['aidrive']['isDevelop']==1}checked="checked"{/if} onclick="changeIsDevelop(1)"> 测试环境
+        </label>
+        <label class="radio-inline">
+            <input type="radio" name="data[aidrive][isDevelop]" value="0" {if $accountSettings['aidrive']['isDevelop']==0}checked="checked"{/if} onclick="changeIsDevelop(0)"> 正式环境
+        </label>
+        <!-- <a class="radio-inline js-clip" data-url=""></a> -->
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-lg control-label">接口地址</label>
+    <div class="col-sm-9 col-xs-12">
+        <input type='text' value="{$accountSettings['aidrive']['clientUrl'] ? $accountSettings['aidrive']['clientUrl'] : 'https://ai.zishuju.cn/newAi'}" name='data[aidrive][clientUrl]' class="form-control" data-rule-required='true' {if !empty($accountSettings['aidrive']['clientUrl'])}readonly ondblclick="this.readOnly=false" οnchange="this.readOnly=true" data-toggle="tooltip" data-placement="top" data-original-title="双击修改"{/if}/>
+    </div>
+</div>
+
 {if empty($accountSettings['aidrive']) || $aiDriveStatus != 'NORMAL'}
 <div class="form-group aidrive-register-box">
     <label class="col-lg control-label">紫薯AI</label>
@@ -213,6 +234,14 @@
 
 <script>
 
+    function changeIsDevelop(isDevelop){
+        if( isDevelop ){
+            $("input[name='data[aidrive][clientUrl]']").val('https://19002-frp.wang1278.top/api/admin');
+        }else{
+            $("input[name='data[aidrive][clientUrl]']").val('https://ai.zishuju.cn/newAi');
+        }
+    }
+
     function rechargeMoney(){
         $('#rechargeModel').modal('show');
     }
@@ -265,7 +294,10 @@
 
     function registerAiDrive() {
         let url = "{:webUrl('account/registerAiDrive')}"
-        $.post(url, {uniacid: "{$uniacid}"}, function (res) {
+        let isDevelop = $('input[name="data[aidrive][isDevelop]"]').is(':checked');
+        let clientUrl = $('input[name="data[aidrive][clientUrl]"]').val();
+
+        $.post(url, {uniacid: "{$uniacid}",isDevelop: isDevelop,clientUrl: clientUrl}, function (res) {
             let result = res.result
             if (res.status === 1) {
                 let statusHtml = `<span class="text text-success" data-value="NORMAL">通信成功</span>`

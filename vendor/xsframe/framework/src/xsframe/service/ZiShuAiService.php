@@ -35,7 +35,7 @@ class ZiShuAiService
     private $username = "xingshu";
     private $password = "f6bdfc5c6fa296866c748f21a50145bf";
 
-    public function __construct($uniacid)
+    public function __construct($uniacid, $isDevelop = null, $clientUrl = null)
     {
         $this->uniacid = $uniacid;
 
@@ -45,6 +45,12 @@ class ZiShuAiService
             $aiDriveSets = $this->accountSettings['aidrive'] ?? [];
             $this->accessKeyId = $aiDriveSets['accessKeyId'] ?? '';
             $this->accessKeySecret = $aiDriveSets['accessKeySecret'] ?? '';
+            $this->isTest = $aiDriveSets['isDevelop'] ?? false;
+            if ($this->isTest) {
+                $this->clientUrl = $clientUrl ?? ($aiDriveSets['clientUrl'] ?? $this->testClientUrl);
+            } else {
+                $this->clientUrl = $clientUrl ?? ($aiDriveSets['clientUrl'] ?? $this->clientUrl);
+            }
         }
     }
 
@@ -155,7 +161,7 @@ class ZiShuAiService
     // 发送http post json请求
     private function doHttpPostJson($url, $postData)
     {
-        $response = RequestUtil::httpPostJson((!$this->isTest ? $this->clientUrl : $this->testClientUrl) . $url, $postData, true);
+        $response = RequestUtil::httpPostJson($this->clientUrl . $url, $postData, true);
         $result = json_decode($response, true);
         if ($result['code'] != '0000') {
             throw new ApiException($result['message']);
@@ -166,7 +172,7 @@ class ZiShuAiService
     // 发送http get 请求
     private function doHttpGet($url, $extra = [])
     {
-        $response = RequestUtil::httpGet((!$this->isTest ? $this->clientUrl : $this->testClientUrl) . $url, $extra);
+        $response = RequestUtil::httpGet($this->clientUrl . $url, $extra);
         $result = json_decode($response, true);
         if ($result['code'] != '0000') {
             throw new ApiException($result['message']);

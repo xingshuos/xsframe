@@ -33,9 +33,11 @@ class Account extends Base
     public function registerAiDrive()
     {
         $uniacid = intval($this->params['uniacid'] ?? 0);
+        $isDevelop = intval($this->params['isDevelop'] ?? 0);
+        $clientUrl = trim($this->params['clientUrl'] ?? '');
 
         try {
-            $ret = (new ZiShuAiService($uniacid))->generateUser();
+            $ret = (new ZiShuAiService($uniacid, $isDevelop, $clientUrl))->generateUser();
         } catch (\Exception $e) {
             return $this->error($e->getMessage());
         }
