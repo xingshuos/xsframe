@@ -103,8 +103,8 @@ class Account extends Base
         // $platformList = (new ZiShuAiService($uniacid))->getPlatformList();
         // $modelAndPlatformList = (new ZiShuAiService($uniacid))->getModelAndPlatform();
 
-        $zishuUserInfo = (new ZiShuAiService($uniacid))->translate("你好");
-        dd($zishuUserInfo);
+        // $zishuUserInfo = (new ZiShuAiService($uniacid))->translate("你好");
+        // dd($zishuUserInfo);
 
         # 配置
         $accountSettings = $this->settingsController->getAccountSettings($uniacid, 'settings');
