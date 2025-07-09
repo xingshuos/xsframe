@@ -19,8 +19,6 @@ use xsframe\util\RandomUtil;
 use xsframe\util\RequestUtil;
 use think\facade\Cache;
 
-// 如遇到接口可能不起作用，请尝试改为post json方式试试看
-
 class WxappService extends BaseService
 {
     private $wxappSet = null;
@@ -34,7 +32,7 @@ class WxappService extends BaseService
         }
     }
 
-    // 获取小程序openid
+    // 文本内容安全识别
     public function msgSecCheck($checkData = [], $appId = null, $secret = null, $isReload = false)
     {
         if (empty($appId)) {
@@ -64,6 +62,36 @@ class WxappService extends BaseService
         return [
             'detail' => $result['detail'],
             'result' => $result['result'],
+        ];
+    }
+
+    // 文本内容安全识别
+    public function mediaCheckAsync($checkData = [], $appId = null, $secret = null, $isReload = false)
+    {
+        if (empty($appId)) {
+            $appId = $this->wxappSet['appid'];
+            $secret = $this->wxappSet['secret'];
+        }
+
+        $token = $this->getAccessToken($appId, $secret, 7000, $isReload);
+
+        $postData = [];
+        $postData['media_url'] = $checkData['media_url'] ?? ''; // 要检测的图片或音频的url，支持图片格式包括jpg, jpeg, png, bmp, gif（取首帧），支持的音频格式包括mp3, aac, ac3, wma, flac, vorbis, opus, wav
+        $postData['media_type'] = $checkData['media_type'] ?? 2; // 1:音频;2:图片
+        $postData['version'] = $checkData['version'] ?? 2; // 接口版本号，2.0版本为固定值2
+        $postData['scene'] = $checkData['scene'] ?? 1; // 场景枚举值（1 资料；2 评论；3 论坛；4 社交日志）
+        $postData['openid'] = $checkData['openid'] ?? ''; // 用户的openid（用户需在近两小时访问过小程序）
+
+        $data = json_encode($postData);
+        $response = RequestUtil::httpPost("https://api.weixin.qq.com/wxa/media_check_async?access_token={$token}", $data);
+        $result = json_decode($response, true);
+
+        if (!empty($result['errcode'])) {
+            throw new ApiException("数据校验失败:" . $result['errmsg']);
+        }
+
+        return [
+            'trace_id' => $result['trace_id'],
         ];
     }
 

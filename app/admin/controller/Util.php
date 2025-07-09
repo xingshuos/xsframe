@@ -13,6 +13,7 @@
 namespace app\admin\controller;
 
 use think\facade\Db;
+use xsframe\service\ZiShuAiService;
 
 class Util extends Base
 {
@@ -20,6 +21,32 @@ class Util extends Base
     public function map()
     {
         return $this->template('map');
+    }
+
+    // 紫薯AI生成文字内容
+    public function chatText()
+    {
+        $content = trim($this->params['content'] ?? '');
+        $prompt = trim($this->params['prompt'] ?? '');
+        $maxLength = trim($this->params['max_length'] ?? 0);
+
+        $promptContent = "将" . (!empty($prompt) ? "这段文字“" . $prompt . "”" : '') . "内容提炼优化,";
+        if (!empty($maxLength)) {
+            $promptContent .= "限制长度必须不超过" . $maxLength . "个字符，";
+        }
+
+        $promptContent .= " 去空格，去换行，直接给我最终答案 只需要一条结果，不要任何备注信息，必须返回最终结果。不需要其他任何备注信息，例如最终结果类似：星数引擎AI智能体开发利器-星数为来科技，以此为标准返回";
+
+        $params = ['prompt' => $promptContent];
+        $contentNew = $content;
+
+        try {
+            $contentNew = (new ZiShuAiService($this->uniacid))->chatText($content, $params);
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+        }
+
+        return $this->success(['content' => $contentNew]);
     }
 
     public function moduleSelector($page = 0, $identifie = null)

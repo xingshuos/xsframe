@@ -218,6 +218,9 @@ abstract class AdminBaseController extends BaseController
         $var['oneMenuNoticePoint'] = Cache::get($this->module . "_" . SysSettingsKeyEnum::ADMIN_ONE_MENU_NOTICE_POINT) ?? [];
         $var['twoMenuNoticePoint'] = Cache::get($this->module . "_" . SysSettingsKeyEnum::ADMIN_TWO_MENU_NOTICE_POINT) ?? [];
 
+        # AI能力
+        $var['aiGenerate'] = m('xs_aidrive', $this->uniacid);
+
         if (!empty($params)) {
             $var = array_merge($var, $params);
         }

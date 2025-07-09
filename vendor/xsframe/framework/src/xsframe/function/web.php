@@ -344,6 +344,100 @@ if (!function_exists('getScriptName')) {
 }
 
 /**
+ * 表单input参数
+ * @param string $name 名称
+ * @param string $value
+ * @param array $options
+ * @return string
+ */
+if (!function_exists('tpl_form_field_input')) {
+    function tpl_form_field_input(string $name, $value = '', $options = [])
+    {
+        $maxLength = $options['maxlength'] ?? 255;
+        $required = $options['required'] ? 'true' : 'false';
+        $isAiGenerate = $options['aiGenerate'] ?? false;
+        $prompt = $options['prompt'] ?? "";
+
+        if (!$isAiGenerate) {
+            $s = '<input type="text" name="' . $name . '" class="form-control" value="' . $value . '" data-rule-required="' . $required . '" maxlength="' . $maxLength . '" />';
+        } else {
+
+            $s = '
+        <div class="input-group">
+            <input type="text" name="' . $name . '" class="form-control" value="' . $value . '" data-rule-required="' . $required . '" maxlength="' . $maxLength . '" />
+            <span class="input-group-btn">
+                <div class="btn btn-default" onclick="aiGenerate(this)" style="background: unset !important; display: flex ; align-items: center; justify-content: center;border:1px solid #efefef !important;">
+                    <span class="count-display" style="color: rgb(137, 139, 143); font-size: 12px; line-height: 16px;">0/' . $maxLength . '</span>
+                    <img src="data:image/png;base64,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" style="width: 20px; height: 20px; margin-left: 4px; cursor: pointer;">
+                </div>
+            </span>
+        </div>
+';
+
+            if (!defined('TPL_INIT_INPUT')) {
+                $s .= '
+            <script>
+                initCounter("input[name=\'' . $name . '\']");
+
+                // 初始化计数器
+                function initCounter(dom) {
+                    const $input = $(dom);
+                    const maxLength = $input.attr("maxlength") || ' . $maxLength . '
+                    const $display = $input.next().find(\'.count-display\');
+                    const currentLength = $input.val().length || 0;
+                    $display.text(`${currentLength}/${maxLength}`);
+                }
+
+                // 实时计算输入字符数
+                $("input[name=\'' . $name . '\']").on("input", function() {
+                    const content = $(this).val();
+                    const length = content.length || 0;
+                    const maxLength = $(this).attr("maxlength") || ' . $maxLength . '
+                    const $display = $(this).next().find(\'.count-display\');
+
+                    // 更新显示
+                    $display.text(`${length}/${maxLength}`);
+
+                    // 超出长度警告（可选）
+                    if (length > maxLength) {
+                        $display.css("color", "red");
+                    } else {
+                        $display.css("color", "rgb(137, 139, 143)");
+                    }
+                });
+
+                // 绑定点击事件
+                function aiGenerate(This){
+                    const $input = $(This).parent().prev();
+                    const content = $input.val();
+
+                    $.ajax({
+                        method: "post",
+                        url: "/admin/util/chatText.html",
+                        data: {content: content,prompt:"' . $prompt . '"},
+                        success: (res) => {
+                            res = JSON.parse(res)
+                            if( res.status === 1 ){
+                                $input.val(res.result.content);
+                            }else{
+                                tip.msgbox.err(res.result.message);
+                            }
+                        }
+                    })
+                }
+            </script>';
+                define('TPL_INIT_INPUT', true);
+            } else {
+                $s .= '<script>initCounter("input[name=\'' . $name . '\']");</script>';
+            }
+        }
+
+        return $s;
+    }
+}
+
+
+/**
  * 单图上传
  * @param string $name 名称
  * @param string $value
