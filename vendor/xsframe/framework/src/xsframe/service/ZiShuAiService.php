@@ -99,7 +99,7 @@ class ZiShuAiService
                 "accessKeySecret" => md5($this->accessKeyId . $this->accessKeySecret),
             ],
             "translationModelParams" => [
-                "sessionId"     => "XS" . RandomUtil::random(10),
+                "sessionId"     => "XSTL" . RandomUtil::random(10),
                 "modelPlatform" => "aliyun",
                 "callbackUrl"   => "",
             ],
@@ -181,7 +181,7 @@ class ZiShuAiService
                 "accessKeySecret" => md5($this->accessKeyId . $this->accessKeySecret),
             ],
             "messageParams"       => [
-                "sessionId" => !empty($params['sessionId']) ? $params['sessionId'] : uniqid(), // 生成唯一会话ID
+                "sessionId" => !empty($params['sessionId']) ? $params['sessionId'] : "XSCM" . RandomUtil::random(10), // 生成唯一会话ID
                 "type"      => !empty($params['type']) ? $params['type'] : "USER",
                 "content"   => $question
             ],
@@ -257,7 +257,7 @@ class ZiShuAiService
                 "accessKeySecret" => md5($this->accessKeyId . $this->accessKeySecret),
             ],
             "messageParams"       => [
-                "sessionId" => !empty($params['sessionId']) ? $params['sessionId'] : uniqid(), // 生成唯一会话ID
+                "sessionId" => !empty($params['sessionId']) ? $params['sessionId'] : "XSCH" . RandomUtil::random(10), // 生成唯一会话ID
                 "type"      => !empty($params['type']) ? $params['type'] : "USER",
                 "content"   => $question
             ],
@@ -324,7 +324,7 @@ class ZiShuAiService
             "messageParams"       => [
                 "type"      => !empty($params['type']) ? $params['type'] : "USER",
                 "content"   => $question,
-                "sessionId" => !empty($params['sessionId']) ? $params['sessionId'] : uniqid(), // 随机会话ID
+                "sessionId" => !empty($params['sessionId']) ? $params['sessionId'] : "XSCT" . RandomUtil::random(10), // 随机会话ID
             ],
             "chatParams"          => [
                 "modelPlatform" => !empty($params['modelPlatform']) ? $params['modelPlatform'] : "siliconflow", // 模型平台
