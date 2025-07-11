@@ -78,7 +78,7 @@ class PermWrapper
         $field = " u.uid,u.status as userstatus,r.status as rolestatus,u.perms as userperms,r.perms as roleperms,u.roleid ";
 
         $where = ['u.uid' => $uid];
-        if( !empty($userInfo['uniacid']) ){
+        if (!empty($userInfo['uniacid'])) {
             $where['u.uniacid'] = $userInfo['uniacid'];
         }
         $user = Db::name("sys_account_perm_user")->alias('u')->field($field)->leftJoin("sys_account_perm_role r", "r.id = u.roleid")->where($where)->find();
@@ -211,7 +211,7 @@ class PermWrapper
 
                             if (is_array($item['perm']) && !empty($item['perm'])) {
                                 $perm = $item['perm'];
-                            }else{
+                            } else {
                                 $perm = $permDefault;
                             }
 
@@ -254,12 +254,14 @@ class PermWrapper
     }
 
     // 格式化权限
-    public function formatPerms($uniacid)
+    public function formatPerms($uniacid, $moduleName = null)
     {
         if (empty(self::$formatPerms)) {
 
-            $perms = $this->allPerms($uniacid);
-            // dump($perms['jrp_anjia']);die;
+            $perms = $this->allPerms($uniacid, $moduleName);
+            if (!empty($moduleName)) {
+                $perms = [$moduleName => $perms[$moduleName]];
+            }
 
             $array = [];
 

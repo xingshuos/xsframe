@@ -17,7 +17,7 @@ use xsframe\wrapper\PermWrapper;
 use think\Facade;
 
 /**
- * @method static formatPerms($uniacid)
+ * @method static formatPerms($uniacid, $moduleName = null)
  * @method static checkPerm(string $permUrl, int $permType)
  */
 class PermFacade extends Facade
