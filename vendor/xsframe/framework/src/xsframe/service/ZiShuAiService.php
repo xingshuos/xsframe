@@ -73,6 +73,129 @@ class ZiShuAiService
         return $this->doHttpGet("/ai/getModelByPlatform/{$platform}");
     }
 
+    // 生成视频
+    public function doVideo($content, $params = [], $type = 'text')
+    {
+        $postData = [
+            "authParams"       => [
+                "accessKeyId"     => $this->accessKeyId,
+                "accessKeySecret" => md5($this->accessKeyId . $this->accessKeySecret),
+            ],
+            "videoModelParams" => [
+                "modelPlatform" => !empty($params['modelPlatform']) ? $params['modelPlatform'] : "siliconflow",
+                "modelName"     => !empty($params['modelName']) ? $params['modelName'] : "Wan-AI/Wan2.1-I2V-14B-720P-Turbo",
+            ],
+            "videoParams"      => [
+                "model"           => !empty($params['model']) ? $params['model'] : "Wan-AI/Wan2.1-I2V-14B-720P-Turbo",
+                "prompt"          => !empty($params['prompt']) ? $params['prompt'] : "", // 帮我生成一个猫咪在阳光下奔跑的图片
+                "negative_prompt" => !empty($params['negative_prompt']) ? $params['negative_prompt'] : "", // 不出现月光和人类
+                "image_size"      => !empty($params['image_size']) ? $params['image_size'] : "", // 1280x720
+                "image"           => !empty($params['image']) ? $params['image'] : "", // https://cdn.translate.alibaba.com/r/wanx-demo-1.png
+                "seed"            => !empty($params['seed']) ? $params['seed'] : "658943",
+            ],
+            "callbackUrl"      => !empty($params['callbackUrl']) ? $params['callbackUrl'] : "", // 回调地址
+            "params"           => !empty($params['params']) ? $params['params'] : ['user_id' => 0, 'uniacid' => 0, 'chat_key' => ''] // 回调地址携带参数 user_id 必传
+        ];
+        // requestId
+        return $this->doHttpPost("/ai/tool/video", $postData);
+    }
+
+    // 查询视频生成进度
+    public function queryVideo($requestId)
+    {
+        return $this->doHttpGet("/ai/tool/get/video/{$requestId}");
+    }
+
+    // 知识库添加
+    public function addKnowledgeAsync($content, $title = null, $type = null)
+    {
+        $postData = [
+            "authParams"      => [
+                "accessKeyId"     => $this->accessKeyId,
+                "accessKeySecret" => md5($this->accessKeyId . $this->accessKeySecret),
+            ],
+            "fileParamsList"  => !empty($params['fileParamsList']) ? $params['fileParamsList'] : [], // 文件列表 fileId，fileUrl，fileName
+            "embeddingParams" => [
+                'modelName'       => !empty($params['modelName']) ? $params['modelName'] : "BAAI/bge-m3",
+                'modelPlatform'   => !empty($params['modelPlatform']) ? $params['modelPlatform'] : "siliconflow",
+                'knowledgeBaseId' => !empty($params['knowledgeBaseId']) ? $params['knowledgeBaseId'] : "123",
+                'maxToken'        => !empty($params['maxToken']) ? $params['maxToken'] : "2000000000",
+                "callbackUrl"     => !empty($params['callbackUrl']) ? $params['callbackUrl'] : "", // 回调地址
+                "params"          => !empty($params['params']) ? $params['params'] : ['user_id' => 0, 'uniacid' => 0, 'chat_key' => ''] // 回调地址携带参数 user_id 必传
+            ],
+        ];
+        return $this->doHttpPost("/ai/async/embedding/doVector/fileUrlList", $postData);
+    }
+
+    // 删除知识库
+    public function deleteKnowledge($params = [])
+    {
+        $postData = [
+            "authParams"      => [
+                "accessKeyId"     => $this->accessKeyId,
+                "accessKeySecret" => md5($this->accessKeyId . $this->accessKeySecret),
+            ],
+            "knowledgeBaseId" => !empty($params['knowledgeBaseId']) ? $params['knowledgeBaseId'] : "123",
+            "modelName"       => !empty($params['modelName']) ? $params['modelName'] : "BAAI/bge-m3",
+            "modelPlatform"   => !empty($params['modelPlatform']) ? $params['modelPlatform'] : "siliconflow",
+            "fileId"          => !empty($params['fileId']) ? $params['fileId'] : "",
+        ];
+        return $this->doHttpPost("/ai/embedding/delete", $postData);
+    }
+
+    // 文生图
+    public function doImage($content, $params = [], $type = 'text')
+    {
+        $postData = [
+            "authParams"         => [
+                "accessKeyId"     => $this->accessKeyId,
+                "accessKeySecret" => md5($this->accessKeyId . $this->accessKeySecret),
+            ],
+            "diagramModelParams" => [
+                "modelPlatform" => !empty($params['modelPlatform']) ? $params['modelPlatform'] : "siliconflow",
+                "modelName"     => !empty($params['modelName']) ? $params['modelName'] : "Kwai-Kolors/Kolors",
+            ],
+            "diagramParams"      => [
+                "model"               => !empty($params['model']) ? $params['model'] : "Kwai-Kolors/Kolors",
+                "prompt"              => !empty($params['prompt']) ? $params['prompt'] : "", // 生成一个美女的图片
+                "negative_prompt"     => !empty($params['negative_prompt']) ? $params['negative_prompt'] : "", // 不要多人
+                "image_size"          => !empty($params['image_size']) ? $params['image_size'] : "", // 1024x1024
+                "batch_size"          => !empty($params['batch_size']) ? $params['batch_size'] : "1", //
+                "seed"                => !empty($params['seed']) ? $params['seed'] : "4999999999",
+                "num_inference_steps" => !empty($params['num_inference_steps']) ? $params['num_inference_steps'] : "20",
+                "guidance_scale"      => !empty($params['guidance_scale']) ? $params['guidance_scale'] : "7.5",
+            ],
+            "callbackUrl"        => !empty($params['callbackUrl']) ? $params['callbackUrl'] : "", // 回调地址
+            "params"             => !empty($params['params']) ? $params['params'] : ['user_id' => 0, 'uniacid' => 0, 'chat_key' => ''] // 回调地址携带参数 user_id 必传
+        ];
+        return $this->doHttpPost("/ai/tool/text2image", $postData);
+    }
+
+    // 图片向量化
+    public function imageEmbedding($content, $params = [])
+    {
+        $postData = [
+            "authParams"         => [
+                "accessKeyId"     => $this->accessKeyId,
+                "accessKeySecret" => md5($this->accessKeyId . $this->accessKeySecret),
+            ],
+            "imageParams"        => !empty($params['imageParams']) ? $params['imageParams'] : [], // 图片地址 imageId,imageUrl,imageName
+            "imageModelPlatform" => [
+                "imageModelPlatform" => !empty($params['imageModelPlatform']) ? $params['imageModelPlatform'] : "aliyun",
+                "imageModelName"     => !empty($params['imageModelName']) ? $params['imageModelName'] : "qwen2.5-vl-32b-instruct",
+            ],
+            "embeddingParams"    => [
+                'modelName'       => !empty($params['modelName']) ? $params['modelName'] : "qllama/bge-m3",
+                'modelPlatform'   => !empty($params['modelPlatform']) ? $params['modelPlatform'] : "ollama",
+                "knowledgeBaseId" => !empty($params['knowledgeBaseId']) ? $params['knowledgeBaseId'] : "123",
+                "maxToken"        => !empty($params['maxToken']) ? $params['maxToken'] : "2000000000",
+                "callbackUrl"     => !empty($params['callbackUrl']) ? $params['callbackUrl'] : "", // 回调地址
+                "params"          => !empty($params['params']) ? $params['params'] : ['user_id' => 0, 'uniacid' => 0, 'chat_key' => ''] // 回调地址携带参数 user_id 必传
+            ],
+        ];
+        return $this->doHttpPost("/ai/tool/imageEmbedding", $postData);
+    }
+
     /**
      * 翻译
      * @param $content
