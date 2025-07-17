@@ -225,18 +225,22 @@ class Account extends Base
         $aiDriveStatus = "";
         $aiDriveBalance = "";
         $errorMessage = "";
+        $modelAndPlatformList = [];
         if (!empty($accountSettings) && !empty($accountSettings['aidrive']) && !empty($accountSettings['aidrive']['accessKeyId'])) {
             try {
                 $zishuUserInfo = (new ZiShuAiService($uniacid))->getUser();
                 $aiDriveStatus = $zishuUserInfo['status'];
                 $aiDriveBalance = $zishuUserInfo['balance'];
+                $modelAndPlatformList = (new ZiShuAiService($uniacid))->getModelAndPlatform();
             } catch (\Exception $e) {
                 $aiDriveStatus = "UNKNOWN";
                 $aiDriveBalance = "0";
                 $errorMessage = $e->getMessage();
+                if (empty($errorMessage)) {
+                    $errorMessage = "紫薯AI接口通信失败";
+                }
             }
         }
-        $modelAndPlatformList = (new ZiShuAiService($uniacid))->getModelAndPlatform();
         // dd($modelAndPlatformList);
 
         $result = [
