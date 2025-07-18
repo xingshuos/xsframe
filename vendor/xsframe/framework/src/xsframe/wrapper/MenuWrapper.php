@@ -76,7 +76,6 @@ class MenuWrapper
         $parentMenuRoute = $getChangeParentInfo['parentRoute'] ?? $controller; // 当前路由是否调换
         $parentMenuIsChange = $getChangeParentInfo['isChange'] ?? false; // 是否已经有选中的菜单
         $allMenus = $getChangeParentInfo['allMenus'] ?? $allMenus;
-
         $parentMenuActive = false;// 是否已经有选中的菜单
 
         if ($controller != 'login') {
@@ -150,18 +149,19 @@ class MenuWrapper
 
                     // 操作员权限验证 start
                     if (!in_array($role, ['founder', 'manager', 'owner'])) {
-                        if ($val['items'][0]['perm']) {
-                            foreach ($val['items'] as $itemsKey => $itemInfo) {
-                                if ($itemInfo['perm']) {
-                                    $permUrl = $module . "/" . $menu_item['route'] . "." . $itemInfo['route'];
-                                    $isAuthPerm = cs($permUrl);
+                        // if ($val['items'][0]['perm']) { // 旧逻辑需要再代码中设置开启权限
+                        foreach ($val['items'] as $itemsKey => $itemInfo) {
+                            // if ($itemInfo['perm']) {
+                            $permUrl = $module . "/" . $menu_item['route'] . "." . $itemInfo['route'];
+                            $isAuthPerm = cs($permUrl);
 
-                                    if ($isAuthPerm) {
-                                        $itemsOneRoute = $val['items'][$itemsKey]['route'];
-                                    }
-                                }
+                            if ($isAuthPerm) {
+                                $itemsOneRoute = $val['items'][$itemsKey]['route'];
                             }
+                            // dump($permUrl, 123, $role);
+                            // }
                         }
+                        // }
                     }
                     // 操作员权限验证 end
 

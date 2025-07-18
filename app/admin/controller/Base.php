@@ -31,6 +31,7 @@ class Base extends AdminBaseController
 
                 # 非管理员用户一律不得进入平台端
                 if ($adminSession['role'] != 'owner' && $this->controller != 'login') {
+
                     $moduleInfo = UserWrapper::getModuleInfoByUserId($this->adminSession['uid']);
                     $uniacid = $moduleInfo['uniacid'];
                     $moduleName = $moduleInfo['module'];
@@ -44,7 +45,8 @@ class Base extends AdminBaseController
                                 exit();
                             }
                         }
-                        $realUrl = UserWrapper::getModuleOneUrl($moduleName, true);
+
+                        $realUrl = UserWrapper::getModuleOneUrl($moduleName, true, $adminSession['role'], $adminSession['uid']);
                         $url = webUrl(strval($realUrl), ['i' => $uniacid]);
                         header('location: ' . $url);
                     } else {
