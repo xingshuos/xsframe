@@ -139,6 +139,15 @@ abstract class BaseController extends Controller
             $this->getUniacid();
         }
         # 验证是否独立数据库应用 end
+
+        if (method_exists($this, '_initialize2')) {
+            $this->_initialize2();
+        }
+    }
+
+    // 初始化2
+    protected function _initialize2()
+    {
     }
 
     // 解决重复提交与跨域问题

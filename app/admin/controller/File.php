@@ -64,7 +64,7 @@ class File extends AdminBaseController
         $originName = $file->getOriginalName();
         $ext = strtolower($file->extension());
 
-        if (($type == 'image' && !in_array($ext, ['jpg', 'jpeg', 'png', 'gif'])) || ($type == 'audio' && !in_array($ext, ['mp3'])) || ($type == 'video' && !in_array($ext, ['mp4']))) {
+        if (($type == 'image' && !in_array($ext, ['jpg', 'jpeg', 'png', 'gif','ico'])) || ($type == 'audio' && !in_array($ext, ['mp3'])) || ($type == 'video' && !in_array($ext, ['mp4']))) {
             $result['message'] = '文件格式错误' . $ext;
             die(json_encode($result));
         }

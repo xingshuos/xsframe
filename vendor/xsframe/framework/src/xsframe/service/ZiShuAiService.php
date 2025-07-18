@@ -74,7 +74,7 @@ class ZiShuAiService
     }
 
     // 生成视频
-    public function doVideo($content, $params = [], $type = 'text')
+    public function doVideo($params = [])
     {
         $postData = [
             "authParams"       => [
@@ -107,7 +107,7 @@ class ZiShuAiService
     }
 
     // 知识库添加
-    public function addKnowledgeAsync($content, $title = null, $type = null)
+    public function addKnowledgeAsync($params)
     {
         $postData = [
             "authParams"      => [
@@ -144,7 +144,7 @@ class ZiShuAiService
     }
 
     // 文生图
-    public function doImage($content, $params = [], $type = 'text')
+    public function doImage($params = [])
     {
         $postData = [
             "authParams"         => [
@@ -172,7 +172,7 @@ class ZiShuAiService
     }
 
     // 图片向量化
-    public function imageEmbedding($content, $params = [])
+    public function imageEmbedding($params = [])
     {
         $postData = [
             "authParams"         => [
