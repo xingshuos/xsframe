@@ -125,45 +125,52 @@ class MenuWrapper
 
                 # 设置一级目录路由 start
                 if (!empty($val['items'])) {
-                    $itemsOneRoute = $val['items'][0]['route'] ?? null;
+                    $itemsOneRouteIsChange = false; // 解决一级菜单默认访问url
+                    $itemsOneRoute = null; // 默认一级菜单路由
 
-                    if (empty($itemsOneRoute) && !empty($val['items'][0]['items'])) {
-                        $itemsOneRoute = $val['items'][0]['items'][0]['route'] ?? null;
-                        if ($itemsOneRoute) {
-                            $val['items'][0]['route'] = $itemsOneRoute;
-                        } else {
-                            $itemsOneRoute = $val['items'][0]['items'][0]['url'] ?? null;
+                    if (in_array($role, ['founder', 'manager', 'owner'])) {
+                        $itemsOneRoute = $val['items'][0]['route'] ?? null;
+
+                        if (empty($itemsOneRoute) && !empty($val['items'][0]['items'])) {
+                            $itemsOneRoute = $val['items'][0]['items'][0]['route'] ?? null;
                             if ($itemsOneRoute) {
-                                $val['items'][0]['url'] = $itemsOneRoute;
+                                $val['items'][0]['route'] = $itemsOneRoute;
+                            } else {
+                                $itemsOneRoute = $val['items'][0]['items'][0]['url'] ?? null;
+                                if ($itemsOneRoute) {
+                                    $val['items'][0]['url'] = $itemsOneRoute;
+                                }
                             }
                         }
-                    }
 
-                    $itemsOneRouteIsChange = false; // 解决一级菜单默认访问url
-                    if (empty($val['items'][0]['route'])) {
-                        $itemsOneRoute = $val['items'][0]['url'] ?? null;
-                        if ($itemsOneRoute) {
-                            $itemsOneRouteIsChange = true;
+                        // 如果一级菜单没有route，则尝试获取url
+                        if (empty($val['items'][0]['route'])) {
+                            $itemsOneRoute = $val['items'][0]['url'] ?? null;
+                            if ($itemsOneRoute) {
+                                $itemsOneRouteIsChange = true;
+                            }
                         }
-                    }
-
-                    // 操作员权限验证 start
-                    if (!in_array($role, ['founder', 'manager', 'owner'])) {
+                    } else { // 操作员权限验证
                         // if ($val['items'][0]['perm']) { // 旧逻辑需要再代码中设置开启权限
                         foreach ($val['items'] as $itemsKey => $itemInfo) {
                             // if ($itemInfo['perm']) {
                             $permUrl = $module . "/" . $menu_item['route'] . "." . $itemInfo['route'];
                             $isAuthPerm = cs($permUrl);
 
-                            if ($isAuthPerm) {
-                                $itemsOneRoute = $val['items'][$itemsKey]['route'];
+                            if ($isAuthPerm && !$itemsOneRoute) {
+                                $itemsOneRoute = $val['items'][$itemsKey]['route'] ?? null;
+                                if( empty($itemsOneRoute) ){
+                                    $itemsOneRoute = $val['items'][$itemsKey]['url'] ?? null;
+                                    if ($itemsOneRoute) {
+                                        $itemsOneRouteIsChange = true;
+                                    }
+                                }
                             }
                             // dump($permUrl, 123, $role);
                             // }
                         }
                         // }
                     }
-                    // 操作员权限验证 end
 
                     if ($itemsOneRouteIsChange) {
                         if (!strexists($itemsOneRoute, 'web.') && $module != 'admin') {
