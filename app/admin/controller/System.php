@@ -17,6 +17,7 @@ use xsframe\enum\AppCategoryKeyEnum;
 use xsframe\enum\AppTypesKeyEnum;
 use xsframe\facade\service\DbServiceFacade;
 use xsframe\facade\wrapper\SystemWrapperFacade;
+use xsframe\service\ZiShuAiService;
 use xsframe\util\ArrayUtil;
 use xsframe\util\FileUtil;
 use xsframe\util\RandomUtil;
@@ -414,14 +415,40 @@ class System extends AdminBaseController
             $item['username'] = $userInfo['username'];
         }
 
+
+        # 查询紫薯AI用户信息
+        $aiDriveStatus = "";
+        $aiDriveBalance = "";
+        $errorMessage = "";
+        $modelAndPlatformList = [];
+        if (!empty($accountSettings) && !empty($accountSettings['aidrive']) && !empty($accountSettings['aidrive']['accessKeyId'])) {
+            try {
+                $zishuUserInfo = (new ZiShuAiService($uniacid))->getUser();
+                $aiDriveStatus = $zishuUserInfo['status'];
+                $aiDriveBalance = $zishuUserInfo['balance'];
+                $modelAndPlatformList = (new ZiShuAiService($uniacid))->getModelAndPlatform();
+            } catch (\Exception $e) {
+                $aiDriveStatus = "UNKNOWN";
+                $aiDriveBalance = "0";
+                $errorMessage = $e->getMessage();
+                if (empty($errorMessage)) {
+                    $errorMessage = "紫薯AI接口通信失败";
+                }
+            }
+        }
+
         $result = [
-            'item'             => $item,
-            'uniacid'          => $uniacid,
-            'hostList'         => $hostList,
-            'accountSettings'  => $accountSettings,
-            'modules'          => $modules,
-            'postUrl'          => strval(url('system/attachment')),
-            'local_attachment' => $localAttachment,
+            'item'                 => $item,
+            'uniacid'              => $uniacid,
+            'hostList'             => $hostList,
+            'accountSettings'      => $accountSettings,
+            'modules'              => $modules,
+            'postUrl'              => strval(url('system/attachment')),
+            'local_attachment'     => $localAttachment,
+            'aiDriveStatus'        => $aiDriveStatus,
+            'aiDriveBalance'       => $aiDriveBalance,
+            'errorMessage'         => $errorMessage,
+            'modelAndPlatformList' => $modelAndPlatformList,
         ];
 
         return $this->template('account', $result);
