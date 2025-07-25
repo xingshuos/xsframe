@@ -736,4 +736,15 @@ class ArrayUtil
 
         return $result;
     }
+
+    // 通过id获取名称
+    public static function getNameById(array $array, int $id, string $default = 'id', string $field = 'name'): string
+    {
+        foreach ($array as $item) {
+            if ($item[$default] == $id) {
+                return $item[$field];
+            }
+        }
+        return '';
+    }
 }

@@ -50,6 +50,9 @@
         {if m('xs_aidrive',$uniacid)}
         <li class="{if $_GET['tab']=='aidrive'}active{/if}"><a href="#tab_aidrive">紫薯AI引擎</a></li>
         {/if}
+        {if m('xs_dingding',$uniacid)}
+        <li class="{if $_GET['tab']=='dingding'}active{/if}"><a href="#tab_dingding">钉钉设置</a></li>
+        {/if}
         {/if}
     </ul>
 
@@ -108,6 +111,11 @@
         <!-- AI引擎驱动 -->
         <div class="tab-pane {if $_GET['tab']=='aidrive'}active{/if}" id="tab_aidrive">
             <div class="panel-body">{include file='../app/admin/view/public/sets/system/tabs/aidrive.html'}</div>
+        </div>
+
+        <!-- 钉钉设置 -->
+        <div class="tab-pane {if $_GET['tab']=='dingding'}active{/if}" id="tab_dingding">
+            <div class="panel-body">{include file='../app/admin/view/public/sets/system/tabs/dingding.html'}</div>
         </div>
 
     </div>
