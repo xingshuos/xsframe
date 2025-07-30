@@ -1,89 +1,329 @@
-<div class="alert alert-info">目前仅支持阿里云短信通道</div>
-
-<div class="form-group-title">阿里云签名</div>
 
 <div class="form-group">
-    <label class="col-lg control-label must">accessKeyId</label>
+    <label class="col-lg control-label">短信设置</label>
     <div class="col-sm-9 col-xs-12">
-        <input type='text' value="{$accountSettings['sms']['accessKeyId']}" name='data[sms][accessKeyId]' class="form-control" data-rule-required='true'/>
+        <label class="radio-inline">
+            <input type="radio" name="data[sms][type]" value="0" onclick="$('.sms-aliyun').show();$('.sms-tencent').hide();$('.sms-juhe').hide();$('.sms-lianlu').hide();" {if empty($accountSettings['sms']['type']) || $accountSettings['sms']['type'] == '0'} checked="checked" {/if}> 阿里云短信
+            <a class="label label-success" href="https://account.aliyun.com" target="_blank">推荐，立即申请</a>
+        </label>
+        <!-- <label class="radio-inline"> -->
+        <!--     <input type="radio" name="data[sms][type]" value="1" onclick="$('.sms-aliyun').hide();$('.sms-tencent').show();$('.sms-juhe').hide();$('.sms-lianlu').hide();" {if !empty($accountSettings['sms']['type']) && $accountSettings['sms']['type'] == '1'} checked="checked" {/if}> 腾讯云短信 -->
+        <!--     <a class="label label-success" href="https://cloud.tencent.com" target="_blank">推荐，立即申请</a> -->
+        <!-- </label> -->
+        <label class="radio-inline">
+            <input type="radio" name="data[sms][type]" value="2" onclick="$('.sms-aliyun').hide();$('.sms-tencent').hide();$('.sms-juhe').show();$('.sms-lianlu').hide();" {if !empty($accountSettings['sms']['type']) && $accountSettings['sms']['type'] == '2'} checked="checked" {/if}> 聚合数据
+            <a class="label label-success" href="https://www.juhe.cn" target="_blank">推荐，立即申请</a>
+        </label>
+        <label class="radio-inline">
+            <input type="radio" name="data[sms][type]" value="3" onclick="$('.sms-aliyun').hide();$('.sms-tencent').hide();$('.sms-juhe').hide();$('.sms-lianlu').show();" {if !empty($accountSettings['sms']['type']) && $accountSettings['sms']['type'] == '3'} checked="checked" {/if}> 联麓短信
+            <a class="label label-info" href="https://console.shlianlu.com" target="_blank">立即申请</a>
+        </label>
     </div>
 </div>
 
-<div class="form-group">
-    <label class="col-lg control-label must">accessKeySecret</label>
-    <div class="col-sm-9 col-xs-12">
-        <input type='text' value="{$accountSettings['sms']['accessKeySecret']}" name='data[sms][accessKeySecret]' class="form-control" data-rule-required='true'/>
+<div class="sms-aliyun" {if empty($accountSettings['sms']['type']) || $accountSettings['sms']['type'] != '0'}style="display:none;" {/if}>
+    <div class="form-group">
+        <label class="col-lg control-label must">accessKeyId</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['accessKeyId']}" name='data[sms][accessKeyId]' class="form-control" data-rule-required='true'/>
+        </div>
     </div>
+    <div class="form-group">
+        <label class="col-lg control-label must">accessKeySecret</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['accessKeySecret']}" name='data[sms][accessKeySecret]' class="form-control" data-rule-required='true'/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label must">短信签名</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['sign']}" name='data[sms][sign]' class="form-control" data-rule-required='true'/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">登录确认验证码</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['login_code']}" name='data[sms][login_code]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">用户注册验证码</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['register_code']}" name='data[sms][register_code]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">修改密码验证码</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['update_code']}" name='data[sms][update_code]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">信息变更验证码</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['change_code']}" name='data[sms][change_code]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">身份验证验证码</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['auth_code']}" name='data[sms][auth_code]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">账号认证审核通过</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['auth_suc_notice']}" name='data[sms][auth_suc_notice]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">账号认证失败通知</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['auth_err_notice']}" name='data[sms][auth_err_notice]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
+    </div>
+
+    <!-- <div class="form-group"> -->
+    <!--     <label class="col-lg control-label">开发者认证审核通知</label> -->
+    <!--     <div class="col-sm-9 col-xs-12"> -->
+    <!--         <input type='text' value="{$accountSettings['sms']['dev_suc_notice']}" name='data[sms][dev_suc_notice]' class="form-control" placeholder="请输入模板编码"/> -->
+    <!--     </div> -->
+    <!-- </div> -->
+
+    <!-- <div class="form-group"> -->
+    <!--     <label class="col-lg control-label">开发者认证失败通知</label> -->
+    <!--     <div class="col-sm-9 col-xs-12"> -->
+    <!--         <input type='text' value="{$accountSettings['sms']['dev_err_notice']}" name='data[sms][dev_err_notice]' class="form-control" placeholder="请输入模板编码"/> -->
+    <!--     </div> -->
+    <!-- </div> -->
 </div>
 
-<div class="form-group-title">验证码模板</div>
-
-<div class="form-group">
-    <label class="col-lg control-label must">短信签名</label>
-    <div class="col-sm-9 col-xs-12">
-        <input type='text' value="{$accountSettings['sms']['sign']}" name='data[sms][sign]' class="form-control" data-rule-required='true'/>
+<div class="sms-tencent" {if empty($accountSettings['sms']['type']) || $accountSettings['sms']['type'] != '1'} style="display:none;" {/if}>
+    <div class="form-group">
+        <label class="col-lg control-label must">企业ID</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['tencent']['enterpriseId']}" name='data[sms][tencent][enterpriseId]' class="form-control" data-rule-required='true'/>
+        </div>
     </div>
+    <div class="form-group">
+        <label class="col-lg control-label must">AppId</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['tencent']['appid']}" name='data[sms][tencent][appid]' class="form-control" data-rule-required='true'/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg control-label must">Key</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['tencent']['appkey']}" name='data[sms][tencent][appkey]' class="form-control" data-rule-required='true'/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label must">短信签名</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['tencent']['sign']}" name='data[sms][tencent][sign]' class="form-control" data-rule-required='true'/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">登录确认验证码</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['tencent']['login_code']}" name='data[sms][tencent][login_code]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">用户注册验证码</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['tencent']['register_code']}" name='data[sms][tencent][register_code]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">修改密码验证码</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['tencent']['update_code']}" name='data[sms][tencent][update_code]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">信息变更验证码</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['tencent']['change_code']}" name='data[sms][tencent][change_code]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">身份验证验证码</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['tencent']['auth_code']}" name='data[sms][tencent][auth_code]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">账号认证审核通过</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['tencent']['auth_suc_notice']}" name='data[sms][tencent][auth_suc_notice]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">账号认证失败通知</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['tencent']['auth_err_notice']}" name='data[sms][tencent][auth_err_notice]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
+    </div>
+
 </div>
 
-<div class="form-group">
-    <label class="col-lg control-label">登录确认验证码</label>
-    <div class="col-sm-9 col-xs-12">
-        <input type='text' value="{$accountSettings['sms']['login_code']}" name='data[sms][login_code]' class="form-control"/>
+<div class="sms-juhe" {if empty($accountSettings['sms']['type']) || $accountSettings['sms']['type'] != '2'} style="display:none;" {/if}>
+    <div class="form-group">
+        <label class="col-lg control-label must">AppKey</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['juhe']['appkey']}" name='data[sms][juhe][appkey]' class="form-control" data-rule-required='true'/>
+        </div>
     </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label must">短信签名</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['juhe']['sign']}" name='data[sms][juhe][sign]' class="form-control" data-rule-required='true'/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">登录确认验证码</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['juhe']['login_code']}" name='data[sms][juhe][login_code]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">用户注册验证码</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['juhe']['register_code']}" name='data[sms][juhe][register_code]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">修改密码验证码</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['juhe']['update_code']}" name='data[sms][juhe][update_code]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">信息变更验证码</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['juhe']['change_code']}" name='data[sms][juhe][change_code]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">身份验证验证码</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['juhe']['auth_code']}" name='data[sms][juhe][auth_code]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">账号认证审核通过</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['juhe']['auth_suc_notice']}" name='data[sms][juhe][auth_suc_notice]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">账号认证失败通知</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['juhe']['auth_err_notice']}" name='data[sms][juhe][auth_err_notice]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
+    </div>
+
 </div>
 
-<div class="form-group">
-    <label class="col-lg control-label">用户注册验证码</label>
-    <div class="col-sm-9 col-xs-12">
-        <input type='text' value="{$accountSettings['sms']['register_code']}" name='data[sms][register_code]' class="form-control"/>
+<div class="sms-lianlu" {if empty($accountSettings['sms']['type']) || $accountSettings['sms']['type'] != '3'} style="display:none;" {/if}>
+    <div class="form-group">
+        <label class="col-lg control-label must">企业ID</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['lianlu']['enterpriseId']}" name='data[sms][lianlu][enterpriseId]' class="form-control" data-rule-required='true'/>
+        </div>
     </div>
-</div>
+    <div class="form-group">
+        <label class="col-lg control-label must">AppId</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['lianlu']['appid']}" name='data[sms][lianlu][appid]' class="form-control" data-rule-required='true'/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg control-label must">Key</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['lianlu']['appkey']}" name='data[sms][lianlu][appkey]' class="form-control" data-rule-required='true'/>
+        </div>
+    </div>
 
-<div class="form-group">
-    <label class="col-lg control-label">修改密码验证码</label>
-    <div class="col-sm-9 col-xs-12">
-        <input type='text' value="{$accountSettings['sms']['update_code']}" name='data[sms][update_code]' class="form-control"/>
+    <div class="form-group">
+        <label class="col-lg control-label must">短信签名</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['lianlu']['sign']}" name='data[sms][lianlu][sign]' class="form-control" data-rule-required='true'/>
+        </div>
     </div>
-</div>
 
-<div class="form-group">
-    <label class="col-lg control-label">信息变更验证码</label>
-    <div class="col-sm-9 col-xs-12">
-        <input type='text' value="{$accountSettings['sms']['change_code']}" name='data[sms][change_code]' class="form-control"/>
+    <div class="form-group">
+        <label class="col-lg control-label">登录确认验证码</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['lianlu']['login_code']}" name='data[sms][lianlu][login_code]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
     </div>
-</div>
 
-<div class="form-group">
-    <label class="col-lg control-label">身份验证验证码</label>
-    <div class="col-sm-9 col-xs-12">
-        <input type='text' value="{$accountSettings['sms']['auth_code']}" name='data[sms][auth_code]' class="form-control"/>
+    <div class="form-group">
+        <label class="col-lg control-label">用户注册验证码</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['lianlu']['register_code']}" name='data[sms][lianlu][register_code]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
     </div>
-</div>
 
-<div class="form-group">
-    <label class="col-lg control-label">账号认证审核通过</label>
-    <div class="col-sm-9 col-xs-12">
-        <input type='text' value="{$accountSettings['sms']['auth_suc_notice']}" name='data[sms][auth_suc_notice]' class="form-control"/>
+    <div class="form-group">
+        <label class="col-lg control-label">修改密码验证码</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['lianlu']['update_code']}" name='data[sms][lianlu][update_code]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
     </div>
-</div>
 
-<div class="form-group">
-    <label class="col-lg control-label">账号认证失败通知</label>
-    <div class="col-sm-9 col-xs-12">
-        <input type='text' value="{$accountSettings['sms']['auth_err_notice']}" name='data[sms][auth_err_notice]' class="form-control"/>
+    <div class="form-group">
+        <label class="col-lg control-label">信息变更验证码</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['lianlu']['change_code']}" name='data[sms][lianlu][change_code]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
     </div>
-</div>
 
-<div class="form-group">
-    <label class="col-lg control-label">开发者认证审核通知</label>
-    <div class="col-sm-9 col-xs-12">
-        <input type='text' value="{$accountSettings['sms']['dev_suc_notice']}" name='data[sms][dev_suc_notice]' class="form-control"/>
+    <div class="form-group">
+        <label class="col-lg control-label">身份验证验证码</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['lianlu']['auth_code']}" name='data[sms][lianlu][auth_code]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
     </div>
-</div>
 
-<div class="form-group">
-    <label class="col-lg control-label">开发者认证失败通知</label>
-    <div class="col-sm-9 col-xs-12">
-        <input type='text' value="{$accountSettings['sms']['dev_err_notice']}" name='data[sms][dev_err_notice]' class="form-control"/>
+    <div class="form-group">
+        <label class="col-lg control-label">账号认证审核通过</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['lianlu']['auth_suc_notice']}" name='data[sms][lianlu][auth_suc_notice]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
     </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label">账号认证失败通知</label>
+        <div class="col-sm-9 col-xs-12">
+            <input type='text' value="{$accountSettings['sms']['lianlu']['auth_err_notice']}" name='data[sms][lianlu][auth_err_notice]' class="form-control" placeholder="请输入模板编码"/>
+        </div>
+    </div>
+
 </div>

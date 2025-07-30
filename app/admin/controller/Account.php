@@ -14,6 +14,7 @@ namespace app\admin\controller;
 
 use think\facade\Db;
 use xsframe\facade\service\DbServiceFacade;
+use xsframe\facade\service\SmsServiceFacade;
 use xsframe\facade\wrapper\SystemWrapperFacade;
 use xsframe\service\ZiShuAiService;
 use xsframe\util\ArrayUtil;
@@ -100,6 +101,8 @@ class Account extends Base
     public function post()
     {
         $uniacid = $this->params['id'];
+
+        // SmsServiceFacade::sendSMS('13282030470', '70288095', [1234]);
 
         // $modelList = (new ZiShuAiService($uniacid))->getModelByPlatform('aliyun');
         // $platformList = (new ZiShuAiService($uniacid))->getPlatformList();

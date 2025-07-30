@@ -198,11 +198,34 @@ class SmsService extends BaseService
             throw new ApiException(ExceptionEnum::getText(ExceptionEnum::SMS_SMSID_ERROR));
         }
 
-        if (empty($this->smsSet) || empty($this->smsSet['accessKeyId']) || empty($this->smsSet['accessKeySecret']) || empty($this->smsSet['sign'])) {
+        if (empty($this->smsSet)) {
             throw new ApiException(ExceptionEnum::getText(ExceptionEnum::SMS_PARAMS_ERROR));
         }
 
-        return self::send($this->smsSet['accessKeyId'], $this->smsSet['accessKeySecret'], $this->smsSet['sign'], $mobile, $tplId, $data);
+        switch (intval($this->smsSet['type'])) {
+            case 0: // 阿里云
+                if (empty($this->smsSet['accessKeyId']) || empty($this->smsSet['accessKeySecret']) || empty($this->smsSet['sign'])) {
+                    throw new ApiException(ExceptionEnum::getText(ExceptionEnum::SMS_PARAMS_ERROR));
+                }
+                return self::send($this->smsSet['accessKeyId'], $this->smsSet['accessKeySecret'], $this->smsSet['sign'], $mobile, $tplId, $data);
+                break;
+            case 1: // 腾讯云
+                break;
+            case 2: // 聚合数据
+                if (empty($this->smsSet['juhe']) || empty($this->smsSet['juhe']['appkey']) || empty($this->smsSet['juhe']['sign'])) {
+                    throw new ApiException(ExceptionEnum::getText(ExceptionEnum::SMS_PARAMS_ERROR));
+                }
+                return self::juheSend($this->smsSet['juhe']['appkey'], $this->smsSet['juhe']['sign'], $mobile, $tplId, $data);
+                break;
+            case 3: // 联麓短信
+                if (empty($this->smsSet['lianlu']) || empty($this->smsSet['lianlu']['enterpriseId']) || empty($this->smsSet['lianlu']['appid']) || empty($this->smsSet['lianlu']['appkey']) || empty($this->smsSet['lianlu']['sign'])) {
+                    throw new ApiException(ExceptionEnum::getText(ExceptionEnum::SMS_PARAMS_ERROR));
+                }
+                return self::lianluSend($this->smsSet['lianlu']['enterpriseId'], $this->smsSet['lianlu']['appid'], $this->smsSet['lianlu']['appkey'], $this->smsSet['lianlu']['sign'], $mobile, $tplId, $data);
+                break;
+        }
+
+        throw new ApiException("暂不支持此短信服务");
     }
 
     // 获取手机号验证码
@@ -344,6 +367,88 @@ class SmsService extends BaseService
 
             self::clearCode($mobile);
 
+            throw new ApiException($msg);
+        }
+
+        return true;
+    }
+
+    /**
+     * 联麓发送短信
+     * @param string $enterpriseId
+     * @param string $appid
+     * @param string $appkey
+     * @param $signName
+     * @param string $mobile 手机号
+     * @param string $tplId 短信模板iID
+     * @param array $data
+     * @return true
+     * @throws ApiException
+     */
+    public function lianluSend(string $enterpriseId, string $appid, string $appkey, $signName, string $mobile, string $tplId, array $data)
+    {
+        date_default_timezone_set('GMT');
+        $post = [
+            'MchId'            => "{$enterpriseId}",
+            'AppId'            => "{$appid}",
+            'Version'          => "1.1.0",
+            'Type'             => '3',
+            'PhoneNumberSet'   => [$mobile],
+            'TemplateId'       => "{$tplId}",
+            'TemplateParamSet' => (array)$data,
+            'TimeStamp'        => TIMESTAMP,
+            'SignType'         => 'MD5',
+        ];
+
+        $post['Signature'] = strtoupper(md5("AppId={$appid}&MchId={$enterpriseId}&SignType=MD5&TemplateId={$tplId}&TimeStamp=" . TIMESTAMP . "&Type=3&Version=1.1.0&key={$appkey}"));
+
+        $url = 'https://apis.shlianlu.com/sms/trade/template/send';
+
+        $result = RequestUtil::httpPostJson($url, $post, true);
+        $result = @json_decode($result, true);
+
+        if ($result['status'] != '00') {
+            $msg = "短信发送失败:" . $result['message'];
+            self::clearCode($mobile);
+            throw new ApiException($msg);
+        }
+
+        return true;
+    }
+
+    /**
+     * 聚合发送短信
+     * @param string $appkey
+     * @param $signName
+     * @param string $mobile 手机号
+     * @param string $tplId 短信模板iID
+     * @param array $data
+     * @return true
+     * @throws ApiException
+     */
+    public function juheSend(string $appkey, $signName, string $mobile, string $tplId, array $data)
+    {
+        date_default_timezone_set('GMT');
+
+        if ($signName != $data['name']) {
+            $data['name'] = $signName;
+        }
+
+        $post = [
+            'key'    => "{$appkey}",
+            'mobile' => "{$mobile}",
+            'tpl_id' => "{$tplId}",
+            'vars'   => json_encode($data), //模板变量键值对的json类型字符串，根据实际情况修改
+        ];
+
+        $url = 'http://v.juhe.cn/sms/send';
+
+        $result = RequestUtil::httpPost($url, $post);
+        $result = @json_decode($result, true);
+
+        if ($result['error_code'] != '0') {
+            $msg = "短信发送失败:" . $result['reason'];
+            self::clearCode($mobile);
             throw new ApiException($msg);
         }
 
