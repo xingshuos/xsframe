@@ -573,7 +573,7 @@
     }
 
     // 统一打开 Loading
-    function openLoading() {
+    function openLoading(maxDelay = 60000) {
         // 判断loadign是否存在
         if ($('#page-loading').length > 0) {
             return;
@@ -583,7 +583,7 @@
         let openLoadingTimer = setTimeout(function () {
             clearTimeout(openLoadingTimer);
             closeLoading();
-        }, 60000);
+        }, maxDelay);
     }
 </script>
 

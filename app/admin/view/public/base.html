@@ -503,6 +503,20 @@
         clearInterval(window.formInitTimer);
         clearTimeout(window.formInitTimeout);
     }
+
+    // 统一打开 Loading
+    function openLoading( maxDelay = 60000 ) {
+        // 判断loadign是否存在
+        if ($('#page-loading').length > 0) {
+            return;
+        }
+        $('.wb-container').append(`<div id="page-loading"> <div class="page-loading-inner"> <div class="sk-three-bounce"> <div class="sk-child sk-bounce1"></div> <div class="sk-child sk-bounce2"></div> <div class="sk-child sk-bounce3"></div> </div> </div> </div>`);
+        // 超过60秒后，关闭 loading
+        let openLoadingTimer = setTimeout(function () {
+            clearTimeout(openLoadingTimer);
+            closeLoading();
+        }, maxDelay);
+    }
 </script>
 
 </body>
