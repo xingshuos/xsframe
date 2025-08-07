@@ -49,10 +49,87 @@ class DingDingService
         return $this->getDeptList();
     }
 
-    public function getDeptList()
+    // 获取所有部门列表
+    public function getDeptAllList()
     {
-        $postData = [];
+        $parentList = $this->getDeptList();
+        // 最多查询8级部门
+        foreach ($parentList as $key => $parent) {
+            $parentList2 = $this->getDeptList($parent['dept_id']);
+
+            if (!empty($parentList2)) {
+                $parentList = array_merge($parentList, $parentList2);
+
+                foreach ($parentList2 as $key2 => $parent2) {
+                    $parentList3 = $this->getDeptList($parent2['dept_id']);
+
+                    if (!empty($parentList3)) {
+                        $parentList = array_merge($parentList, $parentList3);
+
+                        foreach ($parentList3 as $key3 => $parent3) {
+                            $parentList4 = $this->getDeptList($parent3['dept_id']);
+
+                            if (!empty($parentList4)) {
+                                $parentList = array_merge($parentList, $parentList4);
+
+                                foreach ($parentList4 as $key4 => $parent4) {
+                                    $parentList5 = $this->getDeptList($parent4['dept_id']);
+                                    if (!empty($parentList5)) {
+                                        $parentList = array_merge($parentList, $parentList5);
+
+                                        foreach ($parentList5 as $key5 => $parent5) {
+                                            $parentList6 = $this->getDeptList($parent5['dept_id']);
+                                            if (!empty($parentList6)) {
+                                                $parentList = array_merge($parentList, $parentList6);
+
+                                                foreach ($parentList6 as $key6 => $parent6) {
+                                                    $parentList7 = $this->getDeptList($parent6['dept_id']);
+                                                    if (!empty($parentList7)) {
+                                                        $parentList = array_merge($parentList, $parentList7);
+
+                                                        foreach ($parentList7 as $key7 => $parent7) {
+                                                            $parentList8 = $this->getDeptList($parent7['dept_id']);
+                                                            if (!empty($parentList8)) {
+                                                                $parentList = array_merge($parentList, $parentList8);
+                                                            }
+                                                        }
+
+                                                    }
+                                                }
+
+                                            }
+                                        }
+
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+
+                }
+            }
+
+        }
+        return $parentList;
+    }
+
+    // 获取部门子部门列表
+    public function getDeptList($deptId = null)
+    {
+        $postData = [
+            'dept_id' => $deptId
+        ];
         return $this->doHttpPost("https://oapi.dingtalk.com/topapi/v2/department/listsub", $postData);
+    }
+
+    // 查询部门子部门id列表
+    public function getDeptSubList($deptId = null)
+    {
+        $postData = [
+            'dept_id' => $deptId
+        ];
+        return $this->doHttpPost("https://oapi.dingtalk.com/topapi/v2/department/listsubid", $postData);
     }
 
     // 获取部门用户userid列表
