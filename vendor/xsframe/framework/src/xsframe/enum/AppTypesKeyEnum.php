@@ -86,7 +86,7 @@ class AppTypesKeyEnum extends BaseEnum
             self::UNIAPP_CODE    => 'uni-app',
             self::HARMONYOS_CODE => '鸿蒙OS',
             self::DYAPP_CODE     => '抖音小程序',
-            self::AI_CODE        => 'AI应用',
+            self::AI_CODE        => '紫薯AI',
         ];
         return array_key_exists($type, $list) ? $list[$type] : '';
     }
