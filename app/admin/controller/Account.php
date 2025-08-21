@@ -208,11 +208,7 @@ class Account extends Base
 
         $modules = Db::name('sys_modules')->where(['identifie' => $identifies])->orderRaw("FIELD(identifie," . "'" . implode("','", $identifies) . "'" . ")")->select()->toArray();
 
-        $accountUserInfo = DbServiceFacade::name('sys_account_users')->getInfo(['uniacid' => $uniacid]);
-        if (!empty($accountUserInfo)) {
-            $userInfo = DbServiceFacade::name('sys_users')->getInfo(['id' => $accountUserInfo['user_id']]);
-            $item['username'] = $userInfo['username'];
-        }
+        $item['username'] = $this->getAccountUsername($uniacid);
 
         foreach ($modules as &$module) {
             $module['logo'] = !empty($module['logo']) ? tomedia($module['logo']) : $this->siteRoot . "/app/{$module['identifie']}/icon.png";
@@ -261,6 +257,21 @@ class Account extends Base
             'modelAndPlatformList' => $modelAndPlatformList,
         ];
         return $this->template('post', $result);
+    }
+
+    // 递归获取管理员账号
+    private function getAccountUsername($uniacid)
+    {
+        $username = "";
+        $accountUserList = DbServiceFacade::name('sys_account_users')->getAll(['uniacid' => $uniacid], "*", "id asc", "user_id");
+        if ($accountUserList) {
+            $accountUserListUserIds = array_keys($accountUserList);
+            $userInfo = DbServiceFacade::name('sys_users')->getInfo(['id' => $accountUserListUserIds, 'role' => 'manager', 'deleted' => 0]);
+            if (!empty($userInfo)) {
+                $username = $userInfo['username'];
+            }
+        }
+        return $username ?? "";
     }
 
     // 紫薯AI支付

@@ -161,14 +161,30 @@ class SmsService extends BaseService
             $this->smsSet = ArrayUtil::customMergeArrays($this->smsSet, $smsSet);
         }
 
+        $code = self::getCode($mobile);
+        $data = ['code' => $code];
+
         if (!empty($this->smsSet)) {
             if (empty($tplId) && !empty($type)) {
                 $tplId = $this->smsSet[$type];
+                if (!empty($this->smsSet['type'])) {
+                    $smsType = '';
+                    switch ($this->smsSet['type']) {
+                        case 1:
+                            $smsType = 'tencent';
+                            break;
+                        case 2:
+                            $smsType = 'juhe';
+                            break;
+                        case 3:
+                            $smsType = 'lianlu';
+                            $data = [$code];
+                            break;
+                    }
+                    $tplId = $this->smsSet[$smsType][$type];
+                }
             }
         }
-
-        $code = self::getCode($mobile);
-        $data = ['code' => $code];
 
         return $this->sendSMS($mobile, $tplId, $data, $this->smsSet);
     }
