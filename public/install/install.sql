@@ -337,6 +337,9 @@ CREATE TABLE `#__sys_modules`
     `aliapp_support` tinyint(1) DEFAULT '0',
     `bdapp_support`  tinyint(1) DEFAULT '0',
     `uniapp_support` tinyint(1) DEFAULT '0',
+    `harmonyos_support` tinyint(1) DEFAULT '0',
+    `dyapp_support` tinyint(1) DEFAULT '0',
+    `aiapp_support` tinyint(1) DEFAULT '0',
     PRIMARY KEY (`id`),
     UNIQUE KEY `idx_identifie` (`identifie`)
 ) ENGINE=MyISAM AUTO_INCREMENT=45 DEFAULT CHARSET=utf8;
@@ -488,9 +491,9 @@ values (1, 1, 'xs_form', NULL, 1, 0, 1);
 insert into `#__sys_modules`(`id`, `type`, `name`, `identifie`, `version`, `author`, `logo`, `ability`, `description`,
                              `create_time`, `update_time`, `name_initial`, `status`, `is_cloud`, `is_install`,
                              `is_deleted`, `wechat_support`, `wxapp_support`, `pc_support`, `app_support`, `h5_support`,
-                             `aliapp_support`, `bdapp_support`, `uniapp_support`)
+                             `aliapp_support`, `bdapp_support`, `uniapp_support`,`harmonyos_support`,`dyapp_support`,`aiapp_support`)
 values (1, 'tool', '表单案例', 'xs_form', '1.0.2', 'GuiHai', 'app/xs_form/icon.png', '常见表单案例',
-        '后台常用表单案例管理', 1734593468, 1734593468, 'B', 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0);
+        '后台常用表单案例管理', 1734593468, 1734593468, 'B', 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0,0,0,0);
 
 insert into `#__sys_express`(`id`, `name`, `express`, `status`, `displayorder`, `code`, `coding`)
 values (1, '顺丰', 'shunfeng', 1, 0, 'JH_014', 'SF'),
