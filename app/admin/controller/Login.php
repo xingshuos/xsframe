@@ -22,31 +22,8 @@ use think\facade\Db;
 
 class Login extends Base
 {
-    public function checkLicense()
-    {
-        # 1.验证有效性
-        // $License = "";
-        // $valid = LicenseValidatorUtil::validateLicense($License);
-        // // echo $valid[0] ? "有效" : "无效";
-        // dd($valid);
-
-        # 2.生成 License
-        // 设置过期时间（示例：1年后）
-        $expireDate = strtotime('+1 year');
-        $license = LicenseValidatorUtil::generateLicense($expireDate);
-
-        // 输出结果
-        header('Content-Type: application/json');
-        echo json_encode([
-            'license' => $license,
-            'expire_date' => date('Y-m-d H:i:s', $expireDate),
-            'instructions' => '将此License提供给客户激活系统'
-        ]);
-    }
-
     public function index()
     {
-        // $this->checkLicense();
         $rememberUsername = $_COOKIE['remember-username'] ?? '';
         $websiteSets = $this->settingsController->getSysSettings(SysSettingsKeyEnum::WEBSITE_KEY);
 

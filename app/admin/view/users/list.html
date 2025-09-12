@@ -55,12 +55,12 @@
                 <tr>
                     <th style="width:40px;"></th>
                     <th style="width: 60px">ID</th>
-                    <th style="width:120px;">账号</th>
+                    <th style="width:80px;">账号</th>
                     <th style="width:80px;">角色</th>
                     <th style="width: 120px">管理商户</th>
-                    <th style="width: 100px">登录时间</th>
-                    <th style="width: 100px">登录IP</th>
-                    <th style="width: 80px">启用状态</th>
+                    <th style="width: 90px">最后登录</th>
+                    <th style="width: 90px">截止时间</th>
+                    <th style="width: 60px">启用状态</th>
                     <th style="width: 80px">创建时间</th>
                     <th style="width: 100px;text-align: center;">操作</th>
                 </tr>
@@ -96,15 +96,15 @@
                         {if empty($row['logintime'])}
                             尚未登录
                         {else}
-                            {$row['logintime']|date="Y-m-d"}<br>
-                            {$row['logintime']|date="H:i:s"}
+                            {$row['logintime']|date="Y-m-d H:i"} <br>
+                            IP:{$row['lastip']}
                         {/if}
                     </td>
                     <td>
-                        {if empty($row['logintime'])}
-                            尚未登录
+                        {if $row['end_time'] > 0}
+                        <span class="{if $row['end_time'] <= time()}text-danger{else}text-success{/if}">{:date("Y-m-d H:i:s",$row['end_time'])}</span>
                         {else}
-                            {$row['lastip']}
+                        无限制
                         {/if}
                     </td>
                     <td>

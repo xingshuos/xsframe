@@ -101,8 +101,8 @@ class Users extends Base
     public function post()
     {
         $id = $this->params['id'];
-        $uniacid = $this->params['uniacid'];
-        $role = trim($this->params['role']);
+        $uniacid = $this->params['uniacid'] ?? 0;
+        $role = trim($this->params['role'] ?? '');
         $module = $this->params['module'] ?? '';
 
         if ($this->request->isPost()) {
@@ -110,11 +110,19 @@ class Users extends Base
             $username = trim($this->params["username"]);
             $password = trim($this->params['password']);
 
+            $end_time = strval($this->params['end_time']);
+            $limit_time = intval($this->params['limit_time']);
+
             $data = [
                 "username" => $username,
                 "role"     => $role,
                 "status"   => trim($this->params["status"]),
             ];
+
+            $data['end_time'] = 0;
+            if ($limit_time > 0) {
+                $data['end_time'] = strtotime($end_time);
+            }
 
             if (!empty($password)) {
                 $data['salt'] = $salt;

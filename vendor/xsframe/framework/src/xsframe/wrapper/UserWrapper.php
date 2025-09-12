@@ -70,13 +70,17 @@ class UserWrapper
     // 用户登录
     public static function login($username, $password, $hostUrl = '')
     {
-        $userInfo = Db::name('sys_users')->field("id,password,salt,role,status")->where(['username' => $username])->find();
+        $userInfo = Db::name('sys_users')->field("id,password,salt,role,status,end_time")->where(['username' => $username])->find();
         if (empty($userInfo)) {
             return ErrorUtil::error(-1, "该登录用户未找到");
         }
 
         if ($userInfo['status'] == 0) {
             return ErrorUtil::error(-1, "该用户已被禁用，请联系管理员处理");
+        }
+
+        if ($userInfo['end_time'] > 0 && $userInfo['end_time'] <= TIMESTAMP) {
+            return ErrorUtil::error(-1, "该用户登录权限已过期，请联系管理员处理");
         }
 
         $password = md5($password . $userInfo['salt']);

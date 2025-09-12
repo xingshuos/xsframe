@@ -180,3 +180,22 @@
         <span class="help-block">备注:禁用后商户下所有应用禁止访问</span>
     </div>
 </div>
+
+{if $userInfo['role'] == 'owner'}
+<div class="form-group">
+    <label class="col-lg control-label">截止时间</label>
+    <div class="col-sm-6 col-xs-12">
+        <div class="input-group">
+            {:tpl_form_field_date('end_time',$item['end_time'],true)}
+            <span class="input-group-addon">
+                <label class="radio-inline" style="margin-top:-9px;">
+                    <input type="radio" name="limit_time" value="1" {if $item['end_time'] > 0}checked="checked"{/if}> 限制时间
+                </label>
+                <label class="radio-inline" style="margin-top:-9px;">
+                    <input type="radio" name="limit_time" value="0" {if $item['end_time'] <= 0}checked="checked"{/if}> 不限时间
+                </label>
+            </span>
+        </div>
+    </div>
+</div>
+{/if}

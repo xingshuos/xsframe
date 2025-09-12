@@ -101,6 +101,8 @@ class Account extends Base
     public function post()
     {
         $uniacid = $this->params['id'];
+        $end_time = strval($this->params['end_time'] ?? '');
+        $limit_time = intval($this->params['limit_time'] ?? 0);
 
         // SmsServiceFacade::sendSMS('13282030470', '70288095', [1234]);
 
@@ -155,6 +157,12 @@ class Account extends Base
                 "displayorder" => intval($this->params["displayorder"]),
                 "status"       => intval($this->params["status"]),
             ];
+
+            $data['end_time'] = 0;
+            if ($limit_time > 0) {
+                $data['end_time'] = strtotime($end_time);
+            }
+
             $data['settings'] = serialize($settingsData);
 
             // 账号验证

@@ -50,15 +50,16 @@
             <thead class="navbar-inner">
             <tr>
                 <th style="width:40px;"></th>
-                <th style='width:80px'>排序</th>
-                <th style='width:60px'>uniacid</th>
-                <th style='width:140px'>商户名称</th>
-               <th style='width:80px'>会员数</th>
-               <th style='width:80px'>访问域名</th>
-                <th style="width: 80px;">应用数量</th>
+                <th style='width:70px'>排序</th>
+                <th style='width:50px'>uniacid</th>
+                <th style='width:100px'>商户名称</th>
+               <th style='width:70px'>会员数</th>
+               <th style='width:70px'>访问域名</th>
+                <th style="width: 70px;">应用数量</th>
                 <th style='width:120px'>备注</th>
-                <th style='width:80px;'>商户状态</th>
-                <th style="width: 100px;">操作</th>
+                <th style='width:70px;'>商户状态</th>
+                <th style='width:80px;'>截止时间</th>
+                <th style="width: 80px;">操作</th>
             </tr>
             </thead>
             <tbody>
@@ -113,6 +114,13 @@
                     {if $row['status']==1}已开启{else}未开启{/if}
                     </span>
                 </td>
+                <td>
+                    {if $row['end_time'] > 0}
+                    <span class="{if $row['end_time'] <= time()}text-danger{else}text-success{/if}">{:date("Y-m-d H:i:s",$row['end_time'])}</span>
+                    {else}
+                    无限制
+                    {/if}
+                </td>
                 <td style="text-align:left;">
                     <a href="{:webUrl('account/edit', array('id' => $row['uniacid']))}" class="btn btn-op btn-operation">
                         <span data-toggle="tooltip" data-placement="top" data-original-title="修改">
@@ -137,7 +145,7 @@
             <tfoot>
             <tr>
                 <td><input type="checkbox"></td>
-                <td colspan="4">
+                <td colspan="5">
                     <div class="btn-group">
                         <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('account/change',array('type' => 'status','value'=>1))}"><i class='icon icon-eye'></i> 启用</button>
                         <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('account/change',array('type' => 'status','value'=>0))}"><i class='icon icon-eye-close'></i> 禁用</button>
