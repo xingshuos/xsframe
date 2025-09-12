@@ -22,6 +22,7 @@ use xsframe\facade\wrapper\SystemWrapperFacade;
 use xsframe\util\ArrayUtil;
 use xsframe\util\FileUtil;
 use xsframe\util\LoggerUtil;
+use xsframe\util\RequestUtil;
 use xsframe\util\StringUtil;
 use xsframe\wrapper\AccountHostWrapper;
 use xsframe\wrapper\SettingsWrapper;
@@ -142,6 +143,15 @@ abstract class BaseController extends Controller
 
         if (method_exists($this, '_initialize2')) {
             $this->_initialize2();
+        }
+
+        # 系统授权验证
+        $systemAuthSets = $this->settingsController->getSysSettings(SysSettingsKeyEnum::SYSTEM_AUTH_KEY);
+        if ($systemAuthSets && $systemAuthSets['check_date'] !== date('Ymd')) {
+            $needAuthRet = RequestUtil::cloudHttpPost("frame/needAuth", ['authKey' => $this->authkey]);
+            $needAuth = $needAuthRet['data']['isNeedAuth'] ?? 0;
+            $systemAuthSetsData = array_merge($systemAuthSets, ['need_auth' => $needAuth, 'check_date' => date('Ymd')]);
+            $this->settingsController->setSysSettings(SysSettingsKeyEnum::SYSTEM_AUTH_KEY, $systemAuthSetsData);
         }
     }
 

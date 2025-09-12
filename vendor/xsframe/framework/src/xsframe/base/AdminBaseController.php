@@ -20,6 +20,7 @@ use xsframe\enum\SysSettingsKeyEnum;
 use xsframe\exception\ApiException;
 use xsframe\traits\AdminTraits;
 use xsframe\util\RandomUtil;
+use xsframe\util\RequestUtil;
 use xsframe\wrapper\MenuWrapper;
 use xsframe\wrapper\UserWrapper;
 
@@ -59,7 +60,6 @@ abstract class AdminBaseController extends BaseController
     // 校验用户登录
     protected function checkAuth()
     {
-
         $clientName = $this->params['client'] ?? 'web';
         $isFileUpload = strtolower($this->controller) == 'file';
         /*$clientName && $clientName != 'web' TODO zhaoxin 注释图片限定参数 */
@@ -115,7 +115,6 @@ abstract class AdminBaseController extends BaseController
                 }
             }
         }
-
     }
 
     // 引入后端模板

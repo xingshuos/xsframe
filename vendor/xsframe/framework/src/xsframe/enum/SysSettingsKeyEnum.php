@@ -44,7 +44,10 @@ class SysSettingsKeyEnum extends BaseEnum
 
     # 一级菜单通知
     const ADMIN_ONE_MENU_NOTICE_POINT = 'web_one_menu_notice_point';
+
     # 二级菜单通知
     const ADMIN_TWO_MENU_NOTICE_POINT = 'web_two_menu_notice_point';
 
+    # 系统授权
+    const SYSTEM_AUTH_KEY = 'system_auth';
 }

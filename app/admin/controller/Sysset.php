@@ -2,6 +2,7 @@
 
 namespace app\admin\controller;
 
+use app\xs_auth\library\LicenseUtil;
 use think\Exception;
 use think\facade\Cache;
 use think\facade\Db;
@@ -10,7 +11,6 @@ use xsframe\enum\SysSettingsKeyEnum;
 use xsframe\exception\ApiException;
 use xsframe\util\FileUtil;
 use xsframe\util\RequestUtil;
-use xsframe\wrapper\AccountHostWrapper;
 use xsframe\wrapper\AttachmentWrapper;
 use xsframe\wrapper\CloudWrapper;
 
@@ -220,6 +220,45 @@ class Sysset extends Base
             'content' => $content,
         ];
         return $this->template('version', $result);
+    }
+
+    // 系统授权
+    public function auth()
+    {
+        $systemAuthSets = $this->settingsController->getSysSettings(SysSettingsKeyEnum::SYSTEM_AUTH_KEY);
+
+        if ($this->request->isPost()) {
+            $data = $this->params['data'];
+            $systemAuthSetsData = array_merge($systemAuthSets, $data);
+            $this->settingsController->setSysSettings(SysSettingsKeyEnum::SYSTEM_AUTH_KEY, $systemAuthSetsData);
+            show_json(1, ["url" => url("sysset/auth", [])]);
+        }
+
+        $isValid = LicenseUtil::validateLicense($systemAuthSets['license'], env('AUTHKEY'));
+        $expireTime = LicenseUtil::getExpireTime($systemAuthSets['license'], env('AUTHKEY'));
+
+        $result = [
+            'systemAuthSets' => $systemAuthSets,
+            'isValid'        => $isValid,
+            'endTime'        => date('Y-m-d H:i:s', $expireTime),
+        ];
+        return $this->template('auth', $result);
+    }
+
+    // 验证授权状态
+    public function checkSystemAuth()
+    {
+        $systemAuthSets = $this->settingsController->getSysSettings(SysSettingsKeyEnum::SYSTEM_AUTH_KEY);
+
+        $isValid = true;
+        if (isset($systemAuthSets['need_auth']) && $systemAuthSets['need_auth'] == 1) {
+            $isValid = LicenseUtil::validateLicense($systemAuthSets['license'], env('AUTHKEY'));
+        }
+
+        $result = [
+            'isValid' => (bool)$isValid
+        ];
+        return $this->success($result);
     }
 
     // 更新完毕

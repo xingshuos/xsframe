@@ -1,0 +1,52 @@
+{extend name="../../admin/view/public/admin"}
+
+{block name='content'}
+
+<div class="page-header">当前位置：<span class="text-primary">系统授权</span></div>
+
+<style>
+
+</style>
+
+<div class="page-content">
+
+    <form action="" method="post" class="form-validate form-horizontal ">
+        <div class="panel panel-default">
+            <div class="panel-heading h4">系统授权</div>
+            <div class="panel-body">
+
+                <div class="form-group">
+                    <label class="col-lg-1 control-label">授权密钥</label>
+                    <div class="col-sm-9 col-xs-12">
+                        <textarea name="data[license]" class="form-control richtext" rows="5" placeholder="">{$systemAuthSets['license']}</textarea>
+                        <div class="help-block">请填写系统授权密钥，可登录 <a href="https://www.xsyq.cn" class="text-primary" target="_blank">星数引擎官网</a> 申请，免费授权版无需申请。</div>
+                    </div>
+                </div>
+                {if !empty($systemAuthSets['license'])}
+                <div class="form-group">
+                    <label class="col-lg-1 control-label">到期时间</label>
+                    <div class="col-sm-9 col-xs-12">
+                        <div class="form-control-static {if $isValid}text-success{else}text-danger{/if}">{$endTime}{if !$isValid} 授权已过期{/if}</div>
+                    </div>
+                </div>
+                {/if}
+                <div class="form-group">
+                    <label class="col-lg-1 control-label"></label>
+                    <div class="col-sm-9">
+                        <button type="submit" name="submit" value="1" class="btn btn-primary">保存</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+
+</div>
+
+{/block}
+
+{block name='script'}
+<script type="text/javascript">
+
+</script>
+{/block}

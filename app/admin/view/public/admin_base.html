@@ -282,13 +282,30 @@
         let isSystem = parseInt("{$isSystem?1:0}");
 
         if( isOwner === 1 && isSystem === 1 ){
-            let isUpgradeSystemNotice = util.cookie.get('isUpgradeSystemNotice') || 0;
+            // 1.验证系统是否授权
+            checkSystemAuth();
+            async function checkSystemAuth() {
+                try {
+                    const response = await fetch("{:webUrl('sysset/checkSystemAuth')}");
+                    const data = await response.json();
+                    let isValid = data.result.isValid;
+                    if( !isValid ){
+                        require(['tip'], function ($) {
+                            tip.confirm("系统检测到授权已到期，请联系官方管理员处理",function(){
+                                location.href = "{:webUrl('sysset/auth')}"
+                            });
+                        });
+                    }
+                } catch (error) {
+                    console.log('Error fetching data:', error);
+                }
+            }
 
+            // 2.定义一个异步函数 监测系统版本
+            let isUpgradeSystemNotice = util.cookie.get('isUpgradeSystemNotice') || 0;
             if( parseInt(isUpgradeSystemNotice) === 0 ){
                 checkSystemVersion();
             }
-
-            // 1.定义一个异步函数 监测系统版本
             async function checkSystemVersion() {
                 try {
                     const response = await fetch("{:webUrl('sysset/checkVersion')}");
