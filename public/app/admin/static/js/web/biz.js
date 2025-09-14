@@ -20,6 +20,7 @@ define(['jquery'], function ($) {
             var name = params.name === undefined ? 'default' : params.name;
             var modalid = name + "-selector-modal";
             modalObj = $('#' + modalid);
+
             if (modalObj.length <= 0) {
                 var modal = '<div id="' + modalid + '"  class="modal fade" tabindex="-1">';
                 modal += '<div class="modal-dialog" style="width: 1020px;">';
@@ -49,7 +50,6 @@ define(['jquery'], function ($) {
                     }
                 })
             }
-            ;
             modalObj.modal('show')
         },
         search: function (searchbtn, name) {
@@ -59,7 +59,6 @@ define(['jquery'], function ($) {
             if (selector.data('nokeywords') === '1') {
                 needkeywords = false
             }
-            ;
             var keyword = $.trim(input.val());
             if (keyword === '' && needkeywords) {
                 input.focus();
@@ -67,6 +66,7 @@ define(['jquery'], function ($) {
             }
             var modalObj = $('#' + name + "-selector-modal");
             $('.content', modalObj).html("正在搜索....");
+
             $.get(selector.data('url'), {
                 keyword: keyword
             }, function (dat) {

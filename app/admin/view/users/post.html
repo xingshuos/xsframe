@@ -44,7 +44,7 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group" id="uniacid_selector">
+                                <div class="form-group" id="uniacid_selector_group">
                                     <label class="col-lg control-label must">管理商户</label>
                                     <div class="col-sm-9 col-xs-12">
                                         {:tpl_selector('uniacid',array('text'=>'name','value'=>$item['name'],'preview'=>true,'readonly'=>true,'multi'=>0,'type'=>'image', 'required'=>false,  'thumb'=>'logo','placeholder'=>'商户名称','buttontext'=>'选择商户 ', 'items'=>$accountInfo,'url'=>webUrl('account/query')))}
@@ -78,22 +78,22 @@
                                     </div>
                                 </div>
 
-                                <!-- <div class="form-group"> -->
-                                <!--     <label class="col-lg control-label">截止时间</label> -->
-                                <!--     <div class="col-sm-6 col-xs-12"> -->
-                                <!--         <div class="input-group"> -->
-                                <!--             {:tpl_form_field_date('end_time',$item['end_time'],true)} -->
-                                <!--             <span class="input-group-addon"> -->
-                                <!--                 <label class="radio-inline" style="margin-top:-9px;"> -->
-                                <!--                     <input type="radio" name="limit_time" value="1" {if $item['end_time'] > 0}checked="checked"{/if}> 限制时间 -->
-                                <!--                 </label> -->
-                                <!--                 <label class="radio-inline" style="margin-top:-9px;"> -->
-                                <!--                     <input type="radio" name="limit_time" value="0" {if $item['end_time'] <= 0}checked="checked"{/if}> 不限时间 -->
-                                <!--                 </label> -->
-                                <!--             </span> -->
-                                <!--         </div> -->
-                                <!--     </div> -->
-                                <!-- </div> -->
+                                <div class="form-group">
+                                    <label class="col-lg control-label">截止时间</label>
+                                    <div class="col-sm-6 col-xs-12">
+                                        <div class="input-group">
+                                            {:tpl_form_field_date('end_time',$item['end_time'],true)}
+                                            <span class="input-group-addon">
+                                                <label class="radio-inline" style="margin-top:-9px;">
+                                                    <input type="radio" name="limit_time" value="1" {if $item['end_time'] > 0}checked="checked"{/if}> 限制时间
+                                                </label>
+                                                <label class="radio-inline" style="margin-top:-9px;">
+                                                    <input type="radio" name="limit_time" value="0" {if $item['end_time'] <= 0}checked="checked"{/if}> 不限时间
+                                                </label>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
 
                             </div>
                         </div>
@@ -125,9 +125,9 @@
         $("input[name='role']").on("click",function(){
             let type = $(this).val()
             if( type !== 'owner' ){
-                $("#uniacid_selector").show()
+                $("#uniacid_selector_group").show()
             }else{
-                $("#uniacid_selector").hide()
+                $("#uniacid_selector_group").hide()
             }
         })
     })

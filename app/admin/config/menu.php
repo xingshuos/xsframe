@@ -101,6 +101,10 @@ return [
                 'title' => '登录日志',
                 'route' => 'login_log',
             ],
+            [
+                'title' => '授权码',
+                'route' => 'auth',
+            ],
         ]
     ],
     'ops'     => [

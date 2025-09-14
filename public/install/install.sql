@@ -415,6 +415,20 @@ CREATE TABLE `#__sys_users`
     UNIQUE KEY `username` (`username`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `#__sys_users_auth`;
+
+CREATE TABLE `#__sys_users_auth` (
+  `id` INT(10) NOT NULL AUTO_INCREMENT,
+  `uniacid` INT(10) NOT NULL DEFAULT '0' COMMENT '限制商户(0为不限制)',
+  `code` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '授权码',
+  `end_time` INT(11) NOT NULL DEFAULT '0' COMMENT '截止时间',
+  `createtime` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `status` TINYINT(1) NOT NULL DEFAULT '0' COMMENT '使用状态 0未使用 1已使用',
+  `use_username` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '使用者账号',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idc_code` (`code`)
+) ENGINE=MYISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='用户授权码';
+
 DROP TABLE IF EXISTS `#__sys_users_log`;
 
 CREATE TABLE `#__sys_users_log`

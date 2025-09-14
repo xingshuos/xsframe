@@ -1,0 +1,118 @@
+{extend name="../../admin/view/public/admin"}
+
+{block name='content'}
+
+<div class="page-header">
+    <span>
+        当前位置：<span class="text-primary">授权码授权码</span>
+    </span>
+    <span>
+        总数量:  <span class='text-danger'>{$total}</span>
+    </span>
+</div>
+<div class="page-content">
+
+    <form action="" method="get" class="form-horizontal table-search" role="form">
+        <div class="page-toolbar">
+            <div class="col-sm-4">
+                <a class="btn btn-primary btn-sm" href="{:webUrl('users/authPost')}"><i class="icon icon-plus"></i> 添加授权码</a>
+            </div>
+            <div class="col-md-8 input-group">
+                <div class="input-group-select">
+                    <select name='status' class='form-control' style="width:120px;">
+                        <option value="">使用状态</option>
+                        <option value='0' {if $_GET['status']=='0'}selected{/if}>未使用</option>
+                        <option value='1' {if $_GET['status']=='1'}selected{/if}>已使用</option>
+                    </select>
+                </div>
+                <input type="text" class="form-control " name="keyword" value="{$_GPC['keyword']}" placeholder="可搜索授权码/使用账号查询">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit"> 搜索</button>
+                </span>
+            </div>
+        </div>
+    </form>
+
+    {if empty($list)}
+    <div class="panel panel-default">
+        <div class="panel-body empty-data">未查询到相关数据</div>
+    </div>
+    {else/}
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-responsive">
+                <thead>
+                <tr>
+                    <th style="width:40px;"></th>
+                    <th style="width: 60px">ID</th>
+                    <th style="width:140px;">授权码</th>
+                    <th style="width:100px;">使用账号</th>
+                    <th style="width: 100px">截止时间</th>
+                    <th style="width: 70px">使用状态</th>
+                    <th style="width: 80px">创建时间</th>
+                    <th style="width: 100px;text-align: center;">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $list as $key=>$row }
+                <tr>
+                    <td style="position: relative; ">
+                        <input type='checkbox' value="{$row['id']}" class="checkone"/>
+                    </td>
+                    <td>{$row['id']}</td>
+                    <td class="full js-clip" data-url="{$row['code']}">{$row['code']}</td>
+                    <td>
+                        {$row['username']?$row['username']:'未使用'}
+                    </td>
+                    <td>{:date("Y-m-d H:i:s",$row['end_time'])}</td>
+                    <td>
+                        <span class="{if $row['status']==1}text-success{else}text-danger{/if}">
+                            {if $row['status']==1}已使用{else}未使用{/if}
+                        </span>
+                    </td>
+                    <td>
+                        {$row['createtime']|date="Y-m-d"}<br>
+                        {$row['createtime']|date="H:i:s"}
+                    </td>
+                    <td style="overflow:visible;text-align: center;">
+                        <div class="btn-group">
+                            <a class='btn btn-op btn-operation' href="{:webUrl('users/authPost', array('id' => $row['id'],'page'=>$page))}">
+                                <span data-toggle="tooltip" data-placement="top" title="" data-original-title="编辑">
+                                    <i class="icon icon-edit"></i>
+                                </span>
+                            </a>
+                            <a class="btn btn-op btn-operation" data-toggle='ajaxRemove' href="{:url('users/authDelete',array('id' => $row['id']));}" data-confirm="确定要删除该授权码吗？">
+                                 <span data-toggle="tooltip" data-placement="top" title="" data-original-title="删除授权码">
+                                   <i class='icon icon-trash'></i>
+                                </span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {/foreach}
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td colspan="3">
+                        <div class="btn-group">
+                            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:url('users/change',['type'=> 'deleted','value' => 1])}">
+                                <i class="icon icon-trash"></i> 批量删除
+                            </button>
+                        </div>
+                    </td>
+                    <td colspan="4" style="text-align: right">
+                        {$pager | raw}
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    {/if}
+</div>
+
+<script language="javascript">
+
+</script>
+{/block}

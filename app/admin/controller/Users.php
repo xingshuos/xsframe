@@ -12,11 +12,10 @@
 
 namespace app\admin\controller;
 
-use app\xs_store\facade\service\ArticleAdvServiceFacade;
+use think\facade\Db;
 use xsframe\enum\UserRoleKeyEnum;
 use xsframe\facade\service\DbServiceFacade;
 use xsframe\util\RandomUtil;
-use think\facade\Db;
 
 class Users extends Base
 {
@@ -86,6 +85,60 @@ class Users extends Base
             'pager' => $pager,
         ];
         return $this->template('list', $var);
+    }
+
+    public function auth()
+    {
+        $condition = [
+            'id'      => Db::raw("> 1"),
+            'deleted' => 0
+        ];
+
+        $keyword = trim($this->params['keyword']);
+        if (!empty($keyword)) {
+            $condition['code|use_username'] = Db::raw(" like '%" . trim($keyword) . "%'");
+        }
+
+        $list = Db::name("sys_users_auth")->where($condition)->order('id desc')->page($this->pIndex, $this->pSize)->select();
+        $total = Db::name("sys_users_auth")->where($condition)->count();
+        $pager = pagination2($total, $this->pIndex, $this->pSize);
+
+        $var = [
+            'list'  => $list,
+            'total' => $total,
+            'pager' => $pager,
+        ];
+        return $this->template('auth', $var);
+    }
+
+    public function authPost()
+    {
+        $id = intval($this->params['id'] ?? 0);
+        $uniacid = intval($this->params['uniacid'] ?? 0);
+
+        $item = Db::name('sys_users_auth')->where(['id' => $id])->find();
+
+        if ($this->request->isPost()) {
+            $data = [
+                "uniacid"  => $uniacid,
+                "end_time" => strtotime($this->params["end_time"]),
+            ];
+
+            if (!empty($id)) {
+                Db::name('sys_users_auth')->where(['id' => $id])->update($data);
+                $this->success(["message" => "更新成功","url" => webUrl("users/auth")]);
+            } else {
+                $data['createtime'] = time();
+                $data['code'] = RandomUtil::random(32);
+                Db::name('sys_users_auth')->insertGetId($data);
+                $this->success(["message" => "创建成功","url" => webUrl("users/auth")]);
+            }
+        }
+
+        $var = [
+            'item' => $item,
+        ];
+        return $this->template('authPost', $var);
     }
 
     public function edit()
