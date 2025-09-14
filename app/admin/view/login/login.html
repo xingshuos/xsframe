@@ -526,9 +526,12 @@
                     tip.msgbox.err(json.result.message);
                     $('#btn-login').attr('stop', 0).val('登录');
                 } else if (json.status == -2) {
-                    $("#licenseModal").modal('show')
-                    $('#btn-login').attr('stop', 0).val('登录');
                     tip.msgbox.err(json.result.message);
+                    $('#btn-login').attr('stop', 0).val('登录');
+
+                    setTimeout(function () {
+                        $("#licenseModal").modal('show')
+                    }, 1500);
                 } else if (json.status == 1) {
                     tip.msgbox.suc("登录成功");
                     $('#btn-login').attr('stop', 1).val('跳转中...');
@@ -577,9 +580,9 @@
     })
 
     // 显示验证码续订
-    setTimeout(function () {
-        $("#licenseModal").modal('show')
-    }, 1000)
+    // setTimeout(function () {
+    //     $("#licenseModal").modal('show')
+    // }, 1000)
 
     document.getElementById('btn-close-modal').addEventListener('click', function() {
         $("#licenseModal").modal('hide')
