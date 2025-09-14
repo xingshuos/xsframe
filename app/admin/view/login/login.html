@@ -88,6 +88,233 @@
         align-content: center;
     }
 </style>
+<style>
+    .we7-modal-dialog .login-modal-header, .modal-dialog .login-modal-header {
+        background-color: unset;
+    }
+    .login-modal-header{
+        background-color: unset;
+        justify-content: flex-start;
+    }
+    .license-modal-content {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        max-width: 500px;
+        width: 100%;
+        color: #333;
+        transition: all 0.4s ease;
+    }
+
+    .login-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        position: relative;
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .login-modal-header h2 {
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-bottom: 0;
+        color: #2c3e50;
+        font-size: 1.5rem;
+    }
+
+    .login-modal-header::after {
+        content: '';
+        position: absolute;
+        bottom: -15px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, #3498db, #2ecc71);
+        border-radius: 10px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #2c3e50;
+    }
+
+    .form-control {
+        background: #f8f9fa;
+        border: 1px solid #e1e5eb;
+        color: #495057;
+        padding: 12px 15px;
+        border-radius: 10px;
+        transition: all 0.3s;
+    }
+
+    textarea.form-control {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    .form-control:focus {
+        background: white;
+        border-color: #3498db;
+        box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+        color: #495057;
+    }
+
+    .form-control::placeholder {
+        color: #adb5bd;
+    }
+
+    .btn-primary {
+        background: linear-gradient(90deg, #3498db, #2ecc71);
+        border: none;
+        padding: 12px 20px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        border-radius: 10px;
+        width: 100%;
+        margin-top: 10px;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 7px 20px rgba(52, 152, 219, 0.4);
+    }
+
+    .btn-primary:active {
+        transform: translateY(0);
+    }
+
+    .result-container {
+        margin-top: 25px;
+        padding: 20px;
+        border-radius: 15px;
+        background: #f8f9fa;
+        display: none;
+        border: 1px solid #e1e5eb;
+    }
+
+    .success {
+        border-left: 4px solid #2ecc71;
+    }
+
+    .error {
+        border-left: 4px solid #e74c3c;
+    }
+
+    .result-icon {
+        font-size: 24px;
+        margin-right: 15px;
+    }
+
+    .success .result-icon {
+        color: #2ecc71;
+    }
+
+    .error .result-icon {
+        color: #e74c3c;
+    }
+
+    .expiry-date {
+        background: #f1f8ff;
+        padding: 12px 15px;
+        border-radius: 10px;
+        margin-top: 15px;
+        font-weight: 500;
+        border: 1px solid #d1e7ff;
+    }
+
+    .expiry-label {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+    }
+
+    .expiry-value {
+        font-size: 1.1rem;
+        color: #3498db;
+    }
+
+    .license-example {
+        font-size: 0.85rem;
+        color: #7f8c8d;
+        margin-top: 5px;
+    }
+
+    .footer-note {
+        text-align: center;
+        margin-top: 25px;
+        font-size: 0.85rem;
+        color: #7f8c8d;
+    }
+
+    .modal-footer {
+        border-top: none;
+        padding-top: 0;
+    }
+
+    .btn-close {
+        opacity: 0.8;
+        background: unset;
+        font-size: 18px;
+    }
+
+    .btn-close:hover {
+        opacity: 1;
+    }
+
+    .launch-btn {
+        background: linear-gradient(90deg, #3498db, #2ecc71);
+        border: none;
+        padding: 15px 40px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+        border-radius: 50px;
+        box-shadow: 0 10px 25px rgba(52, 152, 219, 0.4);
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+        color: white;
+    }
+
+    .launch-btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(52, 152, 219, 0.6);
+    }
+
+    .launch-btn:active {
+        transform: translateY(0);
+    }
+
+    .launch-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: 0.5s;
+    }
+
+    .launch-btn:hover::before {
+        left: 100%;
+    }
+
+    .modal-content {
+        background: transparent;
+        border: none;
+        box-shadow:none;
+    }
+    .modal.in .modal-dialog, .modal-dialog{
+        min-width: unset !important;
+    }
+</style>
 {/block}
 {block name='content'}
 
@@ -128,7 +355,7 @@
             <form id="login-form" action="" method="post" class="we7-form">
                 <div class="input-group-vertical">
                     <div class="form-group">
-                        <input name="username" type="text" class="form-control" value="{$rememberUsername}"
+                        <input name="username" id="username" type="text" class="form-control" value="{$rememberUsername}"
                                placeholder="请输入用户名/手机登录">
                         <div class="help-block">请输入用户名/手机</div>
                     </div>
@@ -176,6 +403,57 @@
                     </div>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- 许可证验证模态框 -->
+    <div class="modal fade" id="licenseModal" tabindex="-1" aria-labelledby="licenseModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="license-modal-content">
+                    <div class="login-modal-header">
+                        <div>
+                            <h2 class="modal-title" id="licenseModalLabel"><i class="fas fa-key me-2"></i>许可证验证</h2>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close-modal">x</button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="mb-4">
+                            <label for="licenseKey" class="form-label">许可证密钥</label>
+                            <textarea class="form-control" id="licenseKey" placeholder="例如: XXXXX-XXXXX-XXXXX-XXXXX" rows="4"></textarea>
+                            <div class="license-example">请输入一个正确的许可证秘钥延长使用期限，否则将无法使用系统功能。</div>
+                        </div>
+
+                        <button id="verifyBtn" class="btn btn-primary">
+                            <i class="fas fa-check-circle me-2"></i>验证许可证
+                        </button>
+
+                        <div id="resultContainer" class="result-container">
+                            <div class="d-flex align-items-center">
+                                <div class="result-icon">
+                                    <i id="resultIcon"></i>
+                                </div>
+                                <div>
+                                    <h5 id="resultTitle" class="mb-1"></h5>
+                                    <p id="resultMessage" class="mb-0"></p>
+                                </div>
+                            </div>
+
+                            <div id="expiryContainer" class="expiry-date mt-3">
+                                <div class="expiry-label">许可证到期时间:</div>
+                                <div id="expiryDate" class="expiry-value"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <div class="footer-note">
+                            <i class="fas fa-lock me-1"></i> 您的许可证信息将被安全加密处理
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -245,10 +523,12 @@
                 if (json.status == 0) {
                     tip.msgbox.err(json.result.message);
                 } else if (json.status == -1) {
-                    require(['tip'], function () {
-                        tip.msgbox.err(json.result.message);
-                        $('#btn-login').attr('stop', 0).val('登录');
-                    });
+                    tip.msgbox.err(json.result.message);
+                    $('#btn-login').attr('stop', 0).val('登录');
+                } else if (json.status == -2) {
+                    $("#licenseModal").modal('show')
+                    $('#btn-login').attr('stop', 0).val('登录');
+                    tip.msgbox.err(json.result.message);
                 } else if (json.status == 1) {
                     tip.msgbox.suc("登录成功");
                     $('#btn-login').attr('stop', 1).val('跳转中...');
@@ -295,6 +575,104 @@
     $(function () {
         $('.system-login-new.auto').height($('.login-panel').outerHeight())
     })
+
+    // 显示验证码续订
+    setTimeout(function () {
+        $("#licenseModal").modal('show')
+    }, 1000)
+
+    document.getElementById('btn-close-modal').addEventListener('click', function() {
+        $("#licenseModal").modal('hide')
+    })
+    document.getElementById('verifyBtn').addEventListener('click', async function() {
+        const licenseKey = document.getElementById('licenseKey').value.trim();
+        const resultContainer = document.getElementById('resultContainer');
+        const resultIcon = document.getElementById('resultIcon');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultMessage = document.getElementById('resultMessage');
+        const expiryContainer = document.getElementById('expiryContainer');
+        const expiryDate = document.getElementById('expiryDate');
+
+        // 模拟验证过程
+        const expireTime = await validateLicense(licenseKey);
+        console.log('expireTime:', expireTime);
+
+        // 显示结果容器
+        resultContainer.style.display = 'block';
+
+        // 移除之前的样式类
+        resultContainer.classList.remove('success', 'error');
+
+        if (expireTime) {
+            checkSuccess(expireTime)
+        } else {
+            checkFail()
+        }
+    })
+
+    function checkSuccess(expireTime){
+        // 验证成功
+        resultContainer.classList.add('success');
+        resultIcon.className = 'fas fa-check-circle';
+        resultTitle.textContent = '验证成功!';
+        resultMessage.textContent = '您的许可证密钥有效，产品已激活。';
+
+        // 显示到期时间
+        // expiryDate.textContent = getExpiryDate();
+        expiryDate.textContent = expireTime;
+        expiryContainer.style.display = 'block';
+
+        setTimeout(function () {
+            $("#licenseModal").modal('hide')
+        }, 2000);
+    }
+
+    function checkFail(){
+        // 验证失败
+        resultContainer.classList.add('error');
+        resultIcon.className = 'fas fa-exclamation-circle';
+        resultTitle.textContent = '验证失败!';
+
+        if (!licenseKey) {
+            resultMessage.textContent = '请输入许可证密钥。';
+        } else {
+            resultMessage.textContent = '您输入的许可证密钥无效或已过期。';
+        }
+
+        // 隐藏到期时间
+        expiryContainer.style.display = 'none';
+    }
+
+    // 许可证验证逻辑
+    async function validateLicense(licenseKey) {
+        const username = $("#username").val();
+        return new Promise((resolve) => {
+            $.post("{:url('admin/login/checkAuthCode')}", {username:username,license:licenseKey}, function (json) {
+                if (json.status === 0) {
+                    tip.msgbox.err(json.result.message);
+                    resolve(false);
+                } else {
+                    resolve(json.result.expireTime);
+                }
+            },"json")
+        })
+    }
+
+    // 获取到期日期（模拟）
+    function getExpiryDate() {
+        const today = new Date();
+        const expiry = new Date(today);
+
+        // 设置到期时间为3个月后
+        expiry.setMonth(expiry.getMonth() + 3);
+
+        // 格式化日期
+        return expiry.toLocaleDateString('zh-CN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }
 </script>
 
 {/block}

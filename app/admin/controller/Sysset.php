@@ -2,7 +2,6 @@
 
 namespace app\admin\controller;
 
-use app\xs_auth\library\LicenseUtil;
 use think\Exception;
 use think\facade\Cache;
 use think\facade\Db;
@@ -13,6 +12,7 @@ use xsframe\util\FileUtil;
 use xsframe\util\RequestUtil;
 use xsframe\wrapper\AttachmentWrapper;
 use xsframe\wrapper\CloudWrapper;
+use xsframe\util\LicenseUtil;
 
 class Sysset extends Base
 {

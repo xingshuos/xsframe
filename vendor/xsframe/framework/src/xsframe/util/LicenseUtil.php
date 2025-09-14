@@ -6,7 +6,6 @@ use xsframe\exception\ApiException;
 
 class LicenseUtil
 {
-    // 环境变量名称（需在服务器配置）
     const PLATFORM_ID = 'xsframe_license';
 
     /**
@@ -61,14 +60,19 @@ class LicenseUtil
      * @param string $license
      * @param string $masterKey
      * @param string $keySalt
-     * @return bool
+     * @param bool $returnTime
+     * @return bool|mixed
      */
     public static function validateLicense(
         string $license,
         string $masterKey,
-        string $keySalt
-    ): bool
+        string $keySalt = '',
+        bool   $returnTime = false
+    )
     {
+        if (empty($keySalt)) {
+            $keySalt = $masterKey;
+        }
         $raw = base64_decode($license, true);
         if ($raw === false) {
             return false;
@@ -106,7 +110,24 @@ class LicenseUtil
         }
 
         // 检查过期时间
-        return time() < (int)$data['expire'];
+        if ($returnTime) {
+            return $data['expire'];
+        } else {
+            return time() < (int)$data['expire'];
+        }
+    }
+
+    // 获取过期时间
+    public static function getExpireTime(
+        string $license,
+        string $masterKey,
+        string $keySalt = ''
+    ): int
+    {
+        if (empty($keySalt)) {
+            $keySalt = $masterKey;
+        }
+        return self::validateLicense($license, $masterKey, $keySalt, true);
     }
 
     /**

@@ -418,13 +418,15 @@ CREATE TABLE `#__sys_users`
 DROP TABLE IF EXISTS `#__sys_users_auth`;
 
 CREATE TABLE `#__sys_users_auth` (
-  `id` INT(10) NOT NULL AUTO_INCREMENT,
-  `uniacid` INT(10) NOT NULL DEFAULT '0' COMMENT '限制商户(0为不限制)',
-  `code` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '授权码',
-  `end_time` INT(11) NOT NULL DEFAULT '0' COMMENT '截止时间',
-  `createtime` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
-  `status` TINYINT(1) NOT NULL DEFAULT '0' COMMENT '使用状态 0未使用 1已使用',
-  `use_username` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '使用者账号',
+     `id` int(10) NOT NULL AUTO_INCREMENT,
+     `uniacid` int(10) NOT NULL DEFAULT '0' COMMENT '限制商户(0为不限制)',
+     `code` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '授权码',
+     `end_time` int(11) NOT NULL DEFAULT '0' COMMENT '截止时间',
+     `createtime` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+     `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '使用状态 0未使用 1已使用',
+     `username` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '使用者账号',
+     `usetime` int(11) NOT NULL DEFAULT '0' COMMENT '使用时间',
+     `deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否删除 0否 1是',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idc_code` (`code`)
 ) ENGINE=MYISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='用户授权码';

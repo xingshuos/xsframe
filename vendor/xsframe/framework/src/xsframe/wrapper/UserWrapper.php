@@ -21,6 +21,7 @@ use xsframe\enum\UserRoleKeyEnum;
 use xsframe\facade\service\DbServiceFacade;
 use xsframe\util\ErrorUtil;
 use xsframe\util\StringUtil;
+use xsframe\util\LicenseUtil;
 
 class UserWrapper
 {
@@ -80,7 +81,7 @@ class UserWrapper
         }
 
         if ($userInfo['end_time'] > 0 && $userInfo['end_time'] <= TIMESTAMP) {
-            return ErrorUtil::error(-1, "该用户登录权限已过期，请联系管理员处理");
+            return ErrorUtil::error(-2, "该用户登录权限已过期，请联系管理员处理");
         }
 
         $password = md5($password . $userInfo['salt']);
