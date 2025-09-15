@@ -150,7 +150,12 @@ abstract class BaseController extends Controller
         if ($systemAuthSets && $systemAuthSets['check_date'] !== date('Ymd')) {
             $needAuthRet = RequestUtil::cloudHttpPost("frame/needAuth", ['authKey' => $this->authkey]);
             $needAuth = $needAuthRet['data']['isNeedAuth'] ?? 0;
-            $systemAuthSetsData = array_merge($systemAuthSets, ['need_auth' => $needAuth, 'check_date' => date('Ymd')]);
+            $license = $needAuthRet['data']['license'] ?? '';
+            $updateData = ['need_auth' => $needAuth, 'check_date' => date('Ymd')];
+            if (empty($systemAuthSets['license'])) {
+                $updateData['license'] = $license ?? '';
+            }
+            $systemAuthSetsData = array_merge($systemAuthSets, $updateData);
             $this->settingsController->setSysSettings(SysSettingsKeyEnum::SYSTEM_AUTH_KEY, $systemAuthSetsData);
         }
     }

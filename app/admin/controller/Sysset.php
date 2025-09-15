@@ -233,9 +233,13 @@ class Sysset extends Base
             $this->settingsController->setSysSettings(SysSettingsKeyEnum::SYSTEM_AUTH_KEY, $systemAuthSetsData);
             show_json(1, ["url" => url("sysset/auth", [])]);
         }
-
-        $isValid = LicenseUtil::validateLicense($systemAuthSets['license'], env('AUTHKEY'));
-        $expireTime = LicenseUtil::getExpireTime($systemAuthSets['license'], env('AUTHKEY'));
+        
+        $isValid = false;
+        $expireTime = 0;
+        if (!empty($systemAuthSets['license'])) {
+            $isValid = LicenseUtil::validateLicense($systemAuthSets['license'], env('AUTHKEY'));
+            $expireTime = LicenseUtil::getExpireTime($systemAuthSets['license'], env('AUTHKEY'));
+        }
 
         $result = [
             'systemAuthSets' => $systemAuthSets,

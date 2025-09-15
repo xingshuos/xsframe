@@ -32,10 +32,10 @@ return [
                 'title' => '系统升级',
                 'route' => 'upgrade',
             ],
-            [
-                'title' => '系统授权',
-                'route' => 'auth',
-            ]
+            // [
+            //     'title' => '系统授权',
+            //     'route' => 'auth',
+            // ]
         ]
     ],
     'app'     => [
