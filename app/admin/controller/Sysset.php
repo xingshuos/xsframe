@@ -9,6 +9,7 @@ use xsframe\enum\CacheKeyEnum;
 use xsframe\enum\SysSettingsKeyEnum;
 use xsframe\exception\ApiException;
 use xsframe\util\FileUtil;
+use xsframe\util\RandomUtil;
 use xsframe\util\RequestUtil;
 use xsframe\wrapper\AttachmentWrapper;
 use xsframe\wrapper\CloudWrapper;
@@ -233,7 +234,7 @@ class Sysset extends Base
             $this->settingsController->setSysSettings(SysSettingsKeyEnum::SYSTEM_AUTH_KEY, $systemAuthSetsData);
             show_json(1, ["url" => url("sysset/auth", [])]);
         }
-        
+
         $isValid = false;
         $expireTime = 0;
         if (!empty($systemAuthSets['license'])) {
@@ -263,6 +264,84 @@ class Sysset extends Base
             'isValid' => (bool)$isValid
         ];
         return $this->success($result);
+    }
+
+    // 授权码
+    public function code()
+    {
+        $condition = [
+            'id'      => Db::raw("> 1"),
+            'deleted' => 0
+        ];
+
+        $keyword = trim($this->params['keyword']);
+        if (!empty($keyword)) {
+            $condition['code|use_username'] = Db::raw(" like '%" . trim($keyword) . "%'");
+        }
+
+        $list = Db::name("sys_users_auth")->where($condition)->order('id desc')->page($this->pIndex, $this->pSize)->select();
+        $total = Db::name("sys_users_auth")->where($condition)->count();
+        $pager = pagination2($total, $this->pIndex, $this->pSize);
+
+        $var = [
+            'list'  => $list,
+            'total' => $total,
+            'pager' => $pager,
+        ];
+        return $this->template('code', $var);
+    }
+
+    public function codePost()
+    {
+        $id = intval($this->params['id'] ?? 0);
+        $uniacid = intval($this->params['uniacid'] ?? 0);
+
+        $item = Db::name('sys_users_auth')->where(['id' => $id])->find();
+
+        if ($this->request->isPost()) {
+            $type = intval($this->params['type'] ?? 0);
+            $data = [
+                "uniacid"  => $uniacid,
+                "type"     => $type,
+                "end_time" => strtotime($this->params["end_time"]),
+            ];
+
+            if (!empty($id)) {
+                Db::name('sys_users_auth')->where(['id' => $id])->update($data);
+                $this->success(["message" => "更新成功", "url" => webUrl("sysset/code")]);
+            } else {
+                $data['createtime'] = time();
+                $data['code'] = RandomUtil::random($type == 0 ? 32 : 64);
+                Db::name('sys_users_auth')->insertGetId($data);
+                $this->success(["message" => "创建成功", "url" => webUrl("sysset/code")]);
+            }
+        }
+
+        $var = [
+            'item' => $item,
+        ];
+        return $this->template('codePost', $var);
+    }
+
+    public function codeDelete()
+    {
+        $id = intval($this->params['id'] ?? 0);
+
+        if (empty($id)) {
+            $id = $this->params["ids"];
+        }
+
+        if (empty($id)) {
+            $this->error("参数错误");
+        }
+
+        $items = Db::name('sys_users_auth')->field("id,code")->where(['id' => $id])->select()->toArray();
+
+        foreach ($items as $key => $item) {
+            Db::name("sys_users_auth")->where(["id" => $item['id']])->update(['deleted' => 1]);
+        }
+
+        $this->success(["url" => referer()]);
     }
 
     // 更新完毕

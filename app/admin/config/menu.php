@@ -32,6 +32,10 @@ return [
                 'title' => '系统升级',
                 'route' => 'upgrade',
             ],
+            [
+                'title' => '授权码',
+                'route' => 'code',
+            ],
             // [
             //     'title' => '系统授权',
             //     'route' => 'auth',
@@ -77,7 +81,7 @@ return [
             [
                 'title' => '独立域名',
                 'route' => 'host',
-            ],
+            ]
         ]
     ],
     'users'   => [
@@ -100,10 +104,6 @@ return [
             [
                 'title' => '登录日志',
                 'route' => 'login_log',
-            ],
-            [
-                'title' => '授权码',
-                'route' => 'auth',
             ],
         ]
     ],

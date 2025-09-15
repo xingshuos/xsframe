@@ -1619,6 +1619,9 @@ select.form-control.select-lg {
 .table > thead > tr > td.full, .table > tbody > tr > td.full, .table > tfoot > tr > td.full {
     white-space: normal;
     line-height: 20px;
+    word-wrap: break-word;
+    word-break: break-all;
+    hyphens: auto;
 }
 
 .modal .table th, .modal .table td {

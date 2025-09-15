@@ -59,6 +59,11 @@ class Login extends Base
             show_json(0, '请输入密码!');
         }
 
+        # 负载均衡服务器下会导致验证无效，需要将session放入redis存储 TODO
+        if (!Captcha::check($verify)) {
+            show_json(0, '验证码输入错误!');
+        }
+
         # 校验系统授权
         $systemAuthSets = $this->settingsController->getSysSettings(SysSettingsKeyEnum::SYSTEM_AUTH_KEY);
         if (isset($systemAuthSets['need_auth']) && $systemAuthSets['need_auth'] == 1) {
@@ -66,14 +71,28 @@ class Login extends Base
             if (!empty($license)) {
                 $isValid = LicenseUtil::validateLicense($license, env('AUTHKEY'));
                 if (!$isValid) {
-                    return ErrorUtil::error(-2, "系统授权已过期，请联系平台管理员处理");
+                    show_json(-2, "系统授权已过期，请联系平台管理员处理！");
                 }
             }
         }
 
-        # 负载均衡服务器下会导致验证无效，需要将session放入redis存储 TODO
-        if (!Captcha::check($verify)) {
-            show_json(0, '验证码输入错误!');
+        # 校验商户授权
+        $userInfo = Db::name('sys_users')->where(['username' => $username])->find();
+        if (empty($userInfo)) {
+            show_json(0, '用户不存在!');
+        }
+        $accountUserInfo = Db::name('sys_account_users')->where(['user_id' => $userInfo['id']])->find();
+        if (!empty($accountUserInfo)) {
+            $accountInfo = Db::name('sys_account')->where(['uniacid' => $accountUserInfo['uniacid']])->find();
+            if (!empty($accountInfo)) {
+                if ($accountInfo['status'] == 0) {
+                    show_json(0, '商户已被禁用，请联系平台管理员处理!');
+                } else {
+                    if ($accountInfo['end_time'] <= TIMESTAMP) {
+                        show_json(-2, "商户授权已过期，请联系管理员处理！");
+                    }
+                }
+            }
         }
 
         $hostUrl = $this->request->header()['host'];
@@ -127,24 +146,35 @@ class Login extends Base
             if (empty($username)) {
                 show_json(0, '账号不能为空!');
             }
+            $userInfo = Db::name('sys_users')->where(['username' => $username])->find();
+            if (empty($userInfo)) {
+                show_json(0, '用户不存在!');
+            }
+
             $item = Db::name('sys_users_auth')->where(['code' => $license, 'deleted' => 0])->find();
             if (empty($item) || empty($item['code']) || $item['end_time'] < TIMESTAMP || $item['status'] != 0) {
                 show_json(0, '秘钥验证失败!');
             }
             $expireTime = $item['end_time'];
 
-            $userInfo = Db::name('sys_users')->where(['username' => $username])->find();
-            if (empty($userInfo)) {
-                show_json(0, '用户不存在!');
+            # 验证码商户是否到期
+            if (strlen($license) >= 64) {
+                $accountUserInfo = Db::name('sys_account_users')->where(['user_id' => $userInfo['id']])->find();
+                if (empty($accountUserInfo)) {
+                    show_json(0, '该用户未绑定商户!');
+                }
+                Db::name('sys_account')->where(['uniacid' => $accountUserInfo['uniacid']])->update(['end_time' => $expireTime]);
+            } else {
+                if ($userInfo['end_time'] <= 0) {
+                    show_json(0, '该用户无需续授权!');
+                }
+                if ($userInfo['end_time'] >= $expireTime) {
+                    show_json(0, '该用户无需续授权!');
+                }
+                Db::name('sys_users')->where(['username' => $username])->update(['end_time' => $expireTime]);
             }
-            if ($userInfo['end_time'] <= 0) {
-                show_json(0, '该用户无需续授权!');
-            }
-            if ($userInfo['end_time'] >= $expireTime) {
-                show_json(0, '该用户无需续授权!');
-            }
+
             Db::name('sys_users_auth')->where(['id' => $item['id']])->update(['status' => 1, 'username' => $username, 'usetime' => TIMESTAMP]);
-            Db::name('sys_users')->where(['username' => $username])->update(['end_time' => $expireTime]);
         }
 
         show_json(1, ['expireTime' => date('Y-m-d H:i:s', $expireTime)]);

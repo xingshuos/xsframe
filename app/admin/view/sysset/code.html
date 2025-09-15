@@ -15,9 +15,16 @@
     <form action="" method="get" class="form-horizontal table-search" role="form">
         <div class="page-toolbar">
             <div class="col-sm-4">
-                <a class="btn btn-primary btn-sm" href="{:webUrl('users/authPost')}"><i class="icon icon-plus"></i> 添加授权码</a>
+                <a class="btn btn-primary btn-sm" href="{:webUrl('sysset/codePost')}"><i class="icon icon-plus"></i> 添加授权码</a>
             </div>
             <div class="col-md-8 input-group">
+                <div class="input-group-select">
+                    <select name='type' class='form-control' style="width:120px;">
+                        <option value="">授权类型</option>
+                        <option value='0' {if $_GET['type']=='0'}selected{/if}>用户</option>
+                        <option value='1' {if $_GET['type']=='1'}selected{/if}>商户</option>
+                    </select>
+                </div>
                 <div class="input-group-select">
                     <select name='status' class='form-control' style="width:120px;">
                         <option value="">使用状态</option>
@@ -45,12 +52,13 @@
                 <tr>
                     <th style="width:40px;"></th>
                     <th style="width: 60px">ID</th>
+                    <th style="width:60px;">授权类型</th>
                     <th style="width:140px;">授权码</th>
-                    <th style="width:100px;">使用账号</th>
-                    <th style="width: 100px">截止时间</th>
-                    <th style="width: 70px">使用状态</th>
+                    <th style="width:80px;">使用账号</th>
+                    <th style="width: 90px">截止时间</th>
+                    <th style="width: 60px">使用状态</th>
                     <th style="width: 80px">创建时间</th>
-                    <th style="width: 100px;text-align: center;">操作</th>
+                    <th style="width: 60px;text-align: center;">操作</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -60,11 +68,22 @@
                         <input type='checkbox' value="{$row['id']}" class="checkone"/>
                     </td>
                     <td>{$row['id']}</td>
+                    <td>
+                        {if $row['type'] == 0}
+                        <label class="label label-info">用户</label>
+                        {else}
+                        <label class="label label-primary">商户</label>
+                        {/if}
+                    </td>
                     <td class="full js-clip" data-url="{$row['code']}">{$row['code']}</td>
                     <td>
                         {$row['username']?$row['username']:'未使用'}
                     </td>
-                    <td>{:date("Y-m-d H:i:s",$row['end_time'])}</td>
+                    <td>
+                        <span class="{if $row['end_time'] > time()}text-success{else}text-danger{/if}">
+                            {:date("Y-m-d H:i:s",$row['end_time'])}
+                        </span>
+                    </td>
                     <td>
                         <span class="{if $row['status']==1}text-success{else}text-danger{/if}">
                             {if $row['status']==1}已使用{else}未使用{/if}
@@ -76,12 +95,12 @@
                     </td>
                     <td style="overflow:visible;text-align: center;">
                         <div class="btn-group">
-                            <a class='btn btn-op btn-operation' href="{:webUrl('users/authPost', array('id' => $row['id'],'page'=>$page))}">
+                            <a class='btn btn-op btn-operation' href="{:webUrl('sysset/codePost', array('id' => $row['id'],'page'=>$page))}">
                                 <span data-toggle="tooltip" data-placement="top" title="" data-original-title="编辑">
                                     <i class="icon icon-edit"></i>
                                 </span>
                             </a>
-                            <a class="btn btn-op btn-operation" data-toggle='ajaxRemove' href="{:url('users/authDelete',array('id' => $row['id']));}" data-confirm="确定要删除该授权码吗？">
+                            <a class="btn btn-op btn-operation" data-toggle='ajaxRemove' href="{:webUrl('sysset/codeDelete',array('id' => $row['id']));}" data-confirm="确定要删除该授权码吗？">
                                  <span data-toggle="tooltip" data-placement="top" title="" data-original-title="删除授权码">
                                    <i class='icon icon-trash'></i>
                                 </span>
@@ -93,15 +112,7 @@
                 </tbody>
                 <tfoot>
                 <tr>
-                    <td><input type="checkbox"></td>
-                    <td colspan="3">
-                        <div class="btn-group">
-                            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:url('users/change',['type'=> 'deleted','value' => 1])}">
-                                <i class="icon icon-trash"></i> 批量删除
-                            </button>
-                        </div>
-                    </td>
-                    <td colspan="4" style="text-align: right">
+                    <td colspan="9" style="text-align: right">
                         {$pager | raw}
                     </td>
                 </tr>
