@@ -420,6 +420,7 @@ DROP TABLE IF EXISTS `#__sys_users_auth`;
 CREATE TABLE `#__sys_users_auth` (
      `id` int(10) NOT NULL AUTO_INCREMENT,
      `uniacid` int(10) NOT NULL DEFAULT '0' COMMENT '限制商户(0为不限制)',
+     `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '授权类型 0用户 1商户',
      `code` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '授权码',
      `end_time` int(11) NOT NULL DEFAULT '0' COMMENT '截止时间',
      `createtime` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
