@@ -241,6 +241,9 @@ class System extends AdminBaseController
         if (isset($item['dyapp_support']) && $item['dyapp_support'] == 1) {
             $appTypes[] = "dyapp";
         }
+        if (isset($item['aiapp_support']) && $item['aiapp_support'] == 1) {
+            $appTypes[] = "aiapp";
+        }
         return $appTypes;
     }
 

@@ -762,6 +762,30 @@ textarea:focus {
     background: #2a9938 !important;
 }
 
+.label.label-harmonyos {
+    background: #317AF7 !important;
+}
+
+.label.label-harmonyos:hover {
+    background: #317AF7 !important;
+}
+
+.label.label-douyin {
+    background: #1d0b1a !important;
+}
+
+.label.label-douyin:hover {
+    background: #1d0b1a !important;
+}
+
+.label.label-ai {
+    background: #814cc9 !important;
+}
+
+.label.label-ai:hover {
+    background: #814cc9 !important;
+}
+
 .control-label {
     color: #666;
 }

@@ -60,6 +60,9 @@
                         <option value="aliapp" {if $type == 'aliapp'}selected{/if}>支付宝小程序</option>
                         <option value="bdapp" {if $type == 'bdapp'}selected{/if}>百度小程序</option>
                         <option value="uniapp" {if $type == 'uniapp'}selected{/if}>UniApp</option>
+                        <option value="harmonyos" {if $type == 'harmonyos'}selected{/if}>鸿蒙OS</option>
+                        <option value="dyapp" {if $type == 'dyapp'}selected{/if}>抖音小程序</option>
+                        <option value="aiapp" {if $type == 'aiapp'}selected{/if}>AI应用</option>
                     </select>
                 </div>
                 <input type="hidden" class="form-control " name="do" value="{$do}">
@@ -132,32 +135,41 @@
                         <div rel="pop" style="display: flex" data-content="">
                             <img class="img-40" src="{$row['logo']}" style='border-radius:50%;border:1px solid #efefef;' onerror="this.src='__ADMIN_IMG__/default-pic.jpg'"/>
                             <span style="display: flex;flex-direction: column;justify-content: center;align-items: flex-start;padding-left: 5px">
-                                <span class="nickname">{$row['name']}</span>
+                                <a class="text text-default" href="{:webUrl('admin/app/edit', array('id' => $row['id']))}">{$row['name']}</a>
 
-                                <span>
+                                <span style="margin-top:2px;">
                                     {if $row['wechat_support'] == 1}
-                                    <label class="label label-success">公众号</label>
+                                    <img src="/app/admin/static/images/icon/type-wechat.png" data-placement="top" data-toggle="popover" data-trigger="hover" data-html="true" data-content="已支持公众号" style="font-size: 12px;color: #00c952;margin-right:0;width: 20px;height: 20px;">
                                     {/if}
                                     {if $row['wxapp_support'] == 1}
-                                    <label class="label label-wxapp">微信小程序</label>
+                                    <img src="/app/admin/static/images/icon/type-wxapp.png" data-placement="top" data-toggle="popover" data-trigger="hover" data-html="true" data-content="已支持微信小程序" style="font-size: 12px;color: #00c952;margin-right:0;width: 20px;height: 20px;">
                                     {/if}
                                     {if $row['pc_support'] == 1}
-                                    <label class="label label-primary">PC</label>
+                                    <img src="/app/admin/static/images/icon/type-pc.png" data-placement="top" data-toggle="popover" data-trigger="hover" data-html="true" data-content="已支持PC端" style="font-size: 12px;color: #00c952;margin-right:0;width: 20px;height: 20px;">
                                     {/if}
                                     {if $row['app_support'] == 1}
-                                    <label class="label label-info">APP</label>
+                                    <img src="/app/admin/static/images/icon/type-app.png" data-placement="top" data-toggle="popover" data-trigger="hover" data-html="true" data-content="已支持APP" style="font-size: 12px;color: #00c952;margin-right:0;width: 20px;height: 20px;">
                                     {/if}
                                     {if $row['h5_support'] == 1}
-                                    <label class="label label-warning">H5</label>
+                                    <img src="/app/admin/static/images/icon/type-h5.png" data-placement="top" data-toggle="popover" data-trigger="hover" data-html="true" data-content="已支持H5" style="font-size: 12px;color: #00c952;margin-right:0;width: 20px;height: 20px;">
                                     {/if}
                                     {if $row['aliapp_support'] == 1}
-                                    <label class="label label-aliapp">支付宝小程序</label>
+                                    <img src="/app/admin/static/images/icon/type-aliapp.png" data-placement="top" data-toggle="popover" data-trigger="hover" data-html="true" data-content="已支持支付宝小程序" style="font-size: 12px;color: #00c952;margin-right:0;width: 20px;height: 20px;">
                                     {/if}
                                     {if $row['bdapp_support'] == 1}
-                                    <label class="label label-bdapp">百度小程序</label>
+                                    <img src="/app/admin/static/images/icon/type-bdapp.png" data-placement="top" data-toggle="popover" data-trigger="hover" data-html="true" data-content="已支持百度小程序" style="font-size: 12px;color: #00c952;margin-right:0;width: 20px;height: 20px;">
                                     {/if}
                                     {if $row['uniapp_support'] == 1}
-                                    <label class="label label-uniapp">UinApp</label>
+                                    <img src="/app/admin/static/images/icon/type-uniapp.png" data-placement="top" data-toggle="popover" data-trigger="hover" data-html="true" data-content="已支持UniApp" style="font-size: 12px;color: #00c952;margin-right:0;width: 20px;height: 20px;">
+                                    {/if}
+                                    {if $row['harmonyos_support'] == 1}
+                                    <img src="/app/admin/static/images/icon/type-harmonyos.png" data-placement="top" data-toggle="popover" data-trigger="hover" data-html="true" data-content="已支持鸿蒙OS" style="font-size: 12px;color: #00c952;margin-right:0;width: 20px;height: 20px;">
+                                    {/if}
+                                    {if $row['dyapp_support'] == 1}
+                                    <img src="/app/admin/static/images/icon/type-dyapp.png" data-placement="top" data-toggle="popover" data-trigger="hover" data-html="true" data-content="已支持抖音小程序" style="font-size: 12px;color: #00c952;margin-right:0;width: 20px;height: 20px;">
+                                    {/if}
+                                    {if $row['aiapp_support'] == 1}
+                                    <img src="/app/admin/static/images/icon/type-aiapp.png" data-placement="top" data-toggle="popover" data-trigger="hover" data-html="true" data-content="已支持AI" style="font-size: 12px;color: #00c952;margin-right:0;width: 20px;height: 20px;">
                                     {/if}
                                 </span>
 
