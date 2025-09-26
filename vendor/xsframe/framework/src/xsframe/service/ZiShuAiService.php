@@ -97,7 +97,7 @@ class ZiShuAiService
             "params"           => !empty($params['params']) ? $params['params'] : ['user_id' => 0, 'uniacid' => 0, 'chat_key' => ''] // 回调地址携带参数 user_id 必传
         ];
         // requestId
-        return $this->doHttpPost("/ai/tool/video", $postData);
+        return $this->doHttpPostJson("/ai/tool/video", $postData);
     }
 
     // 查询视频生成进度
@@ -124,7 +124,7 @@ class ZiShuAiService
                 "params"          => !empty($params['params']) ? $params['params'] : ['user_id' => 0, 'uniacid' => 0, 'chat_key' => ''] // 回调地址携带参数 user_id 必传
             ],
         ];
-        return $this->doHttpPost("/ai/async/embedding/doVector/fileUrlList", $postData);
+        return $this->doHttpPostJson("/ai/async/embedding/doVector/fileUrlList", $postData);
     }
 
     // 删除知识库
@@ -140,7 +140,7 @@ class ZiShuAiService
             "modelPlatform"   => !empty($params['modelPlatform']) ? $params['modelPlatform'] : "siliconflow",
             "fileId"          => !empty($params['fileId']) ? $params['fileId'] : "",
         ];
-        return $this->doHttpPost("/ai/embedding/delete", $postData);
+        return $this->doHttpPostJson("/ai/embedding/delete", $postData);
     }
 
     // 文生图
@@ -168,7 +168,7 @@ class ZiShuAiService
             "callbackUrl"        => !empty($params['callbackUrl']) ? $params['callbackUrl'] : "", // 回调地址
             "params"             => !empty($params['params']) ? $params['params'] : ['user_id' => 0, 'uniacid' => 0, 'chat_key' => ''] // 回调地址携带参数 user_id 必传
         ];
-        return $this->doHttpPost("/ai/tool/text2image", $postData);
+        return $this->doHttpPostJson("/ai/tool/text2image", $postData);
     }
 
     // 图片向量化
@@ -193,7 +193,7 @@ class ZiShuAiService
                 "params"          => !empty($params['params']) ? $params['params'] : ['user_id' => 0, 'uniacid' => 0, 'chat_key' => ''] // 回调地址携带参数 user_id 必传
             ],
         ];
-        return $this->doHttpPost("/ai/tool/imageEmbedding", $postData);
+        return $this->doHttpPostJson("/ai/tool/imageEmbedding", $postData);
     }
 
     /**
