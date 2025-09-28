@@ -20,7 +20,7 @@ use xsframe\util\RequestUtil;
 use xsframe\util\StringUtil;
 use xsframe\wrapper\SettingsWrapper;
 
-class ZiShuService
+class ZiShuService extends BaseService
 {
     private $accessKeyId = null;
     private $accessKeySecret = null;
@@ -30,20 +30,23 @@ class ZiShuService
     private $clientUrl = "https://ai.zishuju.cn/newAi";
     private $isTest = false;
 
-    private $uniacid = 2;
+    private $zsUniacid = 2;
     private $username = "zishuai";
     private $password = "fb860f536151057762df854d35465cf3";
 
-    public function __construct($userToken = "", $isDevelop = false, $clientUrl = null, $uniacid = 2)
+    public function __construct($isDevelop = false, $userToken = "")
     {
-        $this->uniacid = $uniacid;
+        if (empty($userToken)) {
+            $userToken = trim($this->params['ai_token'] ?? '');
+        }
+
         $this->userToken = $userToken;
         $this->isTest = $isDevelop;
 
         if ($this->isTest) {
-            $this->clientUrl = $clientUrl ?? $this->testClientUrl;
+            $this->clientUrl = $this->testClientUrl;
         } else {
-            $this->clientUrl = $clientUrl ?? $this->clientUrl;
+            $this->clientUrl = $this->clientUrl;
         }
     }
 
@@ -51,7 +54,7 @@ class ZiShuService
     public function getUserInfo()
     {
         $url = $this->clientUrl . '/api/user/user_info';
-        $response = RequestUtil::httpPost($url, ['uniacid' => $this->uniacid], ['authorization' => $this->userToken]);
+        $response = RequestUtil::httpPost($url, ['uniacid' => $this->zsUniacid], ['authorization' => $this->userToken]);
         $result = json_decode($response, true);
         return $result['data']['user_info'];
     }
@@ -63,8 +66,8 @@ class ZiShuService
             "authParams"         => [
                 // "accessKeyId"     => "3030303030303131",
                 // "accessKeySecret" => "f42e3017f6e53bca3fcd924fcf0d837b",
-                "username"        => $this->username,
-                "password"        => $this->password,
+                "username" => $this->username,
+                "password" => $this->password,
             ],
             "diagramModelParams" => [
                 "modelPlatform" => !empty($params['modelPlatform']) ? $params['modelPlatform'] : "siliconflow",
@@ -85,7 +88,7 @@ class ZiShuService
         ];
         // dd($postData);
         $retJson = $this->doHttpPostJson("/ai/tool/diagram", $postData);
-        $result = json_decode($retJson,true);
+        $result = json_decode($retJson, true);
         return $result;
     }
 
