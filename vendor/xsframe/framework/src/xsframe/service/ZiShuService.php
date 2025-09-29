@@ -14,11 +14,11 @@ namespace xsframe\service;
 
 use think\facade\Env;
 use xsframe\base\BaseService;
-use xsframe\exception\ApiException;
 use xsframe\util\RandomUtil;
 use xsframe\util\RequestUtil;
 use xsframe\util\StringUtil;
 use xsframe\wrapper\SettingsWrapper;
+use xsframe\exception\ApiException;
 
 class ZiShuService extends BaseService
 {
@@ -34,14 +34,15 @@ class ZiShuService extends BaseService
     private $username = "zishuai";
     private $password = "fb860f536151057762df854d35465cf3";
 
-    public function __construct($isDevelop = false, $userToken = "")
+    protected function _service_initialize()
     {
+        parent::_service_initialize();
+
         if (empty($userToken)) {
-            $userToken = trim($this->params['ai_token'] ?? '');
+            $userToken = trim(request()->param('ai_token') ?? '');
         }
 
         $this->userToken = $userToken;
-        $this->isTest = $isDevelop;
 
         if ($this->isTest) {
             $this->clientUrl = $this->testClientUrl;
@@ -50,18 +51,32 @@ class ZiShuService extends BaseService
         }
     }
 
+    // 获取用户ID
+    public function getUserId()
+    {
+        return $this->userToken ? $this->authcode(base64_decode($this->userToken), "DECODE", 'zishu') : 0;
+    }
+
     // 获取紫薯的用户信息
     public function getUserInfo()
     {
-        $url = $this->clientUrl . '/api/user/user_info';
-        $response = RequestUtil::httpPost($url, ['uniacid' => $this->zsUniacid], ['authorization' => $this->userToken]);
-        $result = json_decode($response, true);
+        try {
+            $url = $this->clientUrl . '/api/user/user_info';
+            $response = RequestUtil::httpPost($url, ['uniacid' => $this->zsUniacid], ['authorization' => $this->userToken]);
+            $result = json_decode($response, true);
+            if ($result != 200 && $result['code'] != 200) {
+                throw new ApiException("获取用户信息失败");
+            }
+        } catch (\Exception $e) {
+            throw new ApiException($e->getMessage());
+        }
         return $result['data']['user_info'];
     }
 
     // 文生图
     public function doImage($params = [])
     {
+        $callbackUrl = $this->clientUrl . '/api/user/callback';
         $postData = [
             "authParams"         => [
                 // "accessKeyId"     => "3030303030303131",
@@ -90,6 +105,62 @@ class ZiShuService extends BaseService
         $retJson = $this->doHttpPostJson("/ai/tool/diagram", $postData);
         $result = json_decode($retJson, true);
         return $result;
+    }
+
+    // 加解密用户ID
+    private function authcode($string, $operation = 'DECODE', $key = 'xsframe', $expiry = 0)
+    {
+        $ckey_length = 4;
+        $key = md5($key != 'xsframe' ? $key : 'xsframe');
+        $keya = md5(substr($key, 0, 16));
+        $keyb = md5(substr($key, 16, 16));
+        $operation = strtoupper($operation);
+        $keyc = $ckey_length ? ($operation == 'DECODE' ? substr($string, 0, $ckey_length) : substr(md5(microtime()), -$ckey_length)) : '';
+
+        $cryptkey = $keya . md5($keya . $keyc);
+        $key_length = strlen($cryptkey);
+
+        $string = $operation == 'DECODE' ? base64_decode(substr($string, $ckey_length)) : sprintf('%010d', $expiry ? $expiry + time() : 0) . substr(md5($string . $keyb), 0, 16) . $string;
+        $string_length = strlen($string);
+
+        $result = '';
+        $box = range(0, 255);
+
+        $rndkey = [];
+        for ($i = 0; $i <= 255; $i++) {
+            $rndkey[$i] = ord($cryptkey[$i % $key_length]);
+        }
+
+        for ($j = $i = 0; $i < 256; $i++) {
+            $j = ($j + $box[$i] + $rndkey[$i]) % 256;
+            $tmp = $box[$i];
+            $box[$i] = $box[$j];
+            $box[$j] = $tmp;
+        }
+
+        for ($a = $j = $i = 0; $i < $string_length; $i++) {
+            $a = ($a + 1) % 256;
+            $j = ($j + $box[$a]) % 256;
+            $tmp = $box[$a];
+            $box[$a] = $box[$j];
+            $box[$j] = $tmp;
+            $result .= chr(ord($string[$i]) ^ ($box[($box[$a] + $box[$j]) % 256]));
+        }
+
+        if ($operation == 'DECODE') {
+            try {
+                if ((substr($result, 0, 10) == 0 || substr($result, 0, 10) - time() > 0) && substr($result, 10, 16) == substr(md5(substr($result, 26) . $keyb), 0, 16)) {
+                    return substr($result, 26);
+                } else {
+                    return '';
+                }
+            } catch (\Exception $exception) {
+                return '';
+            }
+
+        } else {
+            return $keyc . str_replace('=', '', base64_encode($result));
+        }
     }
 
     // 发送http post json请求
