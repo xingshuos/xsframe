@@ -389,7 +389,6 @@ class File extends AdminBaseController
         }
 
         $list = Db::name('sys_attachment')->where(['id' => $id, 'uniacid' => $this->curUniacid])->select()->toArray();
-
         $this->fileController = new FileWrapper();
         foreach ($list as $item) {
             $file = strval($item['fileurl']);

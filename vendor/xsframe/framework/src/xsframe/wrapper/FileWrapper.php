@@ -84,8 +84,8 @@ class FileWrapper
             @unlink($filePath);
         }
 
-        # TODO 删除远程附件
-        $this->fileRemoteDelete($fileUrl);
+        # 删除远程附件
+        $this->fileRemoteDelete($uniacid, $fileUrl);
 
         $isDelete = Db::name('sys_attachment')->where(['uniacid' => $uniacid, 'fileUrl' => $fileUrl])->delete();
         if (!$isDelete) {
@@ -195,16 +195,24 @@ class FileWrapper
     }
 
     // 删除附件
-    private function fileRemoteDelete($filePath = null)
+    private function fileRemoteDelete($uniacid = 0, $fileUrl = null)
     {
         $settingsController = new SettingsWrapper();
-        $attachmentSets = $settingsController->getSysSettings(SysSettingsKeyEnum::ATTACHMENT_KEY);
+        if ($uniacid > 0) {
+            $setting = $settingsController->getAccountSettings($uniacid, 'settings');
+        } else {
+            $setting = $settingsController->getSysSettings(SysSettingsKeyEnum::ATTACHMENT_KEY);
+        }
 
-        if (empty($attachmentSets) || empty($filePath)) {
+        if (empty($fileUrl)) {
             return false;
         }
 
-        # 删除远程附件 TODO
+        // 删除云存储文件
+        if (!empty($setting['remote']) && $setting['remote']['type'] > 0) {
+            $attachmentController = new AttachmentWrapper();
+            $attachmentController->fileRemoteDelete($setting, $fileUrl);
+        }
 
         return true;
     }

@@ -12,8 +12,10 @@
 
 namespace xsframe\wrapper;
 
+use OSS\Model\DeleteMarkerInfo;
 use Qcloud\Cos\Client;
 use Qiniu\Auth;
+use Qiniu\Storage\BucketManager;
 use Qiniu\Storage\UploadManager;
 use think\Exception;
 use xsframe\exception\ApiException;
@@ -291,6 +293,79 @@ class AttachmentWrapper
 
         if ($auto_delete_local) {
             FileUtil::fileDelete($filename);
+        }
+
+        return true;
+    }
+
+    // 服务器上传文件
+    public function fileRemoteDelete($setting, $filePath)
+    {
+        if (empty($setting['remote']['type'])) {
+            return false;
+        }
+
+        // 阿里云（已完成）
+        if ($setting['remote']['type'] == '2') {
+            [$bucket, $url] = explode('@@', $setting['remote']['alioss']['bucket']);
+
+            $buckets = $this->attachmentAliossBuctkets($setting['remote']['alioss']['key'], $setting['remote']['alioss']['secret']);
+            $host_name = $setting['remote']['alioss']['internal'] ? '-internal.aliyuncs.com' : '.aliyuncs.com';
+            $endpoint = 'http://' . $buckets[$bucket]['location'] . $host_name;
+
+            try {
+                $ossClient = new OssClient($setting['remote']['alioss']['key'], $setting['remote']['alioss']['secret'], $endpoint);
+                $ossClient->deleteObject($bucket, $filePath);
+            } catch (OssException $e) {
+                // throw new ApiException($e->getMessage());
+            }
+            return true;
+        }
+
+        // 七牛云（未完成）
+        if ($setting['remote']['type'] == '3') {
+            try {
+                // 初始化Auth状态
+                $auth = new Auth($setting['remote']['qiniu']['accesskey'], $setting['remote']['qiniu']['secretkey']);
+                $bucketMgr = new BucketManager($auth);
+
+                $error = $bucketMgr->delete($setting['remote']['qiniu']['bucket'], $filePath);
+
+                if ($error instanceof \Qiniu\Http\Error) {
+                    if ($error->code() != 612) {
+                        throw new ApiException("删除七牛远程文件失败");
+                    }
+                }
+            } catch (Exception $e) {
+                // throw new ApiException($e->getMessage());
+            }
+            return true;
+        }
+
+        // 腾讯云（未完成）
+        if ($setting['remote']['type'] == '4') {
+            try {
+                $region = $setting['remote']['cos']['local'];
+                $appid = $setting['remote']['cos']['appid'];
+                $secretId = $setting['remote']['cos']['secretid'];
+                $secretKey = $setting['remote']['cos']['secretkey'];
+                $bucket = $setting['remote']['cos']['bucket'];
+
+                $cosClient = new Client([
+                    'region'      => $region,
+                    'credentials' => [
+                        'appId'     => $appid,
+                        'secretId'  => $secretId,
+                        'secretKey' => $secretKey,
+                    ],
+                ]);
+                $cosClient->DeleteObject([
+                    'Bucket' => $bucket,
+                    'Key'    => $filePath
+                ]);
+            } catch (Exception $e) {
+                // throw new ApiException($e->getMessage());
+            }
         }
 
         return true;
