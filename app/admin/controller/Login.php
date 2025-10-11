@@ -88,7 +88,7 @@ class Login extends Base
                 if ($accountInfo['status'] == 0) {
                     show_json(0, '商户已被禁用，请联系平台管理员处理!');
                 } else {
-                    if ($accountInfo['end_time'] <= TIMESTAMP) {
+                    if ($accountInfo['end_time'] > 0 && $accountInfo['end_time'] <= TIMESTAMP) {
                         show_json(-2, "商户授权已过期，请联系管理员处理！");
                     }
                 }
