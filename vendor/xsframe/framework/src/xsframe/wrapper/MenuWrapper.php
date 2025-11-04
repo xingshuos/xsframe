@@ -151,9 +151,7 @@ class MenuWrapper
                             }
                         }
                     } else { // 操作员权限验证
-                        // if ($val['items'][0]['perm']) { // 旧逻辑需要再代码中设置开启权限
                         foreach ($val['items'] as $itemsKey => $itemInfo) {
-                            // if ($itemInfo['perm']) {
                             $permUrl = $module . "/" . $menu_item['route'] . "." . $itemInfo['route'];
                             $isAuthPerm = cs($permUrl);
 
@@ -166,10 +164,7 @@ class MenuWrapper
                                     }
                                 }
                             }
-                            // dump($permUrl, 123, $role);
-                            // }
                         }
-                        // }
                     }
 
                     if ($itemsOneRouteIsChange) {

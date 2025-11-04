@@ -79,6 +79,9 @@ class Perm extends AdminBaseController
         $role = Db::name("sys_account_perm_role")->where(['id' => $item['roleid']])->find();
         $memberInfo = Db::name('sys_member')->field("id,nickname,realname,realname realname1,avatar,mobile")->where(['id' => $item['mid']])->find();
         $memberInfo['avatar'] = tomedia($memberInfo['avatar']);
+        # 截止时间
+        $item['end_time'] = Db::name('sys_users')->where(['id' => $item['uid']])->value('end_time');
+
         if (empty($memberInfo['realname1'])) {
             $memberInfo['realname1'] = $memberInfo['nickname'];
         }
@@ -91,6 +94,10 @@ class Perm extends AdminBaseController
             $status = intval($this->params['status'] ?? 0);
             $roleId = trim($this->params['roleid'] ?? 0);
             $mid = intval($this->params['mid'] ?? 0);
+            $isLimit = intval($this->params['is_limit'] ?? 0);
+
+            $end_time = strval($this->params['end_time']);
+            $limit_time = intval($this->params['limit_time']);
 
             if (empty($username)) {
                 $this->error('登录账号不能为空');
@@ -136,6 +143,7 @@ class Perm extends AdminBaseController
                 'roleid'   => $roleId,
                 'status'   => $status,
                 'mid'      => $mid,
+                'is_limit' => $isLimit,
             ];
 
             $data['perms'] = trim($this->params['permsarray']);
@@ -152,17 +160,26 @@ class Perm extends AdminBaseController
                     $userUpdateData['password'] = $password;
                     $userUpdateData['salt'] = $salt;
                 }
+
+                $userUpdateData['end_time'] = 0;
+                if ($limit_time > 0) {
+                    $userUpdateData['end_time'] = strtotime($end_time);
+                }
+
                 Db::name('sys_users')->where(['id' => $item['uid']])->update($userUpdateData);
+
+                $accountUsersInfo = Db::name('sys_account_users')->where(['user_id' => $item['uid'], 'uniacid' => $this->uniacid])->find();
+                $userAccountData = [
+                    'uniacid' => $this->uniacid,
+                    'user_id' => $item['uid'],
+                ];
                 if (!empty($permsArray[0])) {
-                    $isUpdate = Db::name('sys_account_users')->where(['user_id' => $item['uid'], 'uniacid' => $this->uniacid])->update(['module' => $permsArray[0]]);
-                    if (!$isUpdate) {
-                        $userAccountData = [
-                            'user_id' => $item['uid'],
-                            'uniacid' => $this->uniacid,
-                            'module'  => $permsArray[0],
-                        ];
-                        Db::name('sys_account_users')->insert($userAccountData);
-                    }
+                    $userAccountData['module'] = $permsArray[0];
+                }
+                if (!empty($accountUsersInfo)) {
+                    Db::name('sys_account_users')->where(['user_id' => $item['uid'], 'uniacid' => $this->uniacid])->update(['module' => $permsArray[0]]);
+                } else {
+                    Db::name('sys_account_users')->insert($userAccountData);
                 }
             } else {
                 $data['createtime'] = time();
@@ -180,18 +197,24 @@ class Perm extends AdminBaseController
                         'status'     => $status,
                         'createtime' => time(),
                     ];
+
+                    $userData['end_time'] = 0;
+                    if ($limit_time > 0) {
+                        $userData['end_time'] = strtotime($end_time);
+                    }
+
                     $userId = Db::name('sys_users')->insertGetId($userData);
                     $data['uid'] = $userId;
 
                     $permsArray = explode(",", $this->params['permsarray']);
 
+                    $userAccountData = [
+                        'uniacid' => $this->uniacid,
+                        'user_id' => $userId,
+                    ];
+
                     if (!empty($permsArray[0])) {
-                        $userAccountData = [
-                            'user_id' => $userId,
-                            'uniacid' => $this->uniacid,
-                            'module'  => $permsArray[0],
-                        ];
-                        Db::name('sys_account_users')->insert($userAccountData);
+                        $userAccountData['module'] = $permsArray[0];
                     } else {
                         if ($roleId > 0) {
                             $roleInfo = Db::name("sys_account_perm_role")->field("perms")->where(['id' => $roleId])->find();
@@ -204,6 +227,8 @@ class Perm extends AdminBaseController
                             Db::name('sys_account_users')->insert($userAccountData);
                         }
                     }
+
+                    Db::name('sys_account_users')->insert($userAccountData);
                 }
 
                 Db::name('sys_account_perm_user')->insert($data);

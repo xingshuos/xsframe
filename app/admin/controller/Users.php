@@ -15,6 +15,7 @@ namespace app\admin\controller;
 use think\facade\Db;
 use xsframe\enum\UserRoleKeyEnum;
 use xsframe\facade\service\DbServiceFacade;
+use xsframe\facade\wrapper\PermFacade;
 use xsframe\util\RandomUtil;
 
 class Users extends Base
@@ -104,10 +105,29 @@ class Users extends Base
         $role = trim($this->params['role'] ?? '');
         $module = $this->params['module'] ?? '';
 
+        $item = Db::name('sys_users')->where(['id' => $id])->find();
+        $accountInfo = [];
+        $usersAccount = [];
+        $accountPermUsersInfo = [];
+        if (!empty($item)) {
+            $usersAccount = Db::name('sys_account_users')->field("id,uniacid,module")->where(['user_id' => $id])->find();
+            $accountInfo = Db::name('sys_account')->where(['uniacid' => $usersAccount['uniacid']])->find();
+            $accountInfo['logo'] = tomedia($accountInfo['logo']);
+
+            $accountPermUsersInfo = Db::name('sys_account_perm_user')->where(['uid' => $id, 'uniacid' => $usersAccount['uniacid']])->find();
+            $item['realname'] = $accountPermUsersInfo['realname'];
+            $item['mobile'] = $accountPermUsersInfo['mobile'];
+            $item['is_limit'] = $accountPermUsersInfo['is_limit'];
+            $uniacid = $usersAccount['uniacid'];
+        }
+
         if ($this->request->isPost()) {
             $salt = RandomUtil::random(6);
             $username = trim($this->params["username"]);
             $password = trim($this->params['password']);
+            $realname = trim($this->params['realname']);
+            $mobile = trim($this->params['mobile']);
+            $is_limit = trim($this->params['is_limit']);
 
             $end_time = strval($this->params['end_time']);
             $limit_time = intval($this->params['limit_time']);
@@ -127,10 +147,32 @@ class Users extends Base
                 $data['salt'] = $salt;
                 $data['password'] = md5($password . $salt);
             }
+
+            $permUserData = [
+                'uniacid'    => $uniacid,
+                'uid'        => $id,
+                'realname'   => $realname,
+                'mobile'     => $mobile,
+                'status'     => 1,
+                'createtime' => TIMESTAMP,
+                'is_limit'   => $is_limit,
+            ];
+
+            $permUserData['perms'] = trim($this->params['permsarray']);
+            $permsArray = explode(",", $this->params['permsarray']);
+
             if (!empty($id)) {
                 Db::name('sys_users')->where(['id' => $id])->update($data);
+
+                if (!empty($accountPermUsersInfo)) {
+                    Db::name('sys_account_perm_user')->where(['id' => $accountPermUsersInfo['id']])->update($permUserData);
+                } else {
+                    $permUserData['createtime'] = TIMESTAMP;
+                    Db::name('sys_account_perm_user')->insert($permUserData);
+                }
             } else {
-                $data['createtime'] = time();
+                $data['createtime'] = TIMESTAMP;
+                $permUserData['createtime'] = TIMESTAMP;
 
                 $isExitUser = Db::name('sys_users')->where(['username' => $username])->count();
                 if ($isExitUser) {
@@ -138,6 +180,7 @@ class Users extends Base
                 }
 
                 $id = Db::name('sys_users')->insertGetId($data);
+                Db::name('sys_account_perm_user')->insert($permUserData);
             }
 
             # 非超级管理员分配商户 start
@@ -149,6 +192,10 @@ class Users extends Base
                 ];
                 if (!empty($module)) {
                     $usersAccountData['module'] = $module;
+                }else{
+                    if (!empty($permsArray[0])) {
+                        $usersAccountData['module'] = $permsArray[0];
+                    }
                 }
                 if (!empty($usersAccount)) {
                     Db::name('sys_account_users')->where(['user_id' => $id])->update($usersAccountData);
@@ -161,17 +208,29 @@ class Users extends Base
             $this->success(["url" => webUrl("users/list")]);
         }
 
-        $item = Db::name('sys_users')->where(['id' => $id])->find();
-        $accountInfo = [];
-
-        if (!empty($item)) {
-            $usersAccount = Db::name('sys_account_users')->field("id,uniacid,module")->where(['user_id' => $id])->find();
-            $accountInfo = Db::name('sys_account')->where(['uniacid' => $usersAccount['uniacid']])->find();
-            $accountInfo['logo'] = tomedia($accountInfo['logo']);
+        /*权限设置 start*/
+        $perms = PermFacade::formatPerms($uniacid);
+        $operatorPerms = []; // 当前用户权限
+        $accountsPerms = []; // 排除系统应用
+        $rolePerms = [];
+        $userPerms = [];
+        if (!empty($accountPermUsersInfo)) {
+            if (!empty($accountPermUsersInfo['roleid'])) {
+                $roleInfo = Db::name('sys_account_perm_role')->field('perms')->where(['id' => $accountPermUsersInfo['roleid']])->find();
+                $rolePerms = explode(',', $roleInfo['perms']);
+            }
+            $userPerms = explode(',', $accountPermUsersInfo['perms']);
         }
+        /*权限设置 end*/
+
         $var = [
-            'item'        => $item,
-            'accountInfo' => $accountInfo,
+            'item'           => $item,
+            'accountInfo'    => $accountInfo,
+            'perms'          => $perms,
+            'operator_perms' => $operatorPerms,
+            'accounts_perms' => $accountsPerms,
+            'role_perms'     => $rolePerms,
+            'user_perms'     => $userPerms,
         ];
         return $this->template('post', $var);
     }

@@ -75,14 +75,16 @@ class PermWrapper
             return false;
         }
 
-        $field = " u.uid,u.status as userstatus,r.status as rolestatus,u.perms as userperms,r.perms as roleperms,u.roleid ";
+        $field = " u.uid,u.status as userstatus,u.is_limit,r.status as rolestatus,u.perms as userperms,r.perms as roleperms,u.roleid ";
 
         $where = ['u.uid' => $uid];
         if (!empty($userInfo['uniacid'])) {
             $where['u.uniacid'] = $userInfo['uniacid'];
         }
         $user = Db::name("sys_account_perm_user")->alias('u')->field($field)->leftJoin("sys_account_perm_role r", "r.id = u.roleid")->where($where)->find();
-
+        if( $user['is_limit'] == 0 ){
+            return true;
+        }
         if (empty($user) || empty($user['userstatus'])) {
             return false;
         }

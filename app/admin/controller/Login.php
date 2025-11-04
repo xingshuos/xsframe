@@ -15,6 +15,7 @@ namespace app\admin\controller;
 use think\captcha\facade\Captcha;
 use think\facade\Db;
 use xsframe\enum\SysSettingsKeyEnum;
+use xsframe\facade\service\DbServiceFacade;
 use xsframe\util\ErrorUtil;
 use xsframe\util\LicenseUtil;
 use xsframe\wrapper\AccountHostWrapper;
@@ -116,10 +117,22 @@ class Login extends Base
                 'lastip'    => $this->request->ip(),
                 'agent'     => $this->request->header()['user-agent'],
             ]);
+
+            # 校验数据库字段升级操作
+            $this->checkDbFieldUpgrade();
         } catch (\Exception $e) {
         }
 
         show_json(1, ['url' => $url]);
+    }
+
+    // 校验升级操作
+    public function checkDbFieldUpgrade()
+    {
+        $is_limit = DbServiceFacade::name("sys_account_perm_user")->hasField('is_limit');
+        if (!$is_limit) {
+            DbServiceFacade::name("sys_account_perm_user")->addField('is_limit', 'tinyint', 1, 0, 0, '是否限制权限 0否 1是');
+        }
     }
 
     // 登录

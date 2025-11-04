@@ -102,7 +102,7 @@
                     </td>
                     <td>
                         {if $row['end_time'] > 0}
-                        <span class="{if $row['end_time'] <= time()}text-danger{else}text-success{/if}">{:date("Y-m-d H:i:s",$row['end_time'])}</span>
+                        <span class="{if $row['end_time'] <= time()}text-danger{else}text-success{/if}">{if $row['end_time'] <= time()}已截止{else}{:date("Y-m-d H:i:s",$row['end_time'])}{/if}</span>
                         {else}
                         无限制
                         {/if}

@@ -1,13 +1,4 @@
-{if !empty($perms['parent']) || $userInfo['role'] == 'operator'}
 
-<!-- <div class="form-group"> -->
-<!--     <label class="col-lg control-label"></label> -->
-<!--     <div class="col-sm-9 col-xs-12"> -->
-<!--         <span class='form-control-static'>用户可以在此角色权限的基础上附加其他权限</span> -->
-<!--     </div> -->
-<!-- </div> -->
-
-{if $action=='userpost'}
 <div class="form-group">
     <label class="col-lg control-label">查看权限</label>
     <div class="col-lg-10">
@@ -23,7 +14,6 @@
         <span class="help-block">注意：不限制权限，用户将拥有已分配应用内的所有菜单权限</span>
     </div>
 </div>
-{/if}
 
 <div class="form-group" id="role-perm" style="{if empty($item['is_limit'])}display:none;{/if}">
     <label class="col-lg control-label">可用权限</label>
@@ -265,4 +255,3 @@
         $(".perm-all[data-group=" + group + "]").get(0).checked = check;
     }
 </script>
-{/if}
