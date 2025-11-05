@@ -132,24 +132,28 @@ class UserWrapper
                 $oneMenus = [];
                 if ($role && $userId && $role == UserRoleKeyEnum::OPERATOR_KEY) {
                     $permUserInfo = DbServiceFacade::name('sys_account_perm_user')->getInfo(['uid' => $userId]);
-                    $perms = $permUserInfo['perms'];
+                    if( $permUserInfo['is_limit'] == 1 ){
+                        $perms = $permUserInfo['perms'];
 
-                    // 使用逗号分割字符串
-                    $parts = explode(',', $perms);
-                    if (!empty($parts)) {
-                        $prefixToRemove = "{$moduleName}.web.";
-                        foreach ($parts as $part) {
-                            if (strpos($part, $prefixToRemove) !== false) {
-                                $key = substr($part, strlen($prefixToRemove));
-                                $menuInfo = $menuConfig[$key];
-                                if (!empty($menuInfo) && $menuInfo['items'] && $menuInfo['items'][0] && $menuInfo['items'][0]['items']) { // 如果是三级目录的情况
-                                    $oneMenus[$key] = $menuInfo['items'][0];
-                                } else {
-                                    $oneMenus[$key] = $menuInfo;
+                        // 使用逗号分割字符串
+                        $parts = explode(',', $perms);
+                        if (!empty($parts)) {
+                            $prefixToRemove = "{$moduleName}.web.";
+                            foreach ($parts as $part) {
+                                if (strpos($part, $prefixToRemove) !== false) {
+                                    $key = substr($part, strlen($prefixToRemove));
+                                    $menuInfo = $menuConfig[$key];
+                                    if (!empty($menuInfo) && $menuInfo['items'] && $menuInfo['items'][0] && $menuInfo['items'][0]['items']) { // 如果是三级目录的情况
+                                        $oneMenus[$key] = $menuInfo['items'][0];
+                                    } else {
+                                        $oneMenus[$key] = $menuInfo;
+                                    }
+                                    break;
                                 }
-                                break;
                             }
                         }
+                    }else{
+                        $oneMenus = array_slice($menuConfig, 0, 1);
                     }
                 } else {
                     $oneMenus = array_slice($menuConfig, 0, 1);

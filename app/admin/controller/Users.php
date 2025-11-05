@@ -192,7 +192,7 @@ class Users extends Base
                 ];
                 if (!empty($module)) {
                     $usersAccountData['module'] = $module;
-                }else{
+                } else {
                     if (!empty($permsArray[0])) {
                         $usersAccountData['module'] = $permsArray[0];
                     }
@@ -224,6 +224,7 @@ class Users extends Base
         /*权限设置 end*/
 
         $var = [
+            'uniacid'        => $uniacid,
             'item'           => $item,
             'accountInfo'    => $accountInfo,
             'perms'          => $perms,
