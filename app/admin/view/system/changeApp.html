@@ -1,0 +1,169 @@
+<style>
+    .feed-activity-list {
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .feed-element {
+        float: left;
+        width: 480px;
+        margin-left: 20px;
+        margin-bottom: 20px;
+        border: 1px solid #efefef;
+        padding: 20px;
+    }
+
+    .feed-element::after {
+        display: none
+    }
+
+    .feed-element .title {
+        font-size: 18px;
+        height: 24px;
+        line-height: 20px;
+        vertical-align: bottom;
+        color: var(--primary-color);
+        font-weight: bold;
+        margin-left: 10px;
+    }
+
+    .feed-element img.img-circle,
+    .dropdown-messages-box img.img-circle {
+        float: left;
+        width: 100px;
+        height: 100px;
+        border-radius: 4px;
+        border: 1px solid #f1f1f1;
+    }
+
+    .media-body {
+        margin-top: 3px;
+        height: 65px;
+        padding-left: 15px;
+        position: relative;
+    }
+
+    .text-muted {
+        margin-left: 10px;
+        width: 100%;
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        font-size: 13px;
+        color: var(--sub-color);
+        margin-top: 15px;
+    }
+
+    .status-box{
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+
+    .authorization{
+        width: 95%;
+        height:20px;
+        color: #999;
+        line-height: 24px;
+        border-top: 1px solid #efefef;
+    }
+</style>
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button data-dismiss="modal" class="close" type="button">×</button>
+            <h4 class="modal-title">应用管理</h4>
+        </div>
+        <div class="modal-body">
+
+            <div class="page-header">
+                <div class="pull-right">
+                    <div class="input-group" style="width:400px;">
+                        <span class="input-group-addon">搜索</span>
+                        <input type="text" class="form-control" id="name" placeholder="输入应用名称进行快速搜索"/>
+                    </div>
+                </div>
+                当前位置：<span class="text-primary">我的应用</span>
+            </div>
+
+            <div class="page-content">
+
+                <div class='panel panel-default' style='border:none;'>
+                    {foreach $list as $ck => $cv}
+                    <div class="panel-heading" style='background:none;border:none;'>
+                        {$category[$ck]}
+                    </div>
+                    <div class="feed-activity-list">
+                        {foreach $cv as $plugin}
+                            {if in_array($plugin['identifie'],$perms) || $userInfo['role'] != 'operator' || !$is_limit}
+                            <a class="feed-element" style="cursor: pointer" onclick="windowOpen('{$plugin.identifie}','{$plugin.url}')" href="javascript:;" data-name="{$plugin['name']}">
+                                <span class="pull-left">
+                                    {if !empty($plugin['logo'])}
+                                    <img src="{:tomedia($plugin['logo'])}" class="img-circle" alt="image">
+                                    {else}
+                                    <img src="/app/{$plugin.identifie}/icon.png" class="img-circle" alt="image">
+                                    {/if}
+                                </span>
+                                <div class="media-body">
+                                    <span class="title flex-start-center">
+                                        <span class="fl">{$plugin['name']}</span>
+                                        {foreach $plugin['app_types'] as $key1=>$item1 }
+                                            {if !empty($key1) && !empty($item1)}
+                                                <img src="/app/admin/static/images/icon/type-{$key1}.png" alt="{$key1}" data-placement="top" data-toggle="popover" data-trigger="hover" data-html="true" data-content="已支持{$item1}" style="font-size: 12px;color: #00c952;margin-left:8px;width: 20px;height: 20px;">
+                                            {/if}
+                                        {/foreach}
+                                    </span>
+                                    <small class="text-muted">{$plugin['ability']}</small>
+                                    <div class="status-box">
+                                        {if $plugin['status'] == 1}
+                                        <span class="text text-success">已启用</span>
+                                        {else}
+                                        <span class="text text-danger">不可用</span>
+                                        {/if}
+                                    </div>
+                                </div>
+                            </a>
+                            {/if}
+                        {/foreach}
+                    </div>
+                    {/foreach}
+                </div>
+                <div class="footer pull-right">
+                    {$pager | raw}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function windowOpen(module,url) {
+        $.post("{:webUrl('system/setAccountDefaultModule')}",{uniacid:"{$uniacid}",module:module}, function (json) {
+            window.location.href = url;
+        }, 'json')
+    }
+
+    $(function(){
+        $('#name').bind('input propertychange',function(){
+            let name = $.trim( $('#name').val() );
+            if( name === ''){
+                $('.feed-activity-list').prev('.panel-heading').show();
+                $('.feed-element').show();
+            }else{
+                let feedElement = $('.feed-element');
+                $('.feed-activity-list').prev('.panel-heading').hide();
+                feedElement.hide();
+                feedElement.each(function(){
+                    let pluginName = $(this).data('name');
+                    if(pluginName.indexOf( name ) !== -1){
+                        $(this).show().closest('.feed-activity-list').prev('.panel-heading').show();
+                    }
+                });
+            }
+        })
+    })
+</script>

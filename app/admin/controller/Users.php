@@ -128,6 +128,7 @@ class Users extends Base
             $realname = trim($this->params['realname']);
             $mobile = trim($this->params['mobile']);
             $is_limit = trim($this->params['is_limit']);
+            $app_perms = $this->params['app_perms'] ?? [];
 
             $end_time = strval($this->params['end_time']);
             $limit_time = intval($this->params['limit_time']);
@@ -156,6 +157,7 @@ class Users extends Base
                 'status'     => 1,
                 'createtime' => TIMESTAMP,
                 'is_limit'   => $is_limit,
+                'app_perms'  => implode(",", $app_perms),
             ];
 
             $permUserData['perms'] = trim($this->params['permsarray']);
@@ -214,12 +216,14 @@ class Users extends Base
         $accountsPerms = []; // 排除系统应用
         $rolePerms = [];
         $userPerms = [];
+        $appPerms = [];
         if (!empty($accountPermUsersInfo)) {
             if (!empty($accountPermUsersInfo['roleid'])) {
                 $roleInfo = Db::name('sys_account_perm_role')->field('perms')->where(['id' => $accountPermUsersInfo['roleid']])->find();
                 $rolePerms = explode(',', $roleInfo['perms']);
             }
             $userPerms = explode(',', $accountPermUsersInfo['perms']);
+            $appPerms = explode(',', $accountPermUsersInfo['app_perms']);
         }
         /*权限设置 end*/
 
@@ -232,6 +236,7 @@ class Users extends Base
             'accounts_perms' => $accountsPerms,
             'role_perms'     => $rolePerms,
             'user_perms'     => $userPerms,
+            'app_perms'      => $appPerms,
         ];
         return $this->template('post', $var);
     }

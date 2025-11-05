@@ -301,7 +301,7 @@ trait ServiceTraits
             if ($this->hasField($field)) {
                 return true;
             }
-            $sql = "ALTER TABLE " . tablename($this->tableName) . " ADD COLUMN `{$field}` {$type}({$length}) " . ($default ? "DEFAULT '{$default}'" : '') . ($isNull ? 'NULL' : 'NOT NULL') . " COMMENT '{$comment}' ";
+            $sql = "ALTER TABLE " . tablename($this->tableName) . " ADD COLUMN `{$field}` " .( $length > 0 ? "{$type}({$length})" : "{$type}" ) . ($default ? "DEFAULT '{$default}'" : " ") . ($isNull ? 'NULL' : 'NOT NULL') . " COMMENT '{$comment}' ";
             return Db::execute($sql);
         } catch (\Exception $e) {
             throw new Exception($exception->getMessage());

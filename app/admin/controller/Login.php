@@ -129,9 +129,21 @@ class Login extends Base
     // 校验升级操作
     public function checkDbFieldUpgrade()
     {
-        $is_limit = DbServiceFacade::name("sys_account_perm_user")->hasField('is_limit');
-        if (!$is_limit) {
+        $account_end_time = DbServiceFacade::name("sys_account")->hasField('end_time');
+        if (!$account_end_time) {
+            DbServiceFacade::name("sys_account")->addField('end_time', 'int', 11, 0, 0, '截止时间');
+        }
+        $users_end_time = DbServiceFacade::name("sys_users")->hasField('end_time');
+        if (!$users_end_time) {
+            DbServiceFacade::name("sys_users")->addField('end_time', 'int', 11, 0, 0, '截止时间');
+        }
+        $perm_user_is_limit = DbServiceFacade::name("sys_account_perm_user")->hasField('is_limit');
+        if (!$perm_user_is_limit) {
             DbServiceFacade::name("sys_account_perm_user")->addField('is_limit', 'tinyint', 1, 0, 0, '是否限制权限 0否 1是');
+        }
+        $perm_user_app_perms = DbServiceFacade::name("sys_account_perm_user")->hasField('app_perms');
+        if (!$perm_user_app_perms) {
+            DbServiceFacade::name("sys_account_perm_user")->addField('app_perms', 'TEXT', '', '', 1, '应用所有者权限配置');
         }
     }
 

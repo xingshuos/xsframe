@@ -220,6 +220,9 @@ abstract class AdminBaseController extends BaseController
         # AI能力
         $var['aiGenerate'] = m('xs_aidrive', $this->uniacid);
 
+        # 应用数量
+        $var['appCount'] = $this->accountHostController->getAppCount($this->uniacid, $this->userId, $this->adminSession['role']);
+
         if (!empty($params)) {
             $var = array_merge($var, $params);
         }

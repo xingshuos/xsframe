@@ -16,10 +16,44 @@ namespace xsframe\wrapper;
 use xsframe\enum\SysSettingsKeyEnum;
 use think\facade\Cache;
 use think\facade\Db;
+use xsframe\facade\service\DbServiceFacade;
 
 class AccountHostWrapper
 {
     private $hostKey = SysSettingsKeyEnum::DOMAIN_MAPPING_LIST_KEY;
+
+    // 获取当前账号下应用数量
+    public function getAppCount($uniacid = 0, $userId = 0, $role = '')
+    {
+        $total = 0;
+        if ($uniacid) {
+            $condition = [
+                'am.uniacid' => $uniacid,
+                'am.deleted' => 0,
+            ];
+
+            $permUserInfo = DbServiceFacade::name('sys_account_perm_user')->getInfo(['uniacid' => $uniacid, 'uid' => $userId]);
+            $is_limit = $permUserInfo['is_limit'];
+            if ($is_limit == 1 && $role == 'operator') {
+                $perms = $permUserInfo['perms'];
+                $app_perms = explode(',', $permUserInfo['app_perms']);
+
+                // 使用逗号分割字符串
+                $parts = explode(',', $perms);
+
+                // 使用array_filter过滤掉包含'.'的字符串
+                $filtered = array_filter($parts, function ($item) {
+                    return strpos($item, '.') === false;
+                });
+
+                $filtered = array_merge(array_filter($filtered), $app_perms);
+
+                $condition['am.module'] = $filtered;
+            }
+            $total = Db::name('sys_account_modules')->alias('am')->leftJoin("sys_modules m", "m.identifie = am.module")->where($condition)->count();
+        }
+        return $total;
+    }
 
     // 获取项目默认应用
     public function getAccountModuleDefault($uniacid = 0)

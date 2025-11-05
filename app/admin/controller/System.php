@@ -33,6 +33,19 @@ class System extends AdminBaseController
     // 应用列表
     public function index()
     {
+        $result = $this->getAppList();
+        return $this->template('index', $result);
+    }
+
+    // 切换应用
+    public function changeApp()
+    {
+        $result = $this->getAppList();
+        return $this->template('changeApp', $result);
+    }
+
+    private function getAppList()
+    {
         $this->pSize = 72;
         $condition = [
             'am.uniacid' => $this->uniacid,
@@ -40,20 +53,23 @@ class System extends AdminBaseController
         ];
 
         $field = "am.settings," . "m.*";
-
+        $is_limit = 0;
         if ($this->adminSession['role'] == 'operator') {
             $permUserInfo = DbServiceFacade::name('sys_account_perm_user')->getInfo(['uniacid' => $this->uniacid, 'uid' => $this->userId]);
-            $perms = $permUserInfo['perms'];
+            $is_limit = $permUserInfo['is_limit'];
+            if ($is_limit == 1) {
+                $perms = $permUserInfo['perms'];
 
-            // 使用逗号分割字符串
-            $parts = explode(',', $perms);
+                // 使用逗号分割字符串
+                $parts = explode(',', $perms);
 
-            // 使用array_filter过滤掉包含'.'的字符串
-            $filtered = array_filter($parts, function ($item) {
-                return strpos($item, '.') === false;
-            });
+                // 使用array_filter过滤掉包含'.'的字符串
+                $filtered = array_filter($parts, function ($item) {
+                    return strpos($item, '.') === false;
+                });
 
-            $condition['am.module'] = $filtered;
+                $condition['am.module'] = $filtered;
+            }
         }
 
         $category = AppCategoryKeyEnum::getEnumsText();
@@ -102,16 +118,15 @@ class System extends AdminBaseController
         }
         unset($item);
 
-        // dd($newList);
-
         $result = [
             'list'     => $newList,
             'pager'    => $pager,
             'total'    => $total,
             'perms'    => $perms,
             'category' => $category,
+            'is_limit' => $is_limit,
         ];
-        return $this->template('index', $result);
+        return $result;
     }
 
     // 会员列表
@@ -281,6 +296,43 @@ class System extends AdminBaseController
         }
 
         return $this->template('profile');
+    }
+
+    // 编辑我的账号
+    public function profileEdit()
+    {
+        $uniacid = intval($this->params['i'] ?? 0);
+        if ($this->request->isPost()) {
+            $username = $this->params['username'];
+            $password = $this->params['password'];
+            $newPassword = $this->params['newPassword'];
+
+            $adminSession = $this->adminSession;
+            $userInfo = Db::name('sys_users')->field("id,username,password,salt")->where(['id' => $adminSession['uid']])->find();
+            $password = md5($password . $userInfo['salt']);
+            if (md5($password . $userInfo['salt']) != $adminSession['hash']) {
+                show_json(0, "原始密码错误，请重新输入");
+            }
+            if (strlen($newPassword) < 6) {
+                show_json(0, "请输入不小于6位数的密码");
+            }
+            if (empty($username)) {
+                show_json(0, "登录账号不能为空");
+            }
+            if ($userInfo['username'] != $username) {
+                show_json(0, "账号暂不允许修改");
+            }
+            if ($userInfo['password'] == md5($newPassword . $userInfo['salt'])) {
+                show_json(0, "新密码与原密码相同无需修改");
+            }
+
+            $salt = RandomUtil::random(6);
+            Db::name('sys_users')->where(['id' => $userInfo['id']])->update(['username' => $username, 'password' => md5($newPassword . $salt), 'salt' => $salt]);
+            UserWrapper::logout();
+            show_json(1, ['message' => "密码已修改请重新登录", 'url' => referer()]);
+        }
+
+        return $this->template('profileEdit', ['uniacid' => $uniacid]);
     }
 
     // 获取后端访问入口

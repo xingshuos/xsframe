@@ -75,16 +75,17 @@ class PermWrapper
             return false;
         }
 
-        $field = " u.uid,u.status as userstatus,u.is_limit,r.status as rolestatus,u.perms as userperms,r.perms as roleperms,u.roleid ";
+        $field = " u.uid,u.status as userstatus,u.is_limit,u.app_perms,r.status as rolestatus,u.perms as userperms,r.perms as roleperms,u.roleid ";
 
         $where = ['u.uid' => $uid];
         if (!empty($userInfo['uniacid'])) {
             $where['u.uniacid'] = $userInfo['uniacid'];
         }
         $user = Db::name("sys_account_perm_user")->alias('u')->field($field)->leftJoin("sys_account_perm_role r", "r.id = u.roleid")->where($where)->find();
-        if( $user['is_limit'] == 0 ){
+        if ($user['is_limit'] == 0) {
             return true;
         }
+
         if (empty($user) || empty($user['userstatus'])) {
             return false;
         }
@@ -94,8 +95,9 @@ class PermWrapper
 
         $role_perms = explode(',', $user['roleperms']);
         $user_perms = explode(',', $user['userperms']);
+        $app_perms = explode(',', $user['app_perms']);
 
-        if (empty($role_perms) && empty($user_perms)) {
+        if (empty($role_perms) && empty($user_perms) && empty($app_perms)) {
             return false;
         }
 
@@ -103,6 +105,11 @@ class PermWrapper
         $module = $permUrlArr[0];
         $appMaps = Config::get('app.app_map') ?? [];
         $appModuleName = $appMaps[$module] ?? $module; // 获取应用真实文件夹名称匹配权限
+
+        # 是否有应用的所有权限
+        if (in_array($module, $app_perms)) {
+            return true;
+        }
 
         if ($permType == 1) {
             $permUrlArr = array_splice($permUrlArr, 0, 2);

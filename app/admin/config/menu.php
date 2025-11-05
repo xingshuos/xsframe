@@ -32,14 +32,14 @@ return [
                 'title' => '系统升级',
                 'route' => 'upgrade',
             ],
-            [
-                'title' => '授权码',
-                'route' => 'code',
-            ],
             // [
             //     'title' => '系统授权',
             //     'route' => 'auth',
-            // ]
+            // ],
+            [
+                'title' => '用户授权',
+                'route' => 'code',
+            ],
         ]
     ],
     'app'     => [

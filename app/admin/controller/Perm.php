@@ -95,7 +95,7 @@ class Perm extends AdminBaseController
             $roleId = trim($this->params['roleid'] ?? 0);
             $mid = intval($this->params['mid'] ?? 0);
             $isLimit = intval($this->params['is_limit'] ?? 0);
-
+            $app_perms = $this->params['app_perms'] ?? [];
             $end_time = strval($this->params['end_time']);
             $limit_time = intval($this->params['limit_time']);
 
@@ -137,13 +137,14 @@ class Perm extends AdminBaseController
             }
 
             $data = [
-                'uniacid'  => $this->uniacid,
-                'realname' => $realname,
-                'mobile'   => $mobile,
-                'roleid'   => $roleId,
-                'status'   => $status,
-                'mid'      => $mid,
-                'is_limit' => $isLimit,
+                'uniacid'   => $this->uniacid,
+                'realname'  => $realname,
+                'mobile'    => $mobile,
+                'roleid'    => $roleId,
+                'status'    => $status,
+                'mid'       => $mid,
+                'is_limit'  => $isLimit,
+                'app_perms' => implode(",", $app_perms),
             ];
 
             $data['perms'] = trim($this->params['permsarray']);
@@ -249,6 +250,7 @@ class Perm extends AdminBaseController
 
         $rolePerms = [];
         $userPerms = [];
+        $appPerms = [];
 
         if (!empty($item)) {
             if (!empty($item['roleid'])) {
@@ -256,6 +258,7 @@ class Perm extends AdminBaseController
                 $rolePerms = explode(',', $roleInfo['perms']);
             }
             $userPerms = explode(',', $item['perms']);
+            $appPerms = explode(',', $item['app_perms']);
         }
 
         // dump($rolePerms);
@@ -270,6 +273,7 @@ class Perm extends AdminBaseController
             'accounts_perms' => $accountsPerms,
             'role_perms'     => $rolePerms,
             'user_perms'     => $userPerms,
+            'app_perms'      => $appPerms,
             'memberInfo'     => $memberInfo,
         ]);
     }
