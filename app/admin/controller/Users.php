@@ -107,7 +107,6 @@ class Users extends Base
 
         $item = Db::name('sys_users')->where(['id' => $id])->find();
         $accountInfo = [];
-        $usersAccount = [];
         $accountPermUsersInfo = [];
         if (!empty($item)) {
             $usersAccount = Db::name('sys_account_users')->field("id,uniacid,module")->where(['user_id' => $id])->find();
@@ -162,6 +161,7 @@ class Users extends Base
 
             $permUserData['perms'] = trim($this->params['permsarray']);
             $permsArray = explode(",", $this->params['permsarray']);
+            $permsArray = array_merge($app_perms, $permsArray);
 
             if (!empty($id)) {
                 Db::name('sys_users')->where(['id' => $id])->update($data);

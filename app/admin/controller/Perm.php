@@ -149,6 +149,7 @@ class Perm extends AdminBaseController
 
             $data['perms'] = trim($this->params['permsarray']);
             $permsArray = explode(",", $this->params['permsarray']);
+            $permsArray = array_merge($app_perms, $permsArray);
 
             $salt = RandomUtil::random(6);
 
