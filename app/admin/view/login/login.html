@@ -402,6 +402,16 @@
                         </div>
                     </div>
                 </div>
+
+                {if $systemExpireShow}
+                <!-- 到期提醒 start -->
+                <div class="fixed-header-tip" style="margin-top:10px;">
+                    <div class="alert alert-danger" style="border:unset;background:rgba(254, 240, 240, 0.5);text-align:left;">
+                        <text class="text text-danger">{$systemExpireText}</text>
+                    </div>
+                </div>
+                <!-- 到期提醒 end -->
+                {/if}
             </form>
         </div>
     </div>

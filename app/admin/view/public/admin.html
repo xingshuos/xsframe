@@ -41,7 +41,19 @@
         {/if}
     </ul>
 
-    <div class="wb-header-flex"></div>
+    <div class="wb-header-flex" style="position: relative">
+
+        {if $systemExpireShow}
+        <!-- 到期提醒 start -->
+        <div class="fixed-header-tip">
+            <div class="alert alert-danger" style="border:unset;background:rgba(254, 240, 240, 0.5);text-align:left;">
+                <text class="text text-danger">{$systemExpireText}</text>
+            </div>
+        </div>
+        <!-- 到期提醒 end -->
+        {/if}
+
+    </div>
 
     <ul>
         {if $isSystem}

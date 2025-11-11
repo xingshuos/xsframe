@@ -43,7 +43,36 @@ class Login extends Base
         }
         # 检测是否配置独立域名 end
 
-        return $this->template($style, compact('rememberUsername', 'websiteSets'));
+        $systemExpireShow = 0;
+        $systemExpireText = "";
+        $systemAuthSets = $this->settingsController->getSysSettings(SysSettingsKeyEnum::SYSTEM_AUTH_KEY);
+        if (isset($systemAuthSets['need_auth']) && $systemAuthSets['need_auth'] == 1) {
+            $license = $systemAuthSets['license'] ?? '';
+            if (!empty($license)) {
+                $isNotExpired = LicenseUtil::validateLicense($license, env('AUTHKEY'));
+                $expireTime = LicenseUtil::getExpireTime($license, env('AUTHKEY'));
+
+                $systemExpireShow = $isNotExpired ? 0 : 1;
+                if ($expireTime - TIMESTAMP <= 7 * 86400) {
+                    $systemExpireShow = 1;
+                    $systemExpireText = "系统即将到期，请及时续费（到期时间：" . date('Y-m-d H:i:s', $expireTime) . "）"; # 过期提示信息')."）"; # 过期提示信息
+                    if( $expireTime - TIMESTAMP <= 0 ){
+                        $systemExpireText = "系统已到期，请及时续费（到期时间：" . date('Y-m-d H:i:s', $expireTime) . "）"; # 过期提示信息')."）"; # 过期提示信息
+                    }
+                }
+            }
+        }
+
+        // $systemExpireShow = 1;
+        // $systemExpireText = "系统即将到期，请及时续费（到期时间：" . date('Y-m-d H:i:s', time()) . "）";
+
+        // return $this->template($style, compact('rememberUsername', 'websiteSets'));
+        return $this->template($style, [
+            'rememberUsername' => $rememberUsername,
+            'websiteSets'      => $websiteSets,
+            'systemExpireShow' => $systemExpireShow,
+            'systemExpireText' => $systemExpireText,
+        ]);
     }
 
     // 登录

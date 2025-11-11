@@ -19,6 +19,7 @@ use think\Request;
 use xsframe\enum\SysSettingsKeyEnum;
 use xsframe\exception\ApiException;
 use xsframe\traits\AdminTraits;
+use xsframe\util\LicenseUtil;
 use xsframe\util\RandomUtil;
 use xsframe\util\RequestUtil;
 use xsframe\wrapper\MenuWrapper;
@@ -225,6 +226,36 @@ abstract class AdminBaseController extends BaseController
 
         if (!empty($params)) {
             $var = array_merge($var, $params);
+        }
+        if( !isset($params['systemExpireShow']) ){
+            # 系统倒计时查询
+            $systemExpireShow = 0;
+            $systemExpireText = "";
+            $systemAuthSets = $this->settingsController->getSysSettings(SysSettingsKeyEnum::SYSTEM_AUTH_KEY);
+            if (isset($systemAuthSets['need_auth']) && $systemAuthSets['need_auth'] == 1) {
+                $license = $systemAuthSets['license'] ?? '';
+                if (!empty($license)) {
+                    $isNotExpired = LicenseUtil::validateLicense($license, env('AUTHKEY'));
+                    $expireTime = LicenseUtil::getExpireTime($license, env('AUTHKEY'));
+
+                    $systemExpireShow = $isNotExpired ? 0 : 1;
+                    if ($expireTime - TIMESTAMP <= 7 * 86400) {
+                        $systemExpireShow = 1;
+                        $systemExpireText = "系统即将到期，请及时续费（到期时间：".date('Y-m-d H:i:s', $expireTime)."）"; # 过期提示信息')."）"; # 过期提示信息
+                        if( $expireTime - TIMESTAMP <= 0 ){
+                            $systemExpireText = "系统已到期，请及时续费（到期时间：" . date('Y-m-d H:i:s', $expireTime) . "）"; # 过期提示信息')."）"; # 过期提示信息
+                        }
+                    }
+                }
+            }
+
+            # 校验用户时长倒计时，商户账号倒计时提醒 TODO
+            if( !$systemExpireShow ){
+
+            }
+
+            $var['systemExpireShow'] = $systemExpireShow; # 是否显示提示 0否 1是
+            $var['systemExpireText'] = $systemExpireText; # 过期提示信息')."）"; # 过期提示信息
         }
 
         return $var;
