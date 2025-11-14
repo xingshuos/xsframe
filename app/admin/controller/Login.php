@@ -174,6 +174,10 @@ class Login extends Base
         if (!$perm_user_app_perms) {
             DbServiceFacade::name("sys_account_perm_user")->addField('app_perms', 'TEXT', '', '', 1, '应用所有者权限配置');
         }
+        $users_auth_deleted = DbServiceFacade::name("sys_users_auth")->hasField('deleted');
+        if (!$users_auth_deleted) {
+            DbServiceFacade::name("sys_users_auth")->addField('deleted', 'tinyint', 1, 0, 0, '是否删除 0否 1是');
+        }
     }
 
     // 登录
