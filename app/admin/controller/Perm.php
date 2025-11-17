@@ -79,8 +79,9 @@ class Perm extends AdminBaseController
         $role = Db::name("sys_account_perm_role")->where(['id' => $item['roleid']])->find();
         $memberInfo = Db::name('sys_member')->field("id,nickname,realname,realname realname1,avatar,mobile")->where(['id' => $item['mid']])->find();
         $memberInfo['avatar'] = tomedia($memberInfo['avatar']);
-        # 截止时间
-        $item['end_time'] = Db::name('sys_users')->where(['id' => $item['uid']])->value('end_time');
+        if (!empty($item)) {
+            $item['end_time'] = Db::name('sys_users')->where(['id' => $item['uid']])->value('end_time');
+        }
 
         if (empty($memberInfo['realname1'])) {
             $memberInfo['realname1'] = $memberInfo['nickname'];
@@ -250,13 +251,15 @@ class Perm extends AdminBaseController
         }
 
         $rolePerms = [];
+        $roleAppPerms = [];
         $userPerms = [];
         $appPerms = [];
 
         if (!empty($item)) {
             if (!empty($item['roleid'])) {
-                $roleInfo = Db::name('sys_account_perm_role')->field('perms')->where(['id' => $item['roleid']])->find();
+                $roleInfo = Db::name('sys_account_perm_role')->field('perms,app_perms')->where(['id' => $item['roleid']])->find();
                 $rolePerms = explode(',', $roleInfo['perms']);
+                $roleAppPerms = explode(',', $roleInfo['app_perms']);
             }
             $userPerms = explode(',', $item['perms']);
             $appPerms = explode(',', $item['app_perms']);
@@ -264,6 +267,7 @@ class Perm extends AdminBaseController
 
         // dump($rolePerms);
         // dump($userPerms);
+        // dump($roleAppPerms);
         // die;
 
         return $this->template('perm/user/post', [
@@ -273,6 +277,7 @@ class Perm extends AdminBaseController
             'operator_perms' => $operatorPerms,
             'accounts_perms' => $accountsPerms,
             'role_perms'     => $rolePerms,
+            'role_app_perms' => $roleAppPerms,
             'user_perms'     => $userPerms,
             'app_perms'      => $appPerms,
             'memberInfo'     => $memberInfo,
@@ -369,11 +374,13 @@ class Perm extends AdminBaseController
         $item = Db::name('sys_account_perm_role')->where(['id' => $id])->find();
 
         if ($this->request->isPost()) {
+            $app_perms = $this->params['app_perms'] ?? [];
             $data = [
-                'uniacid'  => $this->uniacid,
-                'rolename' => trim($this->params['rolename']),
-                'status'   => intval($this->params['status']),
-                'perms'    => trim($this->params['permsarray']),
+                'uniacid'   => $this->uniacid,
+                'rolename'  => trim($this->params['rolename']),
+                'status'    => intval($this->params['status']),
+                'perms'     => trim($this->params['permsarray']),
+                'app_perms' => implode(",", $app_perms),
             ];
             if (!empty($id)) {
                 Db::name('sys_account_perm_role')->where(['id' => $item['id']])->update($data);
@@ -382,7 +389,6 @@ class Perm extends AdminBaseController
             }
             $this->success(['url' => webUrl('perm/rolePost', ['id' => $id, 'module' => $this->params['module']])]);
         }
-
 
         $perms = PermFacade::formatPerms($this->uniacid);
         // dump($perms);
@@ -398,11 +404,14 @@ class Perm extends AdminBaseController
 
         $rolePerms = [];
         $userPerms = [];
+        $appPerms = [];
 
         if (!empty($item)) {
             $dataPerms = $item['perms'];
             $rolePerms = explode(',', $dataPerms);
             $userPerms = $rolePerms;
+            $appPerms = explode(',', $item['app_perms']);
+            $item['is_limit'] = 1;
         }
 
         // dump($rolePerms);
@@ -416,6 +425,7 @@ class Perm extends AdminBaseController
             'accounts_perms' => $accountsPerms,
             'role_perms'     => $rolePerms,
             'user_perms'     => $userPerms,
+            'app_perms'      => $appPerms,
         ]);
     }
 

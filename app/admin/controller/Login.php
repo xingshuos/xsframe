@@ -170,6 +170,10 @@ class Login extends Base
         if (!$perm_user_is_limit) {
             DbServiceFacade::name("sys_account_perm_user")->addField('is_limit', 'tinyint', 1, 0, 0, '是否限制权限 0否 1是');
         }
+        $perm_role_app_perms = DbServiceFacade::name("sys_account_perm_role")->hasField('app_perms');
+        if (!$perm_role_app_perms) {
+            DbServiceFacade::name("sys_account_perm_role")->addField('app_perms', 'TEXT', '', '', 1, '应用所有者权限配置');
+        }
         $perm_user_app_perms = DbServiceFacade::name("sys_account_perm_user")->hasField('app_perms');
         if (!$perm_user_app_perms) {
             DbServiceFacade::name("sys_account_perm_user")->addField('app_perms', 'TEXT', '', '', 1, '应用所有者权限配置');
