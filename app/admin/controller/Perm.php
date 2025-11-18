@@ -403,20 +403,17 @@ class Perm extends AdminBaseController
         }
 
         $rolePerms = [];
+        $roleAppPerms = [];
         $userPerms = [];
         $appPerms = [];
 
         if (!empty($item)) {
-            $dataPerms = $item['perms'];
-            $rolePerms = explode(',', $dataPerms);
+            $rolePerms = explode(',', $item['perms']);
+            $roleAppPerms = explode(',', $item['app_perms']);
             $userPerms = $rolePerms;
             $appPerms = explode(',', $item['app_perms']);
             $item['is_limit'] = 1;
         }
-
-        // dump($rolePerms);
-        // dump($userPerms);
-        // die;
 
         return $this->template('perm/role/post', [
             'item'           => $item,
@@ -424,6 +421,7 @@ class Perm extends AdminBaseController
             'operator_perms' => $operatorPerms,
             'accounts_perms' => $accountsPerms,
             'role_perms'     => $rolePerms,
+            'role_app_perms' => $roleAppPerms,
             'user_perms'     => $userPerms,
             'app_perms'      => $appPerms,
         ]);
