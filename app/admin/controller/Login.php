@@ -67,6 +67,10 @@ class Login extends Base
         // $systemExpireText = "系统即将到期，请及时续费（到期时间：" . date('Y-m-d H:i:s', time()) . "）";
 
         // return $this->template($style, compact('rememberUsername', 'websiteSets'));
+
+        # 校验数据库字段升级操作
+        $this->checkDbFieldUpgrade();
+
         return $this->template($style, [
             'rememberUsername' => $rememberUsername,
             'websiteSets'      => $websiteSets,
@@ -146,9 +150,6 @@ class Login extends Base
                 'lastip'    => $this->request->ip(),
                 'agent'     => $this->request->header()['user-agent'],
             ]);
-
-            # 校验数据库字段升级操作
-            $this->checkDbFieldUpgrade();
         } catch (\Exception $e) {
         }
 
