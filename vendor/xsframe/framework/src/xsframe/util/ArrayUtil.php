@@ -686,6 +686,32 @@ class ArrayUtil
         }
     }
 
+    // 构建树形结构
+    public static function buildTreeWithReference($items, $idField = 'id', $parentIdField = 'parentid')
+    {
+        $itemsByKey = [];
+        $tree = [];
+
+        // 先用id作为键重新组织数组
+        foreach ($items as &$item) {
+            $itemsByKey[$item[$idField]] = &$item;
+            $item['children'] = [];
+        }
+
+        // 构建树形结构
+        foreach ($itemsByKey as &$item) {
+            if (isset($itemsByKey[$item[$parentIdField]])) {
+                // 如果有父级，添加到父级的children中
+                $itemsByKey[$item[$parentIdField]]['children'][] = &$item;
+            } else {
+                // 如果没有父级，作为根节点
+                $tree[] = &$item;
+            }
+        }
+
+        return $tree;
+    }
+
     /**
      * 获取所有子节点
      * @param int $startId 父节点ID
@@ -747,4 +773,6 @@ class ArrayUtil
         }
         return '';
     }
+
+
 }
