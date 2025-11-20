@@ -56,7 +56,7 @@ class Login extends Base
                 if ($expireTime - TIMESTAMP <= 7 * 86400) {
                     $systemExpireShow = 1;
                     $systemExpireText = "系统即将到期，请及时续费（到期时间：" . date('Y-m-d H:i:s', $expireTime) . "）"; # 过期提示信息')."）"; # 过期提示信息
-                    if( $expireTime - TIMESTAMP <= 0 ){
+                    if ($expireTime - TIMESTAMP <= 0) {
                         $systemExpireText = "系统已到期，请及时续费（到期时间：" . date('Y-m-d H:i:s', $expireTime) . "）"; # 过期提示信息')."）"; # 过期提示信息
                     }
                 }
@@ -179,9 +179,12 @@ class Login extends Base
         if (!$perm_user_app_perms) {
             DbServiceFacade::name("sys_account_perm_user")->addField('app_perms', 'TEXT', '', '', 1, '应用所有者权限配置');
         }
-        $users_auth_deleted = DbServiceFacade::name("sys_users_auth")->hasField('deleted');
-        if (!$users_auth_deleted) {
-            DbServiceFacade::name("sys_users_auth")->addField('deleted', 'tinyint', 1, 0, 0, '是否删除 0否 1是');
+        $sys_users_auth_table = DbServiceFacade::hasTable("sys_users_auth");
+        if ($sys_users_auth_table) {
+            $users_auth_deleted = DbServiceFacade::name("sys_users_auth")->hasField('deleted');
+            if (!$users_auth_deleted) {
+                DbServiceFacade::name("sys_users_auth")->addField('deleted', 'tinyint', 1, 0, 0, '是否删除 0否 1是');
+            }
         }
     }
 
