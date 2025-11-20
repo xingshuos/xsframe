@@ -57,7 +57,8 @@ class Login extends Base
                     $systemExpireShow = 1;
                     $systemExpireText = "系统即将到期，请及时续费（到期时间：" . date('Y-m-d H:i:s', $expireTime) . "）"; # 过期提示信息')."）"; # 过期提示信息
                     if ($expireTime - TIMESTAMP <= 0) {
-                        $systemExpireText = "系统已到期，请及时续费（到期时间：" . date('Y-m-d H:i:s', $expireTime) . "）"; # 过期提示信息')."）"; # 过期提示信息
+                        // $systemExpireText = "系统已到期，请及时续费（到期时间：" . date('Y-m-d H:i:s', $expireTime) . "）"; # 过期提示信息')."）"; # 过期提示信息
+                        $systemExpireText = "系统已到期，请及时续费"; # 过期提示信息')."）"; # 过期提示信息
                     }
                 }
             }
