@@ -35,6 +35,7 @@ abstract class AdminBaseController extends BaseController
     public function __construct(Request $request, App $app)
     {
         parent::__construct($request, $app);
+
         if (method_exists($this, '_admin_initialize')) {
 
             $this->checkAuth();
