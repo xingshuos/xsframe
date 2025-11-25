@@ -313,7 +313,9 @@ abstract class BaseController extends Controller
             }
 
             if ($this->module != 'admin' && empty($uniacid)) {
-                exit("<p style='width:100%;height:80px;line-height:80px;text-align: center;font-size: 15px;'>商户不存在,请联系管理员配置默认商户</p>");
+                if( !$this->disUniacid ) {
+                    exit("<p style='width:100%;height:80px;line-height:80px;text-align: center;font-size: 15px;'>商户不存在,请联系管理员配置默认商户</p>");
+                }
             }
 
             $this->uniacid = intval($uniacid);
