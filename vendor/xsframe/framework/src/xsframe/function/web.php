@@ -126,7 +126,16 @@ if (!function_exists('webUrl')) {
     function webUrl($url = null, $params = [], $full = true, $suffix = true)
     {
         if (!StringUtil::strexists($url, 'web.') && app('http')->getName() != 'admin') {
-            $url = "web." . $url;
+            $module = app('http')->getName();
+            $realModule = realModuleName($module);
+            $controller = \think\facade\Request::instance()->controller();
+            $routerPrefix = explode(".", $controller)[0];
+            $isRouterFile = is_file(IA_ROOT . "/app/{$realModule}/route/{$routerPrefix}.php");
+            if ($isRouterFile) {
+                $url = $routerPrefix . (($url && !in_array($url, ['', '.', '/', '@', '#'])) ? ".{$url}" : "./");
+            } else {
+                $url = "web." . $url;
+            }
         }
 
         if (empty($params['page']) && StringUtil::strexists($url, '/edit') && !empty($_GET['page'])) {
@@ -138,6 +147,8 @@ if (!function_exists('webUrl')) {
         }
 
         $url = strval(url($url, array_filter($params), $suffix, $full));
+        $url = str_replace("./?", "?", $url);
+        $url = str_replace("./", "", $url);
 
         // 负载均衡下域名协议会被强制转成http协议，所以这里需要转成https的方式 start
         if (!empty($_SERVER['HTTP_REFERER'])) {
