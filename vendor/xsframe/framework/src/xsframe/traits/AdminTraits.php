@@ -14,6 +14,7 @@ trait AdminTraits
     protected $orderBy = ""; // 列表排序
     protected $result = []; // 可以自定义返回多个值到前端页面
     protected $backUrl = null; // post提交后返回的url
+    protected $backData = []; // post提交后返回的数据
     protected $isBackMain = true; // post提交后是否返回到列表页 默认返回到列表页
     protected $deleteField = "deleted"; // 软删除字段
     protected $template = null; // 设置模板名称
@@ -329,7 +330,8 @@ trait AdminTraits
 
                         $backUrl = $parsedUrl['scheme'] . '://' . $parsedUrl['host'] . $parsedUrl['path'] . '?' . $newQuery;
                     }
-                    $this->success(["url" => $backUrl]);
+                    $this->backData['url'] = $backUrl;
+                    $this->success($this->backData);
                 }
             }
 
