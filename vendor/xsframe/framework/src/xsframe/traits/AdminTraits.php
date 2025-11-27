@@ -303,7 +303,7 @@ trait AdminTraits
                                 $backUrl = $this->request->controller() . "/main";
                             }
                         }
-                        if (!empty($backUrl) && !StringUtil::strexists($backUrl, "web.")) {
+                        if (!empty($backUrl) && !StringUtil::strexists($backUrl, "http") && !StringUtil::strexists($backUrl, "web.")) {
                             $backUrl = "web." . $backUrl;
                         }
                     }
