@@ -986,11 +986,11 @@ textarea:focus {
 
 /*表单*/
 .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
-    background-color: #ddd;
+    background-color: #f4f4f4;
 }
 
 .input-group-addon.disabled {
-    background-color: #ddd;
+    background-color: #f4f4f4;
 }
 
 .form-group-title {

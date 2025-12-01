@@ -528,13 +528,20 @@ if (!function_exists('tpl_form_field_image')) {
             define('TPL_INIT_IMAGE', true);
         }
 
-        $s .= '
+        if( $options['readonly'] || $options['disabled'] ){
+            $s .= '
+<div>
+	<input type="text" name="' . $name . '" value="' . $value . '"' . (!empty($options['extras']['text']) ? $options['extras']['text'] : '') . ' class="form-control" autocomplete="off" readonly>
+';
+        }else{
+            $s .= '
 <div class="input-group ' . $options['class_extra'] . '">
 	<input type="text" name="' . $name . '" value="' . $value . '"' . (!empty($options['extras']['text']) ? $options['extras']['text'] : '') . ' class="form-control" autocomplete="off">
 	<span class="input-group-btn">
 		<button class="btn btn-primary" type="button" onclick="showImageDialog(this, \'' . base64_encode(iserializer($options)) . '\', ' . str_replace('"', '\'', json_encode($options)) . ');">选择图片</button>
 	</span>
 ';
+        }
 
         if (!empty($options['isShowRandomlogoBtn'])) {
             $qqLen = $options['qq_length'] ?? 9;
@@ -559,11 +566,14 @@ if (!function_exists('tpl_form_field_image')) {
         $s .= '</div>';
 
         if (!empty($options['tabs']['browser']) || !empty($options['tabs']['upload'])) {
+            $delDom = '';
+            if( !($options['readonly'] || $options['disabled']) ){
+                $delDom = '<em class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片" onclick="deleteImage(this)">×</em>';
+            }
             $s .=
                 '<div class="input-group ' . $options['class_extra'] . '" style="margin-top:.5em;">
 				<img src="' . $val . '" onerror="this.src=\'' . $default . '\'; this.title=\'图片未找到.\'" class="img-responsive img-thumbnail" ' . (!empty($options['extras']['image']) ? $options['extras']['image'] : '') . ' width="150" />
-				<em class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片" onclick="deleteImage(this)">×</em>
-			</div>';
+                ' .$delDom.'</div>';
         }
         return $s;
     }
@@ -939,11 +949,37 @@ if (!function_exists('tpl_form_field_tags_input')) {
         $height = $options['height'] ?? "42px";
         $total = $options['total'] ?? 5;
 
+        $disabled = $options['disabled'] ?? false;
+        $disabledStyle = "";
+        $disabledJs = "";
+
+        if( $disabled ){
+            $disabledStyle = '
+                <style>
+                    .tagsinput a {
+                        display: none;
+                    }
+                    .disabled, .readonly {
+                        pointer-events: none;
+                        opacity: 0.6;
+                        background-color: #f5f5f5;
+                    }
+                </style>
+            ';
+            $disabledJs = '
+                $("#tags_input").addClass("disabled");
+                $(".tagsinput").addClass("readonly");
+            ';
+        }
+
         $html = '
     
-    <input name="' . $name . '" id="' . $name . '" value="' . $value . '" style="width: auto; min-height: ' . $height . '; height: ' . $height . ';" />
-    <script type="text/javascript">
+    <input readonly="true" name="' . $name . '" id="' . $name . '" value="' . $value . '" style="width: auto; min-height: ' . $height . '; height: ' . $height . ';" />
     
+    '.$disabledStyle.'
+    
+    <script type="text/javascript">
+        
         require(["jquery.tagsinput"], function () {
             $("#' . $name . '").tagsInput({
                 width: "auto",
@@ -964,6 +1000,7 @@ if (!function_exists('tpl_form_field_tags_input')) {
                 },
                 autocomplete_url:"' . $autocompleteUrl . '",
             });
+            '.$disabledJs.'
         })
     
     </script>';
