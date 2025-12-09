@@ -87,11 +87,16 @@ class MenuWrapper
                     'active'   => $val['active'] ?? 0,
                 ];
 
-                if (!strexists($menu_item['route'], 'web.') && $module != 'admin') {
-                    $menu_item['route'] = "web." . $menu_item['route'];
+                if (empty($val['route'])) {
+                    if (!strexists($menu_item['route'], 'web.') && $module != 'admin') {
+                        $menu_item['route'] = "web." . $menu_item['route'];
+                    }
+                } else {
+                    if (!strexists($menu_item['route'], 'web.') && $module != 'admin') {
+                        $isAction = count(explode("/", $menu_item['route'])) == 1;
+                        $menu_item['route'] = "web." . "{$key}" . ($isAction ? '/' : '.') . $menu_item['route'];
+                    }
                 }
-
-                // dump($menu_item);
 
                 if (!empty($val['icon'])) {
                     $menu_item['icon'] = $val['icon'];
@@ -99,12 +104,13 @@ class MenuWrapper
 
                 if (!$parentMenuActive) {
                     $runIn = false;
+
                     if ($parentMenuIsChange) {
                         if ($menu_item['route'] == $parentMenuRoute) {
                             $runIn = true;
                         }
                     } else {
-                        if (strexists($controller, $menu_item['route'])) {
+                        if (strexists($controller, $menu_item['route']) || strexists($menu_item['route'], $controller)) {
                             $runIn = true;
                         }
                     }
@@ -157,7 +163,7 @@ class MenuWrapper
 
                             if ($isAuthPerm && !$itemsOneRoute) {
                                 $itemsOneRoute = $val['items'][$itemsKey]['route'] ?? null;
-                                if( empty($itemsOneRoute) ){
+                                if (empty($itemsOneRoute)) {
                                     $itemsOneRoute = $val['items'][$itemsKey]['url'] ?? null;
                                     if ($itemsOneRoute) {
                                         $itemsOneRouteIsChange = true;
@@ -179,8 +185,11 @@ class MenuWrapper
                             $menu_item['route'] = $module . "/" . $menu_item['route'] . "/" . $itemsOneRoute;
                         }
                     }
+
                 } else {
-                    $menu_item['route'] = $module . "/" . $menu_item['route'] . "/index";
+                    if (empty($val['route'])) {
+                        $menu_item['route'] = $module . "/" . $menu_item['route'] . "/index";
+                    }
                 }
                 # 设置一级目录路由 end
 
