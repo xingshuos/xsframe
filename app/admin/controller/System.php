@@ -347,10 +347,27 @@ class System extends AdminBaseController
             $oneMenusKeys = array_keys($oneMenus);
             $actionUrl = $oneMenus[$oneMenusKeys[0]]['items'][0]['route'];
 
-            if (StringUtil::strexists($actionUrl, "/")) {
-                $actionUrl = "." . $actionUrl;
+            if (empty($actionUrl)) {
+                if (!empty($oneMenus[$oneMenusKeys[0]]['items'][0]['url'])) {
+                    $actionUrl = $oneMenus[$oneMenusKeys[0]]['items'][0]['url'];
+                    if (!StringUtil::strexists($actionUrl, "web.")) {
+                        $actionUrl = "web." . $actionUrl;
+                    }
+                } else {
+                    $actionUrl = $oneMenus[$oneMenusKeys[0]]['route'];
+                    if (empty($actionUrl)) {
+                        $actionUrl = "/main";
+                    } else {
+                        $isAction = count(explode("/", $actionUrl)) == 1;
+                        $actionUrl = ($isAction ? "/" : ".") . $actionUrl;
+                    }
+                }
             } else {
-                $actionUrl = "/" . $actionUrl;
+                if (StringUtil::strexists($actionUrl, "/")) {
+                    $actionUrl = "." . $actionUrl;
+                } else {
+                    $actionUrl = "/" . $actionUrl;
+                }
             }
 
             if (!strexists($oneMenusKeys[0], "web.")) {
