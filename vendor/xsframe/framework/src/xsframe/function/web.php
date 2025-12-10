@@ -497,7 +497,7 @@ if (!function_exists('tpl_form_field_image')) {
 					let btn = $(elm);
 					let ipt = btn.parent().prev();
 					let val = ipt.val();
-					let img = ipt.parent().next().children();
+					let img = ipt.parent().parent().find(".preview-img-box").children();
 
 					util.image(val, function(url){
 					    console.log("url",url)
@@ -521,7 +521,7 @@ if (!function_exists('tpl_form_field_image')) {
 			function deleteImage(elm){
 				require(["jquery"], function($){
                     $(elm).prev().attr("src", "/app/admin/static/images/nopic.png");
-					$(elm).parent().prev().find("input").val("");
+                    $(elm).parent().parent().find("input").val("");
 				});
 			}
 		</script>';
@@ -571,7 +571,7 @@ if (!function_exists('tpl_form_field_image')) {
                 $delDom = '<em class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片" onclick="deleteImage(this)">×</em>';
             }
             $s .=
-                '<div class="input-group ' . $options['class_extra'] . '" style="margin-top:.5em;">
+                '<div class="input-group preview-img-box' . $options['class_extra'] . '" style="margin-top:.5em;">
 				<img src="' . $val . '" onerror="this.src=\'' . $default . '\'; this.title=\'图片未找到.\'" class="img-responsive img-thumbnail" ' . (!empty($options['extras']['image']) ? $options['extras']['image'] : '') . ' width="150" />
                 ' .$delDom.'</div>';
         }
@@ -774,7 +774,7 @@ if (!function_exists('tpl_form_field_image2')) {
 			function deleteImage(elm){
 				require(["jquery"], function($){
                     $(elm).prev().attr("src", "/app/admin/static/images/nopic.png");
-					$(elm).parent().prev().find("input").val("");
+					$(elm).parent().parent().find("input").val("");
 				});
 			}
 		</script>';
@@ -831,9 +831,6 @@ if (!function_exists('tpl_form_field_multi_image2')) {
 		moveImages2();
 		let name = $(elm).next().val();
 		util.image2( "", function(urls){
-            
-            console.log("tpl_form_field_multi_image2 urls",urls)
-            
 			$.each(urls, function(idx, url){
 				$(elm).parent().parent().next().append(\'<div class="multi-item"><img onerror="this.src=\\\'/app/admin/static/images/nopic.png\\\'; this.title=\\\'图片未找到.\\\'" src="\'+url.url+\'" class="img-responsive img-thumbnail"><input type="hidden" name="\'+name+\'[]" value="\'+url.fileurl+\'"><em class="close" title="删除这张图片" onclick="deleteMultiImage2(this)">×</em></div>\');
 			});
