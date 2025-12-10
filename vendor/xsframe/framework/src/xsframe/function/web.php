@@ -950,11 +950,15 @@ if (!function_exists('tpl_form_field_tags_input')) {
         $total = $options['total'] ?? 5;
 
         $disabled = $options['disabled'] ?? false;
-        $disabledStyle = "";
+        $disabledStyle = '
+            <style>
+                #'.$name.'-error{}
+            </style>
+        ';
         $disabledJs = "";
 
         if( $disabled ){
-            $disabledStyle = '
+            $disabledStyle .= '
                 <style>
                     .tagsinput a {
                         display: none;
@@ -974,21 +978,24 @@ if (!function_exists('tpl_form_field_tags_input')) {
 
         $html = '
     
-    <input readonly="true" name="' . $name . '" id="' . $name . '" value="' . $value . '" style="width: auto; min-height: ' . $height . '; height: ' . $height . ';" />
+    <input name="' . $name . '" id="' . $name . '" value="' . $value . '" style="display:block !important;width: auto; min-height: ' . $height . '; height: ' . $height . ';position: fixed;z-index: -1;" data-rule-required="'.$options['data-rule-required'].'" data-msg-required="'.$options['data-msg-required'].'" />
     
     '.$disabledStyle.'
     
     <script type="text/javascript">
         
         require(["jquery.tagsinput"], function () {
+            let input = $(this).siblings(".tagsinput");
             $("#' . $name . '").tagsInput({
                 width: "auto",
                 defaultText: "输入后回车确认",
                 minInputWidth: 110,
+                hide:false,
                 height: "' . $height . '",
                 placeholderColor: "#999",
                 onChange: function(e) {
                     let input = $(this).siblings(".tagsinput");
+                    console.log(input)
                     let maxLen = "' . $total . '"; // e.g.
                     if (input.children("span.tag").length >= maxLen) {
                         input.children("div").hide();
