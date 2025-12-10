@@ -536,7 +536,7 @@ if (!function_exists('tpl_form_field_image')) {
         }else{
             $s .= '
 <div class="input-group ' . $options['class_extra'] . '">
-	<input type="text" name="' . $name . '" value="' . $value . '"' . (!empty($options['extras']['text']) ? $options['extras']['text'] : '') . ' class="form-control" autocomplete="off">
+	<input type="text" name="' . $name . '" value="' . $value . '"' . (!empty($options['extras']['text']) ? $options['extras']['text'] : '') . ' class="form-control" autocomplete="off" data-rule-required="'.$options['data-rule-required'].'" data-msg-required="'.$options['data-msg-required'].'" >
 	<span class="input-group-btn">
 		<button class="btn btn-primary" type="button" onclick="showImageDialog(this, \'' . base64_encode(iserializer($options)) . '\', ' . str_replace('"', '\'', json_encode($options)) . ');">选择图片</button>
 	</span>
