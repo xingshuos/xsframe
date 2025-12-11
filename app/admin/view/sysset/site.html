@@ -2,7 +2,7 @@
 
 {block name='content'}
 
-<div class="page-header">当前位置：<span class="text-primary">后台首页站点</span></div>
+<div class="page-header">当前位置：<span class="text-primary">后台站点设置</span></div>
 
 <style>
 
@@ -11,6 +11,104 @@
 <div class="page-content">
 
     <form action="" method="post" class="form-horizontal form-validate" enctype="multipart/form-data">
+
+        <input type="hidden" id="tab" name="tab" value="{if empty($_GET['tab'])}#tab_basic{else}#tab_{$_GET['tab']}{/if}"/>
+
+        <ul class="nav nav-tabs" id="myTab">
+            <li {if empty($_GET['tab']) || $_GET['tab']=='basic'}class="active"{/if}><a href="#tab_basic">站点信息</a></li>
+            <li {if $_GET['tab']=='login'}class="active"{/if}><a href="#tab_login">登录页设置</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-content">
+
+                <div class="tab-pane {if empty($_GET['tab']) || $_GET['tab']=='basic'}active{/if}" id="tab_basic">
+                    <div class="form-group">
+                        <label class="col-lg control-label">后台名称</label>
+                        <div class="col-sm-9 col-xs-12">
+                            <input type="text" name="data[name]" class="form-control" value="{$websiteSets['name']}" placeholder="XX登录后台"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-lg control-label">LOGO</label>
+                        <div class="col-sm-9 col-xs-12">
+                            {:tpl_form_field_image('data[logo]', $websiteSets['logo'])}
+                            <span class='help-block'>建议尺寸:300px*300px</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane {if $_GET['tab']=='login'}active{/if}" id="tab_login">
+                    <!-- <div class="form-group-title">登录页设置</div> -->
+
+                    <div class="form-group">
+                        <label class="col-lg control-label">默认商户</label>
+                        <div class="col-sm-9 col-xs-12">
+                            <select name="data[uniacid]" class="form-control" onchange="changeUniacid(this)">
+                                <option value="0" {if empty($websiteSets['uniacid'])}selected{/if}>未选择</option>
+                                {foreach $list as $key=>$row }
+                                <option value="{$row['uniacid']}" {if $row['uniacid'] == $websiteSets['uniacid']}selected{/if}>{$row['name']}</option>
+                                {/foreach}
+                            </select>
+                            <span class="help-block text-primary">解释：主域名没有绑定单独的商户时，且默认应用不是admin管理后台 此时会显示默认商户的应用数据。</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-lg control-label">模板</label>
+                        <div class="col-sm-9 col-xs-12">
+                            <select id="login_tpl" name='data[login_tpl]' class='form-control' data-rule-required='true' data-msg-required='请选择登录页模版'>
+                                <option value="">选择模板</option>
+                                {foreach $loginTplList as $key => $tpl}
+                                <option value="{$tpl}" {if $tpl==$websiteSets['login_tpl']}selected{/if}>{$tpl}</option>
+                                {/foreach}
+                            </select>
+                            <span class='help-block'>更换模板可以变更登录页的展现形式，初始为默认模板</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-lg control-label">关键词</label>
+                        <div class="col-sm-9 col-xs-12">
+                            <input type="text" name="data[keywords]" class="form-control" value="{$websiteSets['keywords']}" placeholder="XX登录,XX后台,XXXX后台"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-lg control-label">简介</label>
+                        <div class="col-sm-9 col-xs-12">
+                            <textarea name="data[description]" class="form-control richtext" rows="5" placeholder="XX官网，XXXX官方入驻平台。优质内容，自主经营。登录或创建账户，开始使用。">{$websiteSets['description']}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-lg control-label">背景图</label>
+                        <div class="col-sm-9 col-xs-12">
+                            {:tpl_form_field_image('data[page_bg]', $websiteSets['page_bg'])}
+                            <span class='help-block'>建议尺寸:1920px*920px</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-lg control-label">宣传图</label>
+                        <div class="col-sm-9 col-xs-12">
+                            {:tpl_form_field_image('data[poster]', $websiteSets['poster'])}
+                            <span class='help-block'>建议尺寸:500px*482px</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-lg control-label">底部版权</label>
+                        <div class="col-sm-9">
+                            {:tpl_ueditor('data_copyright',$websiteSets['copyright'])}
+                            <span class="help-block">例如:X ICP备2021010088号-1丨Copyright © 2020 {$_SERVER['HTTP_HOST']}.All Rights Reserved.丨X 公网安备 31010902003223号丨XX科技有限公司</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
 
         <!-- <div class="form-group"> -->
         <!--     <label class="col-lg control-label">站点信息</label> -->
@@ -52,64 +150,6 @@
         <!--<div class="form-group-title">网站基础设置</div>-->
 
         <div id="default-website-sets"><!--style="{if !empty($websiteSets['uniacid'])}display: none;{/if}"-->
-
-            <div class="form-group">
-                <label class="col-lg control-label">后台名称</label>
-                <div class="col-sm-9 col-xs-12">
-                    <input type="text" name="data[name]" class="form-control" value="{$websiteSets['name']}" placeholder="XX登录后台"/>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-lg control-label">LOGO</label>
-                <div class="col-sm-9 col-xs-12">
-                    {:tpl_form_field_image('data[logo]', $websiteSets['logo'])}
-                    <span class='help-block'>建议尺寸:300px*300px</span>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-lg control-label">关键词</label>
-                <div class="col-sm-9 col-xs-12">
-                    <input type="text" name="data[keywords]" class="form-control" value="{$websiteSets['keywords']}" placeholder="XX登录,XX后台,XXXX后台"/>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-lg control-label">简介</label>
-                <div class="col-sm-9 col-xs-12">
-                    <textarea name="data[description]" class="form-control richtext" rows="5" placeholder="XX官网，XXXX官方入驻平台。优质内容，自主经营。登录或创建账户，开始使用。">{$websiteSets['description']}</textarea>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-lg control-label">默认商户</label>
-                <div class="col-sm-9 col-xs-12">
-                    <select name="data[uniacid]" class="form-control" onchange="changeUniacid(this)">
-                        <option value="0" {if empty($websiteSets['uniacid'])}selected{/if}>未选择</option>
-                        {foreach $list as $key=>$row }
-                        <option value="{$row['uniacid']}" {if $row['uniacid'] == $websiteSets['uniacid']}selected{/if}>{$row['name']}</option>
-                        {/foreach}
-                    </select>
-                    <span class="help-block text-primary">解释：主域名没有绑定单独的商户时，且默认应用不是admin管理后台 此时会显示默认商户的应用数据。</span>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-lg control-label">登录页宣传图</label>
-                <div class="col-sm-9 col-xs-12">
-                    {:tpl_form_field_image('data[poster]', $websiteSets['poster'])}
-                    <span class='help-block'>建议尺寸:500px*482px</span>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-lg control-label">底部版权</label>
-                <div class="col-sm-9">
-                    {:tpl_ueditor('data_copyright',$websiteSets['copyright'])}
-                    <span class="help-block">例如:X ICP备2021010088号-1丨Copyright © 2020 {$_SERVER['HTTP_HOST']}.All Rights Reserved.丨X 公网安备 31010902003223号丨XX科技有限公司</span>
-                </div>
-            </div>
 
         </div>
 

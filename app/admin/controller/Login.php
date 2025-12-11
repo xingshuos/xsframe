@@ -28,7 +28,13 @@ class Login extends Base
         $rememberUsername = $_COOKIE['remember-username'] ?? '';
         $websiteSets = $this->settingsController->getSysSettings(SysSettingsKeyEnum::WEBSITE_KEY);
 
-        $style = 'login';
+        $style = 'login'; # 默认登录页面
+
+        if( !empty($this->websiteSets['login_tpl']) && $this->websiteSets['login_tpl'] != 'default' ){
+            $style = "login/tpl/{$this->websiteSets['login_tpl']}";
+        }
+
+        // dd($this->websiteSets);
 
         # 检测是否配置独立域名 如果配置就读取对应商户网站信息 start
         $url = $this->request->header()['host'];

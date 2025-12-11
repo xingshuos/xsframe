@@ -1,0 +1,255 @@
+{extend name="../../admin/view/public/admin_base"}
+
+{block name='style'}
+<style>
+    .wb-container {
+        height: 100%;
+        width: 100%;
+        margin: 0 0 0 0;
+        padding: 0;
+        background-color: #004193;
+    }
+    .header-logo{
+        /*width: 140px;*/
+        height: 100px;
+        display: flex;
+        align-items: center;
+        position: fixed;
+        top: 20px;
+        left: 100px;
+        z-index: 8;
+    }
+    .header-logo-img{
+        height: 100%;
+        vertical-align: middle;
+    }
+    .login-bg-box{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+{/block}
+{block name='content'}
+
+<link rel="stylesheet" href="__ADMIN_CSS__/login.css">
+
+<style>
+
+    .system-login-new{
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+    }
+
+    .login-panel{
+        position: absolute;
+        top: 28%;
+    }
+
+    .system-login-new .login-panel{
+        background-color:rgba(255,255,255,0.6);
+    }
+
+    .copyright-footer{
+        z-index: 99;
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+        background-color:rgba(255,255,255,0);
+    }
+</style>
+
+<div class="system-login-new" style='background-image: url("{:tomedia($websiteSets['page_bg'])}");background-size: cover;'>
+
+    <!-- <div class="login-bg-box"> -->
+    <!--    <img src="__ADMIN_IMG__/inner.png" alt="" style="width: 80%;position: absolute;top: -10%;"> -->
+    <!-- </div> -->
+
+    <!-- <div class="header-logo"> -->
+    <!--     <img src="{:tomedia($websiteSets['logo'])}" alt="{$websiteSets['title']}-logo" class="header-logo-img"> -->
+    <!-- </div> -->
+
+    <div class="login-panel" style="left: 80%">
+        <div class="title">
+            登录
+        </div>
+        <form id="login-form" action="" method="post" class="we7-form">
+            <div class="input-group-vertical">
+                <div class="form-group">
+                    <input name="username" type="text" class="form-control" value="{$rememberUsername}"
+                           placeholder="请输入用户名/手机登录">
+                    <div class="help-block">请输入用户名/手机</div>
+                </div>
+                <div class="form-group" onkeypress="detectCapsLock(event)">
+                    <div class="input-group">
+                        <input name="password" id="password" type="password" class="form-control password"
+                               placeholder="请输入登录密码">
+                        <span class="input-group-addon">
+							<i class="fa fa-eye-slash js-showPass"></i>
+						</span>
+                    </div>
+                    <div class="help-block">请输入登录密码</div>
+                </div>
+                <span style="display:none;color:#ff0000;" id="capitalizationTip">大写锁定已打开</span>
+
+                <div class="form-group verify-form-group">
+                    <div class="input-group">
+                        <input name="verify" type="text" class="form-control" placeholder="请输入验证码">
+                        <a href="javascript:;" id="toggle" class="input-group-btn imgverify">
+                            <img id="imgverify" src="{:url('admin/login/verify')}" title="点击图片更换验证码" onerror="this.src='__ADMIN_IMG__/noface.png'">
+                        </a>
+                    </div>
+                    <div class="help-block">请输入验证码</div>
+                </div>
+            </div>
+            <div class="form-inline" style="margin-bottom: 15px;">
+                <div class="checkbox">
+                    <input type="checkbox" value="true" id="rember" name="rember" {if !empty($rememberUsername)}checked{/if}>
+                    <label for="rember">记住用户名</label>
+                </div>
+            </div>
+            <div class="login-submit text-center">
+                <input type="submit" class="btn btn-primary btn-block" id="btn-login" value="登录">
+                <div class="text-left we7-margin-bottom" style="display: none;">
+                    还没有有账号？
+                    <!--                    <a href="{:url('admin/login/register')}" class="color-default">立即注册</a>-->
+                    <a href="javascript:;" class="color-default" id="goRegister">立即注册</a>
+                    <div class="pull-right">
+                        <!--                        <a href="{:url('admin/login/forget')}" target="_blank" class="color-default">忘记密码？</a>-->
+                        <a href="javascript:;" class="color-default" id="goForget">忘记密码？</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function detectCapsLock(event) {
+        // console.log(event)
+        var e = event || window.event;
+        var o = e.target || e.srcElement;
+        var oTip = $("#capitalizationTip");
+        var keyCode = e.keyCode || e.switch;
+        var isShift = e.shiftKey || (keyCode == 16) || false;
+        if (((keyCode >= 65 && keyCode <= 90) && !isShift) || ((keyCode >= 97 && keyCode <= 122) && isShift)) {
+            oTip.show();
+        } else {
+            oTip.hide();
+        }
+    }
+
+    $("#goRegister").click(function () {
+        util.message('请在客户端完成注册流程后登录', "", "error")
+    });
+
+    $("#goForget").click(function () {
+        util.message('请在客户端我的店铺中更改密码', "", "error")
+    });
+
+    var loginAction = function (e) {
+        var verify = $(':text[name="verify"]').val();
+        if (verify == '') {
+            $(".verify-form-group").addClass('error');
+            return false;
+        }
+        e.preventDefault();
+        var postData = $("#login-form input").serializeArray();
+        var postInit = {};
+
+        for (var key in postData) {
+            var data = postData[key]
+            // console.log(data)
+
+            $('[name="' + data.name + '"]').parents('.form-group').removeClass('error');
+            if (!data.value && data.name != 'referer') {
+                $('[name="' + data.name + '"]').parents('.form-group').addClass('error');
+                return false
+            }
+            postInit[data.name] = data.value
+        }
+        if (postInit['rember']) {
+            util.cookie.set('remember-username', postInit['username']);
+        } else {
+            util.cookie.del('remember-username');
+        }
+        if ($('input[name="smscode"]').val()) {
+            postInit.smscode = $('input[name="smscode"]').val()
+        }
+        var stopVal = $('#btn-login').attr('stop');
+        if (parseInt(stopVal) !== 0 && stopVal !== '' && stopVal !== undefined) {
+            return;
+        }
+        $('#btn-login').attr('stop', 1).val('正在登录...');
+
+        $.post("{:url('admin/login/login')}", postInit, function (json) {
+
+            require(['tip'], function () {
+                if (json.status == 0) {
+                    tip.msgbox.err(json.result.message);
+                } else if (json.status == -1) {
+                    require(['tip'], function () {
+                        tip.msgbox.err(json.result.message);
+                        $('#btn-login').attr('stop', 0).val('登录');
+                    });
+                } else if (json.status == 1) {
+                    tip.msgbox.suc("登录成功");
+                    $('#btn-login').attr('stop', 1).val('跳转中...');
+
+                    setTimeout(function () {
+                        location.href = json.result.url;
+                    }, 500);
+
+                    return true;
+                }
+            });
+
+            $('#btn-login').attr('stop', 0).val('登录');
+            $('#imgverify').prop('src', "{:url('admin/login/verify')}?" + Math.round(new Date().getTime()));
+
+        }, 'json');
+
+    };
+
+    $('#login-form').on('submit', loginAction);
+    // $('.js-login').click(loginAction)
+
+    $('.js-showPass').on('click', function () {
+        var passwordeye = $('.js-showPass');
+        var password = $('#password');
+        if (passwordeye.hasClass('fa-eye')) {
+            passwordeye.removeClass('fa-eye').addClass('fa-eye-slash')
+            password.prop('type', 'password')
+        } else {
+            passwordeye.removeClass('fa-eye-slash').addClass('fa-eye')
+            password.prop('type', 'text')
+        }
+    });
+
+    $('input').on('focus', function () {
+        $(this).parents('.form-group').removeClass('error')
+    });
+
+    $('#toggle').click(function () {
+        $('#imgverify').prop('src', "{:url('admin/login/verify')}?" + Math.round(new Date().getTime()));
+        return false;
+    });
+
+    $(function () {
+        $('.system-login-new.auto').height($('.login-panel').outerHeight())
+    })
+</script>
+
+{/block}
+
+{block name='copyright'}
+{if !empty($websiteSets['copyright'])}
+<div class="container-fluid footer text-center copyright-footer">
+    <div class="copyright">{$websiteSets['copyright'] | raw}</div>
+</div>
+{/if}
+{/block}

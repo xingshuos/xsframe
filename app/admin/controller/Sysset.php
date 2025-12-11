@@ -98,17 +98,19 @@ class Sysset extends Base
             $websiteSetsData = array_merge($websiteSets, $data);
 
             $this->settingsController->setSysSettings(SysSettingsKeyEnum::WEBSITE_KEY, $websiteSetsData);
-            show_json(1, ['url' => url('sysset/site')]);
+            show_json(1, ['url' => url('sysset/site',["tab" => str_replace("#tab_", "", $this->params["tab"])])]);
         }
 
         $list = Db::name('sys_account')->where(['deleted' => 0])->order('uniacid desc')->select();
+        $loginTplList = ['default', 'style1', 'style2'];
 
         $result = [
-            'data'        => $websiteSets,
-            'list'        => $list,
-            'ip'          => $this->ip,
-            'version'     => IMS_VERSION,
-            'versionTime' => IMS_VERSION_TIME,
+            'data'         => $websiteSets,
+            'list'         => $list,
+            'ip'           => $this->ip,
+            'version'      => IMS_VERSION,
+            'versionTime'  => IMS_VERSION_TIME,
+            'loginTplList' => $loginTplList,
         ];
         return $this->template('site', $result);
     }
