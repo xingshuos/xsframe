@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--目录地址: xs_form/packages/manifest.xml-->
 <manifest xmlns="https://www.xsyq.cn" versionCode="1.0">
     <application setting="true">
         <name><![CDATA[表单案例]]></name>

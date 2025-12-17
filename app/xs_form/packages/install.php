@@ -1,4 +1,5 @@
 <?php
+// 目录地址: xs_form/packages/install.php
 
 $sql = "
 CREATE TABLE `ims_xs_form_data_basic` (

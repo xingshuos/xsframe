@@ -1,15 +1,16 @@
 <?php
 
-// 目录地址: xs_form/route/api.php
+// 目录地址: xs_form/route/pc.php
 
 use think\facade\Route;
 
-Route::group('api', function () {
 
-    // 无需登录
+Route::group('pc', function () {
+
+    //无需登录
     Route::group(function () {
-        Route::any('home/index', 'api.index/index'); // 完整访问路径 http://www.xsframe.com/xs_form/api/home/index.html?i=1
-    })->allowCrossDomain();
+        Route::any('', 'pc.index/index');
+    });
 
     // 需要登陆
     Route::group(function () {

@@ -1,5 +1,7 @@
 <?php
 
+// 目录地址: xs_form/route/mobile.php
+
 use think\facade\Route;
 
 Route::group('mobile', function () {
