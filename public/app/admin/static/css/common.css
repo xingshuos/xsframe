@@ -72,13 +72,14 @@ img {
 }
 
 p {
-
+    line-height: 30px;
+    font-size: 14px;
 }
 
 ul, li, dl, dd, dt, p, ol, h1, h2, h3, h4, h5, img {
     padding: 0;
     margin: 0;
-    font-size: 12px;
+    font-size: 13px;
 }
 
 h1 {
@@ -210,6 +211,10 @@ select, input:focus, input {
 .radius50 {
     border-radius: 50%;
     overflow: hidden;
+}
+
+.mt-2{
+    margin-top: 20px;
 }
 
 .text-over {
@@ -3025,4 +3030,9 @@ a.form-control-static {
 
 .sort-group .dropdown-menu .icon {
     width: 10px;
+}
+
+.col-md-3 .form-group{
+    margin-right: 0;
+    margin-left: 0;
 }
