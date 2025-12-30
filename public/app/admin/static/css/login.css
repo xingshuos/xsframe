@@ -5,7 +5,10 @@
     background-position: 50% 50%;
     background-repeat: no-repeat;
     position: relative;
-    height: 100vh
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    grid-gap: 150px;
 }
 
 .system-login-new .head {
@@ -135,22 +138,18 @@
 }
 
 .system-login-new--half.auto {
-    width: 1340px;
     height: 600px;
     margin: 0 auto;
 }
 
 .system-login-new--half.auto .login-bg-box {
-    width: 50%;
+    max-width: 600px;
     height: 100%;
     position: relative;
+    flex: 1;
 }
 
 .system-login-new--half.auto .login-panel {
-    position: absolute;
-    top: 0;
-    left: 75%;
-    margin-left: -86px;
     transform: unset;
     box-shadow: 0 2px 12px 0 rgba(0,0,0,0.2);
 }
@@ -163,4 +162,30 @@
 .imgverify img {
     width: 100px;
     height: 38px
+}
+
+/* 响应式断点 */
+@media (max-width: 1200px) {
+    .system-login-new--half.auto .login-bg-box{
+        display: none;
+    }
+}
+
+@media (max-width: 992px) {
+    .system-login-new--half.auto .login-panel{
+        left: unset;
+        right: 40px;
+    }
+}
+
+@media (max-width: 768px) {
+    
+}
+
+@media (max-width: 480px) {
+    
+}
+
+@media (max-height: 600px) {
+    
 }
