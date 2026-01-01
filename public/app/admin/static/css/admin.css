@@ -790,6 +790,11 @@ textarea:focus {
     color: #666;
 }
 
+.form-group:not(.row) > label.control-label:not([class*="col-"]),
+.form-group.row > label.control-label:not([class*="col-"]) {
+    padding-bottom: 5px;
+}
+
 .progress {
     height: 10px;
     margin: 0;

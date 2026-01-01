@@ -33,6 +33,111 @@ const tipFun = () => {
         $("#tip-loading").remove();
     }
 
+    tip.dialog = function (options) {
+        const defaults = {
+            title: '提示',
+            content: '',
+            width: 400,
+            buttons: [
+                {
+                    text: '关闭',
+                    class: 'btn btn-default',
+                    handler: function () {
+                        $modal.modal('hide');
+                    }
+                }
+            ],
+            onClose: null,
+            onShow: null,
+            onShown: null,
+            onHide: null,
+            onHidden: null
+        };
+
+        const settings = $.extend({}, defaults, options);
+
+        // 生成模态框 HTML
+        const modalId = 'tip-dialog-' + Date.now();
+        let buttonsHtml = '';
+        settings.buttons.forEach(function (btn) {
+            buttonsHtml += `<button type="button" class="${btn.class}" data-handler>${btn.text}</button>`;
+        });
+
+        const modalHtml = `
+        <div class="modal fade" id="${modalId}" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document" style="width: ${settings.width}px;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title">${settings.title}</h4>
+                    </div>
+                    <div class="modal-body">
+                        ${settings.content}
+                    </div>
+                    <div class="modal-footer">
+                        ${buttonsHtml}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+        // 移除可能存在的同名模态框
+        $(`#${modalId}`).remove();
+
+        // 添加到页面
+        const $modal = $(modalHtml).appendTo('body');
+
+        // 绑定按钮事件
+        $modal.find('.modal-footer button[data-handler]').each(function (index) {
+            const btn = settings.buttons[index];
+            $(this).on('click', function () {
+                if (btn.handler && typeof btn.handler === 'function') {
+                    btn.handler($modal);
+                }
+            });
+        });
+
+        // 绑定 Bootstrap modal 事件
+        if (settings.onShow) {
+            $modal.on('show.bs.modal', settings.onShow);
+        }
+
+        if (settings.onShown) {
+            $modal.on('shown.bs.modal', settings.onShown);
+        }
+
+        if (settings.onHide) {
+            $modal.on('hide.bs.modal', settings.onHide);
+        }
+
+        if (settings.onHidden) {
+            $modal.on('hidden.bs.modal', function () {
+                settings.onHidden();
+                $modal.remove(); // 模态框隐藏后移除DOM元素
+            });
+        } else {
+            // 默认情况下，模态框隐藏后移除DOM元素
+            $modal.on('hidden.bs.modal', function () {
+                $modal.remove();
+                if (settings.onClose && typeof settings.onClose === 'function') {
+                    settings.onClose();
+                }
+            });
+        }
+
+        // 显示模态框
+        $modal.modal({
+            backdrop: true, // 点击背景关闭
+            keyboard: true, // 按ESC关闭
+            show: true
+        });
+
+        return $modal;
+    };
+
     tip.confirm = function (msg, callback, cancel_callback) {
         msg = msg.replace(/&lt;/g, "<");
         msg = msg.replace(/&gt;/g, ">");
