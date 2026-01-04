@@ -2575,9 +2575,10 @@ swiper - 轮播图组件
 
 ### 基于JS组件库，实现[功能描述]。要求：
 
-1. 包含完整的错误处理
-2. 使用统一的消息提示
-3. 确保页面加载性能
+- 包含完整的错误处理
+- 使用统一的消息提示
+- 确保页面加载性能
+- js中使用后台变量 "{$item['id']}" 需使用双引号包裹
 
 
 ### 使用规范
@@ -2772,7 +2773,7 @@ $(document).on('click', '.ajax-btn', function() {
 });
 ```
 
-**4、ajax post请求**
+**4、ajax post请求 **
 ```js
 $(document).on('click', '.ajax-btn', function() {
     openLoading();
