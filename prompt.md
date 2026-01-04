@@ -201,6 +201,8 @@ class Index extends ApiBaseController
 
 **3.后台操作格式必须遵守以下格式,显示修改编辑已经存在的根据实际情况重写或直接调用AdminTraits类的方法**
 
+**备注:tableName不需要写ims_前缀**
+
 ```php
 <?php
 
@@ -2843,7 +2845,7 @@ $(document).on('click', '.ajax-btn', function() {
 
 1.遵循BaseFacade门面查询方式，复杂查询遵循thinkphp6语法规范
 
-2.数据表查询规范案例:
+2.数据表查询规范案例(table_name 不需要填写ims_前缀):
     1).查询单条数据
         DbServiceFacade::name("table_name")->getInfo(['uniacid' => $this->uniacid, 'deleted' => 0], "*");
 
@@ -2887,21 +2889,21 @@ $(document).on('click', '.ajax-btn', function() {
 - 确保代码在thinkphp6环境运行
 
 格式要求：
-1. 生成完整的PHP代码
-2. 代码可以直接复用使用
-3. 包含必要的导入
-4. 包含错误处理
-5. 添加适当的注释
-6. 确保代码安全
-7. 必须基于框架应用结构
-8. 必须基于提供的代码结构与写法
-9. 管理后台的方法参考AdminTraits中的方法
-9. 后端代码遵循bootstrap开发规范
-10.客户端前端代码规范不限制，但是需要容易维护和理解
-11.页面需要美观大气整洁，考虑用户的操作使用习惯，体验必须好性能稳定
-12.后端如果使用到其他js尽可能考虑使用require方式引入第三方的js文件
-13.管理后台的代码不需要写route路由
-14.管理后台PHP代码路径遵循 namespace app\{应用名称}\controller\web;
-15.管理后台前端代码路径遵循 app\{应用名称}\view\web;
-16.后台管理PHP类遵循继承AdminBaseController，AdminBaseController类遵循继承BaseController类
-17.列表查询样式尽可能参考“查询显示列表页面开发规范范例”中查询部分，显示在一行即可，特别多查询条件的可以多行
+- 生成完整的PHP代码
+- 代码可以直接复用使用
+- 包含必要的导入
+- 包含错误处理
+- 添加适当的注释
+- 确保代码安全
+- 必须基于框架应用结构
+- 必须基于提供的代码结构与写法
+- 管理后台的方法参考AdminTraits中的方法
+- 后端代码遵循bootstrap开发规范
+- 客户端前端代码规范不限制，但是需要容易维护和理解
+- 页面需要美观大气整洁，考虑用户的操作使用习惯，体验必须好性能稳定
+- 后端如果使用到其他js尽可能考虑使用require方式引入第三方的js文件
+- 管理后台的代码不需要写route路由
+- 管理后台PHP代码路径遵循 namespace app\{应用名称}\controller\web;
+- 管理后台前端代码路径遵循 app\{应用名称}\view\web;
+- 后台管理PHP类遵循继承AdminBaseController，AdminBaseController类遵循继承BaseController类
+- 列表查询样式尽可能参考“查询显示列表页面开发规范范例”中查询部分，显示在一行即可，特别多查询条件的可以多行
