@@ -521,6 +521,8 @@ Route::group('api', function () {
 
 **表单提交开发规范范例**
 
+-- 表单中变量使用 {$item['name']} 不要使用 {$item['name']|default=''}
+
 ```php
 
 <!-- 表单提交: xs_form/view/web/form/basic/post.html -->
