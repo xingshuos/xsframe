@@ -263,7 +263,7 @@ return $sql;
         <name><![CDATA[表单案例]]></name>
         <identifie><![CDATA[xs_form]]></identifie>
         <version><![CDATA[1.0.2]]></version>
-        <type><![CDATA[tool]]></type>
+        <type><![CDATA[business]]></type>
         <ability><![CDATA[常见表单案例]]></ability>
         <description><![CDATA[后台常用表单案例管理]]></description>
         <author><![CDATA[GuiHai]]></author>
@@ -2387,8 +2387,6 @@ trait AdminTraits
 
 <?php
 
-error_reporting(E_ALL ^ E_NOTICE);
-
 use think\facade\Config;
 use think\response\View;
 use xsframe\facade\wrapper\SystemWrapperFacade;
@@ -2597,7 +2595,7 @@ swiper - 轮播图组件
 ```
 
 
-**2. vue2引入与使用**
+**2. vue2引入与使用规范**
 ```js
 {block name="script"}
 <script>
@@ -2759,10 +2757,9 @@ tip.dialog({
     }
 });
 
-
 ```
-
 **2、加载中提示**
+
 ```js
 显示加载:openLoading(1500)
 关闭加载:closeLoading()
@@ -2775,47 +2772,31 @@ $(document).on('click', '.ajax-btn', function() {
 });
 ```
 
-**4、ajax post请求 **
+**4、ajax 请求 **
 ```js
+
+// ajax get请求
+$(document).on('click', '.ajax-btn', function() {
+    openLoading();
+    $.get("{:webUrl('license/verifyLicense')}", {
+        id: "{$item['id']}"
+    }, function(res) {
+        closeLoading();
+        let data = res.result // 返回值在result变量中
+        if (res.status == 1) {
+            tip.msgbox.err('许可证验证成功');
+        } else {
+            tip.msgbox.err('许可证验证失败');
+        }
+    },'json').error((err) => {
+        console.log('err:',err)
+    });
+});
+
+// ajax post请求
 $(document).on('click', '.ajax-btn', function() {
     openLoading();
     $.post("{:webUrl('license/verifyLicense')}", {
-        id: "{$item['id']}"
-    }, function(res) {
-        closeLoading();
-        let data = res.result // 返回值在result变量中
-        if (res.status == 1) {
-            tip.msgbox.err('许可证验证成功');
-        } else {
-            tip.msgbox.err('许可证验证失败');
-        }
-    },'json').error((err) => {
-        console.log('err:',err)
-    });
-});
-
-// ajax get请求
-$(document).on('click', '.ajax-btn', function() {
-    openLoading();
-    $.get("{:webUrl('license/verifyLicense')}", {
-        id: "{$item['id']}"
-    }, function(res) {
-        closeLoading();
-        let data = res.result // 返回值在result变量中
-        if (res.status == 1) {
-            tip.msgbox.err('许可证验证成功');
-        } else {
-            tip.msgbox.err('许可证验证失败');
-        }
-    },'json').error((err) => {
-        console.log('err:',err)
-    });
-});
-
-// ajax get请求
-$(document).on('click', '.ajax-btn', function() {
-    openLoading();
-    $.get("{:webUrl('license/verifyLicense')}", {
         id: "{$item['id']}"
     }, function(res) {
         closeLoading();
@@ -2843,46 +2824,25 @@ $(document).on('click', '.ajax-btn', function() {
     })
 });
 ```
-
 [数据表查询要求与规范]
-
 1.遵循BaseFacade门面查询方式，复杂查询遵循thinkphp6语法规范
-
-2.数据表查询规范案例(table_name 不需要填写ims_前缀):
-    1).查询单条数据
-        DbServiceFacade::name("table_name")->getInfo(['uniacid' => $this->uniacid, 'deleted' => 0], "*");
-
-    2).查询多条数据，分页查询 
-        DbServiceFacade::name("table_name")->getList(['uniacid' => $this->uniacid, 'deleted' => 0], "*");
-
-    3).查询多条数据，查询全部
-        DbServiceFacade::name("table_name")->getAll(['uniacid' => $this->uniacid, 'deleted' => 0], "*");
-
-    4).更新数据表数据
-        DbServiceFacade::name("table_name")->updateInfo(['name' => '张三','age' => 28], ['id' => 1]);
-
-    5).删除数据表数据
-        DbServiceFacade::name("table_name")->deleteInfo(['id' => 1]);
-
-    6).增加数据表数据
-        $id = DbServiceFacade::name("table_name")->insertInfo(['name' => '张三','age' => 28]);
-
-    7).获取单个字段
-        $name = DbServiceFacade::name("table_name")->getValue(['id' => 1], "name");
-
-    8).获取统计数据
-        $total = DbServiceFacade::name("table_name")->getTotal(['uniacid' => 1]);
-
-
+2.数据表查询规范(table_name 不需要填写ims_前缀):
+    1).查询单条数据:DbServiceFacade::name("table_name")->getInfo(['uniacid' => $this->uniacid, 'deleted' => 0], "*");
+    2).分页查询:DbServiceFacade::name("table_name")->getList(['uniacid' => $this->uniacid, 'deleted' => 0], "*");
+    3).查询全部:DbServiceFacade::name("table_name")->getAll(['uniacid' => $this->uniacid, 'deleted' => 0], "*");
+    4).更新数据:DbServiceFacade::name("table_name")->updateInfo(['name' => '张三','age' => 28], ['id' => 1]);
+    5).删除数据:DbServiceFacade::name("table_name")->deleteInfo(['id' => 1]);
+    6).增加数据:$id = DbServiceFacade::name("table_name")->insertInfo(['name' => '张三','age' => 28]);
+    7).获取单个字段:$name = DbServiceFacade::name("table_name")->getValue(['id' => 1], "name");
+    8).获取统计数据:$total = DbServiceFacade::name("table_name")->getTotal(['uniacid' => 1]);
 [要求与学习]
-
 你的任务是：
-1. 根据用户需求生成完整、可运行的PHP代码
-2. 代码必须安全，避免使用危险函数（如eval、exec、os.system等）
-3. 添加适当的注释和错误处理
-4. 只返回代码，不要包含额外的解释
-5. 如果用户需求不明确，询问澄清问题
-6. 生成的代码应遵循PHP7.4规范
+- 根据用户需求生成完整、可运行的PHP代码
+- 代码必须安全，避免使用危险函数（如eval、exec、os.system等）
+- 添加适当的注释和错误处理
+- 只返回代码，不要包含额外的解释
+- 如果用户需求不明确，询问澄清问题
+- 生成的代码应遵循PHP7.4规范
 
 安全要求：
 - 禁止执行系统命令
@@ -2900,13 +2860,14 @@ $(document).on('click', '.ajax-btn', function() {
 - 确保代码安全
 - 必须基于框架应用结构
 - 必须基于提供的代码结构与写法
-- 管理后台的方法参考AdminTraits中的方法
+- 管理后台控制器继承了AdminTraits中的所有方法，复杂逻辑必须结合这些方法补充实现
+- 简单数据增删改查必须使用DbServiceFacade方式，复杂逻辑无法实现的组合查询请必须使用thinkphp6语法
 - 后端代码遵循bootstrap开发规范
-- 客户端前端代码规范不限制，但是需要容易维护和理解
 - 页面需要美观大气整洁，考虑用户的操作使用习惯，体验必须好性能稳定
 - 后端如果使用到其他js尽可能考虑使用require方式引入第三方的js文件
-- 管理后台的代码不需要写route路由
+- 管理后台控制器不需要写route路由
 - 管理后台PHP代码路径遵循 namespace app\{应用名称}\controller\web;
 - 管理后台前端代码路径遵循 app\{应用名称}\view\web;
 - 后台管理PHP类遵循继承AdminBaseController，AdminBaseController类遵循继承BaseController类
 - 列表查询样式尽可能参考“查询显示列表页面开发规范范例”中查询部分，显示在一行即可，特别多查询条件的可以多行
+- AdminTraits类已经存在的空方法不要写在后台控制器中，main,post,add,edit,change,delete等这些方法已经存在，后台控制器逻辑只需要在setMainCondition，beforeMainResult，afterMainResult，exportExcelData，setExportExcelData，beforeSetPostData，afterSetPostData，afterPostResult，beforeChangeData，afterChangeData，beforeDeleteData，afterDeleteData中实现逻辑即可
