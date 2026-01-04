@@ -1905,7 +1905,7 @@ trait AdminTraits
     }
 
     // 列表页导出Excel
-    private function exportExcelData($list = [], $column = null, $keys = null, $title = null, $last = null)
+    public function exportExcelData($list = [], $column = null, $keys = null, $title = null, $last = null)
     {
         if (!empty($list)) {
             ini_set('memory_limit', '1024M'); // 根据需要调整内存大小
