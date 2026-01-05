@@ -2581,9 +2581,9 @@ swiper - 轮播图组件
 - js中使用后台变量 "{$item['id']}" 需使用双引号包裹
 
 
-### 使用规范
+### 使用规范及要求
 
-**1. jquery，Bootstrap,tip 无需引入直接可以使用**
+**1. jquery,Bootstrap,tip 不需要使用require(['jquery','bootstrap', 'tip']) 这种方式引入，请直接使用**
 ```js
 {block name='script'}
     // 页面逻辑
