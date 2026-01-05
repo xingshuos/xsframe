@@ -2583,7 +2583,7 @@ swiper - 轮播图组件
 
 ### 使用规范及要求
 
-**1. jquery,Bootstrap,tip 不需要使用require(['jquery','bootstrap', 'tip']) 这种方式引入，请直接使用**
+**1. jquery,Bootstrap,tip 使用require(['jquery','bootstrap', 'tip'], function($) {}) 这种方式引入**
 ```js
 {block name='script'}
     // 页面逻辑
