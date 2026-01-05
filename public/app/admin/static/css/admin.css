@@ -1074,13 +1074,15 @@ textarea:focus {
     text-align: center;
 }
 
-.input-group-select {
+.input-group-select, .input-group-input{
     display: table-cell;
     width: 1%;
     white-space: nowrap;
     vertical-align: middle;
 }
-
+.input-group-input .form-control {
+    width: auto;
+}
 .input-group-select select.form-control {
     cursor: pointer;
     width: auto;
