@@ -393,13 +393,6 @@ if (!function_exists('echo_value')) {
     </div>
     <?php } ?>
 
-    <div class="copyright">
-        <a title="官方网站" href="https://www.xsyq.cn" target="_blank">星数引擎</a>
-        <span>V<?php echo IMS_VERSION; ?></span>
-        <span>{ 星数引擎-洞察价值无限的数据力量，选择星数引擎,高性价助您筑基，为企业打造核心竞争力， 让每一点数据都成为成功的关键!星数引擎团队为您提供数据资产的基础构建。 }</span>
-        <span>- <a title="官方手册" href="https://www.xsyq.cn/doc" target="_blank">官方手册</a></span>
-    </div>
-
     <?php if (\think\facade\App::isDebug()) { ?>
     <script>
         function $(selector, node){
