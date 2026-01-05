@@ -2595,11 +2595,11 @@ swiper - 轮播图组件
 ```
 
 
-**2. vue2引入与使用规范**
+**2. vue2使用规范及要求 需要使用require(['vue', 'h7.axios'], (Vue, axios) => {});引入**
 ```js
 {block name="script"}
 <script>
-    require(['vue', 'h7.axios', 'jquery', 'tip'], (Vue, axios, $) => {
+    require(['vue', 'h7.axios'], (Vue, axios) => {
 
         new Vue({
             el: '#app-root',
@@ -2628,7 +2628,7 @@ swiper - 轮播图组件
 ## JS调用示例
 
 
-**1、消息提示 **
+**1、系统消息提示 **
 ```js
 // 1.成功/错误提示框
 tip.msgbox.suc('操作成功', '跳转URL可选');
