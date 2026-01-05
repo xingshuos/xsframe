@@ -522,6 +522,7 @@ Route::group('api', function () {
 **表单提交开发规范范例**
 
 -- 表单中变量使用 {$item['name']} 不要使用 {$item['name']|default=''}
+-- 表单验证遵循 设置 data-rule-required='true' data-msg-required='请输入XX' 系统已集成验证js
 
 ```php
 
@@ -2583,7 +2584,7 @@ swiper - 轮播图组件
 
 ### 使用规范及要求
 
-**1. jquery,Bootstrap,tip 使用require(['jquery','bootstrap', 'tip'], function($) {}) 这种方式引入**
+**1. jquery,Bootstrap,tip 请使用require(['jquery','bootstrap', 'tip'], function($) {}) 这种方式引入**
 ```js
 {block name='script'}
     // 页面逻辑
@@ -2865,9 +2866,10 @@ $(document).on('click', '.ajax-btn', function() {
 - 后端代码遵循bootstrap开发规范
 - 页面需要美观大气整洁，考虑用户的操作使用习惯，体验必须好性能稳定
 - 后端如果使用到其他js尽可能考虑使用require方式引入第三方的js文件
-- 管理后台控制器不需要写route路由
+- 管理后台控制器不需要写route路由，例如:app/{应用名称}/route/web.php(不需要)
 - 管理后台PHP代码路径遵循 namespace app\{应用名称}\controller\web;
 - 管理后台前端代码路径遵循 app\{应用名称}\view\web;
 - 后台管理PHP类遵循继承AdminBaseController，AdminBaseController类遵循继承BaseController类
 - 列表查询样式尽可能参考“查询显示列表页面开发规范范例”中查询部分，显示在一行即可，特别多查询条件的可以多行
 - AdminTraits类已经存在的空方法不要写在后台控制器中，main,post,add,edit,change,delete等这些方法已经存在，后台控制器逻辑只需要在setMainCondition，beforeMainResult，afterMainResult，exportExcelData，setExportExcelData，beforeSetPostData，afterSetPostData，afterPostResult，beforeChangeData，afterChangeData，beforeDeleteData，afterDeleteData中实现逻辑即可
+- 复杂视图中表关联查询请重写main方法，如果是单表查询请使用AdminTraits中main方法即可

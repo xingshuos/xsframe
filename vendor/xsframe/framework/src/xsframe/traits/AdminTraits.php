@@ -9,7 +9,7 @@ use xsframe\util\StringUtil;
 trait AdminTraits
 {
     protected $tableName = ''; // 表名
-    private $fieldList = []; // 当前表字段
+    protected $fieldList = []; // 当前表字段
     protected $condition = []; // 查询条件
     protected $orderBy = ""; // 列表排序
     protected $result = []; // 可以自定义返回多个值到前端页面
