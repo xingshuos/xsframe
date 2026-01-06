@@ -2861,6 +2861,7 @@ $(document).on('click', '.ajax-btn', function() {
 - 确保代码安全
 - 必须基于框架应用结构
 - 必须基于提供的代码结构与写法
+- 前端必须使用thinkphp的think模板语法，不要使用Smarty语法
 - 管理后台控制器继承了AdminTraits中的所有方法，复杂逻辑必须结合这些方法补充实现
 - 简单数据增删改查必须使用DbServiceFacade方式，复杂逻辑无法实现的组合查询请必须使用thinkphp6语法
 - 后端代码遵循bootstrap开发规范

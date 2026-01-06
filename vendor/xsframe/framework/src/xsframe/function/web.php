@@ -1332,8 +1332,9 @@ if (!function_exists('tpl_form_field_location_category')) {
  * @return string
  */
 if (!function_exists('tpl_form_field_daterange')) {
-    function tpl_form_field_daterange($name, $value = [], $time = false)
+    function tpl_form_field_daterange($name, $value = [], $time = false, $options = [])
     {
+        $style = '';
         $s = '';
 
         // $value['starttime'] = "2022-08-08";
@@ -1408,11 +1409,15 @@ if (!function_exists('tpl_form_field_daterange')) {
             $value['endtime'] = '请选择';
         }
 
+        if ($options && is_array($options) && !empty($options['style'])){
+            $style = $options['style'];
+        }
+
         $s .= '
 	<input name="' . $name . '[start]' . '" type="hidden" value="' . $value['starttime'] . '" />
 	<input name="' . $name . '[end]' . '" type="hidden" value="' . $value['endtime'] . '" />
 
-	<button class="btn btn-default daterange ' . (!empty($time) ? 'daterange-time' : 'daterange-date') . '" type="button"><span class="date-title">' . $value['starttime'] . ' 至 ' . $value['endtime'] . '</span> <i class="fa fa-calendar"></i></button>
+	<button style="' . $style . '" class="btn btn-default daterange ' . (!empty($time) ? 'daterange-time' : 'daterange-date') . '" type="button"><span class="date-title">' . $value['starttime'] . ' 至 ' . $value['endtime'] . '</span> <i class="fa fa-calendar"></i></button>
 	';
         return $s;
     }
