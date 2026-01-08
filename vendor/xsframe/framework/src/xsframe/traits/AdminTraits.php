@@ -130,10 +130,6 @@ trait AdminTraits
             }
             unset($item);
 
-            if ($export) {
-                $this->exportExcelData($list, $exportColumns, $exportKeys, $exportTitle);
-            }
-
             $total = Db::name($this->tableName)->where($condition)->count();
             $pager = pagination2($total, $this->pIndex, $this->pSize);
 
@@ -145,6 +141,10 @@ trait AdminTraits
         }
 
         $this->afterMainResult($this->result);
+
+        if ($export) {
+            $this->exportExcelData($this->result['list'], $exportColumns, $exportKeys, $exportTitle);
+        }
 
         return $this->template($this->template ?: 'list', $this->result);
     }
