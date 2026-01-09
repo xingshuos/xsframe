@@ -129,7 +129,7 @@ thinkphp6.0作为底层框架，基于ThinkPHP6.0开发
 
 **1.应用菜单配置格式必须遵守以下格式**
 
-**备注1: controller/web 目录，最多支持两级目录，比如1级:controller/web/Sets.php 比如2级:controller/web/form/Basic.php**
+**备注1: controller/web 目录，最多支持两级目录，一级:controller/web/Sets.php 一级:controller/web/form/Basic.php**
 **备注2: 一级路由对应view视图 例如: view/sets/list.html,view/sets/post.html,view/sets/query.html等**
 **备注3: 二级路由对应view视图 例如: view/form/basic/list.html,view/form/basic/post.html,view/form/basic/query.html等**
 **备注4: 一级路由写法 items 数组中 route 列表写法 main ,query ,table 等等 语法: 方法名**
@@ -199,7 +199,7 @@ class Index extends ApiBaseController
 ```
 
 
-**3.后台操作格式必须遵守以下格式,显示修改编辑已经存在的根据实际情况重写或直接调用AdminTraits类的方法**
+**3.后台操作格式必须遵守以下格式,增、删、改、查、修改，已经存在的方法根据实际需求重写或直接调用AdminTraits类的方法**
 
 **备注:tableName不需要写ims_前缀**
 
@@ -223,8 +223,6 @@ class Basic extends AdminBaseController
 }
 
 ```
-
-
 
 **应用安装数据表配置**
 
@@ -2569,8 +2567,6 @@ Vue - 渐进式JavaScript框架
 可视化
 echarts - 百度图表库（完整版和min版）
 jquery.qrcode - 二维码生成
-viewer - 图片查看器
-jquery.img.enlarge - 图片放大镜
 swiper - 轮播图组件
 ```
 
@@ -2580,6 +2576,7 @@ swiper - 轮播图组件
 - 使用统一的消息提示
 - 确保页面加载性能
 - js中使用后台变量 "{$item['id']}" 需使用双引号包裹
+- 使用echarts图表显示的数据源，请使用$.get(),$.post(),$.getJSON()方式获取数据
 
 
 ### 使用规范及要求
