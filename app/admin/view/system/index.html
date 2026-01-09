@@ -7,15 +7,95 @@
     .feed-activity-list {
         width: 100%;
         overflow: hidden;
+        display: flex;
+        flex-wrap: wrap;
+        margin-left: -10px;
+        margin-right: -10px;
     }
 
     .feed-element {
-        float: left;
-        width: 480px;
-        margin-left: 20px;
-        margin-bottom: 20px;
+        box-sizing: border-box;
+        float: none;
+        width: calc(25% - 20px); /* 默认大屏幕显示4个 */
+        margin: 10px;
         border: 1px solid #efefef;
         padding: 20px;
+        transition: all 0.3s ease;
+    }
+
+    /* 超宽屏幕显示5个以上 */
+    @media (min-width: 2150px) {
+        .modal.in .modal-dialog, .modal-dialog{
+            min-width: 1960px !important;
+        }
+        .feed-element {
+            width: calc(20% - 20px); /* 超宽屏幕显示4个 */
+        }
+    }
+
+    /* 中等屏幕显示4个 */
+    @media (max-width: 1959px) {
+        .modal.in .modal-dialog, .modal-dialog{
+            min-width: 1560px !important;
+        }
+        .feed-element {
+            width: calc(25% - 20px);
+        }
+    }
+
+    /* 中等屏幕显示3个 */
+    @media (max-width: 1559px) {
+        .modal.in .modal-dialog, .modal-dialog{
+            min-width: 1200px !important;
+        }
+        .feed-element {
+            width: calc(33.333% - 20px);
+        }
+    }
+
+    /* 小屏幕显示2个 */
+    @media (max-width: 1199px) {
+        .modal.in .modal-dialog, .modal-dialog{
+            min-width: 768px !important;
+        }
+        .feed-element {
+            width: calc(50% - 20px);
+        }
+    }
+
+    /* 平板设备 */
+    @media (max-width: 815px) {
+        .modal.in .modal-dialog, .modal-dialog{
+            min-width: 460px !important;
+        }
+
+        .feed-element {
+            width: calc(100% - 20px);
+        }
+
+        .feed-element img.img-circle,
+        .dropdown-messages-box img.img-circle {
+            width: 80px;
+            height: 80px;
+        }
+    }
+
+    /* 手机设备 */
+    @media (max-width: 480px) {
+        .feed-element {
+            padding: 15px;
+            margin: 8px;
+            width: calc(100% - 16px);
+        }
+
+        .feed-element .title {
+            font-size: 16px;
+        }
+
+        .media-body {
+            height: auto;
+            min-height: 65px;
+        }
     }
 
     .feed-element::after {
@@ -30,6 +110,9 @@
         color: var(--primary-color);
         font-weight: bold;
         margin-left: 10px;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
     }
 
     .feed-element img.img-circle,
@@ -39,6 +122,7 @@
         height: 100px;
         border-radius: 4px;
         border: 1px solid #f1f1f1;
+        object-fit: cover;
     }
 
     .media-body {
@@ -46,6 +130,7 @@
         height: 65px;
         padding-left: 15px;
         position: relative;
+        overflow: hidden;
     }
 
     .text-muted {
@@ -74,6 +159,12 @@
         color: #999;
         line-height: 24px;
         border-top: 1px solid #efefef;
+    }
+
+    /* 确保面板标题在不同屏幕下正确显示 */
+    .panel-heading {
+        clear: both;
+        width: 100%;
     }
 </style>
 {/block}
