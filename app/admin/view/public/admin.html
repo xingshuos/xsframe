@@ -170,7 +170,7 @@
                     {/if}
                     <span class="wb-nav-title {if in_array($sysmenu['route'],$oneMenuNoticePoint??[])}point{/if}">{$sysmenu['text']|raw}</span>
                 </a>
-                <span class="wb-nav-tip">{$sysmenu['subtitle']}</span>
+                <span class="wb-nav-tip" style="width:{if strlen($sysmenu['subtitle']) == 15}90px;{elseif strlen($sysmenu['subtitle']) == 18}102px;{elseif strlen($sysmenu['subtitle']) == 21}115px;{elseif strlen($sysmenu['subtitle']) == 24}130px;{elseif strlen($sysmenu['subtitle']) == 27}145px;{elseif strlen($sysmenu['subtitle']) == 30}160px;{/if}">{$sysmenu['subtitle']}</span>
             </li>
         {/foreach}
 
