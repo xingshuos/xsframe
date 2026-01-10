@@ -129,7 +129,7 @@ thinkphp6.0作为底层框架，基于ThinkPHP6.0开发
 
 **1.应用菜单配置格式必须遵守以下格式**
 
-**备注1: controller/web 目录，最多支持两级目录，比如1级:controller/web/Sets.php 比如2级:controller/web/form/Basic.php**
+**备注1: controller/web 目录，最多支持两级目录，一级:controller/web/Sets.php 一级:controller/web/form/Basic.php**
 **备注2: 一级路由对应view视图 例如: view/sets/list.html,view/sets/post.html,view/sets/query.html等**
 **备注3: 二级路由对应view视图 例如: view/form/basic/list.html,view/form/basic/post.html,view/form/basic/query.html等**
 **备注4: 一级路由写法 items 数组中 route 列表写法 main ,query ,table 等等 语法: 方法名**
@@ -199,7 +199,9 @@ class Index extends ApiBaseController
 ```
 
 
-**3.后台操作格式必须遵守以下格式,显示修改编辑已经存在的根据实际情况重写或直接调用AdminTraits类的方法**
+**3.后台操作格式必须遵守以下格式,增、删、改、查、修改，已经存在的方法根据实际需求重写或直接调用AdminTraits类的方法**
+
+**备注:tableName不需要写ims_前缀**
 
 ```php
 <?php
@@ -221,8 +223,6 @@ class Basic extends AdminBaseController
 }
 
 ```
-
-
 
 **应用安装数据表配置**
 
@@ -261,7 +261,7 @@ return $sql;
         <name><![CDATA[表单案例]]></name>
         <identifie><![CDATA[xs_form]]></identifie>
         <version><![CDATA[1.0.2]]></version>
-        <type><![CDATA[tool]]></type>
+        <type><![CDATA[business]]></type>
         <ability><![CDATA[常见表单案例]]></ability>
         <description><![CDATA[后台常用表单案例管理]]></description>
         <author><![CDATA[GuiHai]]></author>
@@ -518,6 +518,9 @@ Route::group('api', function () {
 ```
 
 **表单提交开发规范范例**
+
+-- 表单中变量使用 {$item['name']} 不要使用 {$item['name']|default=''}
+-- 表单验证遵循 设置 data-rule-required='true' data-msg-required='请输入XX' 系统已集成验证js
 
 ```php
 
@@ -1868,10 +1871,6 @@ trait AdminTraits
             }
             unset($item);
 
-            if ($export) {
-                $this->exportExcelData($list, $exportColumns, $exportKeys, $exportTitle);
-            }
-
             $total = Db::name($this->tableName)->where($condition)->count();
             $pager = pagination2($total, $this->pIndex, $this->pSize);
 
@@ -1883,6 +1882,10 @@ trait AdminTraits
         }
 
         $this->afterMainResult($this->result);
+
+        if ($export) {
+            $this->exportExcelData($this->result['list'], $exportColumns, $exportKeys, $exportTitle);
+        }
 
         return $this->template($this->template ?: 'list', $this->result);
     }
@@ -1903,7 +1906,7 @@ trait AdminTraits
     }
 
     // 列表页导出Excel
-    private function exportExcelData($list = [], $column = null, $keys = null, $title = null, $last = null)
+    public function exportExcelData($list = [], $column = null, $keys = null, $title = null, $last = null)
     {
         if (!empty($list)) {
             ini_set('memory_limit', '1024M'); // 根据需要调整内存大小
@@ -2383,8 +2386,6 @@ trait AdminTraits
 
 <?php
 
-error_reporting(E_ALL ^ E_NOTICE);
-
 use think\facade\Config;
 use think\response\View;
 use xsframe\facade\wrapper\SystemWrapperFacade;
@@ -2566,21 +2567,21 @@ Vue - 渐进式JavaScript框架
 可视化
 echarts - 百度图表库（完整版和min版）
 jquery.qrcode - 二维码生成
-viewer - 图片查看器
-jquery.img.enlarge - 图片放大镜
 swiper - 轮播图组件
 ```
 
 ### 基于JS组件库，实现[功能描述]。要求：
 
-1. 包含完整的错误处理
-2. 使用统一的消息提示
-3. 确保页面加载性能
+- 包含完整的错误处理
+- 使用统一的消息提示
+- 确保页面加载性能
+- js中使用后台变量 "{$item['id']}" 需使用双引号包裹
+- 使用echarts图表显示的数据源，请使用$.get(),$.post(),$.getJSON()方式获取数据
 
 
-### 使用规范
+### 使用规范及要求
 
-**1. jquery，Bootstrap,tip 无需引入直接可以使用**
+**1. jquery,Bootstrap,tip 请使用require(['jquery','bootstrap', 'tip'], function($) {}) 这种方式引入**
 ```js
 {block name='script'}
     // 页面逻辑
@@ -2592,11 +2593,11 @@ swiper - 轮播图组件
 ```
 
 
-**2. vue2引入与使用**
+**2. vue2使用规范及要求 需要使用require(['vue', 'h7.axios'], (Vue, axios) => {});引入**
 ```js
 {block name="script"}
 <script>
-    require(['vue', 'h7.axios', 'jquery', 'tip'], (Vue, axios, $) => {
+    require(['vue', 'h7.axios'], (Vue, axios) => {
 
         new Vue({
             el: '#app-root',
@@ -2625,7 +2626,7 @@ swiper - 轮播图组件
 ## JS调用示例
 
 
-**1、消息提示 **
+**1、系统消息提示 **
 ```js
 // 1.成功/错误提示框
 tip.msgbox.suc('操作成功', '跳转URL可选');
@@ -2754,10 +2755,9 @@ tip.dialog({
     }
 });
 
-
 ```
-
 **2、加载中提示**
+
 ```js
 显示加载:openLoading(1500)
 关闭加载:closeLoading()
@@ -2770,47 +2770,31 @@ $(document).on('click', '.ajax-btn', function() {
 });
 ```
 
-**4、ajax post请求**
+**4、ajax 请求 **
 ```js
+
+// ajax get请求
+$(document).on('click', '.ajax-btn', function() {
+    openLoading();
+    $.get("{:webUrl('license/verifyLicense')}", {
+        id: "{$item['id']}"
+    }, function(res) {
+        closeLoading();
+        let data = res.result // 返回值在result变量中
+        if (res.status == 1) {
+            tip.msgbox.err('许可证验证成功');
+        } else {
+            tip.msgbox.err('许可证验证失败');
+        }
+    },'json').error((err) => {
+        console.log('err:',err)
+    });
+});
+
+// ajax post请求
 $(document).on('click', '.ajax-btn', function() {
     openLoading();
     $.post("{:webUrl('license/verifyLicense')}", {
-        id: "{$item['id']}"
-    }, function(res) {
-        closeLoading();
-        let data = res.result // 返回值在result变量中
-        if (res.status == 1) {
-            tip.msgbox.err('许可证验证成功');
-        } else {
-            tip.msgbox.err('许可证验证失败');
-        }
-    },'json').error((err) => {
-        console.log('err:',err)
-    });
-});
-
-// ajax get请求
-$(document).on('click', '.ajax-btn', function() {
-    openLoading();
-    $.get("{:webUrl('license/verifyLicense')}", {
-        id: "{$item['id']}"
-    }, function(res) {
-        closeLoading();
-        let data = res.result // 返回值在result变量中
-        if (res.status == 1) {
-            tip.msgbox.err('许可证验证成功');
-        } else {
-            tip.msgbox.err('许可证验证失败');
-        }
-    },'json').error((err) => {
-        console.log('err:',err)
-    });
-});
-
-// ajax get请求
-$(document).on('click', '.ajax-btn', function() {
-    openLoading();
-    $.get("{:webUrl('license/verifyLicense')}", {
         id: "{$item['id']}"
     }, function(res) {
         closeLoading();
@@ -2838,46 +2822,25 @@ $(document).on('click', '.ajax-btn', function() {
     })
 });
 ```
-
 [数据表查询要求与规范]
-
 1.遵循BaseFacade门面查询方式，复杂查询遵循thinkphp6语法规范
-
-2.数据表查询规范案例:
-    1).查询单条数据
-        DbServiceFacade::name("table_name")->getInfo(['uniacid' => $this->uniacid, 'deleted' => 0], "*");
-
-    2).查询多条数据，分页查询 
-        DbServiceFacade::name("table_name")->getList(['uniacid' => $this->uniacid, 'deleted' => 0], "*");
-
-    3).查询多条数据，查询全部
-        DbServiceFacade::name("table_name")->getAll(['uniacid' => $this->uniacid, 'deleted' => 0], "*");
-
-    4).更新数据表数据
-        DbServiceFacade::name("table_name")->updateInfo(['name' => '张三','age' => 28], ['id' => 1]);
-
-    5).删除数据表数据
-        DbServiceFacade::name("table_name")->deleteInfo(['id' => 1]);
-
-    6).增加数据表数据
-        $id = DbServiceFacade::name("table_name")->insertInfo(['name' => '张三','age' => 28]);
-
-    7).获取单个字段
-        $name = DbServiceFacade::name("table_name")->getValue(['id' => 1], "name");
-
-    8).获取统计数据
-        $total = DbServiceFacade::name("table_name")->getTotal(['uniacid' => 1]);
-
-
+2.数据表查询规范(table_name 不需要填写ims_前缀):
+    1).查询单条数据:DbServiceFacade::name("table_name")->getInfo(['uniacid' => $this->uniacid, 'deleted' => 0], "*");
+    2).分页查询:DbServiceFacade::name("table_name")->getList(['uniacid' => $this->uniacid, 'deleted' => 0], "*");
+    3).查询全部:DbServiceFacade::name("table_name")->getAll(['uniacid' => $this->uniacid, 'deleted' => 0], "*");
+    4).更新数据:DbServiceFacade::name("table_name")->updateInfo(['name' => '张三','age' => 28], ['id' => 1]);
+    5).删除数据:DbServiceFacade::name("table_name")->deleteInfo(['id' => 1]);
+    6).增加数据:$id = DbServiceFacade::name("table_name")->insertInfo(['name' => '张三','age' => 28]);
+    7).获取单个字段:$name = DbServiceFacade::name("table_name")->getValue(['id' => 1], "name");
+    8).获取统计数据:$total = DbServiceFacade::name("table_name")->getTotal(['uniacid' => 1]);
 [要求与学习]
-
 你的任务是：
-1. 根据用户需求生成完整、可运行的PHP代码
-2. 代码必须安全，避免使用危险函数（如eval、exec、os.system等）
-3. 添加适当的注释和错误处理
-4. 只返回代码，不要包含额外的解释
-5. 如果用户需求不明确，询问澄清问题
-6. 生成的代码应遵循PHP7.4规范
+- 根据用户需求生成完整、可运行的PHP代码
+- 代码必须安全，避免使用危险函数（如eval、exec、os.system等）
+- 添加适当的注释和错误处理
+- 只返回代码，不要包含额外的解释
+- 如果用户需求不明确，询问澄清问题
+- 生成的代码应遵循PHP7.4规范
 
 安全要求：
 - 禁止执行系统命令
@@ -2887,21 +2850,24 @@ $(document).on('click', '.ajax-btn', function() {
 - 确保代码在thinkphp6环境运行
 
 格式要求：
-1. 生成完整的PHP代码
-2. 代码可以直接复用使用
-3. 包含必要的导入
-4. 包含错误处理
-5. 添加适当的注释
-6. 确保代码安全
-7. 必须基于框架应用结构
-8. 必须基于提供的代码结构与写法
-9. 管理后台的方法参考AdminTraits中的方法
-9. 后端代码遵循bootstrap开发规范
-10.客户端前端代码规范不限制，但是需要容易维护和理解
-11.页面需要美观大气整洁，考虑用户的操作使用习惯，体验必须好性能稳定
-12.后端如果使用到其他js尽可能考虑使用require方式引入第三方的js文件
-13.管理后台的代码不需要写route路由
-14.管理后台PHP代码路径遵循 namespace app\{应用名称}\controller\web;
-15.管理后台前端代码路径遵循 app\{应用名称}\view\web;
-16.后台管理PHP类遵循继承AdminBaseController，AdminBaseController类遵循继承BaseController类
-17.列表查询样式尽可能参考“查询显示列表页面开发规范范例”中查询部分，显示在一行即可，特别多查询条件的可以多行
+- 生成完整的PHP代码
+- 代码可以直接复用使用
+- 包含必要的导入
+- 包含错误处理
+- 添加适当的注释
+- 确保代码安全
+- 必须基于框架应用结构
+- 必须基于提供的代码结构与写法
+- 前端必须使用thinkphp的think模板语法，不要使用Smarty语法
+- 管理后台控制器继承了AdminTraits中的所有方法，复杂逻辑必须结合这些方法补充实现
+- 简单数据增删改查必须使用DbServiceFacade方式，复杂逻辑无法实现的组合查询请必须使用thinkphp6语法
+- 后端代码遵循bootstrap开发规范
+- 页面需要美观大气整洁，考虑用户的操作使用习惯，体验必须好性能稳定
+- 后端如果使用到其他js尽可能考虑使用require方式引入第三方的js文件
+- 管理后台控制器不需要写route路由，例如:app/{应用名称}/route/web.php(不需要)
+- 管理后台PHP代码路径遵循 namespace app\{应用名称}\controller\web;
+- 管理后台前端代码路径遵循 app\{应用名称}\view\web;
+- 后台管理PHP类遵循继承AdminBaseController，AdminBaseController类遵循继承BaseController类
+- 列表查询样式尽可能参考“查询显示列表页面开发规范范例”中查询部分，显示在一行即可，特别多查询条件的可以多行
+- AdminTraits类已经存在的空方法不要写在后台控制器中，main,post,add,edit,change,delete等这些方法已经存在，后台控制器逻辑只需要在setMainCondition，beforeMainResult，afterMainResult，exportExcelData，setExportExcelData，beforeSetPostData，afterSetPostData，afterPostResult，beforeChangeData，afterChangeData，beforeDeleteData，afterDeleteData中实现逻辑即可
+- 复杂视图中表关联查询请重写main方法，如果是单表查询请使用AdminTraits中main方法即可

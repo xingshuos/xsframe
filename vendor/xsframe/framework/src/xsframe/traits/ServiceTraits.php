@@ -6,10 +6,17 @@ use think\db\exception\DbException;
 use think\Exception;
 use think\facade\Db;
 use think\Model;
+use think\db\Query;
 
 trait ServiceTraits
 {
     protected $tableName = "";
+
+    /**
+     * 保存Db查询实例用于链式操作
+     * @var \think\db\Query
+     */
+    protected $queryInstance = null;
 
     /**
      * 设置表名
@@ -19,7 +26,221 @@ trait ServiceTraits
     public function name($tableName)
     {
         $this->tableName = $tableName;
+        $this->queryInstance = null; // 重置查询实例
         return $this;
+    }
+
+    /**
+     * 获取查询实例（单例模式）
+     * @return \think\db\Query
+     */
+    protected function getQuery()
+    {
+        if (is_null($this->queryInstance)) {
+            $this->queryInstance = Db::name($this->tableName);
+        }
+        return $this->queryInstance;
+    }
+
+    /**
+     * 设置表别名
+     * @param string $alias
+     * @return $this
+     */
+    public function alias($alias)
+    {
+        $this->getQuery()->alias($alias);
+        return $this;
+    }
+
+    /**
+     * JOIN操作
+     * @param string $table 表名
+     * @param string $condition 关联条件
+     * @param string $type JOIN类型
+     * @return $this
+     */
+    public function join($table, $condition, $type = 'INNER')
+    {
+        $this->getQuery()->join($table, $condition, $type);
+        return $this;
+    }
+
+    /**
+     * LEFT JOIN操作
+     * @param string $table 表名
+     * @param string $condition 关联条件
+     * @return $this
+     */
+    public function leftJoin($table, $condition)
+    {
+        return $this->join($table, $condition, 'LEFT');
+    }
+
+    /**
+     * RIGHT JOIN操作
+     * @param string $table 表名
+     * @param string $condition 关联条件
+     * @return $this
+     */
+    public function rightJoin($table, $condition)
+    {
+        return $this->join($table, $condition, 'RIGHT');
+    }
+
+    /**
+     * WHERE条件
+     * @param mixed $field 字段名
+     * @param mixed $op 操作符或值
+     * @param mixed $condition 值
+     * @return $this
+     */
+    public function where($field, $op = null, $condition = null)
+    {
+        $this->getQuery()->where($field, $op, $condition);
+        return $this;
+    }
+
+    /**
+     * 字段选择
+     * @param string|array $field 字段
+     * @return $this
+     */
+    public function field($field)
+    {
+        $this->getQuery()->field($field);
+        return $this;
+    }
+
+    /**
+     * 排序
+     * @param string|array $order 排序条件
+     * @return $this
+     */
+    public function order($order)
+    {
+        $this->getQuery()->order($order);
+        return $this;
+    }
+
+    /**
+     * 分页
+     * @param int $page 页码
+     * @param int $listRows 每页数量
+     * @return $this
+     */
+    public function page($page, $listRows = null)
+    {
+        $this->getQuery()->page($page, $listRows);
+        return $this;
+    }
+
+    /**
+     * LIMIT限制
+     * @param int $offset 偏移量
+     * @param int $length 数量
+     * @return $this
+     */
+    public function limit($offset, $length = null)
+    {
+        $this->getQuery()->limit($offset, $length);
+        return $this;
+    }
+
+    /**
+     * GROUP BY分组
+     * @param string|array $field 分组字段
+     * @return $this
+     */
+    public function group($field)
+    {
+        $this->getQuery()->group($field);
+        return $this;
+    }
+
+    /**
+     * HAVING条件
+     * @param string $field 字段
+     * @param string $op 操作符
+     * @param mixed $value 值
+     * @return $this
+     */
+    public function having($field, $op, $value = null)
+    {
+        $this->getQuery()->having($field, $op, $value);
+        return $this;
+    }
+
+    /**
+     * 执行查询并返回结果
+     * @param string $type 查询类型 find/select/value/column/...
+     * @return mixed
+     */
+    public function get($type = 'select')
+    {
+        try {
+            $result = $this->getQuery()->$type();
+            $this->queryInstance = null; // 重置查询实例
+            return $result;
+        } catch (\Exception $exception) {
+            $this->queryInstance = null;
+            throw new Exception($exception->getMessage());
+        }
+    }
+
+    /**
+     * 查询单条记录
+     * @return array|Model|null
+     */
+    public function find()
+    {
+        return $this->get('find');
+    }
+
+    /**
+     * 查询多条记录
+     * @return array
+     */
+    public function select()
+    {
+        return $this->get('select');
+    }
+
+    /**
+     * 统计数量
+     * @param string $field 字段名
+     * @return int
+     */
+    public function count($field = '*')
+    {
+        try {
+            $result = $this->getQuery()->count($field);
+            $this->queryInstance = null;
+            return intval($result);
+        } catch (\Exception $exception) {
+            $this->queryInstance = null;
+            throw new Exception($exception->getMessage());
+        }
+    }
+
+    /**
+     * 获取某个字段的值
+     * @param string $field 字段名
+     * @return mixed
+     */
+    public function value($field)
+    {
+        return $this->getQuery()->value($field);
+    }
+
+    /**
+     * 获取某一列的值
+     * @param string $field 字段名
+     * @return array
+     */
+    public function column($field)
+    {
+        return $this->getQuery()->column($field);
     }
 
     /**
@@ -137,17 +358,6 @@ trait ServiceTraits
         }
 
         return intval($total);
-    }
-
-    /**
-     * 获取数据数量
-     * @param $where
-     * @param string $field
-     * @return int|mixed
-     */
-    public function count($where, string $field = "*")
-    {
-        return $this->getTotal($where, $field);
     }
 
     /**
@@ -279,7 +489,7 @@ trait ServiceTraits
             }
             return !empty($tables);
         } catch (\Exception $e) {
-            throw new Exception($exception->getMessage());
+            throw new Exception($e->getMessage());
         }
     }
 
@@ -290,7 +500,7 @@ trait ServiceTraits
             $fields = Db::name($this->tableName)->getTableFields();
             return in_array($field, $fields);
         } catch (\Exception $e) {
-            throw new Exception($exception->getMessage());
+            throw new Exception($e->getMessage());
         }
     }
 
@@ -304,7 +514,7 @@ trait ServiceTraits
             $sql = "ALTER TABLE " . tablename($this->tableName) . " ADD COLUMN `{$field}` " .( $length > 0 ? "{$type}({$length})" : "{$type}" ) . ($default ? "DEFAULT '{$default}'" : " ") . ($isNull ? 'NULL' : 'NOT NULL') . " COMMENT '{$comment}' ";
             return Db::execute($sql);
         } catch (\Exception $e) {
-            throw new Exception($exception->getMessage());
+            throw new Exception($e->getMessage());
         }
     }
 
@@ -318,7 +528,7 @@ trait ServiceTraits
             $sql = "ALTER TABLE " . tablename($this->tableName) . " DROP COLUMN `{$field}`";
             return Db::execute($sql);
         } catch (\Exception $e) {
-            throw new Exception($exception->getMessage());
+            throw new Exception($e->getMessage());
         }
     }
 
@@ -332,7 +542,7 @@ trait ServiceTraits
             $sql = "ALTER TABLE " . tablename($this->tableName) . " CHANGE `{$oldFiled}` `{$field}` {$type}({$length}) " . ($default ? "DEFAULT '{$default}'" : '') . ($isNull ? 'NULL' : 'NOT NULL') . " COMMENT '{$comment}' ";
             return Db::execute($sql);
         } catch (\Exception $e) {
-            throw new Exception($exception->getMessage());
+            throw new Exception($e->getMessage());
         }
     }
 

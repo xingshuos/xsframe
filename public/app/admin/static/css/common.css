@@ -794,7 +794,11 @@ select, input:focus, input {
 }
 
 .wb-nav.fold ul li:hover .wb-nav-tip {
-    display: block;
+    display: flex;
+    align-items: center;
+    text-align: left;
+    line-height: unset;
+    padding: 0 8px;
 }
 
 .wb-nav .wb-nav-fold {

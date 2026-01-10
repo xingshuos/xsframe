@@ -79,7 +79,7 @@ return [
                 'route' => 'list',
             ],
             [
-                'title' => '独立域名',
+                'title' => '商户域名',
                 'route' => 'host',
             ]
         ]
