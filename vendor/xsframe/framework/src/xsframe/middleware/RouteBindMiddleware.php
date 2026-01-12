@@ -57,8 +57,8 @@ class RouteBindMiddleware
             exit(new WechatWrapper($request));
         }
 
-        # 微信小程序消息推送
-        if ($pathInfo == 'wxapp/notify') {
+        # 微信小程序服务消息推送
+        if ($pathInfo == 'wxapp/service') {
             exit(new WxappWrapper($request));
         }
 
