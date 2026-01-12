@@ -269,8 +269,8 @@ class MenuWrapper
                                 'url'    => $child['url'] ?? null,
                             ];
 
-                            if (!$submenuIsActive && strexists(strtolower(str_replace("_", "", $return_menu_child['route'])), $actionTmpArr[0]) || ((strexists($return_menu_child['route'], 'main') || strpos($return_menu_child['route'], '/') === false) && in_array($actionTmp, ['add', 'edit', 'post']))) {
-                                if (strtolower(str_replace("_", "", $return_menu_child['route'])) != $actionTmp && !in_array($actionTmp, ['add', 'edit', 'post']) && !strexists($actionTmp, '/add') && !strexists($actionTmp, '/edit') && !strexists($actionTmp, '/post')) {
+                            if (!$submenuIsActive && strexists(strtolower(str_replace("_", "", $return_menu_child['route'])), $actionTmpArr[0]) || ((strexists($return_menu_child['route'], 'main') || strpos($return_menu_child['route'], '/') === false) && in_array($actionTmp, ['add', 'edit', 'post','detail']))) {
+                                if (strtolower(str_replace("_", "", $return_menu_child['route'])) != $actionTmp && !in_array($actionTmp, ['add', 'edit', 'post','detail']) && !strexists($actionTmp, '/add') && !strexists($actionTmp, '/edit') && !strexists($actionTmp, '/post')) {
                                     $return_menu_child['active'] = 0;
                                     if ($actionTmp == $return_menu_child['route']) {
                                         $return_menu_child['active'] = 1;
@@ -373,7 +373,7 @@ class MenuWrapper
                                     }
                                 }
 
-                                if ($return_submenu_three['active'] == 0 && !empty($actionTmpArr) && in_array($actionTmpArr[1], ['add', 'edit', 'post'])) {
+                                if ($return_submenu_three['active'] == 0 && !empty($actionTmpArr) && in_array($actionTmpArr[1], ['add', 'edit', 'post','detail'])) {
                                     if ($actionTmpArr[0] . "/main" == $three['route'] || (strtolower($actionTmpArr[0]) . "/main" == strtolower($three['route']))) {
                                         $return_submenu_three['active'] = 1; // 是否选中
                                     }
