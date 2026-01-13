@@ -21,6 +21,7 @@ use think\Facade;
  * @method static getSignPackage(string $appId, string $secret, string $url)
  * @method static sendTplNotice(string $appId, string $secret, string $openid, array $msg, string $url, string $templateId)
  * @method static wechatAuth(string $code, string $appid, string $secret, string $snsapi = 'snsapi_base')
+ * @method static createMenu(string $appid, string $secret, array $menus, $isReload = false)
  */
 class WechatServiceFacade extends Facade
 {
