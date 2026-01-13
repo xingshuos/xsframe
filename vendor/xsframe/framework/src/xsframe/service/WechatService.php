@@ -253,6 +253,220 @@ class WechatService
         $response = RequestUtil::httpPostJson($url, json_encode($menus, 320));
         $output = json_decode($response, true);
         return $output;
-
     }
+
+    /**
+     * 创建个性化菜单
+     * @param string $appId 公众号appid
+     * @param string $secret 公众号secret
+     * @param array $button 一级菜单数组(1-3个)
+     * @param array $matchrule 菜单匹配规则(至少一个非空字段)
+     * @param bool $isReload 是否重新加载access_token
+     * @return array|bool 返回结果数组或false
+     * @throws ApiException
+     */
+    public function addConditionalMenu($appId, $secret, $button, $matchrule, $isReload = false)
+    {
+        // 验证菜单数组
+        if (empty($button) || !is_array($button) || count($button) < 1 || count($button) > 3) {
+            return ErrorUtil::error(-1, "菜单数量必须在1-3个之间");
+        }
+
+        // 验证匹配规则，至少有一个非空字段
+        $validMatchrule = false;
+        foreach ($matchrule as $value) {
+            if (!empty($value)) {
+                $validMatchrule = true;
+                break;
+            }
+        }
+        if (!$validMatchrule) {
+            return ErrorUtil::error(-1, "菜单匹配规则至少需要一个非空字段");
+        }
+
+        // 过滤掉微信已不再支持的隐私字段（根据文档说明）
+        $unsupportedFields = ['sex', 'country', 'province', 'city', 'language'];
+        foreach ($unsupportedFields as $field) {
+            if (isset($matchrule[$field])) {
+                unset($matchrule[$field]);
+            }
+        }
+
+        // 构建请求数据
+        $data = [
+            'button'    => $button,
+            'matchrule' => $matchrule
+        ];
+
+        // 获取access_token
+        $accessToken = $this->getAccessToken($appId, $secret, 7000, $isReload);
+        if (ErrorUtil::isError($accessToken)) {
+            return $accessToken;
+        }
+
+        // 构建请求URL
+        $url = "https://api.weixin.qq.com/cgi-bin/menu/addconditional?access_token={$accessToken}";
+
+        // 发送POST请求（使用JSON格式）
+        $jsonData = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $response = RequestUtil::httpPostJson($url, $jsonData);
+
+        // 处理响应
+        if (ErrorUtil::isError($response)) {
+            return ErrorUtil::error(-1, "访问微信接口失败: {$response['message']}");
+        }
+
+        $result = json_decode($response, true);
+
+        // token过期重试
+        if (isset($result['errcode']) && intval($result['errcode']) == 40001 && !$isReload) {
+            return $this->addConditionalMenu($appId, $secret, $button, $matchrule, true);
+        }
+
+        // 检查结果
+        if (empty($result)) {
+            return ErrorUtil::error(-1, "接口调用失败，返回数据为空");
+        }
+
+        if (isset($result['errcode']) && $result['errcode'] != 0) {
+            $errmsg = $result['errmsg'] ?? '未知错误';
+            return ErrorUtil::error(intval($result['errcode']), "创建个性化菜单失败: {$errmsg}");
+        }
+
+        return $result; // 返回完整结果，包含menuid
+    }
+
+    /**
+     * 删除个性化菜单
+     * @param string $appId 公众号appid
+     * @param string $secret 公众号secret
+     * @param string $menuid 个性化菜单ID
+     * @param bool $isReload 是否重新加载access_token
+     * @return array|bool 返回结果
+     */
+    public function deleteConditionalMenu($appId, $secret, $menuid, $isReload = false)
+    {
+        // 获取access_token
+        $accessToken = $this->getAccessToken($appId, $secret, 7000, $isReload);
+        if (ErrorUtil::isError($accessToken)) {
+            return $accessToken;
+        }
+
+        // 构建请求URL
+        $url = "https://api.weixin.qq.com/cgi-bin/menu/delconditional?access_token={$accessToken}";
+
+        // 构建请求数据
+        $data = ['menuid' => $menuid];
+        $jsonData = json_encode($data);
+
+        // 发送POST请求
+        $response = RequestUtil::httpPostJson($url, $jsonData);
+
+        // 处理响应
+        if (ErrorUtil::isError($response)) {
+            return ErrorUtil::error(-1, "访问微信接口失败: {$response['message']}");
+        }
+
+        $result = json_decode($response, true);
+
+        // token过期重试
+        if (isset($result['errcode']) && intval($result['errcode']) == 40001 && !$isReload) {
+            return $this->deleteConditionalMenu($appId, $secret, $menuid, true);
+        }
+
+        if (isset($result['errcode']) && $result['errcode'] != 0) {
+            $errmsg = $result['errmsg'] ?? '未知错误';
+            return ErrorUtil::error(intval($result['errcode']), "删除个性化菜单失败: {$errmsg}");
+        }
+
+        return $result;
+    }
+
+    /**
+     * 测试个性化菜单匹配结果
+     * @param string $appId 公众号appid
+     * @param string $secret 公众号secret
+     * @param string $userId 用户openid或微信号
+     * @param bool $isReload 是否重新加载access_token
+     * @return array|bool 返回匹配的菜单
+     */
+    public function tryMatchConditionalMenu($appId, $secret, $userId, $isReload = false)
+    {
+        // 获取access_token
+        $accessToken = $this->getAccessToken($appId, $secret, 7000, $isReload);
+        if (ErrorUtil::isError($accessToken)) {
+            return $accessToken;
+        }
+
+        // 构建请求URL
+        $url = "https://api.weixin.qq.com/cgi-bin/menu/trymatch?access_token={$accessToken}";
+
+        // 构建请求数据
+        $data = ['user_id' => $userId];
+        $jsonData = json_encode($data);
+
+        // 发送POST请求
+        $response = RequestUtil::httpPostJson($url, $jsonData);
+
+        // 处理响应
+        if (ErrorUtil::isError($response)) {
+            return ErrorUtil::error(-1, "访问微信接口失败: {$response['message']}");
+        }
+
+        $result = json_decode($response, true);
+
+        // token过期重试
+        if (isset($result['errcode']) && intval($result['errcode']) == 40001 && !$isReload) {
+            return $this->tryMatchConditionalMenu($appId, $secret, $userId, true);
+        }
+
+        if (isset($result['errcode']) && $result['errcode'] != 0) {
+            $errmsg = $result['errmsg'] ?? '未知错误';
+            return ErrorUtil::error(intval($result['errcode']), "测试菜单匹配失败: {$errmsg}");
+        }
+
+        return $result;
+    }
+
+    /**
+     * 获取所有菜单（包含默认菜单和个性化菜单）
+     * @param string $appId 公众号appid
+     * @param string $secret 公众号secret
+     * @param bool $isReload 是否重新加载access_token
+     * @return array|bool 返回菜单信息
+     */
+    public function getAllMenus($appId, $secret, $isReload = false)
+    {
+        // 获取access_token
+        $accessToken = $this->getAccessToken($appId, $secret, 7000, $isReload);
+        if (ErrorUtil::isError($accessToken)) {
+            return $accessToken;
+        }
+
+        // 构建请求URL
+        $url = "https://api.weixin.qq.com/cgi-bin/menu/get?access_token={$accessToken}";
+
+        // 发送GET请求
+        $response = RequestUtil::httpGet($url);
+
+        // 处理响应
+        if (ErrorUtil::isError($response)) {
+            return ErrorUtil::error(-1, "访问微信接口失败: {$response['message']}");
+        }
+
+        $result = json_decode($response, true);
+
+        // token过期重试
+        if (isset($result['errcode']) && intval($result['errcode']) == 40001 && !$isReload) {
+            return $this->getAllMenus($appId, $secret, true);
+        }
+
+        if (isset($result['errcode']) && $result['errcode'] != 0) {
+            $errmsg = $result['errmsg'] ?? '未知错误';
+            return ErrorUtil::error(intval($result['errcode']), "获取菜单失败: {$errmsg}");
+        }
+
+        return $result;
+    }
+
 }
