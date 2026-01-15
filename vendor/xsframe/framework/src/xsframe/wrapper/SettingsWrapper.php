@@ -34,7 +34,7 @@ class SettingsWrapper
     public function setSysSettings($key, $data = [])
     {
         $isExit = Db::name('sys_settings')->where(['key' => $key])->value('key');
-        $value  = serialize($data);
+        $value = serialize($data);
 
         if (empty($isExit)) {
             Db::name('sys_settings')->insert(['key' => $key, 'value' => $value]);
@@ -50,7 +50,7 @@ class SettingsWrapper
         $accountInfo = [];
         if (!empty($uniacid)) {
             $accountInfoKey = SysSettingsKeyEnum::ACCOUNT_INFO_KEY . $uniacid;
-            $accountInfo    = Cache::get($accountInfoKey);
+            $accountInfo = Cache::get($accountInfoKey);
             if (empty($accountInfo) || $reload) {
                 $accountInfo = Db::name('sys_account')->where(['uniacid' => $uniacid])->find();
                 if (!empty($accountInfo)) {
@@ -63,6 +63,41 @@ class SettingsWrapper
         return empty($key) ? (array)$accountInfo : (array)$accountInfo[$key];
     }
 
+    // 设置项目配置信息（更新指定key，不影响其他配置）  $value 可以是字符串或者是数组
+    public function setAccountSettings($uniacid, $key, $value, $merge = true)
+    {
+        if (empty($uniacid) || empty($key)) {
+            return false;
+        }
+
+        // 获取当前项目配置
+        $accountInfo = Db::name('sys_account')->where(['uniacid' => $uniacid])->find();
+        if (empty($accountInfo)) {
+            return false;
+        }
+
+        // 反序列化当前配置
+        $settings = empty($accountInfo['settings']) ? [] : unserialize($accountInfo['settings']);
+
+        // 如果merge为true，则合并数组（保留原有字段，只更新传入的字段）
+        if ($merge && is_array($value) && isset($settings[$key]) && is_array($settings[$key])) {
+            $settings[$key] = array_merge($settings[$key], $value);
+        } else {
+            // 直接替换整个键的值
+            $settings[$key] = $value;
+        }
+
+        // 序列化并保存到数据库
+        $serializedSettings = serialize($settings);
+        Db::name('sys_account')->where(['uniacid' => $uniacid])->update(['settings' => $serializedSettings]);
+
+        // 清除缓存，下次读取时自动重新加载
+        $accountInfoKey = SysSettingsKeyEnum::ACCOUNT_INFO_KEY . $uniacid;
+        Cache::delete($accountInfoKey);
+
+        return $settings;
+    }
+
     // 重新加载项目配置信息
     public function reloadAccountSettings($uniacid)
     {
@@ -73,7 +108,7 @@ class SettingsWrapper
     // 获取模块配置信息
     public function getModuleSettings($key = null, $module = null, $uniacid = 0, $reload = false)
     {
-        $moduleSetsKey  = SysSettingsKeyEnum::MODULE_SETS_KEY . $uniacid . "_" . $module;
+        $moduleSetsKey = SysSettingsKeyEnum::MODULE_SETS_KEY . $uniacid . "_" . $module;
         $moduleSettings = Cache::get($moduleSetsKey);
         if (empty($moduleSettings) || $reload) {
             $moduleSettings = Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'module' => $module])->value('settings');
@@ -82,7 +117,7 @@ class SettingsWrapper
         }
 
         $result = empty($key) ? $moduleSettings : $moduleSettings[$key];
-        return empty($result) ? array() : $result;
+        return empty($result) ? [] : $result;
     }
 
     // 重新加载模块配置信息
@@ -98,7 +133,7 @@ class SettingsWrapper
         $moduleInfo = [];
         if (!in_array($module, ['admin'])) {
             $moduleInfoKey = SysSettingsKeyEnum::MODULE_INFO_KEY . $module;
-            $moduleInfo    = Cache::get($moduleInfoKey);
+            $moduleInfo = Cache::get($moduleInfoKey);
             if (empty($moduleInfo) || $reload) {
                 $moduleInfo = Db::name('sys_modules')->where(['identifie' => $module])->find();
                 Cache::set($moduleInfoKey, $moduleInfo);
