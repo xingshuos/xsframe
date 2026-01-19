@@ -11,15 +11,15 @@
 
     <ul>
         {if $isSystem}
-            <li>
-                <a href="{:url('home/welcome')}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="系统概况"><i class="icow icow-homeL" style="font-size: 16px;"></i></a>
-            </li>
+        <li>
+            <a href="{:url('home/welcome')}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="系统概况"><i class="icow icow-homeL" style="font-size: 16px;"></i></a>
+        </li>
         {else}
-            {if in_array($userInfo['role'],['owner','manager']) }
-                <!-- <li class="sysset wb-nav-system" data-module="{$module}" style="padding: 0;width: 60px;">
-                    <a href="" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="系统概况"><i class="icow icow-homeL" style="font-size: 16px;"></i></a>
-                </li> -->
-            {/if}
+        {if in_array($userInfo['role'],['owner','manager']) }
+        <!-- <li class="sysset wb-nav-system" data-module="{$module}" style="padding: 0;width: 60px;">
+            <a href="" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="系统概况"><i class="icow icow-homeL" style="font-size: 16px;"></i></a>
+        </li> -->
+        {/if}
         {/if}
     </ul>
 
@@ -41,18 +41,18 @@
                 </li>
 
                 {if $userInfo['role'] != 'operator'}
-                    <li class="wb-nav-system">
-                        <a href="{:url('admin/perm/user',['i' => $uniacid])}">
-                            <i class="icon icon-key" style="font-size: 22px;"></i>
-                            <span style="display: block">权限管理</span>
-                        </a>
-                    </li>
-                    <li class="wb-nav-system">
-                        <a href="{:url('admin/system/account',['i' => $uniacid])}">
-                            <i class="icon icon-cog" style="font-size: 22px;"></i>
-                            <span style="display: block">商户设置</span>
-                        </a>
-                    </li>
+                <li class="wb-nav-system">
+                    <a href="{:url('admin/perm/user',['i' => $uniacid])}">
+                        <i class="icon icon-key" style="font-size: 22px;"></i>
+                        <span style="display: block">权限管理</span>
+                    </a>
+                </li>
+                <li class="wb-nav-system">
+                    <a href="{:url('admin/system/account',['i' => $uniacid])}">
+                        <i class="icon icon-cog" style="font-size: 22px;"></i>
+                        <span style="display: block">商户设置</span>
+                    </a>
+                </li>
                 {/if}
 
                 <li class="wb-nav-system">
@@ -63,13 +63,13 @@
                 </li>
 
                 {if $userInfo['role'] == 'owner'}
-                    <li>
-                        <a href="{:url('admin/home/welcome')}"> 返回超级管理员后台 </a>
-                    </li>
+                <li>
+                    <a href="{:url('admin/home/welcome')}"> 返回超级管理员后台 </a>
+                </li>
                 {else}
-                    <li data-href="{:url('admin/login/logout')}" class="wb-header-logout">
-                        <a><i class="icow icow-exit"></i> 退出登录</a>
-                    </li>
+                <li data-href="{:url('admin/login/logout')}" class="wb-header-logout">
+                    <a><i class="icow icow-exit"></i> 退出登录</a>
+                </li>
                 {/if}
             </ul>
         </li>
@@ -85,7 +85,7 @@
 <!-- 一级导航 -->
 <div class="wb-nav {if !empty($foldNav)}fold{/if}">
     <p class="wb-nav-fold"><i class="icon icon-outdent" style="font-size:14px;"></i></p>
-    <ul id="navheight" style="max-height: 100%;height: calc(100% - 70px);overflow-y: auto;">
+    <ul id="navheight" style="max-height: 100%;height: calc(100% - 70px);overflow: unset;">
 
         <li class="{if $action == 'index'}active{/if}">
             <a href="{:url('admin/system/index',['i' => $uniacid,'module' => $_GET['module']])}" class="wb-nav-item">
@@ -133,21 +133,45 @@
 
     </ul>
 </div>
+
+<!-- 二级导航 -->
+{if in_array($controller,['perm'])}
+<div class="wb-subnav">
+    <div style="width: 100%;height: 100%;overflow-y: auto">
+
+        <div class="subnav-scene">权限管理</div>
+
+        <ul class="single">
+            <li class="{if $action=='role' || $action=='rolepost'}active{/if}" style="position: relative">
+                <a href="{:webUrl('perm/role')}" style="cursor: pointer;">角色管理</a>
+            </li>
+        </ul>
+
+        <ul class="single">
+            <li class="{if $action=='user' || $action=='userpost'}active{/if}" style=" position: relative">
+                <a href="{:webUrl('perm/user')}" style="cursor: pointer;">员工管理</a>
+            </li>
+        </ul>
+
+        <div class="wb-subnav-fold icow"></div>
+    </div>
+</div>
+{/if}
 {/block}
 
 {block name='copyright'}
 
-    {if !empty($account['copyright'])}
-        <div class="container-fluid footer text-center copyright-footer">
-            <div class="copyright">{$account['copyright'] | raw}</div>
-        </div>
-    {else}
-        {if !empty($websiteSets['copyright'])}
-            <div class="container-fluid footer text-center copyright-footer">
-                <div class="copyright">{$websiteSets['copyright'] | raw}</div>
-            </div>
-        {/if}
-    {/if}
+{if !empty($account['copyright'])}
+<div class="container-fluid footer text-center copyright-footer">
+    <div class="copyright">{$account['copyright'] | raw}</div>
+</div>
+{else}
+{if !empty($websiteSets['copyright'])}
+<div class="container-fluid footer text-center copyright-footer">
+    <div class="copyright">{$websiteSets['copyright'] | raw}</div>
+</div>
+{/if}
+{/if}
 
 {/block}
 

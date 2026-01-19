@@ -8,12 +8,14 @@
     <span>当前位置：<span class="text-primary"> {if !empty($item['id'])}编辑{else}添加{/if}角色 <small>{if !empty($item['id'])}修改【{$item['rolename']}】{/if}</small></span></span>
 </div>
 <div class="page-content">
+    {if $item['id']}
     <div class="page-sub-toolbar">
-         <span class=''>
+        <span class=''>
              <a class="btn btn-primary btn-sm" href="{:webUrl('perm/rolePost')}"><i class="icon icon-plus"></i> 添加新角色</a>
-            <a class='btn btn-default btn-sm' href="{:webUrl('perm/user')}">&nbsp;&nbsp;员工管理&nbsp;&nbsp;</a>
+             <!-- <a class='btn btn-default btn-sm' href="{:webUrl('perm/user')}">&nbsp;&nbsp;员工管理&nbsp;&nbsp;</a> -->
         </span>
     </div>
+    {/if}
     <form action="" method="post" class="form-horizontal form-validate" enctype="multipart/form-data">
         <input type="hidden" name="id" value="{$item['id']}" />
 

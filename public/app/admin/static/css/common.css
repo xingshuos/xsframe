@@ -1269,7 +1269,7 @@ select, input:focus, input {
 }
 
 .wb-nav.fold ~ .wb-subnav ~ .wb-container {
-    margin-left: 170px;
+    margin-left: 205px;
     -webkit-transition: all 0.3s;
     transition: all 0.3s;
 }
