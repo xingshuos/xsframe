@@ -21,7 +21,7 @@
         {foreach $perms['parent'] as $key => $value}
         <label class="checkbox-inline"><input type="checkbox" name="app_perms[]" value="{$key}" {if in_array($key,$app_perms)}checked{/if}>  <b>{$value['text']}</b></label>
         {/foreach}
-        <span class="help-block">启用应用权限后，用户将拥有该应用内所有菜单权限</span>
+        <span class="help-block">启用应用权限后，用户将拥有该应用的所有权限，级别高于操作权限</span>
     </div>
 </div>
 

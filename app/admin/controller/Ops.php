@@ -12,9 +12,14 @@
 
 namespace app\admin\controller;
 
+use think\cache\Driver;
 use think\facade\Cache;
+use think\facade\Config;
 use think\facade\Db;
+use think\facade\Route;
+use think\facade\Template;
 use xsframe\base\AdminBaseController;
+use xsframe\facade\service\DbServiceFacade;
 use xsframe\util\FileUtil;
 use xsframe\util\RandomUtil;
 use xsframe\util\StringUtil;
@@ -52,11 +57,33 @@ class Ops extends AdminBaseController
     // 系统概况
     public function overview(): \think\response\View
     {
-        // if ($this->request->isPost()) {
-        //
-        // }
+        $gd_info = function_exists('gd_info') ? gd_info() : [];
+
+        $environments = [
+            ['name' => 'PHP版本', 'value' => phpversion()],
+            ['name' => 'MySql版本', 'value' => Db::query("SELECT VERSION()")[0]['VERSION()']],
+            ['name' => 'MySqli', 'value' => function_exists('mysqli_connect')],
+            ['name' => 'Openssl', 'value' => function_exists('openssl_encrypt')],
+            ['name' => 'Session', 'value' => function_exists('session_start')],
+            ['name' => 'Safe_Mode', 'value' => !ini_get('safe_mode')],
+            ['name' => 'GD', 'value' => !empty($gd_info['GD Version'])],
+            ['name' => 'Curl', 'value' => function_exists('curl_init')],
+            ['name' => 'Bcmath', 'value' => function_exists('bcadd')],
+            ['name' => 'Upload', 'value' => (bool)ini_get('file_uploads')],
+        ];
+
+        $permissions = [
+            ['name' => 'app', 'require' => '读写', 'value' => is_readable(root_path('app')) && is_writable(root_path('app'))],
+            ['name' => 'config', 'require' => '读写', 'value' => is_readable(root_path('config')) && is_writable(root_path('config'))],
+            ['name' => 'public', 'require' => '读写', 'value' => is_readable(root_path('public')) && is_writable(root_path('public'))],
+            ['name' => 'runtime', 'require' => '读写', 'value' => is_readable(root_path('runtime')) && is_writable(root_path('runtime'))],
+            ['name' => 'vendor', 'require' => '读写', 'value' => is_readable(root_path('vendor')) && is_writable(root_path('vendor'))],
+            ['name' => '.env', 'require' => '读写', 'value' => is_readable(root_path() . '.env') && is_writable(root_path() . '.env')],
+        ];
 
         $result = [
+            'environments' => $environments,
+            'permissions'  => $permissions,
         ];
         return $this->template('overview', $result);
     }
@@ -82,12 +109,77 @@ class Ops extends AdminBaseController
     // 操作日志
     public function oplog(): \think\response\View
     {
-        // if ($this->request->isPost()) {
-        //
-        // }
+        $condition = [];
 
-        $result = [
-        ];
+        // 处理时间段搜索
+        if (!empty($this->params['searchtime']) && is_array($this->params['time'])) {
+            $startTime = strtotime($this->params['time']['start']);
+            $endTime = strtotime($this->params['time']['end']);
+
+            if ($startTime && $endTime) {
+                $condition['create_time'] = Db::raw("between {$startTime} and {$endTime}");
+            }
+        }
+
+        // 操作账号搜索
+        if (!empty($this->params['username'])) {
+            $condition['username'] = ['like', '%' . trim($this->params['username']) . '%'];
+        }
+
+        // 连接搜索
+        if (!empty($this->params['path'])) {
+            $condition['path'] = ['like', '%' . trim($this->params['path']) . '%'];
+        }
+
+        // IP搜索
+        if (!empty($this->params['ip'])) {
+            $condition['ip'] = trim($this->params['ip']);
+        }
+
+        // 模块搜索
+        if (!empty($this->params['module'])) {
+            $condition['module'] = trim($this->params['module']);
+        }
+
+        $result = [];
+
+        $list = DbServiceFacade::name("sys_log")->getList($condition, "*", "id desc");
+        $total = DbServiceFacade::name("sys_log")->count();
+        $result['total'] = $total;
+        $result['list'] = $list;
+
+        // 获取所有模块列表用于下拉选择
+        $moduleList = Db::name("sys_log")
+            ->where(['uniacid' => $this->uniacid])
+            ->group('module')
+            ->column('module');
+
+        $result['moduleList'] = $moduleList;
+
+        // 设置默认时间段（最近7天）
+        if (empty($this->params['time'])) {
+            $result['start_time'] = strtotime('-7 days');
+            $result['end_time'] = time();
+        } else {
+            $result['start_time'] = strtotime($this->params['time']['start']);
+            $result['end_time'] = strtotime($this->params['time']['end']);
+        }
+
+        // 格式化操作时间
+        if (!empty($result['list'])) {
+            foreach ($result['list'] as &$item) {
+                // 简化过长的路径显示
+                if (strlen($item['path']) > 50) {
+                    $item['path_short'] = substr($item['path'], 0, 50) . '...';
+                } else {
+                    $item['path_short'] = $item['path'];
+                }
+
+                $item['module_name'] = DbServiceFacade::name("sys_modules")->getValue(['identifie' => $item['module']], "name");
+            }
+            unset($item);
+        }
+
         return $this->template('oplog', $result);
     }
 
@@ -391,6 +483,24 @@ class Ops extends AdminBaseController
     public function cache(): \think\response\View
     {
         if ($this->request->isPost()) {
+            try {
+                $types = $this->params['type'] ?? [];
+                $types = is_array($types) ? $types : [$types];
+
+                if( in_array('data', $types) ){
+                    Cache::clear();
+
+                    $driver = Cache::store('redis')->handler();
+                    if ($driver instanceof Driver) {
+                        $driver->clear(); // 清除文件缓存
+                    }
+                }
+
+                if( in_array('template', $types) ){
+                    FileUtil::rmDirs($this->iaRoot . '/runtime');
+                }
+            } catch (\Exception $e) {
+            }
             $this->success("更新缓存成功！");
         }
 

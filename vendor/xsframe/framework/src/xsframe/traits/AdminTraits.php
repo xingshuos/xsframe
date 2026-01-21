@@ -3,6 +3,7 @@
 namespace xsframe\traits;
 
 use think\facade\Db;
+use xsframe\facade\service\DbServiceFacade;
 use xsframe\util\ExcelUtil;
 use xsframe\util\StringUtil;
 
@@ -27,6 +28,11 @@ trait AdminTraits
 
     public function main()
     {
+        // 权限检查 - 查看列表
+        if (!$this->checkPermission('view')) {
+            return $this->errorMsg('您没有权限查看此页面', 403);
+        }
+
         if ($this->pSize != $this->pageSize) {
             $this->pSize = $this->pageSize;
         }
@@ -119,6 +125,12 @@ trait AdminTraits
             $this->beforeMainResult();
 
             if ($export) {
+
+                // 导出权限检查
+                if (!$this->checkPermission('export')) {
+                    return $this->errorMsg('您没有权限导出数据', 403);
+                }
+
                 $list = Db::name($this->tableName)->field($field)->where($condition)->order($this->orderBy)->select()->toArray();
             } else {
                 $list = Db::name($this->tableName)->field($field)->where($condition)->order($this->orderBy)->page($this->pIndex, $this->pSize)->select()->toArray();
@@ -212,12 +224,22 @@ trait AdminTraits
     // 编辑数据
     public function edit()
     {
+        // 权限检查 - 编辑
+        if (!$this->checkPermission('edit')) {
+            return $this->errorMsg('您没有权限编辑数据', 403);
+        }
+
         return $this->post();
     }
 
     // 添加数据
     public function add()
     {
+        // 权限检查 - 添加
+        if (!$this->checkPermission('add')) {
+            return $this->errorMsg('您没有权限添加数据', 403);
+        }
+
         return $this->post();
     }
 
@@ -286,9 +308,29 @@ trait AdminTraits
                 $this->beforeSetPostData($updateData);
 
                 if (!empty($id)) {
+                    $beforeData = Db::name($this->tableName)->where(['id' => $id])->find();
                     Db::name($this->tableName)->where(['id' => $id])->update($updateData);
+
+                    // 记录编辑日志
+                    $this->recordLog('edit', [
+                        'table'    => $this->tableName,
+                        'id'       => $id,
+                        'before'   => $beforeData,
+                        'after'    => $updateData,
+                        'user_id'  => $this->userId,
+                        'username' => $this->adminSession['username'] ?? ''
+                    ]);
                 } else {
                     $id = Db::name($this->tableName)->insertGetId($updateData);
+
+                    // 记录添加日志
+                    $this->recordLog('add', [
+                        'table'    => $this->tableName,
+                        'id'       => $id,
+                        'data'     => $updateData,
+                        'user_id'  => $this->userId,
+                        'username' => $this->adminSession['username'] ?? ''
+                    ]);
                 }
 
                 $this->afterSetPostData($id);
@@ -364,6 +406,11 @@ trait AdminTraits
     // 改变字段数据
     public function change()
     {
+        // 权限检查 - 修改
+        if (!$this->checkPermission('edit')) {
+            return $this->errorMsg('您没有权限修改数据', 403);
+        }
+
         if (!empty($this->tableName)) {
             $id = intval($this->params["id"]);
 
@@ -381,8 +428,20 @@ trait AdminTraits
             $items = Db::name($this->tableName)->where(['id' => $id])->select();
             foreach ($items as $item) {
                 $this->beforeChangeData($item);
+                $beforeValue = $item[$type] ?? '';
                 Db::name($this->tableName)->where("id", '=', $item['id'])->update([$type => $value]);
                 $this->afterChangeData($item);
+
+                // 记录修改字段日志
+                $this->recordLog('change_field', [
+                    'table'    => $this->tableName,
+                    'id'       => $item['id'],
+                    'field'    => $type,
+                    'before'   => $beforeValue,
+                    'after'    => $value,
+                    'user_id'  => $this->userId,
+                    'username' => $this->adminSession['username'] ?? ''
+                ]);
             }
         }
 
@@ -402,6 +461,11 @@ trait AdminTraits
     // 删除数据
     public function delete()
     {
+        // 权限检查 - 删除
+        if (!$this->checkPermission('delete')) {
+            return $this->errorMsg('您没有权限删除数据', 403);
+        }
+
         if (!empty($this->tableName)) {
             $id = intval($this->params["id"]);
 
@@ -440,9 +504,21 @@ trait AdminTraits
 
                 $this->beforeDeleteData($item);
 
+                // 记录删除前的数据
+                $deletedData = $item;
+
                 Db::name($this->tableName)->where(['uniacid' => $this->uniacid, "id" => $item['id']])->update($updateData);
 
                 $this->afterDeleteData($item);
+
+                // 记录删除日志
+                $this->recordLog('delete', [
+                    'table'    => $this->tableName,
+                    'id'       => $item['id'],
+                    'data'     => $deletedData,
+                    'user_id'  => $this->userId,
+                    'username' => $this->adminSession['username'] ?? ''
+                ]);
             }
         }
         $this->success(["url" => referer()]);
@@ -461,6 +537,11 @@ trait AdminTraits
     // 更新数据
     public function update()
     {
+        // 权限检查 - 编辑
+        if (!$this->checkPermission('edit')) {
+            return $this->errorMsg('您没有权限更新数据', 403);
+        }
+
         if (!empty($this->tableName)) {
             $id = intval($this->params["id"]);
             $updateData = $this->params["data"] ?? [];
@@ -476,7 +557,18 @@ trait AdminTraits
             if (!empty($updateData)) {
                 $items = Db::name($this->tableName)->where(['id' => $id])->select();
                 foreach ($items as $item) {
+                    $beforeData = $item;
                     Db::name($this->tableName)->where(['uniacid' => $this->uniacid, "id" => $item['id']])->update($updateData);
+
+                    // 记录批量更新日志
+                    $this->recordLog('batch_update', [
+                        'table'    => $this->tableName,
+                        'id'       => $item['id'],
+                        'before'   => $beforeData,
+                        'after'    => $updateData,
+                        'user_id'  => $this->userId,
+                        'username' => $this->adminSession['username'] ?? ''
+                    ]);
                 }
             }
         }
@@ -486,6 +578,11 @@ trait AdminTraits
     // 真实删除
     public function destroy()
     {
+        // 权限检查 - 删除（真实删除需要更高权限）
+        if (!$this->checkPermission('delete') || !$this->checkPermission('force_delete')) {
+            return $this->errorMsg('您没有权限永久删除数据', 403);
+        }
+
         if (!empty($this->tableName)) {
             $id = intval($this->params["id"]);
 
@@ -502,7 +599,20 @@ trait AdminTraits
                 if (!empty($item['is_default'])) {
                     $this->error("默认项不能被删除");
                 }
+
+                // 记录真实删除前的数据
+                $deletedData = $item;
+
                 Db::name($this->tableName)->where(["id" => $item['id']])->delete();
+
+                // 记录真实删除日志
+                $this->recordLog('force_delete', [
+                    'table'    => $this->tableName,
+                    'id'       => $item['id'],
+                    'data'     => $deletedData,
+                    'user_id'  => $this->userId,
+                    'username' => $this->adminSession['username'] ?? ''
+                ]);
             }
         }
         $this->success(["url" => referer()]);
@@ -511,6 +621,11 @@ trait AdminTraits
     // 还原数据
     public function restore()
     {
+        // 权限检查 - 还原
+        if (!$this->checkPermission('restore')) {
+            return $this->errorMsg('您没有权限还原数据', 403);
+        }
+
         if (!empty($this->tableName)) {
             $id = intval($this->params["id"]);
 
@@ -534,6 +649,15 @@ trait AdminTraits
             $items = Db::name($this->tableName)->where(['id' => $id])->select();
             foreach ($items as $item) {
                 Db::name($this->tableName)->where(["id" => $item['id']])->update($updateData);
+
+                // 记录还原日志
+                $this->recordLog('restore', [
+                    'table'    => $this->tableName,
+                    'id'       => $item['id'],
+                    'user_id'  => $this->userId,
+                    'username' => $this->adminSession['username'] ?? ''
+                ]);
+
             }
         }
         $this->success(["url" => referer()]);
@@ -542,6 +666,11 @@ trait AdminTraits
     // 回收站
     public function recycle()
     {
+        // 权限检查 - 查看回收站
+        if (!$this->checkPermission('recycle')) {
+            return $this->errorMsg('您没有权限查看回收站', 403);
+        }
+
         if (!empty($this->tableName)) {
             $condition = [
                 'uniacid'          => $this->uniacid,
@@ -565,6 +694,11 @@ trait AdminTraits
     // 访问入口
     public function cover()
     {
+        // 权限检查 - 访问入口
+        if (!$this->checkPermission('cover')) {
+            return $this->errorMsg('您没有权限访问此入口', 403);
+        }
+
         $moduleName = realModuleName($this->module);
         $coverUrl = $this->siteRoot . "/{$moduleName}.html?i=" . $this->uniacid;
         $mobileUrl = $this->siteRoot . "/{$moduleName}/mobile.html?i=" . $this->uniacid;
@@ -575,6 +709,11 @@ trait AdminTraits
     // 设置项目应用配置信息
     public function moduleSettings()
     {
+        // 权限检查 - 模块设置
+        if (!$this->checkPermission('module_settings')) {
+            return $this->errorMsg('您没有权限进行模块设置', 403);
+        }
+
         $moduleSettings = $this->settingsController->getModuleSettings(null, $this->module, $this->uniacid);
         if ($this->request->isPost()) {
             $settingsData = $this->params['data'] ?? [];
@@ -593,6 +732,15 @@ trait AdminTraits
                 Db::name('sys_account_modules')->where(["uniacid" => $this->uniacid, 'module' => $this->module])->update($data);
                 # 更新缓存
                 $this->settingsController->reloadModuleSettings($this->module, $this->uniacid);
+
+                // 记录模块设置日志
+                $this->recordLog('module_settings', [
+                    'module'   => $this->module,
+                    'uniacid'  => $this->uniacid,
+                    'settings' => $settingsData,
+                    'user_id'  => $this->userId,
+                    'username' => $this->adminSession['username'] ?? ''
+                ]);
             }
 
             $moduleSettings = $settingsData;
@@ -603,6 +751,11 @@ trait AdminTraits
     // 当前项目应用配置信息
     public function module()
     {
+        // 权限检查 - 模块配置
+        if (!$this->checkPermission('module_config')) {
+            return $this->errorMsg('您没有权限配置模块', 403);
+        }
+
         $moduleSettings = $this->moduleSettings();
         if ($this->request->isPost()) {
             $this->success(["url" => webUrl("sets/module", ['tab' => str_replace("#tab_", "", $this->params['tab'])])]);
@@ -634,4 +787,207 @@ trait AdminTraits
     {
         return $item;
     }
+
+    // ============ 新增的日志记录和权限检查方法 ============
+
+    /**
+     * 记录操作日志
+     * @param string $action 操作类型：add, edit, delete, change_field, etc.
+     * @param array $data 相关数据
+     * @return bool
+     */
+    protected function recordLog($action, $data = [])
+    {
+        try {
+            // 操作类型映射
+            $actionMap = [
+                'add'             => '添加',
+                'edit'            => '编辑',
+                'delete'          => '删除',
+                'force_delete'    => '永久删除',
+                'restore'         => '还原',
+                'change_field'    => '修改字段',
+                'batch_update'    => '批量更新',
+                'module_settings' => '模块设置',
+                'export'          => '导出'
+            ];
+
+            $actionName = $actionMap[$action] ?? $action;
+            $tableName = $data['table'] ?? $this->tableName ?? 'unknown';
+            $recordId = $data['id'] ?? 0;
+
+            // 构建日志数据
+            $logData = [
+                'uniacid'     => $this->uniacid,
+                'user_id'     => $data['user_id'] ?? $this->userId ?? 0,
+                'username'    => $data['username'] ?? $this->adminSession['username'] ?? '',
+                'path'        => $this->request->pathinfo(),
+                'page_name'   => $actionName . ' - ' . $tableName . ($recordId ? ' (ID: ' . $recordId . ')' : ''),
+                'module'      => $this->module,
+                'ip'          => $this->request->ip(),
+                'create_time' => time()
+            ];
+
+            // 写入日志表
+            Db::name('sys_log')->insert($logData);
+
+            return true;
+        } catch (\Exception $e) {
+            // 记录日志失败时不要影响主流程
+            error_log('记录操作日志失败: ' . $e->getMessage());
+
+            # 验证日志表是否存在
+            if (!DbServiceFacade::hasTable('sys_log')) {
+                try {
+                    DbServiceFacade::execute("
+                        CREATE TABLE " . tablename('sys_log') . " (
+                          `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '记录ID',
+                          `uniacid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '商户id',
+                          `user_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '员工id',
+                          `username` varchar(64) NOT NULL DEFAULT '' COMMENT '操作账号',
+                          `path` varchar(128) NOT NULL DEFAULT '' COMMENT '操作连接',
+                          `page_name` varchar(64) NOT NULL DEFAULT '' COMMENT '页面名称',
+                          `module` varchar(50) NOT NULL DEFAULT '' COMMENT '模块标识',
+                          `ip` varchar(16) NOT NULL DEFAULT '' COMMENT '登录IP',
+                          `create_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '操作时间',
+                          PRIMARY KEY (`id`) USING BTREE,
+                          KEY `user_id` (`user_id`) USING BTREE,
+                          KEY `create_time` (`create_time`) USING BTREE
+                        ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='员工操作记录表';
+                    ");
+                    $this->recordLog($action, $data);
+                } catch (\Exception $e) {
+                }
+            }
+
+            return false;
+        }
+    }
+
+    /**
+     * 检查权限
+     * @param string $permission 权限标识
+     * @return bool
+     */
+    protected function checkPermission($permission)
+    {
+        try {
+            // 如果用户是超级管理员（owner），拥有所有权限
+            if (!empty($this->adminSession['role'])) {
+                if ($this->adminSession['role'] === 'owner') {
+                    return true;
+                }
+
+                if ($this->adminSession['role'] === 'manager') {
+                    return true;
+                }
+            }
+
+            // 获取当前用户的权限列表
+            $userPermissions = $this->getUserPermissions();
+
+            if (empty($userPermissions)) {
+                return false;
+            }
+
+            // 检查是否有应用权限
+            if (in_array($this->module, $userPermissions['app_perms'])) {
+                return true;
+            }
+
+            $permission = $this->module . "." . $this->controller . "." . $permission;
+
+            // 检查是否有操作权限
+            $hasPermission = in_array($permission, $userPermissions['perms']);
+            return $hasPermission;
+        } catch (\Exception $e) {
+            // 权限检查失败时默认返回无权限
+            error_log('权限检查失败: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * 获取当前用户权限列表
+     * @return array
+     */
+    protected function getUserPermissions()
+    {
+        // 从缓存或数据库中获取用户权限
+        $userId = $this->userId ?? 0;
+        $uniacid = $this->uniacid ?? 0;
+
+        if (!$userId || !$uniacid) {
+            return [];
+        }
+
+        try {
+            $operator = Db::name('sys_account_perm_user')->field('perms,app_perms')->where(['uid' => $userId, 'uniacid' => $uniacid])->find();
+            $operatorPerms = (array)explode(',', $operator['perms']);
+            $operatorAppPerms = (array)explode(',', $operator['app_perms']);
+
+            $permissions = [
+                'perms'     => $operatorPerms,
+                'app_perms' => $operatorAppPerms,
+            ];
+
+            return $permissions ?: [];
+        } catch (\Exception $e) {
+            error_log('获取用户权限失败: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * 获取权限操作映射
+     * @return array
+     */
+    protected function getPermissionActions()
+    {
+        if (empty($this->permissionActions)) {
+            // 默认的权限操作映射
+            $this->permissionActions = [
+                'main'           => 'view',           // 查看列表
+                'index'          => 'view',          // 查看列表
+                'add'            => 'add',             // 添加
+                'edit'           => 'edit',           // 编辑
+                'post'           => ['add', 'edit'],  // 添加/编辑
+                'change'         => 'edit',         // 修改字段
+                'delete'         => 'delete',       // 删除
+                'destroy'        => 'force_delete', // 永久删除
+                'restore'        => 'restore',     // 还原
+                'recycle'        => 'recycle',     // 回收站
+                'cover'          => 'cover',         // 访问入口
+                'module'         => 'module_config', // 模块配置
+                'moduleSettings' => 'module_settings', // 模块设置
+                'export'         => 'export',       // 导出
+                'update'         => 'edit',         // 批量更新
+            ];
+        }
+
+        return $this->permissionActions;
+    }
+
+    /**
+     * 在控制器初始化时检查权限（可以在AdminBaseController中调用）
+     */
+    protected function checkActionPermission()
+    {
+        $action = $this->action;
+        $permissionActions = $this->getPermissionActions();
+
+        if (isset($permissionActions[$action])) {
+            $permissions = (array)$permissionActions[$action];
+            foreach ($permissions as $permission) {
+                if (!$this->checkPermission($permission)) {
+                    if ($this->request->isAjax()) {
+                        $this->errorMsg('您没有权限执行此操作', 403);
+                    } else {
+                        exit('权限不足');
+                    }
+                }
+            }
+        }
+    }
+
 }

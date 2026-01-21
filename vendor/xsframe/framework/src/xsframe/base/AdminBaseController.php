@@ -137,6 +137,15 @@ abstract class AdminBaseController extends BaseController
         return view($name, $var);
     }
 
+    // 引入后端模板
+    protected function templateDisplay($content = null, $var = null)
+    {
+        # 解决 使用门面调用会报 未定义数组索引 的错误警告
+        error_reporting(E_ALL ^ E_NOTICE);
+        $var = $this->getDefaultVars($var);
+        return display($content, $var);
+    }
+
     /**
      * 生成静态文件
      * @throws \Exception
@@ -170,6 +179,9 @@ abstract class AdminBaseController extends BaseController
 
     protected function errorMsg($message, $code = 0)
     {
+        if (!request()->isAjax()) {
+            return $this->template('admin@public/message', ['type' => 'error', "title" => '系统提示', 'message' => $message, 'wait' => 3]);
+        }
         return $this->error(["message" => $message], $code);
     }
 
@@ -228,7 +240,7 @@ abstract class AdminBaseController extends BaseController
         if (!empty($params)) {
             $var = array_merge($var, $params);
         }
-        if( !isset($params['systemExpireShow']) ){
+        if (!isset($params['systemExpireShow'])) {
             # 系统倒计时查询
             $systemExpireShow = 0;
             $systemExpireText = "";
@@ -242,8 +254,8 @@ abstract class AdminBaseController extends BaseController
                     $systemExpireShow = $isNotExpired ? 0 : 1;
                     if ($expireTime - TIMESTAMP <= 7 * 86400) {
                         $systemExpireShow = 1;
-                        $systemExpireText = "系统即将到期，请及时续费（到期时间：".date('Y-m-d H:i:s', $expireTime)."）"; # 过期提示信息')."）"; # 过期提示信息
-                        if( $expireTime - TIMESTAMP <= 0 ){
+                        $systemExpireText = "系统即将到期，请及时续费（到期时间：" . date('Y-m-d H:i:s', $expireTime) . "）"; # 过期提示信息')."）"; # 过期提示信息
+                        if ($expireTime - TIMESTAMP <= 0) {
                             $systemExpireText = "系统已到期，请及时续费（到期时间：" . date('Y-m-d H:i:s', $expireTime) . "）"; # 过期提示信息')."）"; # 过期提示信息
                         }
                     }
@@ -251,7 +263,7 @@ abstract class AdminBaseController extends BaseController
             }
 
             # 校验用户时长倒计时，商户账号倒计时提醒 TODO
-            if( !$systemExpireShow ){
+            if (!$systemExpireShow) {
 
             }
 

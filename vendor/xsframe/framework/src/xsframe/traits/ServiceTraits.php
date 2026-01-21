@@ -258,6 +258,16 @@ trait ServiceTraits
      * @param $sql
      * @return mixed
      */
+    public function run($sql)
+    {
+        return $this->execute($sql);
+    }
+
+    /**
+     * 执行sql
+     * @param $sql
+     * @return mixed
+     */
     public function query($sql = null)
     {
         return $sql ? Db::query($sql) : "";
@@ -511,7 +521,7 @@ trait ServiceTraits
             if ($this->hasField($field)) {
                 return true;
             }
-            $sql = "ALTER TABLE " . tablename($this->tableName) . " ADD COLUMN `{$field}` " .( $length > 0 ? "{$type}({$length})" : "{$type}" ) . ($default ? "DEFAULT '{$default}'" : " ") . ($isNull ? 'NULL' : 'NOT NULL') . " COMMENT '{$comment}' ";
+            $sql = "ALTER TABLE " . tablename($this->tableName) . " ADD COLUMN `{$field}` " . ($length > 0 ? "{$type}({$length})" : "{$type}") . ($default ? "DEFAULT '{$default}'" : " ") . ($isNull ? 'NULL' : 'NOT NULL') . " COMMENT '{$comment}' ";
             return Db::execute($sql);
         } catch (\Exception $e) {
             throw new Exception($e->getMessage());

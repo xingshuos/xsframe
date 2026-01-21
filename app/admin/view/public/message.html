@@ -1,0 +1,260 @@
+{extend name="../../admin/view/public/admin"}
+
+{block name='style'}
+<style>
+    .tip-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 60vh;
+        padding: 40px 20px;
+    }
+
+    .tip-card {
+        max-width: 600px;
+        width: 100%;
+        text-align: center;
+        padding: 40px 30px;
+        border-radius: 12px;
+        box-shadow: 0 5px 30px rgba(0, 0, 0, 0.08);
+        background: #fff;
+        border-top: 4px solid #dc3545;
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    .tip-success {
+        border-top-color: #28a745 !important;
+    }
+
+    .tip-warning {
+        border-top-color: #ffc107 !important;
+    }
+
+    .tip-info {
+        border-top-color: #17a2b8 !important;
+    }
+
+    .tip-error {
+        border-top-color: #dc3545 !important;
+    }
+
+    .tip-icon {
+        font-size: 72px;
+        margin-bottom: 20px;
+        display: block;
+        line-height: 1;
+    }
+
+    .tip-icon-success {
+        color: #28a745;
+    }
+
+    .tip-icon-error {
+        color: #dc3545;
+    }
+
+    .tip-icon-warning {
+        color: #ffc107;
+    }
+
+    .tip-icon-info {
+        color: #17a2b8;
+    }
+
+    .tip-title {
+        font-size: 26px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .tip-message-text {
+        font-size: 16px;
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        padding: 0 20px;
+    }
+
+    .tip-countdown {
+        font-size: 14px;
+        color: #999;
+        margin-top: 15px;
+        margin-bottom: 25px;
+    }
+
+    .tip-countdown-num {
+        color: #dc3545;
+        font-weight: bold;
+        font-size: 18px;
+        margin: 0 3px;
+    }
+
+    .tip-actions {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .tip-btn {
+        min-width: 140px;
+        padding: 10px 25px;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .tip-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .tip-btn-primary {
+        background: #007bff;
+        border-color: #007bff;
+    }
+
+    .tip-btn-secondary {
+        background: #6c757d;
+        border-color: #6c757d;
+    }
+
+    .tip-btn-success {
+        background: #28a745;
+        border-color: #28a745;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .tip-card {
+            padding: 30px 20px;
+        }
+
+        .tip-title {
+            font-size: 22px;
+        }
+
+        .tip-message-text {
+            font-size: 15px;
+            padding: 0 10px;
+        }
+
+        .tip-actions {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .tip-btn {
+            width: 100%;
+        }
+    }
+</style>
+{/block}
+
+{block name='content'}
+<div class="tip-container">
+
+    <div class="tip-card tip-{$type}">
+        {if $type == 'success'}
+        <i class="tip-icon tip-icon-success icon icon-check-circle"></i>
+        {elseif $type == 'error'}
+        <i class="tip-icon tip-icon-error icon icon-times-circle"></i>
+        {elseif $type == 'warning'}
+        <i class="tip-icon tip-icon-warning icon icon-exclamation-triangle"></i>
+        {else}
+        <i class="tip-icon tip-icon-info icon icon-info-circle"></i>
+        {/if}
+
+        <h2 class="tip-title">{$title}</h2>
+
+        <div class="tip-message-text">
+            {$message}
+        </div>
+
+        <div class="tip-countdown" id="countdown">
+            <span id="countdown-text">页面将在 <span class="tip-countdown-num" id="countdown-num">{$wait}</span> 秒后自动返回</span>
+        </div>
+
+        <div class="tip-actions">
+            <button type="button" class="btn tip-btn
+                {if $type == 'success'}tip-btn-success
+                {elseif $type == 'error'}tip-btn-primary
+                {elseif $type == 'warning'}tip-btn-warning
+                {else}tip-btn-secondary{/if}"
+                    onclick="goBack()">
+                <i class="icon icon-reply"></i> {$btn_text}
+            </button>
+        </div>
+
+    </div>
+</div>
+{/block}
+
+{block name='script'}
+<script>
+    require(['jquery'], function($) {
+        // 倒计时处理
+        let waitTime = "{$wait??3}";
+        let countdownElement = $('#countdown-num');
+        let countdownTextElement = $('#countdown-text');
+        let countdownInterval;
+
+        // 开始倒计时
+        function startCountdown() {
+            countdownElement.text(waitTime);
+
+            countdownInterval = setInterval(function() {
+                waitTime--;
+                countdownElement.text(waitTime);
+
+                if (waitTime <= 0) {
+                    clearInterval(countdownInterval);
+                    goBack();
+                }
+            }, 1000);
+        }
+
+        // 返回上一页
+        window.goBack = function() {
+            clearInterval(countdownInterval);
+            history.go(-1);
+        };
+
+        // 页面加载完成后开始倒计时
+        $(function() {
+            startCountdown();
+
+            // 添加键盘支持
+            $(document).on('keyup', function(e) {
+                if (e.keyCode === 13) { // Enter键
+                    goBack();
+                } else if (e.keyCode === 27) { // ESC键
+                    goBack();
+                }
+            });
+
+            // 点击遮罩层关闭
+            $('.tip-card').on('click', function(e) {
+                e.stopPropagation();
+            });
+
+            // 提示信息过长时的处理
+            let messageEl = $('.tip-message-text');
+            if (messageEl.text().length > 200) {
+                messageEl.css('max-height', '200px').css('overflow-y', 'auto').css('padding', '10px 15px');
+            }
+        });
+    });
+</script>
+{/block}

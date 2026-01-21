@@ -1,7 +1,17 @@
 {extend name="../../admin/view/public/admin"}
 
 {block name='style'}
+<style>
+    .log-path {
+        max-width: 300px;
+        word-break: break-all;
+    }
 
+    .log-username {
+        max-width: 120px;
+        word-break: break-all;
+    }
+</style>
 {/block}
 
 {block name='content'}
@@ -10,8 +20,166 @@
 
 <div class="page-content">
 
-    功能开发中...
+    <!-- 搜索表单 -->
+    <form action="" method="get" class="form-horizontal table-search" role="form" id="searchForm">
+        <div class="page-toolbar">
+            <div class="col-md-12 input-group pull-right">
+                <!-- 操作账号搜索 -->
+                <span class="input-group-input" style="width: 200px;">
+                    <input type="text" class="form-control" name="username" value="{$_GET['username']}" placeholder="操作账号" style="width: 100%;">
+                </span>
+
+                <!-- 连接搜索 -->
+                <span class="input-group-input" style="width: 200px;">
+                    <input type="text" class="form-control" name="ip" value="{$_GET['ip']}" placeholder="操作IP" style="width: 100%;">
+                </span>
+
+                <!-- IP搜索 -->
+                <input type="text" class="form-control" name="path" value="{$_GET['path']}" placeholder="操作连接" >
+
+                <!-- 模块选择 -->
+                <span class="input-group-select">
+                    <select name="module" class="form-control">
+                        <option value="">全部模块</option>
+                        {if !empty($moduleList)}
+                        {foreach $moduleList as $module}
+                        <option value="{$module}" {if $_GET['module'] == $module}selected{/if}>{$module}</option>
+                        {/foreach}
+                        {/if}
+                    </select>
+                </span>
+
+                <!-- 时间范围 -->
+                <span class="input-group-select">
+                    <select name="searchtime" class="form-control" style="width:100px;padding:0 5px;" id="searchtime">
+                        <option value="">全部时间</option>
+                        <option value="create" {if $_GET['searchtime']=='create'}selected{/if}>操作时间</option>
+                    </select>
+                </span>
+                <span class="input-group-btn">{:tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d H:i', $start_time),'endtime'=>date('Y-m-d H:i', $end_time)),true);}</span>
+
+                <!-- 搜索按钮 -->
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="icon icon-search"></i> 搜索
+                    </button>
+                    <button class="btn btn-default" type="button" onclick="resetSearch()">
+                        <i class="icon icon-refresh"></i> 重置
+                    </button>
+                </span>
+            </div>
+        </div>
+
+    </form>
+
+    {if empty($list)}
+    <div class="panel panel-default">
+        <div class="panel-body empty-data">
+            <i class="icon icon-file-text-o" style="font-size: 48px; color: #ddd;"></i>
+            <p>未查询到相关日志记录</p>
+        </div>
+    </div>
+    {else/}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                            <tr>
+                                <th style="width: 60px;">ID</th>
+                                <th style="width: 100px;">ID/账号</th>
+                                <th style="width: 150px;">页面名称</th>
+                                <th style="width: 150px;">操作连接</th>
+                                <th style="width: 100px;">操作IP</th>
+                                <th style="width: 120px;">模块应用</th>
+                                <th style="width: 80px;">操作时间</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {foreach $list as $key=>$log }
+                            <tr>
+                                <td>{$log['id']}</td>
+                                <td>
+                                    <div class="text-primary">ID: {$log['user_id']}</div>
+                                    <div class="text-muted log-username">{$log['username']}</div>
+                                </td>
+                                <td>
+                                    <span class="label label-info">{$log['page_name']}</span>
+                                </td>
+                                <td>
+                                    <div class="log-path" title="{$log['path']}">
+                                        {$log['path_short']}
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="label label-default">{$log['ip']}</span>
+                                </td>
+                                <td>
+                                    <span class="label label-primary">{$log['module_name']} ({$log['module']})</span>
+                                </td>
+                                <td>
+                                    <span class="text-muted">
+                                        {$log['create_time']|date='Y-m-d'}<br>
+                                        {$log['create_time']|date='H:i:s'}
+                                    </span>
+                                </td>
+                            </tr>
+                            {/foreach}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {if $pager}
+                <div class="panel-footer">
+                    <div class="pull-left">
+                        <span class="text-muted">共 {$total} 条记录</span>
+                    </div>
+                    <div class="pull-right">
+                        {$pager|raw}
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                {/if}
+            </div>
+        </div>
+    </div>
+    {/if}
 
 </div>
 
+{/block}
+
+{block name='script'}
+<script>
+    require(['jquery', 'bootstrap', 'tip'], function($) {
+
+        // 重置搜索
+        window.resetSearch = function() {
+            $('#searchForm')[0].reset();
+            $('#searchForm').find('input[name="time[start]"]').val('');
+            $('#searchForm').find('input[name="time[end]"]').val('');
+            window.location.href = "{:webUrl('ops/oplog')}";
+        };
+
+        // 页面加载完成后初始化
+        $(function() {
+            // 添加时间范围选择器的样式调整
+            $('.daterange').css({
+                'min-width': '220px'
+            });
+
+            // 表格行悬停效果
+            $('table tbody tr').hover(
+                function() {
+                    $(this).addClass('active');
+                },
+                function() {
+                    $(this).removeClass('active');
+                }
+            );
+        });
+    });
+</script>
 {/block}

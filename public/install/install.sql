@@ -192,6 +192,24 @@ CREATE TABLE `#__sys_express`
     PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
+
+DROP TABLE IF EXISTS `#__sys_log`;
+CREATE TABLE `#__sys_log` (
+   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '记录ID',
+   `uniacid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '商户id',
+   `user_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '员工id',
+   `username` varchar(64) NOT NULL DEFAULT '' COMMENT '操作账号',
+   `path` varchar(128) NOT NULL DEFAULT '' COMMENT '操作连接',
+   `page_name` varchar(64) NOT NULL DEFAULT '' COMMENT '页面名称',
+   `module` varchar(50) NOT NULL DEFAULT '' COMMENT '模块标识',
+   `ip` varchar(16) NOT NULL DEFAULT '' COMMENT '登录IP',
+   `create_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '操作时间',
+   PRIMARY KEY (`id`) USING BTREE,
+   KEY `user_id` (`user_id`) USING BTREE,
+   KEY `create_time` (`create_time`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='员工操作记录表';
+
+
 DROP TABLE IF EXISTS `#__sys_member`;
 CREATE TABLE `#__sys_member`
 (

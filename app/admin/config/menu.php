@@ -132,6 +132,10 @@ return [
                 'title' => '更新缓存',
                 'route' => 'cache',
             ],
+            [
+                'title' => '系统日志',
+                'route' => 'oplog',
+            ],
         ]
     ],
     'college' => [
