@@ -29,7 +29,7 @@ trait AdminTraits
     public function main()
     {
         // 权限检查 - 查看列表
-        if (!$this->checkPermission('view')) {
+        if (!$this->checkPermission('main')) {
             return $this->errorMsg('您没有权限查看此页面', 403);
         }
 
@@ -947,8 +947,9 @@ trait AdminTraits
         if (empty($this->permissionActions)) {
             // 默认的权限操作映射
             $this->permissionActions = [
-                'main'           => 'view',           // 查看列表
-                'index'          => 'view',          // 查看列表
+                'main'           => 'main',           // 查看列表
+                'index'          => 'main',          // 查看列表
+                'detail'         => 'detail',          // 查看详情
                 'add'            => 'add',             // 添加
                 'edit'           => 'edit',           // 编辑
                 'post'           => ['add', 'edit'],  // 添加/编辑

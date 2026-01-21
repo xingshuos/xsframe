@@ -171,7 +171,7 @@ class PermWrapper
 
             $permDefault = [
                 'main'   => '查看列表',
-                'view'   => '查看详情',
+                'detail' => '查看详情',
                 'add'    => '添加-log',
                 'edit'   => '修改-log',
                 'delete' => '删除-log',
