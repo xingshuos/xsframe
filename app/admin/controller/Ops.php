@@ -149,11 +149,7 @@ class Ops extends AdminBaseController
         $result['list'] = $list;
 
         // 获取所有模块列表用于下拉选择
-        $moduleList = Db::name("sys_log")
-            ->where(['uniacid' => $this->uniacid])
-            ->group('module')
-            ->column('module');
-
+        $moduleList = DbServiceFacade::name("sys_modules")->getAll(['status' => 1, 'is_install' => 1, 'is_deleted' => 0]);
         $result['moduleList'] = $moduleList;
 
         // 设置默认时间段（最近7天）
@@ -487,7 +483,7 @@ class Ops extends AdminBaseController
                 $types = $this->params['type'] ?? [];
                 $types = is_array($types) ? $types : [$types];
 
-                if( in_array('data', $types) ){
+                if (in_array('data', $types)) {
                     Cache::clear();
 
                     $driver = Cache::store('redis')->handler();
@@ -496,7 +492,7 @@ class Ops extends AdminBaseController
                     }
                 }
 
-                if( in_array('template', $types) ){
+                if (in_array('template', $types)) {
                     FileUtil::rmDirs($this->iaRoot . '/runtime');
                 }
             } catch (\Exception $e) {

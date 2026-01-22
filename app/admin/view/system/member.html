@@ -17,8 +17,8 @@
                 <span class="input-group-select">
                     <select name="module" class="form-control" style="width:230px;padding:0 5px;">
                         <option value="">选择应用</option>
-                        {foreach $appList as $app}
-                        <option value="{$app['module']}" {if $_GET['module']==$app['module']}selected{/if}>{$app['module_name']}（{$app['module']}）</option>
+                        {foreach $appList as $module}
+                        <option value="{$module['identifie']}" {if $_GET['module'] == $module['identifie']}selected{/if}>{$module['name']}({$module['identifie']})</option>
                         {/foreach}
                     </select>
                 </span>

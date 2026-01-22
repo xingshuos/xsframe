@@ -164,11 +164,12 @@ class System extends AdminBaseController
         }
         unset($item);
 
-        $appList = DbServiceFacade::name('sys_account_modules')->getAll(['uniacid' => $this->uniacid], "module");
-        foreach ($appList as &$item) {
-            $item['module_name'] = DbServiceFacade::name('sys_modules')->getValue(['identifie' => $item['module']], "name");
-        }
-        unset($item);
+        // 获取所有模块列表用于下拉选择
+        $appList = Db::name("sys_account_modules")->alias('am')
+            ->leftJoin('sys_modules m', 'am.module = m.identifie')
+            ->where(['am.uniacid' => $this->uniacid])
+            ->where(['m.status' => 1, 'm.is_install' => 1, 'm.is_deleted' => 0])
+            ->select()->toArray();
 
         $result = [
             'appList'   => $appList,

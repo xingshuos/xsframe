@@ -104,7 +104,7 @@
         </li>
 
         {if $userInfo['role'] != 'operator'}
-        <li class="{if in_array($action,['user','role','rolepost','userpost'])}active{/if}">
+        <li class="{if in_array($action,['user','role','rolepost','userpost','oplog'])}active{/if}">
             <a href="{:url('admin/perm/user',['i' => $uniacid,'module' => $_GET['module']])}" class="wb-nav-item">
                 <i class="icon icon-key"></i>
                 <span class="wb-nav-title">权限</span>
@@ -150,6 +150,12 @@
         <ul class="single">
             <li class="{if $action=='user' || $action=='userpost'}active{/if}" style=" position: relative">
                 <a href="{:webUrl('perm/user')}" style="cursor: pointer;">员工管理</a>
+            </li>
+        </ul>
+
+        <ul class="single">
+            <li class="{if $action=='oplog'}active{/if}" style=" position: relative">
+                <a href="{:webUrl('perm/oplog')}" style="cursor: pointer;">操作日志</a>
             </li>
         </ul>
 

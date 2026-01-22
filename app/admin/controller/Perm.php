@@ -14,6 +14,7 @@ namespace app\admin\controller;
 
 use xsframe\base\AdminBaseController;
 use xsframe\enum\UserRoleKeyEnum;
+use xsframe\facade\service\DbServiceFacade;
 use xsframe\facade\wrapper\PermFacade;
 use xsframe\util\RandomUtil;
 use think\facade\Db;
@@ -443,6 +444,86 @@ class Perm extends AdminBaseController
             Db::name("sys_account_perm_role")->where("id", '=', $item['id'])->update(['deleted' => 1]);
         }
         $this->success(["url" => referer()]);
+    }
+
+    // 操作日志
+    public function oplog(): \think\response\View
+    {
+        $condition = [
+            'uniacid' => $this->uniacid,
+        ];
+
+        // 处理时间段搜索
+        if (!empty($this->params['searchtime']) && is_array($this->params['time'])) {
+            $startTime = strtotime($this->params['time']['start']);
+            $endTime = strtotime($this->params['time']['end']);
+
+            if ($startTime && $endTime) {
+                $condition['create_time'] = Db::raw("between {$startTime} and {$endTime}");
+            }
+        }
+
+        // 操作账号搜索
+        if (!empty($this->params['username'])) {
+            $condition['username'] = ['like', '%' . trim($this->params['username']) . '%'];
+        }
+
+        // 连接搜索
+        if (!empty($this->params['path'])) {
+            $condition['path'] = ['like', '%' . trim($this->params['path']) . '%'];
+        }
+
+        // IP搜索
+        if (!empty($this->params['ip'])) {
+            $condition['ip'] = trim($this->params['ip']);
+        }
+
+        // 模块搜索
+        if (!empty($this->params['module'])) {
+            $condition['module'] = trim($this->params['module']);
+        }
+
+        $result = [];
+
+        $list = DbServiceFacade::name("sys_log")->getList($condition, "*", "id desc");
+        $total = DbServiceFacade::name("sys_log")->count();
+        $result['total'] = $total;
+        $result['list'] = $list;
+
+        // 获取所有模块列表用于下拉选择
+        $moduleList = Db::name("sys_account_modules")->alias('am')
+            ->leftJoin('sys_modules m', 'am.module = m.identifie')
+            ->where(['am.uniacid' => $this->uniacid])
+            ->where(['m.status' => 1, 'm.is_install' => 1, 'm.is_deleted' => 0])
+            ->select()->toArray();
+
+        $result['moduleList'] = $moduleList;
+
+        // 设置默认时间段（最近7天）
+        if (empty($this->params['time'])) {
+            $result['start_time'] = strtotime('-7 days');
+            $result['end_time'] = time();
+        } else {
+            $result['start_time'] = strtotime($this->params['time']['start']);
+            $result['end_time'] = strtotime($this->params['time']['end']);
+        }
+
+        // 格式化操作时间
+        if (!empty($result['list'])) {
+            foreach ($result['list'] as &$item) {
+                // 简化过长的路径显示
+                if (strlen($item['path']) > 50) {
+                    $item['path_short'] = substr($item['path'], 0, 50) . '...';
+                } else {
+                    $item['path_short'] = $item['path'];
+                }
+
+                $item['module_name'] = DbServiceFacade::name("sys_modules")->getValue(['identifie' => $item['module']], "name");
+            }
+            unset($item);
+        }
+
+        return $this->template('oplog', $result);
     }
 
     public function roleChange()

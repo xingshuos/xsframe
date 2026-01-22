@@ -133,7 +133,7 @@ return [
                 'route' => 'cache',
             ],
             [
-                'title' => '系统日志',
+                'title' => '操作日志',
                 'route' => 'oplog',
             ],
         ]
