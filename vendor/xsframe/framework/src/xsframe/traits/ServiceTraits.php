@@ -258,16 +258,6 @@ trait ServiceTraits
      * @param $sql
      * @return mixed
      */
-    public function run($sql)
-    {
-        return $this->execute($sql);
-    }
-
-    /**
-     * 执行sql
-     * @param $sql
-     * @return mixed
-     */
     public function query($sql = null)
     {
         return $sql ? Db::query($sql) : "";
