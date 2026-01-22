@@ -81,7 +81,7 @@ body{background-color: #F5F5F5}
 
 .magnify-footer {
     height: 50px;
-    bottom: 0;
+    bottom: 30px;
     position: absolute;
     width: 100%;
     text-align: center;
@@ -95,10 +95,10 @@ body{background-color: #F5F5F5}
     background-color: rgba(96, 98,102, .8);
     -webkit-border-radius: 5px 5px 0 0;
     -moz-border-radius: 5px 5px 0 0;
-    border-radius: 5px 5px 0 0;
-    background-color:#606266;
+    padding: 0 15px;
+    border-radius: 50px;
 }
-.magnify-toolbar .magnify-btn{display:inline-block;width:50px;margin:0;color:#fff;line-height:58px;}
+.magnify-toolbar .magnify-btn{display:inline-block;width:60px;margin:0;color:#fff;line-height:58px;}
 .magnify-btn-close{
     width:44px;
     height:44px;

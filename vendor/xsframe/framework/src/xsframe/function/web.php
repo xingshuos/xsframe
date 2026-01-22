@@ -497,14 +497,19 @@ if (!function_exists('tpl_form_field_image')) {
 					let btn = $(elm);
 					let ipt = btn.parent().prev();
 					let val = ipt.val();
-					let img = ipt.parent().parent().find(".preview-img-box").children();
+					let img = ipt.parent().parent().find(".preview-img-box").find("img");
 
 					util.image(val, function(url){
-					    console.log("url",url)
+					    console.log("url1",url)
 						if(url.url){
 							if(img.length > 0){
 								img.get(0).src = url.url;
+                                img.parent().attr("data-src",url.url)
 							}
+                            
+                            console.log("img",img)
+                            console.log("ipt",ipt)
+                            
 							ipt.val(url.fileurl);
 							ipt.attr("filename",url.filename);
 							ipt.attr("url",url.url);
@@ -524,7 +529,49 @@ if (!function_exists('tpl_form_field_image')) {
                     $(elm).parent().parent().find("input").val("");
 				});
 			}
+            
+            require([\'jquery.ui\',\'jquery.img.enlarge\'], function () {
+                $(\'.multi-img-details\').sortable({scroll: \'false\'});
+                
+                $(\'[data-magnify]\').Magnify({
+                    Toolbar: [
+                        \'prev\',
+                        \'next\',
+                        \'rotateLeft\',
+                        \'rotateRight\',
+                        \'zoomIn\',
+                        \'actualSize\',
+                        \'zoomOut\'
+                    ],
+                    title:false,
+                    keyboard:true,
+                    draggable:false,
+                    movable:true,
+                    modalSize:["100%","100%"],
+                    modalOffset: [0, 0],
+                    beforeOpen:function (obj,data) {
+                        // console.log(\'beforeOpen\',obj)
+                    },
+                    opened:function (obj,data) {
+                        // console.log(\'opened\')
+                    },
+                    beforeClose:function (obj,data) {
+                        console.log(\'beforeClose\')
+                    },
+                    closed:function (obj,data) {
+                        console.log(\'closed\')
+                    },
+                    beforeChange:function (obj,data) {
+                        // console.log(\'beforeChange\')
+                    },
+                    changed:function (obj,data) {
+                        // console.log(\'changed\')
+                    }
+                });
+            });
+            
 		</script>';
+
             define('TPL_INIT_IMAGE', true);
         }
 
@@ -568,11 +615,13 @@ if (!function_exists('tpl_form_field_image')) {
         if (!empty($options['tabs']['browser']) || !empty($options['tabs']['upload'])) {
             $delDom = '';
             if( !($options['readonly'] || $options['disabled']) ){
-                $delDom = '<em class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片" onclick="deleteImage(this)">×</em>';
+                $delDom = '<em class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片2" onclick="deleteImage(this)">×</em>';
             }
             $s .=
                 '<div class="input-group preview-img-box' . $options['class_extra'] . '" style="margin-top:.5em;">
-				<img src="' . $val . '" onerror="this.src=\'' . $default . '\'; this.title=\'图片未找到.\'" class="img-responsive img-thumbnail" ' . (!empty($options['extras']['image']) ? $options['extras']['image'] : '') . ' width="150" />
+				    <a href="javascript:void(0)" data-magnify="gallery" data-group="g1" data-src="' . tomedia($val) . '" data-caption="查看大图" style="object-fit:contain;">
+				        <img src="' . $val . '" onerror="this.src=\'' . $default . '\'; this.title=\'图片未找到.\'" class="img-responsive img-thumbnail" ' . (!empty($options['extras']['image']) ? $options['extras']['image'] : '') . ' width="150" />
+                    </a>
                 ' .$delDom.'</div>';
         }
         return $s;
@@ -608,7 +657,7 @@ if (!function_exists('tpl_form_field_multi_image')) {
 		let name = $(elm).next().val();
 		util.image( "", function(urls){
 			$.each(urls, function(idx, url){
-				$(elm).parent().parent().next().append(\'<div class="multi-item"><img onerror="this.src=\\\'/app/admin/static/images/nopic.png\\\'; this.title=\\\'图片未找到.\\\'" src="\'+url.url+\'" class="img-responsive img-thumbnail"><input type="hidden" name="\'+name+\'[]" value="\'+url.fileurl+\'"><em class="close" title="删除这张图片" onclick="deleteMultiImage(this)">×</em></div>\');
+				$(elm).parent().parent().next().append(\'<div class="multi-item"><img onerror="this.src=\\\'/app/admin/static/images/nopic.png\\\'; this.title=\\\'图片未找到.\\\'" src="\'+url.url+\'" class="img-responsive img-thumbnail"><input type="hidden" name="\'+name+\'[]" value="\'+url.fileurl+\'"><em class="close" title="删除这张图片3" onclick="deleteMultiImage(this)">×</em></div>\');
 			});
 		}, ' . json_encode($options) . ');
 	}
@@ -698,7 +747,7 @@ if (!function_exists('tpl_form_field_multi_image')) {
         <img src="' . tomedia($row) . '" onerror="this.src=\'/app/admin/static/images/nopic.png\'; this.title=\'图片未找到.\'" class="img-responsive img-thumbnail">
     </a>
 	<input type="hidden" name="' . $name . '[]" value="' . $row . '" >
-	<em class="close" title="删除这张图片" onclick="deleteMultiImage(this)">×</em>
+	<em class="close" title="删除这张图片4" onclick="deleteMultiImage(this)">×</em>
 </div>';
             }
         }
@@ -763,6 +812,7 @@ if (!function_exists('tpl_form_field_image2')) {
 						if(url.url){
 							if(img.length > 0){
 								img.get(0).src = url.url;
+                                img.parent().attr("data-src",url.url)
 							}
 							ipt.val(url.fileurl);
 							ipt.attr("filename",url.filename);
@@ -777,6 +827,47 @@ if (!function_exists('tpl_form_field_image2')) {
 					$(elm).parent().parent().find("input").val("");
 				});
 			}
+            
+            require([\'jquery.ui\',\'jquery.img.enlarge\'], function () {
+                $(\'.multi-img-details\').sortable({scroll: \'false\'});
+                
+                $(\'[data-magnify]\').Magnify({
+                    Toolbar: [
+                        \'prev\',
+                        \'next\',
+                        \'rotateLeft\',
+                        \'rotateRight\',
+                        \'zoomIn\',
+                        \'actualSize\',
+                        \'zoomOut\'
+                    ],
+                    title:false,
+                    keyboard:true,
+                    draggable:false,
+                    movable:true,
+                    modalSize:["100%","100%"],
+                    modalOffset: [0, 0],
+                    beforeOpen:function (obj,data) {
+                        // console.log(\'beforeOpen\',obj)
+                    },
+                    opened:function (obj,data) {
+                        // console.log(\'opened\')
+                    },
+                    beforeClose:function (obj,data) {
+                        console.log(\'beforeClose\')
+                    },
+                    closed:function (obj,data) {
+                        console.log(\'closed\')
+                    },
+                    beforeChange:function (obj,data) {
+                        // console.log(\'beforeChange\')
+                    },
+                    changed:function (obj,data) {
+                        // console.log(\'changed\')
+                    }
+                });
+            });
+            
 		</script>';
             define('TPL_INIT_IMAGE2', true);
         }
@@ -794,8 +885,12 @@ if (!function_exists('tpl_form_field_image2')) {
         if (!empty($options['tabs']['browser']) || !empty($options['tabs']['upload'])) {
             $s .=
                 '<div class="input-group ' . $options['class_extra'] . '" style="margin-top:.5em;">
-				<img src="' . $val . '" onerror="this.src=\'' . $default . '\'; this.title=\'图片未找到.\'" class="img-responsive img-thumbnail" ' . (!empty($options['extras']['image']) ? $options['extras']['image'] : '') . ' width="150" />
-				<em class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片" onclick="deleteImage(this)">×</em>
+				
+				<a href="javascript:void(0)" data-magnify="gallery" data-group="g1" data-src="' . tomedia($val) . '" data-caption="查看大图" style="object-fit:contain;">
+                    <img src="' . $val . '" onerror="this.src=\'' . $default . '\'; this.title=\'图片未找到.\'" class="img-responsive img-thumbnail" ' . (!empty($options['extras']['image']) ? $options['extras']['image'] : '') . ' width="150" />
+                </a>
+				
+				<em class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片5" onclick="deleteImage(this)">×</em>
 			</div>';
         }
         return $s;
@@ -832,7 +927,7 @@ if (!function_exists('tpl_form_field_multi_image2')) {
 		let name = $(elm).next().val();
 		util.image2( "", function(urls){
 			$.each(urls, function(idx, url){
-				$(elm).parent().parent().next().append(\'<div class="multi-item"><img onerror="this.src=\\\'/app/admin/static/images/nopic.png\\\'; this.title=\\\'图片未找到.\\\'" src="\'+url.url+\'" class="img-responsive img-thumbnail"><input type="hidden" name="\'+name+\'[]" value="\'+url.fileurl+\'"><em class="close" title="删除这张图片" onclick="deleteMultiImage2(this)">×</em></div>\');
+				$(elm).parent().parent().next().append(\'<div class="multi-item"><img onerror="this.src=\\\'/app/admin/static/images/nopic.png\\\'; this.title=\\\'图片未找到.\\\'" src="\'+url.url+\'" class="img-responsive img-thumbnail"><input type="hidden" name="\'+name+\'[]" value="\'+url.fileurl+\'"><em class="close" title="删除这张图片6" onclick="deleteMultiImage2(this)">×</em></div>\');
 			});
 		}, ' . json_encode($options) . ');
 	}
@@ -922,7 +1017,7 @@ if (!function_exists('tpl_form_field_multi_image2')) {
         <img src="' . tomedia($row) . '" onerror="this.src=\'/app/admin/static/images/nopic.png\'; this.title=\'图片未找到.\'" class="img-responsive img-thumbnail">
     </a>
 	<input type="hidden" name="' . $name . '[]" value="' . $row . '" >
-	<em class="close" title="删除这张图片" onclick="deleteMultiImage2(this)">×</em>
+	<em class="close" title="删除这张图片1" onclick="deleteMultiImage2(this)">×</em>
 </div>';
             }
         }
@@ -1719,7 +1814,7 @@ if (!function_exists('tpl_form_field_audio')) {
 			
 			util.audio(val, function(url){
 			    
-			    console.log("url",url);
+			    console.log("url2",url);
 			    
 				if(url && url.fileurl && url.url){
 					btn.prev().show();
