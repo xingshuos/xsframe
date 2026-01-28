@@ -244,6 +244,16 @@ trait ServiceTraits
     }
 
     /**
+     * 更新数值
+     * @param string $updateData 修改 数据
+     * @return array
+     */
+    public function update(array $updateData)
+    {
+        return $this->getQuery()->update($updateData);
+    }
+
+    /**
      * 执行sql
      * @param $sql
      * @return mixed
