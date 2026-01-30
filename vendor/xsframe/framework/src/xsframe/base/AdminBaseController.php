@@ -31,6 +31,7 @@ abstract class AdminBaseController extends BaseController
     protected $isSystem = false;
     protected $adminSession = [];
     protected $_GPC = [];
+    protected $assignConfig = []; // 新增：存储配置项的数组
 
     public function __construct(Request $request, App $app)
     {
@@ -119,6 +120,18 @@ abstract class AdminBaseController extends BaseController
         }
     }
 
+    // 设置参数给前端配置
+    protected function assignconfig($name, $value = null)
+    {
+        if (is_array($name)) {
+            // 如果传入的是数组，批量设置
+            $this->assignConfig = array_merge($this->assignConfig, $name);
+        } else {
+            // 单个设置
+            $this->assignConfig[$name] = $value;
+        }
+    }
+
     // 引入后端模板
     protected function template($name = null, $var = null)
     {
@@ -134,6 +147,7 @@ abstract class AdminBaseController extends BaseController
         # 解决 使用门面调用会报 未定义数组索引 的错误警告
         error_reporting(E_ALL ^ E_NOTICE);
         $var = $this->getDefaultVars($var);
+
         return view($name, $var);
     }
 
@@ -194,6 +208,7 @@ abstract class AdminBaseController extends BaseController
         $var = [];
         $var['module'] = $this->module;
         $var['controller'] = $this->controller;
+        $var['controllerSnake'] = $this->controllerSnake;
         $var['action'] = $this->action;
         $var['uniacid'] = $this->uniacid;
         $var['clientServiceName'] = $this->clientServiceName;
@@ -212,6 +227,7 @@ abstract class AdminBaseController extends BaseController
         if (!empty($this->adminSession) && is_array($this->adminSession)) {
             $menusList = MenuWrapper::getMenusList($this->adminSession['role'], $this->module, $this->controller, $this->action);
         }
+
         $var['menusList'] = $menusList;
         $var['pageTitle'] = strip_tags(empty($menusList['pageTitle']) ? $this->websiteSets['name'] : $menusList['pageTitle']);
 
@@ -236,6 +252,11 @@ abstract class AdminBaseController extends BaseController
 
         # 应用数量
         $var['appCount'] = $this->accountHostController->getAppCount($this->uniacid, $this->userId, $this->adminSession['role']);
+
+        # 配置项（新增）- 直接合并到$var中，前端可以直接使用变量名访问
+        if (!empty($this->assignConfig)) {
+            $var = array_merge($var, $this->assignConfig);
+        }
 
         if (!empty($params)) {
             $var = array_merge($var, $params);

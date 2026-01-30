@@ -45,6 +45,7 @@ abstract class BaseController extends Controller
 
     protected $module;
     protected $controller;
+    protected $controllerSnake;
     protected $action;
 
     protected $url;
@@ -130,6 +131,12 @@ abstract class BaseController extends Controller
         $this->action = strtolower($this->request->action());
         $this->url = $this->request->url();
         $this->clientServiceName = explode(".", $this->controller)[0];
+
+        $pathinfo = preg_replace('/\/[^\/]+(\.[^.]+)?$/', '', trim($this->request->pathinfo(), '/'));
+        $parts = explode('.', $pathinfo);
+        $controller = parse_name(end($parts), 1);
+        $controllerSnake = \think\helper\Str::snake($controller);
+        $this->controllerSnake = $controllerSnake;
 
         $this->checkCors();
         $this->autoLoad();
