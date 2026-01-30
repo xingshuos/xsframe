@@ -185,7 +185,7 @@ abstract class AdminBaseController extends BaseController
         return $this->error(["message" => $message], $code);
     }
 
-    private function getDefaultVars($params = null): array
+    protected function getDefaultVars($params = null): array
     {
         if (!empty($this->moduleSetting['basic']) && !empty($this->moduleSetting['basic']['name'])) {
             $this->moduleInfo = array_merge(!empty($this->moduleInfo) ? $this->moduleInfo : [], $this->moduleSetting['basic']);
@@ -274,7 +274,7 @@ abstract class AdminBaseController extends BaseController
         return $var;
     }
 
-    private function getSelSystemNavUrl()
+    protected function getSelSystemNavUrl()
     {
         $uniacid = $this->uniacid;
         $selSystemNavUrl = $_COOKIE[$this->module . "_systemnavurl"] ?? null;

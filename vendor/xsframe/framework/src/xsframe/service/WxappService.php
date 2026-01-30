@@ -106,8 +106,9 @@ class WxappService extends BaseService
         }
 
         return [
-            'session_key' => $result['session_key'],
-            'openid'      => $result['openid'],
+            'session_key' => $result['session_key'] ?? '',
+            'openid'      => $result['openid'] ?? '',
+            'unionid'     => $result['unionid'] ?? '',
         ];
     }
 

@@ -18,14 +18,14 @@ class BaseMiddleware implements MiddlewareInterface
     public function handle($request, \Closure $next)
     {
         $this->request = $request;
-        if (method_exists($this, '_initialize')) {
-            $this->_initialize();
+        if (method_exists($this, '_base_initialize')) {
+            $this->_base_initialize();
         }
         return $next($request);
     }
 
     // 初始化
-    protected function _initialize()
+    protected function _base_initialize()
     {
         $this->params = $this->request->param();
     }

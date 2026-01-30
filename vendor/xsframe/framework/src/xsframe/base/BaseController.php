@@ -84,15 +84,15 @@ abstract class BaseController extends Controller
             $this->accountHostController = new AccountHostWrapper();
         }
 
-        if (method_exists($this, '_initialize')) {
-            $this->_initialize();
+        if (method_exists($this, '_base_initialize')) {
+            $this->_base_initialize();
         }
     }
 
     /**
      * @throws ApiException
      */
-    protected function _initialize()
+    protected function _base_initialize()
     {
         $this->authkey = env('AUTHKEY') ?? 'xsframe_';
         $this->expire = 3600 * 24 * 10; // 10天有效期
