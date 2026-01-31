@@ -21,7 +21,7 @@ class MenuWrapper
     public static function getMenusList($role, $module, $controller, $action, $full = true, $configKey = 'menu'): ?array
     {
         $allMenus = Config::get($configKey);
-        return self::buildMenu($role, $allMenus, $module, strtolower($controller), $action, $full);
+        return self::buildMenu($role, $allMenus, $module, $controller, $action, $full);
     }
 
     private static function getChangeParentInfo($allMenus, $module, $controller, $action): array
@@ -70,6 +70,14 @@ class MenuWrapper
         $pageTitle = "";
         $module = realModuleName($module);
 
+        $orgController = $controller;
+        $controller = strtolower($controller);
+
+        $orgAction = $action;
+        $action = strtolower($action);
+
+        $isUnderlineController = false; // 是否使用下划线方式
+
         # 验证当前路由是否调换（子路由调换到其他父级路由中）
         $getChangeParentInfo = self::getChangeParentInfo($allMenus, $module, $controller, $action);
 
@@ -112,6 +120,14 @@ class MenuWrapper
                     } else {
                         if (strexists($controller, $menu_item['route']) || strexists($menu_item['route'], $controller)) {
                             $runIn = true;
+                        } else {
+                            # 验证下划线方式选中
+                            $orgControllerArr = explode(".", $orgController);
+                            $controllerSnake = StringUtil::snake($orgControllerArr[1]);
+                            if (strexists($controllerSnake, $menu_item['route']) || strexists($menu_item['route'], $controllerSnake)) {
+                                $runIn = true;
+                                $isUnderlineController = true;
+                            }
                         }
                     }
 
@@ -128,6 +144,8 @@ class MenuWrapper
                         }
                     }
                 }
+
+                // dump($menu_item);
 
                 # 设置一级目录路由 start
                 if (!empty($val['items'])) {
@@ -205,7 +223,14 @@ class MenuWrapper
             unset($val);
 
             if (!empty($submenu)) {
-                $menuRoute = $controller;
+
+                if( $isUnderlineController ){
+                    $menuRoute = $orgController;
+                    $menuRouteArr = explode(".", $orgController);
+                    $menuRoute =$menuRouteArr[0] . "." . StringUtil::uncamelize($menuRouteArr[1]);
+                }else{
+                    $menuRoute = $controller;
+                }
 
                 if ($parentMenuIsChange) {
                     $menuRoute = $parentMenuRoute;
@@ -269,8 +294,8 @@ class MenuWrapper
                                 'url'    => $child['url'] ?? null,
                             ];
 
-                            if (!$submenuIsActive && strexists(strtolower(str_replace("_", "", $return_menu_child['route'])), $actionTmpArr[0]) || ((strexists($return_menu_child['route'], 'main') || strpos($return_menu_child['route'], '/') === false) && in_array($actionTmp, ['add', 'edit', 'post','detail']))) {
-                                if (strtolower(str_replace("_", "", $return_menu_child['route'])) != $actionTmp && !in_array($actionTmp, ['add', 'edit', 'post','detail']) && !strexists($actionTmp, '/add') && !strexists($actionTmp, '/edit') && !strexists($actionTmp, '/post') && !strexists($actionTmp, '/detail')) {
+                            if (!$submenuIsActive && strexists(strtolower(str_replace("_", "", $return_menu_child['route'])), $actionTmpArr[0]) || ((strexists($return_menu_child['route'], 'main') || strpos($return_menu_child['route'], '/') === false) && in_array($actionTmp, ['add', 'edit', 'post', 'detail']))) {
+                                if (strtolower(str_replace("_", "", $return_menu_child['route'])) != $actionTmp && !in_array($actionTmp, ['add', 'edit', 'post', 'detail']) && !strexists($actionTmp, '/add') && !strexists($actionTmp, '/edit') && !strexists($actionTmp, '/post') && !strexists($actionTmp, '/detail')) {
                                     $return_menu_child['active'] = 0;
                                     if ($actionTmp == $return_menu_child['route']) {
                                         $return_menu_child['active'] = 1;
@@ -291,7 +316,7 @@ class MenuWrapper
                                             } else {
                                                 if (strexists($actionTmp, '/detail')) {
                                                     $pageTitle = str_replace("列表", "", $pageTitle) . "详情";
-                                                }else{
+                                                } else {
                                                     $pageTitle = str_replace("列表", "", $pageTitle) . "更新";
                                                 }
                                             }
@@ -301,7 +326,7 @@ class MenuWrapper
                                     if (strtolower($controllerNameTmp) == $actionTmpArr[0]) {
                                         $return_menu_child['active'] = $parentMenuIsChange ? 0 : 1;
                                     } else {
-                                        if (in_array($controllerNameTmp, ['list', 'main', 'index']) && in_array($actionTmpArr[0], ['add', 'post', 'edit','detail'])) {
+                                        if (in_array($controllerNameTmp, ['list', 'main', 'index']) && in_array($actionTmpArr[0], ['add', 'post', 'edit', 'detail'])) {
                                             $return_menu_child['active'] = 1;
                                         }
                                     }
@@ -311,6 +336,7 @@ class MenuWrapper
                                     $return_menu_child['active'] = 1;
                                 }
                             }
+                            // dump($return_menu_child);
 
                             if ($isMoreDir || $parentMenuIsChange) {
                                 $routeLen = 0;
@@ -377,7 +403,7 @@ class MenuWrapper
                                     }
                                 }
 
-                                if ($return_submenu_three['active'] == 0 && !empty($actionTmpArr) && in_array($actionTmpArr[1], ['add', 'edit', 'post','detail'])) {
+                                if ($return_submenu_three['active'] == 0 && !empty($actionTmpArr) && in_array($actionTmpArr[1], ['add', 'edit', 'post', 'detail'])) {
                                     if ($actionTmpArr[0] . "/main" == $three['route'] || (strtolower($actionTmpArr[0]) . "/main" == strtolower($three['route']))) {
                                         $return_submenu_three['active'] = 1; // 是否选中
                                     }

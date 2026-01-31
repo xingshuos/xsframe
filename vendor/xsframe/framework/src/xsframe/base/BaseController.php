@@ -135,7 +135,7 @@ abstract class BaseController extends Controller
         $pathinfo = preg_replace('/\/[^\/]+(\.[^.]+)?$/', '', trim($this->request->pathinfo(), '/'));
         $parts = explode('.', $pathinfo);
         $controller = parse_name(end($parts), 1);
-        $controllerSnake = \think\helper\Str::snake($controller);
+        $controllerSnake = StringUtil::snake($controller);
         $this->controllerSnake = $controllerSnake;
 
         $this->checkCors();

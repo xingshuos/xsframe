@@ -132,6 +132,11 @@ abstract class AdminBaseController extends BaseController
         }
     }
 
+    protected function assign($name, $value = null)
+    {
+        return $this->assignconfig($name, $value);
+    }
+
     // 引入后端模板
     protected function template($name = null, $var = null)
     {
@@ -225,7 +230,7 @@ abstract class AdminBaseController extends BaseController
 
         $menusList = [];
         if (!empty($this->adminSession) && is_array($this->adminSession)) {
-            $menusList = MenuWrapper::getMenusList($this->adminSession['role'], $this->module, $this->controller, $this->action);
+            $menusList = MenuWrapper::getMenusList($this->adminSession['role'], $this->module, $this->request->controller(), $this->request->action());
         }
 
         $var['menusList'] = $menusList;
