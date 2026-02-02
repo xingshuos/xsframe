@@ -254,12 +254,6 @@ class StringUtil
         return strtolower(preg_replace('/([a-z])([A-Z])/', "$1" . $separator . "$2", $camelCaps));
     }
 
-    // 驼峰转下划线
-    public static function snake($value, $delimiter = '_')
-    {
-        return \think\helper\Str::snake($value, $delimiter);
-    }
-
     /**
      * str字符串是否以needle为开头
      *

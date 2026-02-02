@@ -123,7 +123,7 @@ class MenuWrapper
                         } else {
                             # 验证下划线方式选中
                             $orgControllerArr = explode(".", $orgController);
-                            $controllerSnake = StringUtil::snake($orgControllerArr[1]);
+                            $controllerSnake = StringUtil::uncamelize($orgControllerArr[1]);
                             if (strexists($controllerSnake, $menu_item['route']) || strexists($menu_item['route'], $controllerSnake)) {
                                 $runIn = true;
                                 $isUnderlineController = true;
