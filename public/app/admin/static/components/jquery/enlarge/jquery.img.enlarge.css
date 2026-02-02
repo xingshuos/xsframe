@@ -1,6 +1,6 @@
 
 /*************************************************Rest Start*************************************************/
-body{font:14px/1.5 "Microsoft YaHei","\5FAE\8F6F\96C5\9ED1,\9ED1\4F53","\5b8b\4f53",arial,Helvetica,Tahoma,sans-serif;margin:0 auto;color:#333;}
+/*body{font:14px/1.5 "Microsoft YaHei","\5FAE\8F6F\96C5\9ED1,\9ED1\4F53","\5b8b\4f53",arial,Helvetica,Tahoma,sans-serif;margin:0 auto;color:#333;}*/
 p,ul,ol,dl,dt,dd,h1,h2,h3,h4,h5,h6,form,input,select,button,textarea,iframe{margin:0;padding:0;}
 img{border:0 none;vertical-align:top;}
 ul,li,ol{list-style-type:none;}
@@ -116,18 +116,6 @@ body{background-color: #F5F5F5}
     text-align:center;
 }
 .magnify-toolbar .magnify-btn:hover,.magnify-btn-close:hover{color:#fff;}
-
-
-/*.magnify-btn-close:before{content: "\ea4f"}*/
-/*.magnify-btn-zoomIn:before{content: "\e7dd"}*/
-/*.magnify-btn-zoomOut:before{content:'\e7dc'}*/
-/*.magnify-btn-prev:before{content:'\e624'}*/
-/*.magnify-btn-next:before{content:'\e9ce'}*/
-/*.magnify-btn-fullScreen:before{content:'\e63f'}*/
-/*.magnify-btn-actualSize:before{content:'\e615'}*/
-/*.magnify-btn-rotateLeft:before{content:'\ece3'}*/
-/*.magnify-btn-rotateRight:before{content:'\ece4'}*/
-/*.magnify-loader:before{content:'\e600'}*/
 
 .magnify-btn-close svg{width:23px;}
 .magnify-btn-zoomIn svg{width:23px;}

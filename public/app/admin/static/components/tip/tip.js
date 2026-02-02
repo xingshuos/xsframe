@@ -381,6 +381,9 @@ const tipFun = () => {
                 onClosed: onClosed
             })
         },
+        success: function (msg, url, onClose, onClosed) {
+            this.suc(msg, url, onClose, onClosed)
+        },
         err: function (msg, url, onClose, onClosed) {
             tip.msgbox.show({
                 delay: 2000,
@@ -390,7 +393,10 @@ const tipFun = () => {
                 onClose: onClose,
                 onClosed: onClosed
             })
-        }
+        },
+        error: function (msg, url, onClose, onClosed) {
+            this.err(msg, url, onClose, onClosed)
+        },
     };
 
     tip.msg = tip.msgbox;

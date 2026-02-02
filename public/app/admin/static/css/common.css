@@ -84,7 +84,6 @@ ul, li, dl, dd, dt, p, ol, h1, h2, h3, h4, h5, img {
 
 h1 {
     font-size: 30px;
-    padding: 50px;
 }
 
 h2 {
@@ -349,6 +348,9 @@ select, input:focus, input {
     margin: 0;
     position: relative;
     z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .wb-header .logo.small {
@@ -361,6 +363,7 @@ select, input:focus, input {
     height: 52px;
     border-radius: 50%;
     overflow: hidden;
+    margin-bottom: 18px;
 }
 
 .wb-header .logo .title {

@@ -27,6 +27,7 @@ let myConfig = {
         "switchery": "components/switchery/switchery",
         "echarts": "components/echarts/echarts-all",
         "echarts.min": "components/echarts/echarts.min",
+        'echarts-theme': 'components/echarts/echarts-theme',
         "toast": "components/jquery/toastr.min",
         "clipboard": "components/clipboard/clipboard.min",
         "tpl": "components/tmodjs/tmodjs",
