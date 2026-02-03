@@ -322,8 +322,10 @@
             ajaxModel(obj)
         }
 
-        window.ajaxHideModel = function(obj) {
-            $("#public_modal").modal({show: false});
+        window.ajaxHideModel = function() {
+            setTimeout(function () {
+                $("#public_modal").modal('hide')
+            }, 0);
         }
 
         // 防止bootstrap自带的tooltip和popover在模态框中失效
