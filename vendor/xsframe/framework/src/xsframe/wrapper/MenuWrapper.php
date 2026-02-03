@@ -26,7 +26,8 @@ class MenuWrapper
 
     private static function getChangeParentInfo($allMenus, $module, $controller, $action): array
     {
-        $url = $controller . "/" . $action;
+        $url = StringUtil::uncamelize($controller) . "/" . $action;
+        // dd($url);
 
         $parentMenuRoute = $controller;
         $currentRouteIsChange = false;
@@ -40,7 +41,18 @@ class MenuWrapper
                         $urlArr = explode("/", $url);
                         $itemUrlArr = explode("/", $itemInfo['url']);
 
-                        if (strexists($urlArr[0], $itemUrlArr[0])) {
+                        $isInSide = strtolower($url) == strtolower("web." . $itemInfo['url']);
+
+                        // if( $itemInfo['url'] == 'wx_user/index' ){
+                        //     dump(strtolower($url));
+                        //     dump(strtolower("web." . $itemInfo['url']));
+                        //     die;
+                        // }
+
+
+                        // dump($isInSide);
+
+                        if ($isInSide) {
                             $menuInfo['active'] = 1;
                             $currentRouteIsChange = true;
                             if (!strexists($route, 'web.') && $module != 'admin') {
@@ -79,7 +91,7 @@ class MenuWrapper
         $isUnderlineController = false; // 是否使用下划线方式
 
         # 验证当前路由是否调换（子路由调换到其他父级路由中）
-        $getChangeParentInfo = self::getChangeParentInfo($allMenus, $module, $controller, $action);
+        $getChangeParentInfo = self::getChangeParentInfo($allMenus, $module, $orgController, $action);
 
         $parentMenuRoute = $getChangeParentInfo['parentRoute'] ?? $controller; // 当前路由是否调换
         $parentMenuIsChange = $getChangeParentInfo['isChange'] ?? false; // 是否已经有选中的菜单
@@ -224,11 +236,11 @@ class MenuWrapper
 
             if (!empty($submenu)) {
 
-                if( $isUnderlineController ){
+                if ($isUnderlineController) {
                     $menuRoute = $orgController;
                     $menuRouteArr = explode(".", $orgController);
-                    $menuRoute =$menuRouteArr[0] . "." . StringUtil::uncamelize($menuRouteArr[1]);
-                }else{
+                    $menuRoute = $menuRouteArr[0] . "." . StringUtil::uncamelize($menuRouteArr[1]);
+                } else {
                     $menuRoute = $controller;
                 }
 

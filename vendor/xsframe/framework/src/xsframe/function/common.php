@@ -240,15 +240,39 @@ if (!function_exists('getScheme')) {
     }
 }
 
-// 字符串是否存在
 if (!function_exists('strexists')) {
-    function strexists($string, $find)
+    /**
+     * 检查字符串中是否存在指定的子串
+     *
+     * @param string $string 原始字符串
+     * @param string $find 要查找的子串
+     * @param bool $caseSensitive 是否区分大小写，默认为true（区分大小写）
+     * @return bool 如果找到返回true，否则返回false
+     */
+    function strexists($string, $find, $caseSensitive = true)
     {
-        $isExists = false;
-        if (!empty($string) && !empty($find) && is_string($string) && is_string($find)) {
-            $isExists = !(strpos((string)$string, (string)$find) === false);
+        // 参数验证：确保两个参数都不为空
+        if (empty($string) || empty($find)) {
+            return false;
         }
-        return $isExists;
+
+        // 确保参数转换为字符串，增强兼容性
+        $string = (string)$string;
+        $find = (string)$find;
+
+        // 如果查找的子串比原字符串还长，直接返回false
+        if (strlen($find) > strlen($string)) {
+            return false;
+        }
+
+        // 根据大小写敏感设置选择不同的查找函数
+        if ($caseSensitive) {
+            // 区分大小写查找
+            return strpos($string, $find) !== false;
+        } else {
+            // 不区分大小写查找
+            return stripos($string, $find) !== false;
+        }
     }
 }
 
