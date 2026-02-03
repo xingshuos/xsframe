@@ -265,7 +265,7 @@ abstract class BaseController extends Controller
     protected function getUniacid($checkUrl = false)
     {
         if (empty($this->uniacid)) {
-            $uniacid = $this->params['uniacid'] ?? ($_GET['i'] ?? ($_COOKIE['uniacid'] ?? 0));
+            $uniacid = $this->params['uniacid'] ?? ($_GET['i'] ?? ($this->request->header('uniacid') ?? ($_COOKIE['uniacid'] ?? 0) ));
             $this->module = empty($this->module) ? app('http')->getName() : $this->module;
 
             // 唯一作用就是验证异步回调时，如果有调用应用service 并且继承了 \xsframe\service\BaseService 这时候需要获取到uniacid
@@ -320,7 +320,7 @@ abstract class BaseController extends Controller
             }
 
             if ($this->module != 'admin' && empty($uniacid)) {
-                if( !$this->disUniacid ){
+                if (!$this->disUniacid) {
                     exit("<p style='width:100%;height:80px;line-height:80px;text-align: center;font-size: 15px;'>商户不存在,请联系管理员配置默认商户</p>");
                 }
             }
@@ -355,7 +355,7 @@ abstract class BaseController extends Controller
     // 抛出禁用异常
     private function throwDisabledException()
     {
-        if( !$this->disUniacid ){
+        if (!$this->disUniacid) {
             if ($this->request->isAjax() || $this->request->isPost()) {
                 throw new ApiException("抱歉！该站点{$uniacid}已暂停服务，请联系管理员了解详情!", 403);
             } else {
