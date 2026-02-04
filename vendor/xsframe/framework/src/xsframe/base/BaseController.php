@@ -57,6 +57,7 @@ abstract class BaseController extends Controller
     protected $iaRoot;
     protected $moduleSiteRoot;
     protected $moduleAttachUrl;
+    protected $moduleAttachIaRoot;
     protected $moduleIaRoot;
     protected $authkey;
     protected $expire;
@@ -125,6 +126,7 @@ abstract class BaseController extends Controller
         $this->attachUrl = $this->siteRoot . "/attachment";
         $this->moduleSiteRoot = $this->siteRoot . "/" . $this->module;
         $this->moduleAttachUrl = $this->siteRoot . "/app/" . $this->module;
+        $this->moduleAttachIaRoot = $this->iaRoot . "/public/app/" . $this->module;
         $this->moduleIaRoot = $this->iaRoot . "/app/" . $this->module;
 
         $this->controller = strtolower($this->request->controller());
