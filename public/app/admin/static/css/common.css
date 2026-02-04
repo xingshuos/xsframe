@@ -2757,7 +2757,7 @@ a.form-control-static {
     left: 0;
     right: 0;
     top: 25%;
-    transform: translate(0, -25%);
+    transform: translate(0, -25%) !important;
 }
 
 .modal-dialog .modal-body {
