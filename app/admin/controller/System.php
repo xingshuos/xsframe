@@ -33,7 +33,11 @@ class System extends AdminBaseController
     // 应用列表
     public function index()
     {
+        $this->getRealModuleUrl("sz_propt");
+
         $result = $this->getAppList();
+
+
         return $this->template('index', $result);
     }
 
@@ -347,13 +351,14 @@ class System extends AdminBaseController
             $oneMenus = array_slice($menuConfig, 0, 1);
             $oneMenusKeys = array_keys($oneMenus);
             $actionUrl = $oneMenus[$oneMenusKeys[0]]['items'][0]['route'];
-
+            $isRoute = true;
             if (empty($actionUrl)) {
                 if (!empty($oneMenus[$oneMenusKeys[0]]['items'][0]['url'])) {
                     $actionUrl = $oneMenus[$oneMenusKeys[0]]['items'][0]['url'];
                     if (!StringUtil::strexists($actionUrl, "web.")) {
                         $actionUrl = "web." . $actionUrl;
                     }
+                    $isRoute = false;
                 } else {
                     $actionUrl = $oneMenus[$oneMenusKeys[0]]['route'];
                     if (empty($actionUrl)) {
@@ -371,11 +376,12 @@ class System extends AdminBaseController
                 }
             }
 
-            if (!strexists($oneMenusKeys[0], "web.")) {
+            if ($isRoute && !strexists($oneMenusKeys[0], "web.")) {
                 $oneMenusKeys[0] = "web." . $oneMenusKeys[0];
+                $actionUrl = $oneMenusKeys[0] . $actionUrl;
             }
 
-            $url = webUrl('/' . $realModuleName . "/{$oneMenusKeys[0]}{$actionUrl}", ['i' => $this->uniacid]);
+            $url = webUrl('/' . $realModuleName . "/{$actionUrl}", ['i' => $this->uniacid]);
         } else {
             $url = webUrl('/' . $realModuleName . "/web.index", ['i' => $this->uniacid]);
         }
