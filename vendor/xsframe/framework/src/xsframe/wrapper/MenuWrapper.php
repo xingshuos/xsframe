@@ -122,10 +122,6 @@ class MenuWrapper
                     $menu_item['icon'] = $val['icon'];
                 }
 
-                // if( strtolower($orgController) == $menu_item['route'] ){
-                //     $menu_item['active'] = 1;
-                // }
-
                 if (!$parentMenuActive) {
                     $runIn = false;
 
@@ -140,7 +136,7 @@ class MenuWrapper
                             # 验证下划线方式选中
                             $orgControllerArr = explode(".", $orgController);
                             $controllerSnake = StringUtil::uncamelize($orgControllerArr[1]);
-                            if (strexists("web." . $controllerSnake, $menu_item['route']) || strexists($menu_item['route'], "web." . $controllerSnake)) {
+                            if (strexists("." . $controllerSnake, $menu_item['route']) || strexists($menu_item['route'], "." . $controllerSnake)) {
                                 $runIn = true;
                                 $isUnderlineController = true;
                             }
