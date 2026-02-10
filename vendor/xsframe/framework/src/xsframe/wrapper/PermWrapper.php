@@ -127,6 +127,13 @@ class PermWrapper
 
         $permUrl = str_replace("/", '.', $permUrl);
 
+        $search = '.index';
+        $replace = '.main';
+        $pos = strrpos($permUrl, $search);
+        if ($pos !== false) {
+            $permUrl = substr_replace($permUrl, $replace, $pos, strlen($search));
+        }
+
         $perms = array_merge($role_perms, $user_perms);
         if (!in_array($permUrl, $perms)) {
             return false;

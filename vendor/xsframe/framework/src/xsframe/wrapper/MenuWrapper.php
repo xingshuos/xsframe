@@ -76,6 +76,11 @@ class MenuWrapper
     // 定义菜单结构
     private static function buildMenu($role, $allMenus, $module, $controller, $action, $full)
     {
+
+        // dump(cm('sz_propt/web.combination/index'));
+        // dd("*");
+
+
         $return_menu = [];
         $return_submenu = [];
         $submenu = [];
@@ -188,7 +193,14 @@ class MenuWrapper
                         }
                     } else { // 操作员权限验证
                         foreach ($val['items'] as $itemsKey => $itemInfo) {
-                            $permUrl = $module . "/" . $menu_item['route'] . "." . $itemInfo['route'];
+                            if (!empty($itemInfo['route'])) {
+                                $permUrl = $module . "/" . $menu_item['route'] . "." . $itemInfo['route'];
+                            } else {
+                                if (!empty($itemInfo['url'])) {
+                                    $permUrl = $module . "/" . $menu_item['route'] . "." . $itemInfo['url'];
+                                }
+                            }
+
                             $isAuthPerm = cs($permUrl);
 
                             if ($isAuthPerm && !$itemsOneRoute) {
@@ -219,6 +231,8 @@ class MenuWrapper
                 } else {
                     if (empty($val['route'])) {
                         $menu_item['route'] = $module . "/" . $menu_item['route'] . "/index";
+                    } else {
+                        $menu_item['route'] = $module . "/" . $menu_item['route'];
                     }
                 }
                 # 设置一级目录路由 end
@@ -231,6 +245,7 @@ class MenuWrapper
                 if (cm($menu_item['route'])) {
                     $return_menu[] = $menu_item;
                 }
+
             }
             unset($val);
 
@@ -442,7 +457,6 @@ class MenuWrapper
                         }
 
                     }
-
                 }
             }
         }
