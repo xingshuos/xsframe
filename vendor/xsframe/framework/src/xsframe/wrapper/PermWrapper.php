@@ -182,7 +182,7 @@ class PermWrapper
 
             // $permDefault = [];
 
-            // if( $module == 'jrp_anjia' ){
+            // if( $module == 'sz_propt' ){
             //     dd($moduleMenus);
             // }
 
@@ -224,8 +224,13 @@ class PermWrapper
                                 $perm = $permDefault;
                             }
 
-                            $routers = explode("/", $item['route']);
-                            $c = count($routers) > 1 ? "." . $routers[0] : '';
+                            if( $item['route'] ){
+                                $routers = explode("/", $item['route']);
+                                $c = count($routers) > 1 ? "." . $routers[0] : '';
+                            }else{
+                                $routers = explode("/", $item['url']);
+                                $c = count($routers) > 1 ? "." . $routers[0] : '';
+                            }
 
                             $newModuleMenusItemText = ['text' => !empty($item['subtitle']) ? $item['subtitle'] : $item['title']];
                             $newModuleMenusItem = array_merge($newModuleMenusItemText, $perm);
@@ -238,6 +243,28 @@ class PermWrapper
                                 $itemModuleMenus[$itemRoute] = $newModuleMenusItem;
                             }
                         }
+                    }
+                }else{
+                    $perm = [];
+
+                    if (is_array($menu['perm']) && !empty($menu['perm'])) {
+                        $perm = $menu['perm'];
+                    } else {
+                        $perm = $permDefault;
+                    }
+
+                    $routers = explode("/", $menu['route']);
+                    $c = count($routers) > 1 ? "." . $routers[0] : '';
+
+                    $newModuleMenusItemText = ['text' => !empty($menu['subtitle']) ? $menu['subtitle'] : $item['title']];
+                    $newModuleMenusItem = array_merge($newModuleMenusItemText, $perm);
+
+                    if (empty($c)) {
+                        $itemModuleMenus[$menu['route']] = $newModuleMenusItem;
+                    } else {
+                        $itemRoute = preg_replace('/^\./u', '', $c); // 去掉第一个字符是.的
+                        $itemRoute = preg_replace('/\bweb\..*?\b/u', '', $itemRoute);// 去掉第一个字符是web.的
+                        $itemModuleMenus[$itemRoute] = $newModuleMenusItem;
                     }
                 }
 
