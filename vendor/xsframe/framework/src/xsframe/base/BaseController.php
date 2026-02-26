@@ -324,6 +324,7 @@ abstract class BaseController extends Controller
             }
 
             if (!StringUtil::strexists($this->controller, "web.")) {
+                $_COOKIE['uniacid'] = $uniacid;
                 isetcookie('uniacid', $uniacid); // 缓存当前所选商户uniacid
             }
 
