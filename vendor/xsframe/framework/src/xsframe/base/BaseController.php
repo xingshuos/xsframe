@@ -310,10 +310,6 @@ abstract class BaseController extends Controller
                         }
                     }
                 }
-
-                if (!StringUtil::strexists($this->controller, "web.")) {
-                    isetcookie('uniacid', $uniacid); // 缓存当前所选商户uniacid
-                }
             } else {
                 $uniacid = $this->websiteSets['uniacid'] ?? 0; // 默认uniacid
                 if ($this->module != 'admin') {
@@ -325,6 +321,10 @@ abstract class BaseController extends Controller
                 if (!$this->disUniacid) {
                     exit("<p style='width:100%;height:80px;line-height:80px;text-align: center;font-size: 15px;'>商户不存在,请联系管理员配置默认商户</p>");
                 }
+            }
+
+            if (!StringUtil::strexists($this->controller, "web.")) {
+                isetcookie('uniacid', $uniacid); // 缓存当前所选商户uniacid
             }
 
             $this->uniacid = intval($uniacid);
