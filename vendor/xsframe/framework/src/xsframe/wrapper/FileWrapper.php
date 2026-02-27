@@ -12,6 +12,7 @@
 
 namespace xsframe\wrapper;
 
+use think\Exception;
 use xsframe\enum\SysSettingsKeyEnum;
 use xsframe\exception\ApiException;
 use xsframe\util\ErrorUtil;
@@ -41,12 +42,16 @@ class FileWrapper
             return ErrorUtil::error(0, "不允许上传此类文件");
         }
 
-        $file = request()->file('file');
-        $tmpPath = $file->getFileInfo()->getPathname();
+        $tmpPath = $attachmentPath . $folder . $filename;
+        if( !is_file($tmpPath) ){
+            $file = request()->file('file');
+            $tmpPath = $file->getFileInfo()->getPathname();
+        }
         $filesize = @filesize($tmpPath) ?? 0;
 
         # 文件上传处理
         $filename = $this->fileRemoteUpload($uniacid, $type, $attachmentPath . $folder, $filename, $ext, $file);
+
         if (ErrorUtil::isError($filename)) {
             return ErrorUtil::error(0, $filename['msg']);
         }
@@ -115,7 +120,6 @@ class FileWrapper
     // 上传附件
     private function fileRemoteUpload($uniacid, $type, $filePath = null, $fileName = null, $ext = '')
     {
-        $file = request()->file('file');
         if (empty($filePath)) {
             return false;
         }
@@ -129,7 +133,6 @@ class FileWrapper
         } else {
             $setting = $settingsController->getSysSettings(SysSettingsKeyEnum::ATTACHMENT_KEY);
         }
-
 
         // 图片处理
         if ($type == 'image' && !empty($setting['image'])) {
@@ -178,18 +181,25 @@ class FileWrapper
         }
 
         // 上传附件
-        $filename = str_replace($attachmentPath, '', $filePath . $newFileName);
-        if (!empty($setting['remote']) && $setting['remote']['type'] > 0) { // 上传云服务
-            $attachmentController = new AttachmentWrapper();
-            $tmpPath = $file->getFileInfo()->getPathname();
-            $attachmentController->fileRemoteUpload($setting, $tmpPath, $filename);
-        } else { // 上传本地
-            $file = request()->file('file');
-            $fileInfo = $file->move($filePath, $filename);
-            if (!$fileInfo) {
-                return ErrorUtil::error(0, "上传失败");
+        try {
+            $filename = str_replace($attachmentPath, '', $filePath . $newFileName);
+            if (!empty($setting['remote']) && $setting['remote']['type'] > 0) { // 上传云服务
+                $attachmentController = new AttachmentWrapper();
+                if (is_file($filePath . $fileName)) {
+                    $tmpPath = $filePath . $fileName;
+                }else{
+                    $file = request()->file('file');
+                    $tmpPath = $file->getFileInfo()->getPathname();
+                }
+                $attachmentController->fileRemoteUpload($setting, $tmpPath, $filename);
+            } else { // 上传本地
+                $file = request()->file('file');
+                $fileInfo = $file->move($filePath, $filename);
+                if (!$fileInfo) {
+                    return ErrorUtil::error(0, "上传失败");
+                }
             }
-        }
+        }catch (Exception $exception){}
 
         return $newFileName;
     }
