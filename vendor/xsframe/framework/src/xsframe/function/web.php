@@ -157,6 +157,28 @@ if (!function_exists('webUrl')) {
             }
         }
         // end
+
+        // ---------- 端口修复：解决 IP+端口 生成的URL缺少端口问题 ----------
+        if ($full && !empty($_SERVER['HTTP_HOST'])) {
+            $requestHost = $_SERVER['HTTP_HOST'];
+            // 提取请求中的端口（非标准端口才存在）
+            $requestPort = parse_url('http://' . $requestHost, PHP_URL_PORT);
+            if ($requestPort !== null) {
+                $parsedUrl = parse_url($url);
+                if ($parsedUrl && isset($parsedUrl['host'])) {
+                    // 如果生成的URL没有显式端口，则替换host为带端口的host
+                    if (!isset($parsedUrl['port'])) {
+                        $newUrl = (isset($parsedUrl['scheme']) ? $parsedUrl['scheme'] . '://' : '//') . $requestHost;
+                        if (isset($parsedUrl['path'])) $newUrl .= $parsedUrl['path'];
+                        if (isset($parsedUrl['query'])) $newUrl .= '?' . $parsedUrl['query'];
+                        if (isset($parsedUrl['fragment'])) $newUrl .= '#' . $parsedUrl['fragment'];
+                        $url = $newUrl;
+                    }
+                }
+            }
+        }
+        // ---------- 端口修复结束 ----------
+
         return str_replace(".html.html", ".html", is_object($url) ? strval($url) : $url);
     }
 }
