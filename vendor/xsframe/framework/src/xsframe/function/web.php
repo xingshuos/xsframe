@@ -159,16 +159,23 @@ if (!function_exists('webUrl')) {
         // end
 
         // ---------- 端口修复：解决 IP+端口 生成的URL缺少端口问题 ----------
-        if ($full && !empty($_SERVER['HTTP_HOST'])) {
-            $requestHost = $_SERVER['HTTP_HOST'];
-            // 提取请求中的端口（非标准端口才存在）
-            $requestPort = parse_url('http://' . $requestHost, PHP_URL_PORT);
-            if ($requestPort !== null) {
+        if ($full) {
+            // 1. 获取当前请求的主机名（可能包含端口）
+            $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? '';
+            $port = $_SERVER['SERVER_PORT'] ?? '';
+
+            // 如果 host 中没有端口号，但使用了非标准端口，则手动拼接端口
+            if (!StringUtil::strexists($host, ':') && $port && !in_array($port, ['80', '443'])) {
+                $host .= ':' . $port;
+            }
+
+            if (!empty($host)) {
                 $parsedUrl = parse_url($url);
                 if ($parsedUrl && isset($parsedUrl['host'])) {
-                    // 如果生成的URL没有显式端口，则替换host为带端口的host
-                    if (!isset($parsedUrl['port'])) {
-                        $newUrl = (isset($parsedUrl['scheme']) ? $parsedUrl['scheme'] . '://' : '//') . $requestHost;
+                    // 检查生成的 URL 是否缺少端口，且当前请求确实使用了非标准端口
+                    if (!isset($parsedUrl['port']) && isset($port) && !in_array($port, ['80', '443'])) {
+                        // 重新构建 URL，使用带端口的 host 替换原有主机
+                        $newUrl = (isset($parsedUrl['scheme']) ? $parsedUrl['scheme'] . '://' : '//') . $host;
                         if (isset($parsedUrl['path'])) $newUrl .= $parsedUrl['path'];
                         if (isset($parsedUrl['query'])) $newUrl .= '?' . $parsedUrl['query'];
                         if (isset($parsedUrl['fragment'])) $newUrl .= '#' . $parsedUrl['fragment'];
