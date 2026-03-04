@@ -1000,7 +1000,7 @@ textarea:focus {
 
 .form-group-title {
     height: 65px;
-    line-height: 60px;
+    line-height: 65px;
     border-bottom: 1px solid #efefef;
     margin-bottom: 20px;
     font-weight: bold;
@@ -1020,6 +1020,7 @@ textarea:focus {
     border-radius: 30%;
     top: 33px;
     left: -10px;
+    transform: translate(0, -50%);
 }
 
 .form-control {

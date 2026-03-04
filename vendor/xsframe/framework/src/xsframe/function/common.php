@@ -304,6 +304,28 @@ if (!function_exists('getAttachmentUrl')) {
     {
         $hostUrl = request()->domain() . ($isAttachment ? "/attachment" : '');
 
+        // ---------- 端口修复：解决 IP+端口 生成的URL缺少端口问题 ----------
+        $port = request()->port(); // 获取当前请求端口
+        if (!in_array($port, [80, 443])) { // 非标准端口才需处理
+            $parsed = parse_url($hostUrl);
+            if ($parsed && isset($parsed['host']) && !isset($parsed['port'])) {
+                // 重新构建带端口的 URL
+                $newHostUrl = (isset($parsed['scheme']) ? $parsed['scheme'] . '://' : '//')
+                    . $parsed['host'] . ':' . $port;
+                if (isset($parsed['path'])) {
+                    $newHostUrl .= $parsed['path'];
+                }
+                if (isset($parsed['query'])) {
+                    $newHostUrl .= '?' . $parsed['query'];
+                }
+                if (isset($parsed['fragment'])) {
+                    $newHostUrl .= '#' . $parsed['fragment'];
+                }
+                $hostUrl = $newHostUrl;
+            }
+        }
+        // ---------- 端口修复结束 ----------
+
         if ($isAttachment) {
             if (empty($uniacid)) {
                 $module = app('http')->getName();
