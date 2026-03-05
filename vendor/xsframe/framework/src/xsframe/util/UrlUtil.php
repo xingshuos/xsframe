@@ -70,4 +70,46 @@ class UrlUtil
         curl_close($ch);
         exit;
     }
+
+    /**
+     * 处理URL端口，确保非标准端口被正确包含
+     * 主要用于处理完整URL时，确保端口号一致性
+     *
+     * @param string $url 要处理的URL
+     * @param bool $full 是否进行完整处理（包括端口检查）
+     * @return string 处理后的URL
+     */
+    public static function processUrlWithPort($url, $full = true)
+    {
+        if (!$full) {
+            return $url;
+        }
+
+        // 1. 获取当前请求的主机名（可能包含端口）
+        $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? '';
+        $port = $_SERVER['SERVER_PORT'] ?? '';
+
+        // 如果 host 中没有端口号，但使用了非标准端口，则手动拼接端口
+        if (!StringUtil::strexists($host, ':') && $port && !in_array($port, ['80', '443'])) {
+            $host .= ':' . $port;
+        }
+
+        if (!empty($host)) {
+            $parsedUrl = parse_url($url);
+            if ($parsedUrl && isset($parsedUrl['host'])) {
+                // 检查生成的 URL 是否缺少端口，且当前请求确实使用了非标准端口
+                if (!isset($parsedUrl['port']) && isset($port) && !in_array($port, ['80', '443'])) {
+                    // 重新构建 URL，使用带端口的 host 替换原有主机
+                    $newUrl = (isset($parsedUrl['scheme']) ? $parsedUrl['scheme'] . '://' : '//') . $host;
+                    if (isset($parsedUrl['path'])) $newUrl .= $parsedUrl['path'];
+                    if (isset($parsedUrl['query'])) $newUrl .= '?' . $parsedUrl['query'];
+                    if (isset($parsedUrl['fragment'])) $newUrl .= '#' . $parsedUrl['fragment'];
+                    $url = $newUrl;
+                }
+            }
+        }
+
+        return $url;
+    }
+
 }

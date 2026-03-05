@@ -108,6 +108,7 @@ abstract class BaseController extends Controller
         if (StringUtil::strexists($this->request->server('HTTP_REFERER'), 'https')) {
             $this->siteRoot = str_replace("http:", "https:", $this->siteRoot);
         }
+        $this->siteRoot = \xsframe\util\UrlUtil::processUrlWithPort($this->siteRoot);
 
         if (empty($this->module)) {
             $this->module = app('http')->getName(); // 获取的是真实应用名称不是别名
