@@ -116,10 +116,11 @@
                                                         {foreach $v as $kk => $vv}
                                                             {if $kk != 'text'}
                                                                  <label class='checkbox-inline'>
-                                                                     <input type='checkbox'  value='{$key}.{$ke}.{$k}.{$kk}' class='perm-item perms'
+                                                                     {php}$str = $key.($ke ? ".".$ke : "").($k ? ".".$k : "").($kk ? ".".$kk : "");{/php}
+                                                                     <input type='checkbox'  value='{$key}{$ke?".".$ke:""}{$k?".".$k:""}{$kk?".".$kk:""}' class='perm-item perms'
                                                                             data-group='{$key}' data-parent='{$parentKe}' data-son="{$k}" data-grandson="{$kk}"
-                                                                            {if in_array($key.".".$ke.".".$k.".".$kk,$role_perms) || in_array($key.".".$ke.".".$k.".".$kk,$user_perms)} checked{/if}
-                                                                     {if in_array($key.".".$ke.".".$k.".".$kk,$role_perms)  && $action=='userpost'} disabled{/if}
+                                                                            {if in_array($str,$role_perms) || in_array($str,$user_perms)} checked{/if}
+                                                                     {if in_array($str,$role_perms)  && $action=='userpost'} disabled{/if}
                                                                      />  {:str_replace("-log", "", $vv)}
                                                                  </label>
                                                             {else}
