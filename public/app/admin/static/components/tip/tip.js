@@ -293,7 +293,7 @@ const tipFun = () => {
     };
 
     tip.error = function (msg, delay = 2000) {
-        let messageObj = $(`<div role="alert" class="tip-message tip-message--error" style="z-index: 2001;"><i class="iconfont icon-error">&#xe616;</i><p class="tip-message__content">${msg}</p></div>`);
+        let messageObj = $(`<div role="alert" class="tip-message tip-message--error" style="z-index: 2001;"><i class="iconfont icon icon-times-circle" style="color: #f56c6c;"></i><p class="tip-message__content">${msg}</p></div>`);
         $('body').append(messageObj);
 
         messageObj.animate({}, () => {

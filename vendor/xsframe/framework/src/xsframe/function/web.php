@@ -1128,10 +1128,12 @@ if (!function_exists('tpl_form_field_date')) {
         $withtime = empty($withtime) ? false : true;
         if (!empty($value)) {
             $value = strexists($value, '-') ? strtotime($value) : $value;
-        } else {
-            $value = time();
         }
-        $value = ($withtime ? date('Y-m-d H:i', $value) : date('Y-m-d', $value));
+
+        if( $value ){
+            $value = ($withtime ? date('Y-m-d H:i', $value) : date('Y-m-d', $value));
+        }
+
         $s .= '<input type="text" name="' . $name . '"  value="' . $value . '" placeholder="请选择日期时间" ' . ($disabled ? 'disabled' : '') . ' class="datetimepicker form-control" style="padding-left:12px;" />';
         $s .= '
 		<script type="text/javascript">
