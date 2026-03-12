@@ -71,7 +71,7 @@ abstract class ApiBaseController extends BaseController
             'data' => $data
         ];
         $retData = $this->utf8ize($retData);
-        return json($data);
+        return json($retData);
     }
 
     /**
