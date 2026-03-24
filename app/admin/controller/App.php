@@ -250,7 +250,7 @@ class App extends Base
             Db::name('sys_account_modules')->where(['module' => $identifie])->update(['deleted' => 0]);
 
             $modulesController->moveDirToPublic($identifie);
-            $this->removePackages($identifie);
+            // $this->removePackages($identifie);
 
             $this->updateSystemModuleList();
             $this->success('安装成功');
@@ -302,7 +302,7 @@ class App extends Base
             ];
             Db::name('sys_modules')->where(['id' => $id])->update($updateData);
 
-            $this->removePackages($identifie);
+            // $this->removePackages($identifie);
             $this->updateSystemModuleList();
             $this->success('升级成功');
         } else {
