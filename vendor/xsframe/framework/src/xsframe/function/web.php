@@ -1983,6 +1983,188 @@ if (!function_exists('tpl_form_field_multi_audio')) {
     }
 }
 
+if (!function_exists('tpl_form_field_multi_file')) {
+    /**
+     * 多文件上传组件（支持自定义文件类型和大小）
+     * @param string $name 表单名称
+     * @param array $value 已上传的文件列表
+     * @param array $options 配置选项
+     *   - file_types: array 允许的文件扩展名数组，如 ['pdf', 'doc', 'docx']
+     *   - max_size: int 最大文件大小（MB），默认50
+     *   - placeholder: string 输入框提示文字
+     *   - btntext: string 上传按钮文字
+     * @return string HTML代码
+     * @author fengzi
+     */
+    function tpl_form_field_multi_file($name, $value = [], $options = [])
+    {
+        // 默认配置
+        $defaultTypes = ['pdf', 'doc', 'docx', 'xls', 'xlsx'];
+        $defaultMaxSize = 50; // MB
+
+        // 解析配置
+        $fileTypes = $options['file_types'] ?? $defaultTypes;
+        $maxSize = intval($options['max_size'] ?? $defaultMaxSize);
+        $placeholder = $options['placeholder'] ?? '支持上传' . implode('、', array_map('strtoupper', $fileTypes)) . '格式文件';
+        $btnText = $options['btntext'] ?? '选择文件';
+
+        // 生成 accept 属性
+        $accept = '.' . implode(',.', $fileTypes);
+
+        // 生成文件类型提示
+        $typeHint = implode(',', $fileTypes);
+
+        $s = '';
+
+        // 只初始化一次全局脚本
+        if (!defined('TPL_INIT_MULTI_FILE')) {
+            $s = '
+<script type="text/javascript">
+    /**
+     * 上传多个文件（支持自定义配置）
+     * @param elm 元素
+     * @author fengzi
+     */
+    function uploadMultiFile(elm) {
+        let name = $(elm).parent().next().val();
+        let uniacid = window.sysinfo ? window.sysinfo.uniacid : 0;
+        
+        // 从按钮的 data 属性获取配置
+        let accept = $(elm).data("accept") || ".pdf,.doc,.docx,.xls,.xlsx";
+        let maxSize = $(elm).data("maxsize") || 50;
+        let fileTypes = $(elm).data("filetypes") || "pdf,doc,docx,xls,xlsx";
+        
+        // 创建隐藏的文件输入框
+        let fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.multiple = true;
+        fileInput.accept = accept;
+        fileInput.style.display = "none";
+        document.body.appendChild(fileInput);
+        
+        fileInput.onchange = function() {
+            let files = this.files;
+            if (files.length === 0) {
+                document.body.removeChild(fileInput);
+                return;
+            }
+            
+            // 验证文件大小
+            for (let i = 0; i < files.length; i++) {
+                if (files[i].size > maxSize * 1024 * 1024) {
+                    layer.msg("文件【" + files[i].name + "】超过最大限制" + maxSize + "MB", {icon: 2});
+                    document.body.removeChild(fileInput);
+                    return;
+                }
+            }
+            
+            // 显示上传进度
+            let loadingIndex = layer.load(1, {shade: [0.3, "#fff"]});
+            
+            let uploadCount = 0;
+            let totalFiles = files.length;
+            let uploadedFiles = [];
+            
+            for (let i = 0; i < files.length; i++) {
+                let formData = new FormData();
+                formData.append("file", files[i]);
+                formData.append("uniacid", uniacid);
+                formData.append("upload_type", "file");
+                formData.append("file_types", fileTypes);
+                formData.append("max_size", maxSize);
+                
+                $.ajax({
+                    url: "/sz_jiaowu/web.file/upload_file",
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(result) {
+                        uploadCount++;
+                        if (result.code === 1 && result.data) {
+                            uploadedFiles.push(result.data);
+                            // 添加文件显示
+                            let fileHtml = \'<div class="multi-item" style="width: 100px; height: 100px; margin: 5px; flex-shrink: 0; position: relative; border: 1px solid #ddd; border-radius: 4px; text-align: center; background: #f5f5f5;">\' +
+                                \'<div style="padding: 20px 10px;">\' +
+                                \'<i class="icon icon-file-text" style="font-size: 32px; color: #666;"></i>\' +
+                                \'<div style="font-size: 12px; color: #333; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 5px;" title="\' + result.data.filename + \'">\' + result.data.filename + \'</div>\' +
+                                \'</div>\' +
+                                \'<input type="hidden" name="\' + name + \'[]" value="\' + result.data.fileurl + \'">\' +
+                                \'<em class="close" title="删除文件" onclick="deleteMultiFile(this)" style="position: absolute; top: -8px; right: -8px; width: 20px; height: 20px; background: #d9534f; color: #fff; border-radius: 50%; text-align: center; line-height: 18px; cursor: pointer; font-style: normal;">×</em>\' +
+                                \'</div>\';
+                            $(elm).parent().parent().next().append(fileHtml);
+                        } else {
+                            layer.msg(result.msg || "上传失败", {icon: 2});
+                        }
+                        
+                        if (uploadCount === totalFiles) {
+                            layer.close(loadingIndex);
+                            document.body.removeChild(fileInput);
+                        }
+                    },
+                    error: function() {
+                        uploadCount++;
+                        layer.msg("上传出错", {icon: 2});
+                        if (uploadCount === totalFiles) {
+                            layer.close(loadingIndex);
+                            document.body.removeChild(fileInput);
+                        }
+                    }
+                });
+            }
+        };
+        
+        fileInput.click();
+    }
+
+    /**
+     * 删除已上传的文件
+     * @param elm 元素
+     * @author fengzi
+     */
+    function deleteMultiFile(elm) {
+        $(elm).parent().remove();
+    }
+</script>';
+            define('TPL_INIT_MULTI_FILE', true);
+        }
+
+        $s .= '<div class="input-group">
+            <input type="text" class="form-control" readonly placeholder="' . htmlspecialchars($placeholder) . '">
+            <span class="input-group-btn">
+                <button type="button" class="btn btn-primary" onclick="uploadMultiFile(this)" 
+                    data-accept="' . htmlspecialchars($accept) . '" 
+                    data-maxsize="' . $maxSize . '" 
+                    data-filetypes="' . htmlspecialchars($typeHint) . '">
+                    <i class="icon icon-upload"></i> ' . htmlspecialchars($btnText) . '
+                </button>
+            </span>
+            <input type="hidden" value="' . $name . '">
+        </div>';
+
+        $s .= '<div class="multi-img-details" style="margin-top: 10px; width: 100%; display: flex; flex-wrap: wrap; align-items: flex-start;">';
+
+        if (is_array($value) && !empty($value)) {
+            foreach ($value as $item) {
+                $fileurl = is_array($item) ? ($item['fileurl'] ?? $item['url'] ?? '') : $item;
+                $filename = is_array($item) ? ($item['filename'] ?? basename($fileurl)) : basename($fileurl);
+                $s .= '<div class="multi-item" style="width: 100px; height: 100px; margin: 5px; flex-shrink: 0; position: relative; border: 1px solid #ddd; border-radius: 4px; text-align: center; background: #f5f5f5;">';
+                $s .= '<div style="padding: 20px 10px;">';
+                $s .= '<i class="icon icon-file-text" style="font-size: 32px; color: #666;"></i>';
+                $s .= '<div style="font-size: 12px; color: #333; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 5px;" title="' . htmlspecialchars($filename) . '">' . htmlspecialchars($filename) . '</div>';
+                $s .= '</div>';
+                $s .= '<input type="hidden" name="' . $name . '[]" value="' . htmlspecialchars($fileurl) . '">';
+                $s .= '<em class="close" title="删除文件" onclick="deleteMultiFile(this)" style="position: absolute; top: -8px; right: -8px; width: 20px; height: 20px; background: #d9534f; color: #fff; border-radius: 50%; text-align: center; line-height: 18px; cursor: pointer; font-style: normal;">×</em>';
+                $s .= '</div>';
+            }
+        }
+
+        $s .= '</div>';
+
+        return $s;
+    }
+}
+
 // 地理位置
 if (!function_exists('tpl_form_field_position')) {
     function tpl_form_field_position($field, $value = [], $locationType = "GCJ-02")
