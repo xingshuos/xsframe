@@ -1999,7 +1999,7 @@ if (!function_exists('tpl_form_field_multi_file')) {
     function tpl_form_field_multi_file($name, $value = [], $options = [])
     {
         // 默认配置
-        $defaultTypes = ['pdf', 'doc', 'docx', 'xls', 'xlsx'];
+        $defaultTypes = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'psd', 'jpeg', 'png'];
         $defaultMaxSize = 50; // MB
 
         // 解析配置
