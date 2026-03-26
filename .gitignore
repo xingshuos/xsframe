@@ -54,6 +54,7 @@ app/*
 !app/admin
 !app/xs_form
 backup/*
+config/*
 config/appMap.php
 config/workerMap.php
 config/websocket.php
