@@ -1999,7 +1999,7 @@ if (!function_exists('tpl_form_field_multi_file')) {
     function tpl_form_field_multi_file($name, $value = [], $options = [])
     {
         // 默认配置
-        $defaultTypes = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'psd', 'jpeg', 'png'];
+        $defaultTypes = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png'];
         $defaultMaxSize = 50; // MB
 
         // 解析配置
@@ -2030,9 +2030,9 @@ if (!function_exists('tpl_form_field_multi_file')) {
         let uniacid = window.sysinfo ? window.sysinfo.uniacid : 0;
         
         // 从按钮的 data 属性获取配置
-        let accept = $(elm).data("accept") || ".pdf,.doc,.docx,.xls,.xlsx";
+        let accept = $(elm).data("accept") || ".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png";
         let maxSize = $(elm).data("maxsize") || 50;
-        let fileTypes = $(elm).data("filetypes") || "pdf,doc,docx,xls,xlsx";
+        let fileTypes = $(elm).data("filetypes") || "pdf,doc,docx,xls,xlsx,.jpg,.jpeg,.png";
         
         // 创建隐藏的文件输入框
         let fileInput = document.createElement("input");
