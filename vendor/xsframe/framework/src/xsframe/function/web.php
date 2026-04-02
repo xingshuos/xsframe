@@ -658,33 +658,12 @@ if (!function_exists('tpl_form_field_multi_image')) {
             $s = '
 <script type="text/javascript">
 	function uploadMultiImage(elm) {
-		moveImages();
 		let name = $(elm).next().val();
 		util.image( "", function(urls){
 			$.each(urls, function(idx, url){
 				$(elm).parent().parent().next().append(\'<div class="multi-item"><img onerror="this.src=\\\'/app/admin/static/images/nopic.png\\\'; this.title=\\\'图片未找到.\\\'" src="\'+url.url+\'" class="img-responsive img-thumbnail"><input type="hidden" name="\'+name+\'[]" value="\'+url.fileurl+\'"><em class="close" title="删除这张图片3" onclick="deleteMultiImage(this)">×</em></div>\');
 			});
 		}, ' . json_encode($options) . ');
-	}
-
-	function moveImages(){
-		var isShow = false;
-        setTimeout(function(){
-            $(".dropdown-toggle").click(function(){
-                isShow = !isShow;
-                var _this = $(this);
-
-                if(isShow){
-                    $(this).parent().addClass("open").find(".dropdown-menu").show();
-                    $(this).parent().find(".dropdown-menu").hover(
-                        function(){$(this).show();$(this).parent().addClass("open")},
-                        function(){$(this).hide();$(this).parent().removeClass("open");}
-                    );
-                }else{
-                    $(this).parent().removeClass("open").find(".dropdown-menu").hide();
-                }
-            });
-        },500);
 	}
 
 	function deleteMultiImage(elm){
@@ -928,33 +907,12 @@ if (!function_exists('tpl_form_field_multi_image2')) {
             $s = '
 <script type="text/javascript">
 	function uploadMultiImage2(elm) {
-		moveImages2();
 		let name = $(elm).next().val();
 		util.image2( "", function(urls){
 			$.each(urls, function(idx, url){
 				$(elm).parent().parent().next().append(\'<div class="multi-item"><img onerror="this.src=\\\'/app/admin/static/images/nopic.png\\\'; this.title=\\\'图片未找到.\\\'" src="\'+url.url+\'" class="img-responsive img-thumbnail"><input type="hidden" name="\'+name+\'[]" value="\'+url.fileurl+\'"><em class="close" title="删除这张图片6" onclick="deleteMultiImage2(this)">×</em></div>\');
 			});
 		}, ' . json_encode($options) . ');
-	}
-
-	function moveImages2(){
-		let isShow = false;
-        setTimeout(function(){
-            $(".dropdown-toggle").click(function(){
-                isShow = !isShow;
-                var _this = $(this);
-
-                if(isShow){
-                    $(this).parent().addClass("open").find(".dropdown-menu").show();
-                    $(this).parent().find(".dropdown-menu").hover(
-                        function(){$(this).show();$(this).parent().addClass("open")},
-                        function(){$(this).hide();$(this).parent().removeClass("open");}
-                    );
-                }else{
-                    $(this).parent().removeClass("open").find(".dropdown-menu").hide();
-                }
-            });
-        },500);
 	}
 
 	function deleteMultiImage2(elm){
