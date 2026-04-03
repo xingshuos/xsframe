@@ -3,6 +3,7 @@
 namespace xsframe\traits;
 
 use think\db\exception\DbException;
+use think\db\Raw;
 use think\Exception;
 use think\facade\Db;
 use think\Model;
@@ -641,5 +642,75 @@ trait ServiceTraits
         } else {
             return $string == true ? '' : [];
         }
+    }
+
+    /**
+     * 聚合查询（修复后的实现，不再依赖不存在的 $this->connection）
+     * @access protected
+     * @param string     $aggregate 聚合方法 SUM/MIN/MAX/AVG
+     * @param string|Raw $field     字段名
+     * @param bool       $force     强制转为数字类型
+     * @return mixed
+     */
+    protected function aggregate(string $aggregate, $field, bool $force = false)
+    {
+        try {
+            $method = strtolower($aggregate);
+            $result = $this->getQuery()->$method($field);
+            $this->queryInstance = null;
+            if ($force) {
+                $result = floatval($result);
+            }
+            return $result;
+        } catch (\Exception $exception) {
+            $this->queryInstance = null;
+            throw new Exception($exception->getMessage());
+        }
+    }
+
+    /**
+     * SUM查询
+     * @access public
+     * @param string|Raw $field 字段名
+     * @return float
+     */
+    public function sum($field): float
+    {
+        return $this->aggregate('SUM', $field, true);
+    }
+
+    /**
+     * MIN查询
+     * @access public
+     * @param string|Raw $field 字段名
+     * @param bool       $force 强制转为数字类型
+     * @return mixed
+     */
+    public function min($field, bool $force = true)
+    {
+        return $this->aggregate('MIN', $field, $force);
+    }
+
+    /**
+     * MAX查询
+     * @access public
+     * @param string|Raw $field 字段名
+     * @param bool       $force 强制转为数字类型
+     * @return mixed
+     */
+    public function max($field, bool $force = true)
+    {
+        return $this->aggregate('MAX', $field, $force);
+    }
+
+    /**
+     * AVG查询
+     * @access public
+     * @param string|Raw $field 字段名
+     * @return float
+     */
+    public function avg($field): float
+    {
+        return $this->aggregate('AVG', $field, true);
     }
 }
