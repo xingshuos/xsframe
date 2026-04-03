@@ -19,6 +19,8 @@ trait ServiceTraits
      */
     protected $queryInstance = null;
 
+    protected $fetchSql = false;
+
     /**
      * 设置表名
      * @param $tableName
@@ -28,6 +30,17 @@ trait ServiceTraits
     {
         $this->tableName = $tableName;
         $this->queryInstance = null; // 重置查询实例
+        return $this;
+    }
+
+    /**
+     * 设置返回 SQL 语句而不执行
+     * @param bool $fetch 是否获取 SQL
+     * @return $this
+     */
+    public function fetchSql($fetch = true)
+    {
+        $this->fetchSql = $fetch;
         return $this;
     }
 
@@ -180,13 +193,28 @@ trait ServiceTraits
     public function get($type = 'select')
     {
         try {
-            $result = $this->getQuery()->$type();
-            $this->queryInstance = null; // 重置查询实例
+            $query = $this->getQuery();
+            if ($this->fetchSql) {
+                $sql = $query->fetchSql(true)->$type();
+                $this->resetQuery(); // 重置状态
+                return $sql;
+            }
+            $result = $query->$type();
+            $this->resetQuery();
             return $result;
         } catch (\Exception $exception) {
-            $this->queryInstance = null;
+            $this->resetQuery();
             throw new Exception($exception->getMessage());
         }
+    }
+
+    /**
+     * 重置查询实例和 fetchSql 标志
+     */
+    protected function resetQuery()
+    {
+        $this->queryInstance = null;
+        $this->fetchSql = false;
     }
 
     /**
@@ -215,11 +243,17 @@ trait ServiceTraits
     public function count($field = '*')
     {
         try {
-            $result = $this->getQuery()->count($field);
-            $this->queryInstance = null;
+            $query = $this->getQuery();
+            if ($this->fetchSql) {
+                $sql = $query->fetchSql(true)->count($field);
+                $this->resetQuery();
+                return $sql;
+            }
+            $result = $query->count($field);
+            $this->resetQuery();
             return intval($result);
         } catch (\Exception $exception) {
-            $this->queryInstance = null;
+            $this->resetQuery();
             throw new Exception($exception->getMessage());
         }
     }
@@ -231,7 +265,15 @@ trait ServiceTraits
      */
     public function value($field)
     {
-        return $this->getQuery()->value($field);
+        $query = $this->getQuery();
+        if ($this->fetchSql) {
+            $sql = $query->fetchSql(true)->value($field);
+            $this->resetQuery();
+            return $sql;
+        }
+        $result = $query->value($field);
+        $this->resetQuery();
+        return $result;
     }
 
     /**
@@ -241,7 +283,15 @@ trait ServiceTraits
      */
     public function column($field)
     {
-        return $this->getQuery()->column($field);
+        $query = $this->getQuery();
+        if ($this->fetchSql) {
+            $sql = $query->fetchSql(true)->column($field);
+            $this->resetQuery();
+            return $sql;
+        }
+        $result = $query->column($field);
+        $this->resetQuery();
+        return $result;
     }
 
     /**
@@ -251,7 +301,15 @@ trait ServiceTraits
      */
     public function update(array $updateData)
     {
-        return $this->getQuery()->update($updateData);
+        $query = $this->getQuery();
+        if ($this->fetchSql) {
+            $sql = $query->fetchSql(true)->update($updateData);
+            $this->resetQuery();
+            return $sql;
+        }
+        $result = $query->update($updateData);
+        $this->resetQuery();
+        return $result;
     }
 
     /**
@@ -647,34 +705,40 @@ trait ServiceTraits
     /**
      * 聚合查询（修复后的实现，不再依赖不存在的 $this->connection）
      * @access protected
-     * @param string     $aggregate 聚合方法 SUM/MIN/MAX/AVG
-     * @param string|Raw $field     字段名
-     * @param bool       $force     强制转为数字类型
+     * @param string $aggregate 聚合方法 SUM/MIN/MAX/AVG
+     * @param string|Raw $field 字段名
+     * @param bool $force 强制转为数字类型
      * @return mixed
      */
     /**
      * 聚合查询（支持表达式）
-     * @param string     $aggregate 聚合方法 SUM/MIN/MAX/AVG
-     * @param string|Raw $field     字段名或表达式
-     * @param bool       $force     强制转为数字类型
+     * @param string $aggregate 聚合方法 SUM/MIN/MAX/AVG
+     * @param string|Raw $field 字段名或表达式
+     * @param bool $force 强制转为数字类型
      * @return mixed
      */
     protected function aggregate(string $aggregate, $field, bool $force = false)
     {
         try {
-            // 如果是字符串且包含运算符（+ - * /）或函数，自动转为 Raw 对象
+            // 自动将表达式转为 Raw 对象（之前修复的功能）
             if (is_string($field) && preg_match('/[+\-*\/\(\)]|\b\w+\(/', $field)) {
                 $field = new Raw($field);
             }
             $method = strtolower($aggregate);
-            $result = $this->getQuery()->$method($field);
-            $this->queryInstance = null;
+            $query = $this->getQuery();
+            if ($this->fetchSql) {
+                $sql = $query->fetchSql(true)->$method($field);
+                $this->resetQuery();
+                return $sql;
+            }
+            $result = $query->$method($field);
+            $this->resetQuery();
             if ($force) {
                 $result = floatval($result);
             }
             return $result;
         } catch (\Exception $exception) {
-            $this->queryInstance = null;
+            $this->resetQuery();
             throw new Exception($exception->getMessage());
         }
     }
@@ -685,7 +749,7 @@ trait ServiceTraits
      * @param string|Raw $field 字段名
      * @return float
      */
-    public function sum($field): float
+    public function sum($field)
     {
         return $this->aggregate('SUM', $field, true);
     }
@@ -694,7 +758,7 @@ trait ServiceTraits
      * MIN查询
      * @access public
      * @param string|Raw $field 字段名
-     * @param bool       $force 强制转为数字类型
+     * @param bool $force 强制转为数字类型
      * @return mixed
      */
     public function min($field, bool $force = true)
@@ -706,7 +770,7 @@ trait ServiceTraits
      * MAX查询
      * @access public
      * @param string|Raw $field 字段名
-     * @param bool       $force 强制转为数字类型
+     * @param bool $force 强制转为数字类型
      * @return mixed
      */
     public function max($field, bool $force = true)
@@ -720,7 +784,7 @@ trait ServiceTraits
      * @param string|Raw $field 字段名
      * @return float
      */
-    public function avg($field): float
+    public function avg($field)
     {
         return $this->aggregate('AVG', $field, true);
     }
