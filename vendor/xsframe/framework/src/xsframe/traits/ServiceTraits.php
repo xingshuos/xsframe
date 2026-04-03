@@ -652,9 +652,20 @@ trait ServiceTraits
      * @param bool       $force     强制转为数字类型
      * @return mixed
      */
+    /**
+     * 聚合查询（支持表达式）
+     * @param string     $aggregate 聚合方法 SUM/MIN/MAX/AVG
+     * @param string|Raw $field     字段名或表达式
+     * @param bool       $force     强制转为数字类型
+     * @return mixed
+     */
     protected function aggregate(string $aggregate, $field, bool $force = false)
     {
         try {
+            // 如果是字符串且包含运算符（+ - * /）或函数，自动转为 Raw 对象
+            if (is_string($field) && preg_match('/[+\-*\/\(\)]|\b\w+\(/', $field)) {
+                $field = new Raw($field);
+            }
             $method = strtolower($aggregate);
             $result = $this->getQuery()->$method($field);
             $this->queryInstance = null;
