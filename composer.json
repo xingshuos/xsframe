@@ -23,7 +23,7 @@
     "php": ">=7.3",
     "topthink/framework": "^6.0.0",
     "topthink/think-orm": "^2.0",
-    "topthink/think-multi-app": "^1.0",
+    "xsframe/think-multi-app": "^1.0.1",
     "topthink/think-view": "^1.0",
     "ext-gd": "*",
     "ext-json": "*",
@@ -55,7 +55,7 @@
     "qiniu/php-sdk": "^7.12",
     "qcloud/cos-sdk-v5": "^2.6",
     "xsframe/think-qrcode": "^1.0",
-    "xsframe/framework": "^1.0",
+    "xsframe/framework": "^2.0",
     "ext-fileinfo": "*",
     "workerman/channel": "^1.0",
     "ext-posix": "*"
@@ -74,18 +74,16 @@
   },
   "config": {
     "preferred-install": "dist",
-    "optimize-autoloader": true
+    "optimize-autoloader": false,
+    "platform-check": false,
+    "platform": {
+      "ext-posix": "1.0"
+    }
   },
   "scripts": {
     "post-autoload-dump": [
       "@php think service:discover",
       "@php think vendor:publish"
     ]
-  },
-  "repositories": {
-    "xsframe": {
-      "type": "vcs",
-      "url": "https://gitee.com/xingshuos_admin/xs-chinaums"
-    }
   }
 }

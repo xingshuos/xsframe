@@ -167,7 +167,7 @@ class Arr
      * @param mixed $default
      * @return mixed
      */
-    public static function first($array, callable $callback = null, $default = null)
+    public static function first($array, ?callable $callback = null, $default = null)
     {
         if (is_null($callback)) {
             if (empty($array)) {
@@ -196,7 +196,7 @@ class Arr
      * @param mixed $default
      * @return mixed
      */
-    public static function last($array, callable $callback = null, $default = null)
+    public static function last($array, ?callable $callback = null, $default = null)
     {
         if (is_null($callback)) {
             return empty($array) ? value($default) : end($array);
@@ -356,9 +356,7 @@ class Arr
      */
     public static function isAssoc(array $array)
     {
-        $keys = array_keys($array);
-
-        return array_keys($keys) !== $keys;
+        return !array_is_list($array);
     }
 
     /**
@@ -478,7 +476,7 @@ class Arr
 
         if ($requested > $count) {
             throw new InvalidArgumentException(
-                "You requested {$requested} items, but there are only {$count} items available."
+                "You requested {$requested} items, but there are only {$count} items available.",
             );
         }
 
@@ -632,16 +630,30 @@ class Arr
         return is_array($value) ? $value : [$value];
     }
 
+    /**
+     * Recursively merge arrays.
+     * If the value is an associative array, it will be merged recursively.
+     * If the value is an indexed array, it will be replaced entirely.
+     *
+     * @param array ...$arrays
+     * @return array
+     */
     public static function mergeDeep(array ...$arrays): array
     {
         $result = [];
         foreach ($arrays as $array) {
             foreach ($array as $key => $value) {
                 if (isset($result[$key]) && is_array($result[$key]) && is_array($value)) {
-                    $result[$key] = self::mergeDeep(
-                        $result[$key],
-                        $value
-                    );
+                    // 只有当两个数组都是关联数组时才递归合并
+                    if (self::isAssoc($result[$key]) && self::isAssoc($value)) {
+                        $result[$key] = self::mergeDeep(
+                            $result[$key],
+                            $value,
+                        );
+                    } else {
+                        // 如果任一数组是索引数组，则直接覆盖
+                        $result[$key] = $value;
+                    }
                 } else {
                     $result[$key] = $value;
                 }
@@ -653,5 +665,32 @@ class Arr
     public static function flatMap(callable $fn, array $array): array
     {
         return array_merge(...array_map($fn, $array));
+    }
+
+    public static function toTree(array $array, $idKey = 'id', $parentKey = 'pid', $childrenKey = 'children')
+    {
+        $tree       = [];
+        $references = [];
+
+        // 第一次遍历：创建所有节点的引用
+        foreach ($array as &$node) {
+            $node[$childrenKey]        = [];  // 初始化children
+            $references[$node[$idKey]] = &$node;
+        }
+
+        // 第二次遍历：构建树
+        foreach ($array as &$node) {
+            $parentId = $node[$parentKey];
+
+            if (empty($parentId) || !isset($references[$parentId])) {
+                // 根节点或父节点不存在
+                $tree[] = &$node;
+            } else {
+                // 子节点
+                $references[$parentId][$childrenKey][] = &$node;
+            }
+        }
+
+        return $tree;
     }
 }

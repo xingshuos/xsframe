@@ -18,7 +18,6 @@ return array(
     'a1105708a18b76903365ca1c4aa61b02' => $vendorDir . '/symfony/translation/Resources/functions.php',
     '66453932bc1be9fb2f910a27947d11b6' => $vendorDir . '/alibabacloud/client/src/Functions.php',
     '2cffec82183ee1cea088009cef9a6fc3' => $vendorDir . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
-    '25072dd6e2470089de65ae7bf11d3109' => $vendorDir . '/symfony/polyfill-php72/bootstrap.php',
     'cd5441689b14144e5573bf989ee47b34' => $vendorDir . '/qcloud/cos-sdk-v5/src/Common.php',
     '841780ea2e1d6545ea3a253239d59c05' => $vendorDir . '/qiniu/php-sdk/src/Qiniu/functions.php',
     '5dd19d8a547b7318af0c3a93c8bd6565' => $vendorDir . '/qiniu/php-sdk/src/Qiniu/Http/Middleware/Middleware.php',
