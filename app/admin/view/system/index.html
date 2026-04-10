@@ -204,9 +204,9 @@
                 <a class="feed-element" style="cursor: pointer" onclick="windowOpen('{$plugin.identifie}','{$plugin.url}')" href="javascript:;" data-name="{$plugin['name']}">
                     <span class="pull-left">
                         {if !empty($plugin['logo'])}
-                        <img src="{:tomedia($plugin['logo'])}" class="img-circle" alt="image">
+                        <img src="{:tomedia($plugin['logo'])}" class="img-circle" alt="image" onerror="this.src='/app/admin/static/images/nopic.png'">
                         {else}
-                        <img src="/app/{$plugin.identifie}/icon.png" class="img-circle" alt="image">
+                        <img src="/app/{$plugin.identifie}/icon.png" class="img-circle" alt="image" onerror="this.src='/app/admin/static/images/nopic.png'">
                         {/if}
                     </span>
                     <div class="media-body">
