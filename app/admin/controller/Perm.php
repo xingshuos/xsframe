@@ -248,7 +248,7 @@ class Perm extends AdminBaseController
 
         if ($this->adminSession['role'] == 'operator') {
             $operator = Db::name('sys_account_perm_user')->field('perms')->where(['uid' => $this->userId, 'uniacid' => $this->uniacid])->find();
-            $operatorPerms = explode(',', $operator['perms2']);
+            $operatorPerms = explode(',', $operator['perms']);
         }
 
         $rolePerms = [];
@@ -400,7 +400,7 @@ class Perm extends AdminBaseController
 
         if ($this->adminSession['role'] == 'operator') {
             $operator = Db::name('sys_account_perm_user')->field('perms')->where(['uid' => $this->userId, 'uniacid' => $this->uniacid])->find();
-            $operatorPerms = explode(',', $operator['perms2']);
+            $operatorPerms = explode(',', $operator['perms']);
         }
 
         $rolePerms = [];

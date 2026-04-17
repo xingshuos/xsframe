@@ -869,7 +869,7 @@ trait AdminTraits
      * @param string $permission 权限标识
      * @return bool
      */
-    protected function checkPermission($permission)
+    protected function checkPermission($action)
     {
         try {
             // 如果用户是超级管理员（owner），拥有所有权限
@@ -895,10 +895,16 @@ trait AdminTraits
                 return true;
             }
 
-            $permission = $this->module . "." . $this->controller . "." . $permission;
+            $permission = $this->module . "." . $this->controller . "." . $action;
 
             // 检查是否有操作权限
             $hasPermission = in_array($permission, $userPermissions['perms']);
+
+            if (!$hasPermission) {
+                $permission = $this->controller . "." . $action;
+                return cp($permission);
+            }
+
             return $hasPermission;
         } catch (\Exception $e) {
             // 权限检查失败时默认返回无权限
