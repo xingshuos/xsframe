@@ -12,16 +12,13 @@
         <input type="hidden" name="module" value="{$_GET['module']}">
 
         <div class="page-toolbar">
-
             <div class="col-sm-6">
                 <span class="">
                     <a class="btn btn-primary btn-sm" href="{:webUrl('perm/rolePost',['module' => $_GET['module']])}"><i class="icon icon-plus"></i> 添加新角色</a>
-                    <!-- <a class='btn btn-default btn-sm' href="{:webUrl('perm/user',['module' => $_GET['module']])}">&nbsp;&nbsp;员工管理&nbsp;&nbsp;</a> -->
                 </span>
             </div>
 
             <div class="col-sm-6 pull-right">
-
                 <div class="input-group">
                     <div class="input-group-select">
                         <select name="status" class='form-control'>
@@ -35,7 +32,6 @@
                         <button class="btn btn-primary" type="submit"> 搜索</button>
                     </span>
                 </div>
-
             </div>
         </div>
     </form>
@@ -46,11 +42,11 @@
                 <i class='icon icon-eye'></i> 启用</button>
             <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch'  data-href="{:webUrl('perm/roleChange',array('type' => 'status','value'=>0))}">
                 <i class='icon icon-eye-close'></i> 禁用</button>
-            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('perm/delete',['module' => $_GET['module']])}">
+            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('perm/roleDelete',['module' => $_GET['module']])}">
                 <i class='icon icon-trash'></i> 删除</button>
         </div>
     </div>
-    <table class="table table-hover  table-responsive">
+    <table class="table table-hover table-responsive">
         <thead>
         <tr>
             <th style="width:60px;">
@@ -58,7 +54,8 @@
                     <input type="checkbox">
                 </label>
             </th>
-            <th style="width: 100px">角色名称</th>
+            <th style="width: 200px">角色名称</th>
+            <th style="width: 150px;">上级角色</th>
             <th style="width: 100px;">员工数量</th>
             <th style="width: 100px;">状态</th>
             <th style="width: 100px;">操作</th>
@@ -67,8 +64,15 @@
         <tbody>
         {foreach $list as $key => $row}
         <tr>
-            <td><input type='checkbox'   value="{$row['id']}"/></td>
-            <td>{$row['rolename']}</td>
+            <td><input type='checkbox' value="{$row['id']}"/></td>
+            <td>
+                {for start="1" end=$row['level']}
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                {/for}
+                {if $row['level'] > 0}├─ {/if}
+                {$row['rolename']}
+            </td>
+            <td>{$row['parent_rolename']}</td>
             <td>{$row['usercount']}</td>
             <td>
                 <span class='label {if $row['status']==1}label-primary{else}label-default{/if}'
@@ -93,30 +97,29 @@
             </td>
         </tr>
         {/foreach}
-
         </tbody>
         <tfoot>
         <tr>
-            <td colspan="2">
+            <td colspan="3">
                 <div class="input-group-btn">
                     <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('perm/roleChange',array('type' => 'status','value'=>1))}">
                         <i class='icon icon-eye'></i> 启用</button>
                     <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch'  data-href="{:webUrl('perm/roleChange',array('type' => 'status','value'=>0))}">
                         <i class='icon icon-eye-close'></i> 禁用</button>
                     <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('perm/roleDelete')}">
-                    <i class='icon icon-trash'></i> 删除</button>
+                        <i class='icon icon-trash'></i> 删除</button>
                 </div>
             </td>
-            <td colspan="3" class="text-right"> {$pager | raw}</td>
+            <td colspan="3" class="text-right"> {$pager | raw} </td>
         </tr>
         </tfoot>
     </table>
     {else}
-        <div class='panel panel-default'>
-            <div class='panel-body' style='text-align: center;padding:30px;'>
-                暂时没有任何角色!
-            </div>
+    <div class='panel panel-default'>
+        <div class='panel-body' style='text-align: center;padding:30px;'>
+            暂时没有任何角色!
         </div>
+    </div>
     {/if}
     </form>
 </div>

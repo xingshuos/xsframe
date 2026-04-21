@@ -331,11 +331,11 @@ class Perm extends AdminBaseController
         $this->success();
     }
 
-    /*角色管理*/
+    /*角色管理 - 树形列表*/
     public function role()
     {
-        $keyword = $this->params['keyword'];
-        $status = $this->params['status'];
+        $keyword = $this->params['keyword'] ?? '';
+        $status = $this->params['status'] ?? '';
 
         $condition = [
             'uniacid' => $this->uniacid,
@@ -347,19 +347,33 @@ class Perm extends AdminBaseController
         }
 
         if (!empty($keyword)) {
-            $condition[''] = Db::raw(" rolename like '%" . trim($keyword) . "%'");
+            $condition[] = ['rolename', 'like', '%' . trim($keyword) . '%'];
         }
 
-        $list = Db::name("sys_account_perm_role")->field('*')->where($condition)->order('id desc')->page($this->pIndex, $this->pSize)->select()->toArray();
-        $total = Db::name("sys_account_perm_role")->where($condition)->count();
-        $pager = pagination2($total, $this->pIndex, $this->pSize);
+        // 获取所有角色数据（不分页，便于构建树形结构）
+        $allRoles = Db::name("sys_account_perm_role")
+            ->field('*')
+            ->where($condition)
+            ->order('displayorder desc, id desc')
+            ->select()
+            ->toArray();
 
-        foreach ($list as &$row) {
-            $row['usercount'] = Db::name("sys_account_perm_user")->where(['roleid' => $row['id'], 'deleted' => 0])->count();
+        // 构建树形扁平列表（带层级和父级名称）
+        $treeList = $this->buildRoleTree($allRoles);
+        $total = count($allRoles);
+
+        // 保留分页变量但不实际分页（角色数量通常较少）
+        $pager = '';
+
+        // 统计每个角色的员工数量
+        foreach ($treeList as &$row) {
+            $row['usercount'] = Db::name("sys_account_perm_user")
+                ->where(['roleid' => $row['id'], 'deleted' => 0])
+                ->count();
         }
 
         $result = [
-            'list'   => $list,
+            'list'   => $treeList,
             'pager'  => $pager,
             'total'  => $total,
             'status' => $status,
@@ -368,23 +382,171 @@ class Perm extends AdminBaseController
         return $this->template('perm/role/list', $result);
     }
 
+    /**
+     * 构建角色树形扁平数组（带层级和父级名称）
+     * @param array $roles 所有角色
+     * @param int $parentId 父级ID
+     * @param int $level 层级深度
+     * @return array
+     */
+    private function buildRoleTree($roles, $parentId = 0, $level = 0)
+    {
+        $tree = [];
+        // 先按displayorder排序
+        usort($roles, function ($a, $b) {
+            if ($a['displayorder'] == $b['displayorder']) {
+                return $a['id'] < $b['id'] ? 1 : -1;
+            }
+            return $a['displayorder'] < $b['displayorder'] ? 1 : -1;
+        });
+
+        foreach ($roles as $role) {
+            if ($role['pid'] == $parentId) {
+                $role['level'] = $level;
+                // 获取父级角色名称
+                if ($role['pid'] > 0) {
+                    $parentRole = Db::name("sys_account_perm_role")
+                        ->where(['id' => $role['pid'], 'deleted' => 0])
+                        ->field('rolename')
+                        ->find();
+                    $role['parent_rolename'] = $parentRole ? $parentRole['rolename'] : '顶级角色';
+                } else {
+                    $role['parent_rolename'] = '顶级角色';
+                }
+                $tree[] = $role;
+                // 递归获取子角色
+                $children = $this->buildRoleTree($roles, $role['id'], $level + 1);
+                $tree = array_merge($tree, $children);
+            }
+        }
+        return $tree;
+    }
+
+    /**
+     * 获取树形角色选项（用于下拉选择）
+     * @param int $excludeId 排除的ID（编辑时排除自身及后代）
+     * @return array
+     */
+    private function getRoleTreeOptions($excludeId = 0)
+    {
+        $condition = [
+            'uniacid' => $this->uniacid,
+            'deleted' => 0,
+        ];
+        $allRoles = Db::name("sys_account_perm_role")
+            ->field('id, pid, rolename')
+            ->where($condition)
+            ->order('displayorder desc, id desc')
+            ->select()
+            ->toArray();
+
+
+        // 如果需要排除某个角色及其后代，先收集要排除的ID
+        $excludeIds = [];
+        if ($excludeId > 0) {
+            $excludeIds = $this->getRoleDescendantIds($allRoles, $excludeId);
+            $excludeIds[] = $excludeId;
+        }
+
+        // 构建树形选项
+        $options = $this->buildRoleOptions($allRoles, 0, 0, $excludeIds);
+        return $options;
+    }
+
+    /**
+     * 获取角色的所有后代ID
+     * @param array $roles 所有角色
+     * @param int $parentId 父级ID
+     * @return array
+     */
+    private function getRoleDescendantIds($roles, $parentId)
+    {
+        $ids = [];
+        foreach ($roles as $role) {
+            if ($role['pid'] == $parentId) {
+                $ids[] = $role['id'];
+                $ids = array_merge($ids, $this->getRoleDescendantIds($roles, $role['id']));
+            }
+        }
+        return $ids;
+    }
+
+    /**
+     * 构建下拉选项数组
+     * @param array $roles 所有角色
+     * @param int $parentId 父级ID
+     * @param int $level 层级
+     * @param array $excludeIds 排除的ID
+     * @return array
+     */
+    private function buildRoleOptions($roles, $parentId = 0, $level = 0, $excludeIds = [])
+    {
+        $options = [];
+        // 排序
+        usort($roles, function ($a, $b) {
+            if ($a['displayorder'] == $b['displayorder']) {
+                return $a['id'] < $b['id'] ? 1 : -1;
+            }
+            return $a['displayorder'] < $b['displayorder'] ? 1 : -1;
+        });
+
+        foreach ($roles as $role) {
+            if ($role['pid'] == $parentId && !in_array($role['id'], $excludeIds)) {
+                $prefix = str_repeat('&nbsp;&nbsp;&nbsp;', $level) . ($level > 0 ? '├─ ' : '');
+                $options[$role['id']] = $prefix . $role['rolename'];
+                $children = $this->buildRoleOptions($roles, $role['id'], $level + 1, $excludeIds);
+                foreach ($children as $childId => $childName) {
+                    $options[$childId] = $childName;
+                }
+            }
+        }
+        return $options;
+    }
+
     public function rolePost()
     {
-        $id = $this->params['id'];
+        $id = $this->params['id'] ?? 0;
 
         $item = Db::name('sys_account_perm_role')->where(['id' => $id])->find();
 
         if ($this->request->isPost()) {
             $app_perms = $this->params['app_perms'] ?? [];
+            $pid = intval($this->params['pid'] ?? 0);
+            $rolename = trim($this->params['rolename']);
+            $status = intval($this->params['status']);
+            $permsarray = trim($this->params['permsarray'] ?? '');
+            $app_perms_str = implode(",", $app_perms);
+
+            // 校验上级角色合法性（不能是自身及后代）
+            if ($pid > 0) {
+                if ($id > 0 && $pid == $id) {
+                    $this->error('上级角色不能是自身');
+                }
+                // 检查是否后代
+                if ($id > 0) {
+                    $allRoles = Db::name("sys_account_perm_role")
+                        ->where(['uniacid' => $this->uniacid, 'deleted' => 0])
+                        ->field('id, pid')
+                        ->select()
+                        ->toArray();
+                    $descendantIds = $this->getRoleDescendantIds($allRoles, $id);
+                    if (in_array($pid, $descendantIds)) {
+                        $this->error('上级角色不能是当前角色的子角色');
+                    }
+                }
+            }
+
             $data = [
                 'uniacid'   => $this->uniacid,
-                'rolename'  => trim($this->params['rolename']),
-                'status'    => intval($this->params['status']),
-                'perms'     => trim($this->params['permsarray']),
-                'app_perms' => implode(",", $app_perms),
+                'pid'       => $pid,
+                'rolename'  => $rolename,
+                'status'    => $status,
+                'perms'     => $permsarray,
+                'app_perms' => $app_perms_str,
             ];
+
             if (!empty($id)) {
-                Db::name('sys_account_perm_role')->where(['id' => $item['id']])->update($data);
+                Db::name('sys_account_perm_role')->where(['id' => $id])->update($data);
             } else {
                 $id = Db::name('sys_account_perm_role')->insertGetId($data);
             }
@@ -392,8 +554,6 @@ class Perm extends AdminBaseController
         }
 
         $perms = PermFacade::formatPerms($this->uniacid);
-        // dump($perms);
-        // die;
 
         $operatorPerms = []; // 当前用户权限
         $accountsPerms = []; // 排除系统应用
@@ -416,6 +576,12 @@ class Perm extends AdminBaseController
             $item['is_limit'] = 1;
         }
 
+        // 获取树形角色选项（编辑时排除自身及后代）
+        $excludeId = $id ?: 0;
+        $roleOptions = $this->getRoleTreeOptions($excludeId);
+        // 添加顶级角色选项
+        $roleOptions = [0 => '顶级角色'] + $roleOptions;
+
         return $this->template('perm/role/post', [
             'item'           => $item,
             'perms'          => $perms,
@@ -425,6 +591,7 @@ class Perm extends AdminBaseController
             'role_app_perms' => $roleAppPerms,
             'user_perms'     => $userPerms,
             'app_perms'      => $appPerms,
+            'roleOptions'    => $roleOptions,
         ]);
     }
 
@@ -437,6 +604,22 @@ class Perm extends AdminBaseController
 
         if (empty($id)) {
             show_json(0, ["message" => "参数错误"]);
+        }
+
+        // 检查是否有子角色
+        $hasChildren = Db::name("sys_account_perm_role")
+            ->where(['pid' => $id, 'uniacid' => $this->uniacid, 'deleted' => 0])
+            ->count();
+        if ($hasChildren > 0) {
+            show_json(0, ["message" => "该角色下存在子角色，请先删除子角色"]);
+        }
+
+        // 检查是否有员工使用该角色
+        $hasUsers = Db::name("sys_account_perm_user")
+            ->where(['roleid' => $id, 'uniacid' => $this->uniacid, 'deleted' => 0])
+            ->count();
+        if ($hasUsers > 0) {
+            show_json(0, ["message" => "该角色下存在员工，请先移除员工或修改员工角色"]);
         }
 
         $items = Db::name("sys_account_perm_role")->where(['id' => $id])->select();
