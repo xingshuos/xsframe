@@ -66,7 +66,7 @@ class FileWrapper
             'filename'   => $filename,
             'fileurl'    => $folder . $filename,
             'attachment' => $folder . $filename,
-            'url'        => tomedia($folder . $filename),
+            'url'        => tomedia($folder . $filename, null, $uniacid),
             'type'       => $type == 'image' ? 1 : ($type == 'video' ? 2 : ($type == 'audio' ? 3 : 0)),
             'filesize'   => $filesize,
             'group_id'   => $groupId,
