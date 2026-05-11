@@ -10,5 +10,5 @@
 // | Author: guiHai <786824455@qq.com>
 // +----------------------------------------------------------------------
 
-const IMS_VERSION = '1.0.47';
-const IMS_VERSION_TIME = '1769052569';
+const IMS_VERSION = '1.0.48';
+const IMS_VERSION_TIME = '1778479079';
