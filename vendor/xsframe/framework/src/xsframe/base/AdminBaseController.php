@@ -32,6 +32,7 @@ abstract class AdminBaseController extends BaseController
     protected $adminSession = [];
     protected $_GPC = [];
     protected $assignConfig = []; // 新增：存储配置项的数组
+    protected $result = [];
 
     public function __construct(Request $request, App $app)
     {
@@ -146,6 +147,9 @@ abstract class AdminBaseController extends BaseController
         } else {
             if (empty($name)) {
                 $name = $this->action;
+            }
+            if (empty($var)) {
+                $var = $this->result;
             }
         }
 
