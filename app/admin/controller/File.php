@@ -48,13 +48,12 @@ class File extends AdminBaseController
     // 上传
     public function upload()
     {
-        $type = $this->params['upload_type'];
+        $type = $this->params['uploadtype'] ?? $this->params['type'] ?? 'image';
         $type = in_array($type, ['image', 'audio', 'video']) ? $type : 'image';
         $groupId = $this->params['group_id'] ?? 0;
         $attachmentPath = IA_ROOT . "/public/attachment/";
 
         $file = request()->file('file');
-
         if (empty($file)) {
             $result['message'] = '请选择上传文件';
             die(json_encode($result));
@@ -64,25 +63,37 @@ class File extends AdminBaseController
         $originName = $file->getOriginalName();
         $ext = strtolower($file->extension());
 
-        if (($type == 'image' && !in_array($ext, ['jpg', 'jpeg', 'png', 'gif','ico'])) || ($type == 'audio' && !in_array($ext, ['mp3'])) || ($type == 'video' && !in_array($ext, ['mp4']))) {
-            $result['message'] = '文件格式错误' . $ext;
+        // 扩展名校验
+        $allowExt = [];
+        if ($type == 'image') {
+            $allowExt = ['jpg', 'jpeg', 'png', 'gif', 'ico'];
+        } elseif ($type == 'audio') {
+            $allowExt = ['mp3'];
+        } elseif ($type == 'video') {
+            $allowExt = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv']; // 可根据需要扩展
+        }
+        if (!in_array($ext, $allowExt)) {
+            $result['message'] = '文件格式错误，仅支持：' . implode(',', $allowExt);
             die(json_encode($result));
         }
 
         $filename = FileUtil::fileRandomName($attachmentPath . $folder, $ext);
 
-        // $tmpPath = $file->getFileInfo()->getPathname();
-
-        # 上传本地
-        // $fileInfo = $file->move($attachmentPath . $folder, $filename);
-        // if (!$fileInfo) {
-        //     $result['message'] = '本地文件上传失败';
-        //     die(json_encode($result));
-        // }
-
         $this->fileController = new FileWrapper();
+        $result = $this->fileController->fileUpload(
+            $this->curUniacid,
+            $this->curModule,
+            $this->userId,
+            $type,          // 类型：image/audio/video
+            $folder,
+            $originName,
+            $filename,
+            $ext,
+            false,
+            $groupId,
+            $file
+        );
 
-        $result = $this->fileController->fileUpload($this->curUniacid, $this->curModule, $this->userId, $type, $folder, $originName, $filename, $ext, false, $groupId, $file);
         if (ErrorUtil::isError($result)) {
             $result['message'] = $result['msg'];
             die(json_encode($result));

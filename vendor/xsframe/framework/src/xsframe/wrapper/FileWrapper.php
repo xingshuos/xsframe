@@ -43,7 +43,7 @@ class FileWrapper
         }
 
         $tmpPath = $attachmentPath . $folder . $filename;
-        if( !is_file($tmpPath) ){
+        if (!is_file($tmpPath)) {
             $file = request()->file('file');
             $tmpPath = $file->getFileInfo()->getPathname();
         }
@@ -72,6 +72,7 @@ class FileWrapper
             'group_id'   => $groupId,
             'width'      => $width,
             'height'     => $height,
+            'uniacid'    => $uniacid,
         ];
 
         $this->addFileLog($uniacid, $userId, $result['name'], $result['fileurl'], $result['type'], $result['filesize'], $module, $groupId, $clientName);
@@ -187,7 +188,7 @@ class FileWrapper
                 $attachmentController = new AttachmentWrapper();
                 if (is_file($filePath . $fileName)) {
                     $tmpPath = $filePath . $fileName;
-                }else{
+                } else {
                     $file = request()->file('file');
                     $tmpPath = $file->getFileInfo()->getPathname();
                 }
@@ -199,7 +200,8 @@ class FileWrapper
                     return ErrorUtil::error(0, "上传失败");
                 }
             }
-        }catch (Exception $exception){}
+        } catch (Exception $exception) {
+        }
 
         return $newFileName;
     }
