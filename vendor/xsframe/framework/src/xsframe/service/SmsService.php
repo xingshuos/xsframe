@@ -266,7 +266,10 @@ class SmsService extends BaseService
     // 设置验证码缓存过期时间
     private function getCode($obj): int
     {
-        $code = RandomUtil::random(4, true);
+        $code = '';
+        for ($i = 0; $i < 4; $i++) {
+            $code .= mt_rand(1, 9);  // 只生成1-9，不会有0
+        }
 
         $key = $this->getKey($this->codeKey . $obj);
         $keyTime = $this->getKey($this->codeTimeKey . $obj);
