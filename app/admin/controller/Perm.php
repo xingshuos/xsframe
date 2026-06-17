@@ -741,7 +741,7 @@ class Perm extends AdminBaseController
             'deleted' => 0,
         ];
 
-        if (!empty($kwd)) {
+        if (!empty($keyword)) {
             $condition[''] = Db::raw(" rolename like '%" . trim($keyword) . "%' ");
         }
 
