@@ -278,16 +278,23 @@ class MenuWrapper
                         // 操作员权限验证 start
                         if (!in_array($role, ['founder', 'manager', 'owner'])) {
                             if ($child['perm']) {
-                                $controllerArr = explode(".", $controller);
-                                $permUrl = $module . "/" . $controllerArr[0] . "." . $controllerArr[1] . "." . $child['route'];
+                                // ★★★ 关键修改：获取子路由（优先 route，其次 url）★★★
+                                $childRoute = $child['route'] ?? $child['url'] ?? '';
+                                if (empty($childRoute)) {
+                                    // 如果连 url 都没有，跳过此子菜单（理论上不会发生）
+                                    unset($submenu['items'][$i]);
+                                    continue;
+                                }
+
+                                // 构造权限校验 URL：模块/web.父级键.子路由（如 sz_customer/web.finance.receive_plan/index）
+                                $permUrl = $module . "/" . $webMenuRoute . "." . $childRoute;
                                 $currentUrl = $module . "/" . $controller . "/" . $action;
                                 $isAuthPerm = cs($permUrl);
 
-                                // 权限不足提示 start
+                                // 权限不足提示（仅当当前访问的 URL 与该菜单完全匹配时才提示）
                                 if ($permUrl == $currentUrl && !$isAuthPerm) {
                                     exit('Your permission is insufficient !');
                                 }
-                                // 权限不足提示 end
 
                                 if (!$isAuthPerm) {
                                     unset($submenu['items'][$i]);

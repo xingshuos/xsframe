@@ -63,12 +63,6 @@ class PermWrapper
     {
         $oldPermUrl = $permUrl;
 
-        // /* 测试 start */
-        // if( $permType == 1 ){
-        //     dump($permUrl);
-        // }
-        // /* 测试 end */
-
         // 操作名映射转换（支持动态操作名）
         $lastDot = strrpos($permUrl, '.');
         $lastSlash = strrpos($permUrl, '/');
@@ -77,7 +71,9 @@ class PermWrapper
             $preFixUrl = substr($permUrl, 0, $lastSep + 1);
             $operation = substr($permUrl, $lastSep + 1);
 
-            if (in_array($operation, ['main', 'detail', 'add', 'edit', 'delete'])) {
+            // dd($lastSep);
+
+            if (in_array($operation, ['index', 'main', 'detail', 'add', 'edit', 'delete'])) {
 
             } else if (in_array($operation, ['status', 'change', 'del', 'save'])) {
                 $operation = 'edit';
@@ -245,6 +241,10 @@ class PermWrapper
         $perms = array_merge($role_perms, $user_perms);
         $perms = array_unique($perms);
 
+        // if( $oldPermUrl == 'sz_customer/web.finance.receive_plan/index' ){
+        //     dd($permUrl, $perms);
+        // }
+
         if (!in_array($permUrl, $perms)) {
             return false;
         }
@@ -293,6 +293,7 @@ class PermWrapper
                 'edit'   => '修改-log',
                 'delete' => '删除-log',
                 'xxx'    => [
+                    'index'  => 'main',  // 继承main权限，默认继承
                     'status' => 'edit',  // 继承edit权限，默认继承
                     'change' => 'edit',  // 继承edit权限，默认继承
                     'del'    => 'delete',// 继承delete权限，默认继承
