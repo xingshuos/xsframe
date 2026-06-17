@@ -61,6 +61,14 @@ class PermWrapper
 
     private function check($permUrl = '', $permType = 3)
     {
+        $oldPermUrl = $permUrl;
+
+        // /* 测试 start */
+        // if( $permType == 1 ){
+        //     dump($permUrl);
+        // }
+        // /* 测试 end */
+
         // 操作名映射转换（支持动态操作名）
         $lastDot = strrpos($permUrl, '.');
         $lastSlash = strrpos($permUrl, '/');
@@ -99,8 +107,8 @@ class PermWrapper
                     $partsCount = count($parts);
                     if ($partsCount >= 2) {
                         $mainKey = $parts[1];      // 如 'form'
-                        $subKey  = $parts[2];      // 如 'basic'
-                        $opName  = $parts[3] ?? ''; // 如 'log'
+                        $subKey = $parts[2];      // 如 'basic'
+                        $opName = $parts[3] ?? ''; // 如 'log'
 
                         // 查找主菜单
                         if (isset($moduleMenus[$mainKey]) && !empty($moduleMenus[$mainKey]['items'])) {
@@ -178,14 +186,48 @@ class PermWrapper
         }
 
         if ($permType == 1) {
-            $permUrlArr = array_splice($permUrlArr, 0, 2);
+            // 尝试从菜单配置中查找父级菜单键（用于主菜单权限校验）
+            $module = $permUrlArr[0] ?? '';
+            if ($module) {
+                $menuPath = APP_PATH . "/{$module}/config/menu.php";
+                if (is_file($menuPath)) {
+                    $moduleMenus = require $menuPath;
+                    // 获取路径部分，如 "web.receive_plan/index"
+                    $pathPart = isset($permUrlArr[1]) ? $permUrlArr[1] : '';
+                    // 提取子菜单键（去掉 web. 前缀，并取第一个部分）
+                    $subKey = '';
+                    if (strpos($pathPart, 'web.') === 0) {
+                        $pathPart = substr($pathPart, 4);
+                    }
+                    if (strpos($pathPart, '/') !== false) {
+                        $parts = explode('/', $pathPart);
+                        $subKey = $parts[0];
+                    } else if (strpos($pathPart, '.') !== false) {
+                        $parts = explode('.', $pathPart);
+                        $subKey = $parts[0];
+                    } else {
+                        $subKey = $pathPart;
+                    }
 
-            $controllerUrl = $permUrlArr[1];
-            $controllerUrlArr = explode(".", $controllerUrl);
-            $controllerUrlArr = array_splice($controllerUrlArr, 0, 2);
-            $controllerUrl = implode("/", $controllerUrlArr);
-
-            $permUrl = $appModuleName . "/" . $controllerUrl;
+                    // 在菜单配置中查找包含该子菜单的父级菜单键
+                    if ($subKey) {
+                        foreach ($moduleMenus as $parentKey => $menu) {
+                            if (!empty($menu['items'])) {
+                                foreach ($menu['items'] as $item) {
+                                    $itemRoute = $item['route'] ?? $item['url'] ?? '';
+                                    // 匹配子菜单的 route 或 url 是否以 subKey 开头（支持 subKey/main 或 subKey/index）
+                                    if ($itemRoute && strpos($itemRoute, $subKey) === 0) {
+                                        // 找到父级键，构造父级权限点（点分隔格式）
+                                        $permUrl = $module . '.web.' . $parentKey;
+                                        break 2; // 跳出两层循环
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // 如果未找到父级菜单，则保持原 $permUrl 不变（后续会按常规转换）
         } else {
             $permUrlArr[0] = $appModuleName;
             $permUrl = implode("/", $permUrlArr);
@@ -201,6 +243,8 @@ class PermWrapper
         }
 
         $perms = array_merge($role_perms, $user_perms);
+        $perms = array_unique($perms);
+
         if (!in_array($permUrl, $perms)) {
             return false;
         }
@@ -253,6 +297,7 @@ class PermWrapper
                     'change' => 'edit',  // 继承edit权限，默认继承
                     'del'    => 'delete',// 继承delete权限，默认继承
                     'save'   => 'edit',  // 继承edit权限，默认继承
+                    'status' => 'edit'
                 ],
             ];
 
@@ -300,10 +345,10 @@ class PermWrapper
                                 $perm = $permDefault;
                             }
 
-                            if( $item['route'] ){
+                            if ($item['route']) {
                                 $routers = explode("/", $item['route']);
                                 $c = count($routers) > 1 ? "." . $routers[0] : '';
-                            }else{
+                            } else {
                                 $routers = explode("/", $item['url']);
                                 $c = count($routers) > 1 ? "." . $routers[0] : '';
                             }
@@ -320,7 +365,7 @@ class PermWrapper
                             }
                         }
                     }
-                }else{
+                } else {
                     $perm = [];
 
                     if (is_array($menu['perm']) && !empty($menu['perm'])) {

@@ -76,11 +76,6 @@ class MenuWrapper
     // 定义菜单结构
     private static function buildMenu($role, $allMenus, $module, $controller, $action, $full)
     {
-
-        // dump(cm('sz_propt/web.combination/index'));
-        // dd("*");
-
-
         $return_menu = [];
         $return_submenu = [];
         $submenu = [];
@@ -271,6 +266,8 @@ class MenuWrapper
                     $isMoreDir = true;
                 }
 
+                $webMenuRoute = (strexists($menuRoute, 'web.') ? '' : 'web.') . $menuRoute;
+
                 if (!empty($submenu['items'])) {
                     $submenuIsActive = false;
                     foreach ($submenu['items'] as $i => $child) {
@@ -314,9 +311,13 @@ class MenuWrapper
 
                         # 二级目录
                         if (empty($child['items'])) {
+                            $route = $child['route'] ?? $child['url'] ?? '';
+                            if (empty($route)) {
+                                continue; // 跳过无路由的菜单项
+                            }
                             $return_menu_child = [
                                 'title'  => $child['title'],
-                                'route'  => $child['route'],
+                                'route'  => $route,
                                 'active' => $child['active'] ?? 0,
                                 'url'    => $child['url'] ?? null,
                             ];
@@ -372,12 +373,12 @@ class MenuWrapper
                                 }
 
                                 if ($routeLen == 1) {
-                                    $return_menu_child['route'] = $module . "/" . $menuRoute . "/" . $return_menu_child['route'];
+                                    $return_menu_child['route'] = $module . "/" . $webMenuRoute . "/" . $return_menu_child['route'];
                                 } else {
-                                    $return_menu_child['route'] = $module . "/" . $menuRoute . "." . $return_menu_child['route'];
+                                    $return_menu_child['route'] = $module . "/" . $webMenuRoute . "." . $return_menu_child['route'];
                                 }
                             } else {
-                                $return_menu_child['route'] = $module . "/" . $menuRoute . "/" . $return_menu_child['route'];
+                                $return_menu_child['route'] = $module . "/" . $webMenuRoute . "/" . $return_menu_child['route'];
                             }
 
                             if ($full) {
@@ -410,16 +411,16 @@ class MenuWrapper
                                     'active' => 0,
                                 ];
 
-                                if (!empty($three['route'])) {
-                                    $return_submenu_three['route'] = $three['route'];
-                                } else {
-                                    $return_submenu_three['route'] = $child['route'];
+                                $threeRoute = $three['route'] ?? $three['url'] ?? '';
+                                if (empty($threeRoute)) {
+                                    continue; // 跳过无路由的三级菜单
                                 }
+                                $return_submenu_three['route'] = $threeRoute;
 
                                 if (strlen($return_submenu_three['route']) > 0 && $return_submenu_three['route'][0] === '/') {
-                                    $return_submenu_three['route'] = $module . "/" . $menuRoute . $return_submenu_three['route'];
+                                    $return_submenu_three['route'] = $module . "/" . $webMenuRoute . $return_submenu_three['route'];
                                 } else {
-                                    $return_submenu_three['route'] = $module . "/" . $menuRoute . "." . $return_submenu_three['route'];
+                                    $return_submenu_three['route'] = $module . "/" . $webMenuRoute . "." . $return_submenu_three['route'];
                                 }
 
                                 if (strexists($return_submenu_three['route'], $action)) {
