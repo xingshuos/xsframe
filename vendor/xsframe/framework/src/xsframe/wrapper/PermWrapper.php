@@ -297,7 +297,6 @@ class PermWrapper
                     'change' => 'edit',  // 继承edit权限，默认继承
                     'del'    => 'delete',// 继承delete权限，默认继承
                     'save'   => 'edit',  // 继承edit权限，默认继承
-                    'status' => 'edit'
                 ],
             ];
 
