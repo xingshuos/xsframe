@@ -71,64 +71,73 @@ class PermWrapper
             $preFixUrl = substr($permUrl, 0, $lastSep + 1);
             $operation = substr($permUrl, $lastSep + 1);
 
-            // dd($lastSep);
-
             if (in_array($operation, ['index', 'main', 'detail', 'add', 'edit', 'delete'])) {
 
             } else if (in_array($operation, ['status', 'change', 'del', 'save'])) {
                 $operation = 'edit';
                 if ($operation == 'del') $operation = 'delete';
             } else {
-                // 默认映射为 edit
-                $operation = 'edit';
+
+                // ★ 不要预先设为 edit，保留原操作名
+                $originalOperation = $operation;
 
                 // 从 permUrl 中提取模块名和路径部分
                 $slashPos = strpos($permUrl, '/');
                 if ($slashPos === false) {
-                    // 格式不符合预期，保留原 operation
-                    return false;
-                }
-                $module = substr($permUrl, 0, $slashPos);
-                $path = substr($permUrl, $slashPos + 1);  // 如 "form.basic.log"
-
-                // 加载模块菜单配置
-                $menuPath = APP_PATH . "/{$module}/config/menu.php";
-                if (!is_file($menuPath)) {
-                    // 没有菜单文件，无法映射，使用默认 edit
-                    $permUrl = $preFixUrl . $operation;
+                    // 格式不符合预期，保留原操作
+                    $permUrl = $preFixUrl . $originalOperation;
                 } else {
-                    $moduleMenus = require $menuPath;
-                    // 按点分割路径，获取主菜单键、子菜单键、操作名
-                    $parts = explode('.', $path);
-                    $partsCount = count($parts);
-                    if ($partsCount >= 2) {
-                        $mainKey = $parts[1];      // 如 'form'
-                        $subKey = $parts[2];      // 如 'basic'
-                        $opName = $parts[3] ?? ''; // 如 'log'
+                    $module = substr($permUrl, 0, $slashPos);
+                    $path = substr($permUrl, $slashPos + 1);
+                    $menuPath = APP_PATH . "/{$module}/config/menu.php";
 
-                        // 查找主菜单
-                        if (isset($moduleMenus[$mainKey]) && !empty($moduleMenus[$mainKey]['items'])) {
-                            foreach ($moduleMenus[$mainKey]['items'] as $item) {
-                                // 子菜单的 route 通常是 "basic/main" 或 "module/main"
-                                $routeParts = explode('/', $item['route']);
-                                if ($routeParts[0] === $subKey) {
-                                    // 找到对应子菜单，获取其 perm 定义
-                                    $permDef = $item['perm'] ?? [];
-                                    if (isset($permDef['xxx']) && is_array($permDef['xxx']) && $opName !== '') {
-                                        // 如果操作名在映射表中，则替换
-                                        if (array_key_exists($opName, $permDef['xxx'])) {
-                                            $operation = $permDef['xxx'][$opName];
+                    if (!is_file($menuPath)) {
+                        // 没有菜单文件，使用默认 edit
+                        $operation = 'edit';
+                        $permUrl = $preFixUrl . $operation;
+                    } else {
+                        $moduleMenus = require $menuPath;
+                        $parts = explode('.', $path);
+                        $partsCount = count($parts);
+                        if ($partsCount >= 2) {
+                            $mainKey = $parts[1];
+                            $subKey = $parts[2];
+                            $opName = $parts[3] ?? '';
+
+                            if (isset($moduleMenus[$mainKey]) && !empty($moduleMenus[$mainKey]['items'])) {
+                                foreach ($moduleMenus[$mainKey]['items'] as $item) {
+                                    $routeParts = explode('/', $item['route']);
+                                    if ($routeParts[0] === $subKey) {
+                                        $permDef = $item['perm'] ?? [];
+
+                                        // ★ 先检查 perm 是否直接定义了该操作
+                                        if (isset($permDef[$opName])) {
+                                            $operation = $opName; // 保留原操作名
+                                        } else if (isset($permDef['xxx']) && is_array($permDef['xxx']) && $opName !== '') {
+                                            // 其次检查 xxx 映射
+                                            if (array_key_exists($opName, $permDef['xxx'])) {
+                                                $operation = $permDef['xxx'][$opName];
+                                            } else {
+                                                $operation = 'edit';
+                                            }
+                                        } else {
+                                            $operation = 'edit';
                                         }
+                                        break;
                                     }
-                                    break;
                                 }
                             }
                         }
+                        // 如果未找到子菜单或未匹配，默认使用 edit
+                        if (!isset($operation)) {
+                            $operation = 'edit';
+                        }
+                        $permUrl = $preFixUrl . $operation;
                     }
-                    // 重新构造完整的 permUrl
-                    $permUrl = $preFixUrl . $operation;
                 }
+
             }
+
         }
 
         $loginResult = UserWrapper::checkUser();
