@@ -312,25 +312,41 @@ trait AdminTraits
                     Db::name($this->tableName)->where(['id' => $id])->update($updateData);
 
                     // 记录编辑日志
-                    $this->recordLog('edit', [
-                        'table'    => $this->tableName,
-                        'id'       => $id,
-                        'before'   => $beforeData,
-                        'after'    => $updateData,
-                        'user_id'  => $this->userId,
-                        'username' => $this->adminSession['username'] ?? ''
-                    ]);
+                    $this->recordLog('edit',
+                        [
+                            'table'    => $this->tableName,
+                            'id'       => $id,
+                            'before'   => $beforeData,
+                            'after'    => $updateData,
+                            'user_id'  => $this->userId,
+                            'username' => $this->adminSession['username'] ?? ''
+                        ],
+                        [
+                            'action'  => 'edit',
+                            'table'   => $this->tableName,
+                            'id'      => $id,
+                            'changes' => $this->buildChanges($beforeData, $updateData), // 辅助方法
+                        ]
+                    );
                 } else {
                     $id = Db::name($this->tableName)->insertGetId($updateData);
 
                     // 记录添加日志
-                    $this->recordLog('add', [
-                        'table'    => $this->tableName,
-                        'id'       => $id,
-                        'data'     => $updateData,
-                        'user_id'  => $this->userId,
-                        'username' => $this->adminSession['username'] ?? ''
-                    ]);
+                    $this->recordLog('add',
+                        [
+                            'table'    => $this->tableName,
+                            'id'       => $id,
+                            'data'     => $updateData,
+                            'user_id'  => $this->userId,
+                            'username' => $this->adminSession['username'] ?? ''
+                        ],
+                        [
+                            'action' => 'add',
+                            'table'  => $this->tableName,
+                            'id'     => $id,
+                            'data'   => $updateData,
+                        ]
+                    );
                 }
 
                 $this->afterSetPostData($id);
@@ -433,15 +449,25 @@ trait AdminTraits
                 $this->afterChangeData($item);
 
                 // 记录修改字段日志
-                $this->recordLog('change_field', [
-                    'table'    => $this->tableName,
-                    'id'       => $item['id'],
-                    'field'    => $type,
-                    'before'   => $beforeValue,
-                    'after'    => $value,
-                    'user_id'  => $this->userId,
-                    'username' => $this->adminSession['username'] ?? ''
-                ]);
+                $this->recordLog('change_field',
+                    [
+                        'table'    => $this->tableName,
+                        'id'       => $item['id'],
+                        'field'    => $type,
+                        'before'   => $beforeValue,
+                        'after'    => $value,
+                        'user_id'  => $this->userId,
+                        'username' => $this->adminSession['username'] ?? ''
+                    ],
+                    [
+                        'action' => 'change_field',
+                        'table'  => $this->tableName,
+                        'id'     => $item['id'],
+                        'field'  => $type,
+                        'before' => $beforeValue,
+                        'after'  => $value,
+                    ]
+                );
             }
         }
 
@@ -492,6 +518,9 @@ trait AdminTraits
             if (array_key_exists('delete_time', $fieldList)) {
                 $updateData['delete_time'] = TIMESTAMP;
             }
+            if (array_key_exists('deletetime', $fieldList)) {
+                $updateData['deletetime'] = TIMESTAMP;
+            }
             if (array_key_exists('is_deleted', $fieldList)) {
                 $updateData['is_deleted'] = 1;
             }
@@ -512,13 +541,21 @@ trait AdminTraits
                 $this->afterDeleteData($item);
 
                 // 记录删除日志
-                $this->recordLog('delete', [
-                    'table'    => $this->tableName,
-                    'id'       => $item['id'],
-                    'data'     => $deletedData,
-                    'user_id'  => $this->userId,
-                    'username' => $this->adminSession['username'] ?? ''
-                ]);
+                $this->recordLog('delete',
+                    [
+                        'table'    => $this->tableName,
+                        'id'       => $item['id'],
+                        'data'     => $deletedData,
+                        'user_id'  => $this->userId,
+                        'username' => $this->adminSession['username'] ?? ''
+                    ],
+                    [
+                        'action' => 'delete',
+                        'table'  => $this->tableName,
+                        'id'     => $item['id'],
+                        'data'   => $deletedData,
+                    ]
+                );
             }
         }
         $this->success(["url" => referer()]);
@@ -606,13 +643,22 @@ trait AdminTraits
                 Db::name($this->tableName)->where(["id" => $item['id']])->delete();
 
                 // 记录真实删除日志
-                $this->recordLog('force_delete', [
-                    'table'    => $this->tableName,
-                    'id'       => $item['id'],
-                    'data'     => $deletedData,
-                    'user_id'  => $this->userId,
-                    'username' => $this->adminSession['username'] ?? ''
-                ]);
+                $this->recordLog('force_delete',
+                    [
+                        'table'    => $this->tableName,
+                        'id'       => $item['id'],
+                        'data'     => $deletedData,
+                        'user_id'  => $this->userId,
+                        'username' => $this->adminSession['username'] ?? ''
+                    ],
+                    [
+                        'action' => 'force_delete',
+                        'table'  => $this->tableName,
+                        'id'     => $item['id'],
+                        'data'   => $deletedData,
+                    ]
+
+                );
             }
         }
         $this->success(["url" => referer()]);
@@ -651,12 +697,19 @@ trait AdminTraits
                 Db::name($this->tableName)->where(["id" => $item['id']])->update($updateData);
 
                 // 记录还原日志
-                $this->recordLog('restore', [
-                    'table'    => $this->tableName,
-                    'id'       => $item['id'],
-                    'user_id'  => $this->userId,
-                    'username' => $this->adminSession['username'] ?? ''
-                ]);
+                $this->recordLog('restore',
+                    [
+                        'table'    => $this->tableName,
+                        'id'       => $item['id'],
+                        'user_id'  => $this->userId,
+                        'username' => $this->adminSession['username'] ?? ''
+                    ],
+                    [
+                        'id'     => $item['id'],
+                        'action' => 'restore',
+                        'table'  => $this->tableName,
+                    ]
+                );
 
             }
         }
@@ -737,10 +790,15 @@ trait AdminTraits
                 $this->recordLog('module_settings', [
                     'module'   => $this->module,
                     'uniacid'  => $this->uniacid,
-                    'settings' => $settingsData,
                     'user_id'  => $this->userId,
                     'username' => $this->adminSession['username'] ?? ''
+                ], [
+                    'action'   => 'module_settings',
+                    'module'   => $this->module,
+                    'uniacid'  => $this->uniacid,
+                    'settings' => $settingsData,
                 ]);
+
             }
 
             $moduleSettings = $settingsData;
@@ -793,13 +851,13 @@ trait AdminTraits
     /**
      * 记录操作日志
      * @param string $action 操作类型：add, edit, delete, change_field, etc.
-     * @param array $data 相关数据
+     * @param array $data 相关数据（包含 table, id, user_id, username 等）
+     * @param array|null $detail 变更详情（可选），将自动转为 JSON 存储
      * @return bool
      */
-    protected function recordLog($action, $data = [])
+    protected function recordLog($action, $data = [], $detail = null)
     {
         try {
-            // 操作类型映射
             $actionMap = [
                 'add'             => '添加',
                 'edit'            => '编辑',
@@ -816,7 +874,7 @@ trait AdminTraits
             $tableName = $data['table'] ?? $this->tableName ?? 'unknown';
             $recordId = $data['id'] ?? 0;
 
-            // 构建日志数据
+            // 构建基础日志数据
             $logData = [
                 'uniacid'     => $this->uniacid,
                 'user_id'     => $data['user_id'] ?? $this->userId ?? 0,
@@ -825,41 +883,67 @@ trait AdminTraits
                 'page_name'   => $actionName . ' - ' . $tableName . ($recordId ? ' (ID: ' . $recordId . ')' : ''),
                 'module'      => $this->module,
                 'ip'          => $this->request->ip(),
-                'create_time' => time()
+                'create_time' => time(),
             ];
 
-            // 写入日志表
+            // 处理 detail（如果传入，则转为 JSON）
+            if ($detail !== null) {
+                // 确保 detail 包含基本标识
+                if (!isset($detail['table']) && $tableName) {
+                    $detail['table'] = $tableName;
+                }
+                if (!isset($detail['id']) && $recordId) {
+                    $detail['id'] = $recordId;
+                }
+                if (!isset($detail['action'])) {
+                    $detail['action'] = $action;
+                }
+                $logData['detail'] = json_encode($detail, JSON_UNESCAPED_UNICODE);
+            } else {
+                // 若未传入详情，则从 $data 中尝试提取关键信息形成简单详情
+                $simpleDetail = ['action' => $action, 'table' => $tableName, 'id' => $recordId];
+                if (isset($data['before']) || isset($data['after'])) {
+                    $simpleDetail['changes'] = [
+                        'before' => $data['before'] ?? null,
+                        'after'  => $data['after'] ?? null,
+                    ];
+                } else if (isset($data['data'])) {
+                    $simpleDetail['data'] = $data['data'];
+                }
+                $logData['detail'] = json_encode($simpleDetail, JSON_UNESCAPED_UNICODE);
+            }
+
+            // 插入日志
             Db::name('sys_log')->insert($logData);
-
             return true;
-        } catch (\Exception $e) {
-            // 记录日志失败时不要影响主流程
-            error_log('记录操作日志失败: ' . $e->getMessage());
 
-            # 验证日志表是否存在
+        } catch (\Exception $e) {
+            // 如果表不存在，则尝试创建表（保持原有逻辑）
             if (!DbServiceFacade::hasTable('sys_log')) {
                 try {
                     DbServiceFacade::execute("
-                        CREATE TABLE " . tablename('sys_log') . " (
-                          `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '记录ID',
-                          `uniacid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '商户id',
-                          `user_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '员工id',
-                          `username` varchar(64) NOT NULL DEFAULT '' COMMENT '操作账号',
-                          `path` varchar(128) NOT NULL DEFAULT '' COMMENT '操作连接',
-                          `page_name` varchar(64) NOT NULL DEFAULT '' COMMENT '页面名称',
-                          `module` varchar(50) NOT NULL DEFAULT '' COMMENT '模块标识',
-                          `ip` varchar(16) NOT NULL DEFAULT '' COMMENT '登录IP',
-                          `create_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '操作时间',
-                          PRIMARY KEY (`id`) USING BTREE,
-                          KEY `user_id` (`user_id`) USING BTREE,
-                          KEY `create_time` (`create_time`) USING BTREE
-                        ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='员工操作记录表';
-                    ");
-                    $this->recordLog($action, $data);
+                    CREATE TABLE " . tablename('sys_log') . " (
+                      `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '记录ID',
+                      `uniacid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '商户id',
+                      `user_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '员工id',
+                      `username` varchar(64) NOT NULL DEFAULT '' COMMENT '操作账号',
+                      `path` varchar(128) NOT NULL DEFAULT '' COMMENT '操作连接',
+                      `page_name` varchar(64) NOT NULL DEFAULT '' COMMENT '页面名称',
+                      `module` varchar(50) NOT NULL DEFAULT '' COMMENT '模块标识',
+                      `ip` varchar(16) NOT NULL DEFAULT '' COMMENT '登录IP',
+                      `create_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '操作时间',
+                      `detail` text COMMENT '变更详情（JSON格式）',
+                      PRIMARY KEY (`id`) USING BTREE,
+                      KEY `user_id` (`user_id`) USING BTREE,
+                      KEY `create_time` (`create_time`) USING BTREE
+                    ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='员工操作记录表';
+                ");
+                    // 重新尝试插入
+                    Db::name('sys_log')->insert($logData);
                 } catch (\Exception $e) {
+                    // 忽略再次异常
                 }
             }
-
             return false;
         }
     }
@@ -995,6 +1079,17 @@ trait AdminTraits
                 }
             }
         }
+    }
+
+    protected function buildChanges($oldData, $newData)
+    {
+        $changes = [];
+        foreach ($newData as $key => $val) {
+            if (array_key_exists($key, $oldData) && $oldData[$key] != $val) {
+                $changes[$key] = ['old' => $oldData[$key], 'new' => $val];
+            }
+        }
+        return $changes;
     }
 
 }
