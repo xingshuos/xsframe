@@ -197,6 +197,13 @@ class Login extends Base
                 DbServiceFacade::name("sys_users_auth")->addField('deleted', 'tinyint', 1, 0, 0, '是否删除 0否 1是');
             }
         }
+        $sys_log_table = DbServiceFacade::hasTable("sys_log");
+        if ($sys_log_table) {
+            $sys_log_detail = DbServiceFacade::name("sys_log")->hasField('detail');
+            if (!$sys_log_detail) {
+                DbServiceFacade::name("sys_log")->addField('detail', 'text', '', '', 1, '变更详情（JSON格式）');
+            }
+        }
     }
 
     // 登录

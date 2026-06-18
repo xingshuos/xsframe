@@ -201,6 +201,7 @@ CREATE TABLE `#__sys_log` (
    `username` varchar(64) NOT NULL DEFAULT '' COMMENT '操作账号',
    `path` varchar(128) NOT NULL DEFAULT '' COMMENT '操作连接',
    `page_name` varchar(64) NOT NULL DEFAULT '' COMMENT '页面名称',
+   `detail` text COMMENT '变更详情（JSON格式）',
    `module` varchar(50) NOT NULL DEFAULT '' COMMENT '模块标识',
    `ip` varchar(16) NOT NULL DEFAULT '' COMMENT '登录IP',
    `create_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '操作时间',
