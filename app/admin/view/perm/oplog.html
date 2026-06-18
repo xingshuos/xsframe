@@ -20,6 +20,29 @@
 
 <div class="page-content">
 
+    <div class="row" style="margin-bottom: 15px;">
+        <div class="col-md-6">
+            <div class="alert alert-info" style="margin-bottom:0;">
+                <i class="icon icon-file-text-o"></i>
+                当前共有 <strong>{$total}</strong> 条操作日志记录
+            </div>
+        </div>
+        <div class="col-md-6 text-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+                    <i class="icon icon-trash"></i> 批量删除 <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                    <li><a href="javascript:;" onclick="deleteLogs(30)">删除 30 天前日志</a></li>
+                    <li><a href="javascript:;" onclick="deleteLogs(60)">删除 60 天前日志</a></li>
+                    <li><a href="javascript:;" onclick="deleteLogs(90)">删除 90 天前日志</a></li>
+                    <li><a href="javascript:;" onclick="deleteLogs(180)">删除 180 天前日志</a></li>
+                    <li><a href="javascript:;" onclick="deleteLogs(365)">删除 1 年前日志</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <!-- 搜索表单 -->
     <form action="" method="get" class="form-horizontal table-search" role="form" id="searchForm">
         <div class="page-toolbar">
@@ -89,7 +112,9 @@
                             <thead>
                             <tr>
                                 <th style="width: 60px;">ID</th>
-                                <th style="width: 100px;">ID/账号</th>
+                                <th style="width: 80px;">账号</th>
+                                <th style="width: 80px;">真实姓名</th>
+                                <th style="width: 100px;">手机号</th>
                                 <th style="width: 150px;">页面名称</th>
                                 <th style="width: 150px;">操作连接</th>
                                 <th style="width: 100px;">操作IP</th>
@@ -101,30 +126,14 @@
                             {foreach $list as $key=>$log }
                             <tr>
                                 <td>{$log['id']}</td>
-                                <td>
-                                    <div class="text-primary">ID: {$log['user_id']}</div>
-                                    <div class="text-muted log-username">{$log['username']}</div>
-                                </td>
-                                <td>
-                                    <span class="label label-info">{$log['page_name']}</span>
-                                </td>
-                                <td>
-                                    <div class="log-path" title="{$log['path']}">
-                                        {$log['path_short']}
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="label label-default">{$log['ip']}</span>
-                                </td>
-                                <td>
-                                    <span class="label label-primary">{$log['module_name']} ({$log['module']})</span>
-                                </td>
-                                <td>
-                                    <span class="text-muted">
-                                        {$log['create_time']|date='Y-m-d'}<br>
-                                        {$log['create_time']|date='H:i:s'}
-                                    </span>
-                                </td>
+                                <td>{$log['username']?:'-'}</td>
+                                <td>{$log['realname']?:'-'}</td>
+                                <td>{$log['mobile']?:'-'}</td>
+                                <td><span class="label label-info">{$log['page_name']}</span></td>
+                                <td><div class="log-path" title="{$log['path']}">{$log['path_short']}</div></td>
+                                <td><span class="label label-default">{$log['ip']}</span></td>
+                                <td><span class="label label-primary">{$log['module_name']} ({$log['module']})</span></td>
+                                <td><span class="text-muted">{$log['create_time']|date='Y-m-d'}<br>{$log['create_time']|date='H:i:s'}</span></td>
                             </tr>
                             {/foreach}
                             </tbody>
@@ -161,6 +170,34 @@
             $('#searchForm').find('input[name="time[start]"]').val('');
             $('#searchForm').find('input[name="time[end]"]').val('');
             window.location.href = "{:webUrl('ops/oplog')}";
+        };
+
+        // 删除日志
+        window.deleteLogs = function(days) {
+            if (!confirm('确认要删除 ' + days + ' 天前的所有操作日志吗？此操作不可恢复！')) {
+                return;
+            }
+
+            $.ajax({
+                url: "{:webUrl('perm/oplogDelete')}",
+                type: 'POST',
+                data: { days: days },
+                dataType: 'json',
+                success: function(res) {
+                    if (res.status == 1) {
+                        tip.success(res.result.message);
+                        // 刷新页面或重新加载列表
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 1500);
+                    } else {
+                        tip.error(res.result.message);
+                    }
+                },
+                error: function() {
+                    tip.error('请求失败，请重试');
+                }
+            });
         };
 
         // 页面加载完成后初始化

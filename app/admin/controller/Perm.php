@@ -53,8 +53,9 @@ class Perm extends AdminBaseController
         $pager = pagination2($total, $this->pIndex, $this->pSize);
 
         foreach ($list as $key => $item) {
-            $roleName = Db::name('sys_account_perm_role')->where(['id' => $item['roleid']])->value('rolename');
-            $list[$key]['rolename'] = $roleName;
+            $roleInfo = Db::name('sys_account_perm_role')->where(['id' => $item['roleid']])->find();
+            $list[$key]['rolename'] = $roleInfo['rolename'] ?? '';
+            $list[$key]['role_key'] = $roleInfo['role_key'] ?? '';
         }
         unset($item);
 
@@ -440,7 +441,6 @@ class Perm extends AdminBaseController
             ->select()
             ->toArray();
 
-
         // 如果需要排除某个角色及其后代，先收集要排除的ID
         $excludeIds = [];
         if ($excludeId > 0) {
@@ -506,23 +506,42 @@ class Perm extends AdminBaseController
     public function rolePost()
     {
         $id = $this->params['id'] ?? 0;
-
         $item = Db::name('sys_account_perm_role')->where(['id' => $id])->find();
 
         if ($this->request->isPost()) {
             $app_perms = $this->params['app_perms'] ?? [];
             $pid = intval($this->params['pid'] ?? 0);
             $rolename = trim($this->params['rolename']);
+            $role_key = trim($this->params['role_key'] ?? '');
             $status = intval($this->params['status']);
             $permsarray = trim($this->params['permsarray'] ?? '');
             $app_perms_str = implode(",", $app_perms);
+
+            // 角色标识校验
+            if (empty($role_key)) {
+                $this->error('角色标识不能为空');
+            }
+            if (strlen($role_key) > 64) {
+                $this->error('角色标识长度不能超过64个字符');
+            }
+            // 唯一性校验：同一 uniacid 下，role_key 必须唯一（排除自身）
+            $exists = Db::name('sys_account_perm_role')
+                ->where('uniacid', $this->uniacid)
+                ->where('role_key', $role_key)
+                ->where('deleted', 0)
+                ->when($id > 0, function ($query) use ($id) {
+                    return $query->where('id', '<>', $id);
+                })
+                ->count();
+            if ($exists) {
+                $this->error('角色标识已存在，请使用其他标识');
+            }
 
             // 校验上级角色合法性（不能是自身及后代）
             if ($pid > 0) {
                 if ($id > 0 && $pid == $id) {
                     $this->error('上级角色不能是自身');
                 }
-                // 检查是否后代
                 if ($id > 0) {
                     $allRoles = Db::name("sys_account_perm_role")
                         ->where(['uniacid' => $this->uniacid, 'deleted' => 0])
@@ -540,6 +559,7 @@ class Perm extends AdminBaseController
                 'uniacid'   => $this->uniacid,
                 'pid'       => $pid,
                 'rolename'  => $rolename,
+                'role_key'  => $role_key,
                 'status'    => $status,
                 'perms'     => $permsarray,
                 'app_perms' => $app_perms_str,
@@ -632,81 +652,129 @@ class Perm extends AdminBaseController
     // 操作日志
     public function oplog(): \think\response\View
     {
+        // 基础条件（只查当前商户）
         $condition = [
-            'uniacid' => $this->uniacid,
+            'l.uniacid' => $this->uniacid,
         ];
 
-        // 处理时间段搜索
+        // 时间段搜索
         if (!empty($this->params['searchtime']) && is_array($this->params['time'])) {
             $startTime = strtotime($this->params['time']['start']);
             $endTime = strtotime($this->params['time']['end']);
-
             if ($startTime && $endTime) {
-                $condition['create_time'] = Db::raw("between {$startTime} and {$endTime}");
+                $condition['l.create_time'] = Db::raw("between {$startTime} and {$endTime}");
             }
         }
 
-        // 操作账号搜索
+        // 操作账号搜索（支持用户名）
         if (!empty($this->params['username'])) {
-            $condition['username'] = ['like', '%' . trim($this->params['username']) . '%'];
+            $condition['u.username'] = ['like', '%' . trim($this->params['username']) . '%'];
         }
 
-        // 连接搜索
+        // 操作路径搜索
         if (!empty($this->params['path'])) {
-            $condition['path'] = ['like', '%' . trim($this->params['path']) . '%'];
+            $condition['l.path'] = ['like', '%' . trim($this->params['path']) . '%'];
         }
 
         // IP搜索
         if (!empty($this->params['ip'])) {
-            $condition['ip'] = trim($this->params['ip']);
+            $condition['l.ip'] = trim($this->params['ip']);
         }
 
         // 模块搜索
         if (!empty($this->params['module'])) {
-            $condition['module'] = trim($this->params['module']);
+            $condition['l.module'] = trim($this->params['module']);
         }
 
-        $result = [];
+        // 联表查询（获取真实姓名和手机号）
+        $list = Db::name('sys_log')->alias('l')
+            ->leftJoin('sys_users u', 'l.user_id = u.id')
+            ->leftJoin('sys_account_perm_user pu', 'u.id = pu.uid AND pu.uniacid = ' . $this->uniacid)
+            ->field('l.*, u.username, pu.realname, pu.mobile')
+            ->where($condition)
+            ->order('l.id desc')
+            ->page($this->pIndex, $this->pSize)
+            ->select()
+            ->toArray();
 
-        $list = DbServiceFacade::name("sys_log")->getList($condition, "*", "id desc");
-        $total = DbServiceFacade::name("sys_log")->count();
-        $result['total'] = $total;
-        $result['list'] = $list;
+        // 总记录数
+        $total = Db::name('sys_log')->alias('l')
+            ->leftJoin('sys_users u', 'l.user_id = u.id')
+            ->where($condition)
+            ->count();
 
-        // 获取所有模块列表用于下拉选择
+        $pager = pagination2($total, $this->pIndex, $this->pSize);
+
+        // 获取模块列表（用于下拉搜索）
         $moduleList = Db::name("sys_account_modules")->alias('am')
             ->leftJoin('sys_modules m', 'am.module = m.identifie')
             ->where(['am.uniacid' => $this->uniacid])
             ->where(['m.status' => 1, 'm.is_install' => 1, 'm.is_deleted' => 0])
             ->select()->toArray();
 
-        $result['moduleList'] = $moduleList;
-
-        // 设置默认时间段（最近7天）
-        if (empty($this->params['time'])) {
-            $result['start_time'] = strtotime('-7 days');
-            $result['end_time'] = time();
-        } else {
-            $result['start_time'] = strtotime($this->params['time']['start']);
-            $result['end_time'] = strtotime($this->params['time']['end']);
-        }
-
-        // 格式化操作时间
-        if (!empty($result['list'])) {
-            foreach ($result['list'] as &$item) {
-                // 简化过长的路径显示
-                if (strlen($item['path']) > 50) {
-                    $item['path_short'] = substr($item['path'], 0, 50) . '...';
-                } else {
-                    $item['path_short'] = $item['path'];
+        // 格式化数据
+        if (!empty($list)) {
+            foreach ($list as &$item) {
+                // 路径截断
+                $item['path_short'] = strlen($item['path']) > 50 ? substr($item['path'], 0, 50) . '...' : $item['path'];
+                // 模块名称
+                $item['module_name'] = Db::name('sys_modules')->where('identifie', $item['module'])->value('name');
+                // 如果未关联到真实姓名，则用用户名替代
+                if (empty($item['realname'])) {
+                    $item['realname'] = $item['username'];
                 }
-
-                $item['module_name'] = DbServiceFacade::name("sys_modules")->getValue(['identifie' => $item['module']], "name");
             }
             unset($item);
         }
 
+        // 默认时间范围（最近7天）
+        $startTime = empty($this->params['time']) ? strtotime('-7 days') : strtotime($this->params['time']['start']);
+        $endTime = empty($this->params['time']) ? time() : strtotime($this->params['time']['end']);
+
+        $result = [
+            'list'       => $list,
+            'total'      => $total,
+            'pager'      => $pager,
+            'moduleList' => $moduleList,
+            'start_time' => $startTime,
+            'end_time'   => $endTime,
+        ];
+
         return $this->template('oplog', $result);
+    }
+
+    /**
+     * 删除操作日志（支持按天数批量删除）
+     */
+    public function oplogDelete()
+    {
+        // 权限检查（仅允许管理员操作）
+        if (!in_array($this->adminSession['role'], ['founder', 'manager', 'owner'])) {
+            show_json(0, ['message' => '您没有权限执行此操作']);
+        }
+
+        $days = intval($this->params['days'] ?? 0);
+        if ($days <= 0) {
+            show_json(0, ['message' => '请选择有效的删除天数']);
+        }
+
+        // 计算删除截止时间戳
+        $endTime = time() - ($days * 86400);
+
+        // 删除指定时间之前的日志（仅限当前商户）
+        $deletedCount = Db::name('sys_log')
+            ->where('uniacid', $this->uniacid)
+            ->where('create_time', '<', $endTime)
+            ->delete();
+
+        if ($deletedCount === false) {
+            show_json(0, ['message' => '删除失败，请重试']);
+        }
+
+        show_json(1, [
+            'message' => "成功删除 {$deletedCount} 条操作日志（{$days}天前）",
+            'count'   => $deletedCount
+        ]);
     }
 
     public function roleChange()

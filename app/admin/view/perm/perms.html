@@ -49,7 +49,7 @@
 
                     <div class='panel-heading' style="background:#f8f8f8;border-bottom: 1px solid #efefef;display:{if !in_array($key,$operator_perms) && $userInfo['role'] == 'operator'}none{/if};" >
                         <a class="btn btn-link btn-sm pull-right" data-toggle="collapse" data-parent="#accordion" href="#collapse_{$key}"><i class='icon icon-chevron-down'></i> 展开</a>
-                        <label class='checkbox-inline'>
+                        <label class='checkbox-inline' title="{$key}">
                             <input type='checkbox' id="perm_{$key}" value='{$key}' class='perm-all perms' data-group='{$key}'
                                     {if in_array($key,$role_perms) || in_array($key,$user_perms) } checked {/if}
                                     {if in_array($key,$role_perms) && $action=='userpost'} disabled {/if}
