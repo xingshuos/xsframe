@@ -38,7 +38,14 @@
             <label class="col-lg control-label">员工密码</label>
             <div class="col-sm-9 col-xs-12">
                 <a id="xiangqing" class="a" style="cursor:pointer">修改</a>
-                <input type="hidden" id="mima" name="password" class="form-control" value="" autocomplete="off" {if empty($item['password'])}data-rule-required='false' {/if}  />
+                <div class="input-group" id="passwordGroup" style="display:none; margin-top:5px;">
+                    <input type="password" id="mima" name="password" class="form-control" value="" autocomplete="off" placeholder="请输入密码" />
+                    <span class="input-group-btn">
+                        <button type="button" id="togglePassword" class="btn btn-default">
+                            <i class="fa fa-eye"></i> 显示
+                        </button>
+                    </span>
+                </div>
                 <p>密码不填写则不修改</p>
                 <!--<div class='form-control-static'>********</div>-->
             </div>
@@ -152,9 +159,23 @@
 
 <script language='javascript'>
     $('#xiangqing').click(function(){
-        $('#xiangqing').attr("class","hidden");
-        $('#mima').attr("type","password");
+        $('#xiangqing').addClass("hidden");
+        $('#passwordGroup').show();
+        $('#mima').focus();
     })
+
+    $('#togglePassword').click(function(){
+        var input = $('#mima');
+        var button = $(this);
+        
+        if (input.attr("type") === "password") {
+            input.attr("type", "text");
+            button.html('<i class="fa fa-eye-slash"></i> 隐藏');
+        } else {
+            input.attr("type", "password");
+            button.html('<i class="fa fa-eye"></i> 显示');
+        }
+    });
 
     function search_users() {
         $("#module-menus1").html("正在搜索....");

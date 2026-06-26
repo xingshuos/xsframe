@@ -14,7 +14,6 @@ namespace app\admin\controller;
 
 use xsframe\base\AdminBaseController;
 use xsframe\enum\UserRoleKeyEnum;
-use xsframe\facade\service\DbServiceFacade;
 use xsframe\facade\wrapper\PermFacade;
 use xsframe\util\RandomUtil;
 use think\facade\Db;
@@ -112,30 +111,10 @@ class Perm extends AdminBaseController
             }
 
             if (!empty($password) || empty($item['id'])) {
-                if (strlen($password) < 8) {
-                    show_json(0, '密码长度至少8位');
-                }
-
-                $score = 0;
-
-                if (preg_match('/[0-9]+/', $password)) {
-                    ++$score;
-                }
-
-                if (preg_match('/[a-z]+/', $password)) {
-                    ++$score;
-                }
-
-                if (preg_match('/[A-Z]+/', $password)) {
-                    ++$score;
-                }
-
-                if (preg_match('/[_|\\-|+|=|*|!|@|#|$|%|^|&|(|)]+/', $password)) {
-                    ++$score;
-                }
-
-                if ($score < 2) {
-                    show_json(0, '密码必须包含大小写字母、数字、标点符号的其中两项');
+                // 强密码校验
+                $passwordCheck = $this->checkStrongPassword($password, $username);
+                if ($passwordCheck !== true) {
+                    show_json(0, $passwordCheck);
                 }
             }
 
@@ -849,4 +828,78 @@ class Perm extends AdminBaseController
 
         return $this->template('perm/member/query', $result);
     }
+
+    /**
+     * 校验强密码
+     * @param string $password 密码
+     * @param string $username 用户名（可选，用于校验密码不能包含用户名）
+     * @return bool|string 返回 true 表示密码强度合格，返回字符串表示错误信息
+     */
+    private function checkStrongPassword($password, $username = '')
+    {
+        // 1. 长度校验：至少10位
+        if (strlen($password) < 10) {
+            return '密码过于简单，长度至少10位';
+        }
+
+        // 2. 必须包含大写字母、小写字母、数字、特殊字符中的至少3项
+        $score = 0;
+
+        if (preg_match('/[a-z]/', $password)) {
+            ++$score;
+        }
+
+        if (preg_match('/[A-Z]/', $password)) {
+            ++$score;
+        }
+
+        if (preg_match('/[0-9]/', $password)) {
+            ++$score;
+        }
+
+        if (preg_match('/[_\-\+\=\*\!\@\#\$\%\^\&\(\)\[\]\{\}\;\:\"\'\,\.\<\>\/\?\|\\\\`~]/', $password)) {
+            ++$score;
+        }
+
+        if ($score < 3) {
+            return '密码过于简单，必须包含小写字母、大写字母、数字、特殊字符中的至少3项';
+        }
+
+        // 3. 不能包含连续3个以上相同字符
+        if (preg_match('/(.)\1{2,}/', $password)) {
+            return '密码过于简单，不能包含连续3个以上相同字符';
+        }
+
+        // 4. 不能包含常见弱密码
+        $weakPasswords = [
+            '123456', '123456789', 'qwerty', 'password', '111111',
+            '12345678', 'abc123', '1234567', 'password1', '12345',
+            '1234567890', '123123', 'admin', 'administrator'
+        ];
+
+        if (in_array(strtolower($password), $weakPasswords)) {
+            return '密码过于简单，不能使用常见弱密码';
+        }
+
+        // 5. 不能包含用户名（如果提供了用户名）
+        if (!empty($username) && stripos($password, $username) !== false) {
+            return '密码过于简单，不能包含用户名';
+        }
+
+        // 6. 检查字符重复性（不能有超过6个相同字符）
+        $charCount = [];
+        $passwordChars = str_split($password);
+        foreach ($passwordChars as $char) {
+            if (!isset($charCount[$char])) {
+                $charCount[$char] = 0;
+            }
+            $charCount[$char]++;
+            if ($charCount[$char] > 6) {
+                return '密码过于简单，单个字符不能出现超过6次';
+            }
+        }
+
+        return true;
+    }
+
 }
