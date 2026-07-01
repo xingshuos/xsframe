@@ -118,6 +118,17 @@ class Perm extends AdminBaseController
                 }
             }
 
+            // ★ 核心：perms 只存用户手动勾选的权限，角色权限完全不保存
+            // permsarray = 角色权限（disabled）+ 用户手动勾选 → 只取差集 = 用户额外权限
+            $savedPermsRaw = array_filter(explode(',', $this->params['permsarray'] ?? ''));
+            $rolePermsArray = [];
+            if (!empty($roleId)) {
+                $roleInfo = Db::name('sys_account_perm_role')->field('perms')->where(['id' => $roleId])->find();
+                $rolePermsArray = array_filter(explode(',', $roleInfo['perms'] ?? ''));
+            }
+            // 差集：用户勾选的 - 角色的 = 用户自己额外勾选的（只存这部分）
+            $userExtraPerms = array_values(array_diff($savedPermsRaw, $rolePermsArray));
+
             $data = [
                 'uniacid'   => $this->uniacid,
                 'realname'  => $realname,
@@ -126,12 +137,12 @@ class Perm extends AdminBaseController
                 'status'    => $status,
                 'mid'       => $mid,
                 'is_limit'  => $isLimit,
-                'app_perms' => implode(",", $app_perms),
+                'perms'     => implode(',', $userExtraPerms),  // 只存用户额外权限
+                'app_perms' => implode(',', $app_perms),
             ];
 
-            $data['perms'] = trim($this->params['permsarray']);
-            $permsArray = explode(",", $this->params['permsarray']);
-            $permsArray = array_merge($app_perms, $permsArray);
+            // 兼容后面 module 取第一个权限点
+            $permsArray = $savedPermsRaw;
 
             $salt = RandomUtil::random(6);
 
@@ -239,11 +250,12 @@ class Perm extends AdminBaseController
         if (!empty($item)) {
             if (!empty($item['roleid'])) {
                 $roleInfo = Db::name('sys_account_perm_role')->field('perms,app_perms')->where(['id' => $item['roleid']])->find();
-                $rolePerms = explode(',', $roleInfo['perms']);
-                $roleAppPerms = explode(',', $roleInfo['app_perms']);
+                $rolePerms = array_filter(explode(',', $roleInfo['perms'] ?? ''));
+                $roleAppPerms = array_filter(explode(',', $roleInfo['app_perms'] ?? ''));
             }
-            $userPerms = explode(',', $item['perms']);
-            $appPerms = explode(',', $item['app_perms']);
+            // 用户自己额外勾选的权限（perms 字段，保存时已排除角色权限）
+            $userPerms = array_filter(explode(',', $item['perms'] ?? ''));
+            $appPerms = array_filter(explode(',', $item['app_perms'] ?? ''));
         }
 
         // dump($rolePerms);
@@ -259,7 +271,7 @@ class Perm extends AdminBaseController
             'accounts_perms' => $accountsPerms,
             'role_perms'     => $rolePerms,
             'role_app_perms' => $roleAppPerms,
-            'user_perms'     => $userPerms,
+            'user_perms'     => $userPerms,    // 用户额外权限（已排除角色权限）
             'app_perms'      => $appPerms,
             'memberInfo'     => $memberInfo,
         ]);

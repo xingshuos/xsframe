@@ -32,23 +32,32 @@ class AccountHostWrapper
                 'am.deleted' => 0,
             ];
 
+            // 获取用户权限信息
             $permUserInfo = DbServiceFacade::name('sys_account_perm_user')->getInfo(['uniacid' => $uniacid, 'uid' => $userId]);
             $is_limit = $permUserInfo['is_limit'];
+
             if ($is_limit == 1 && $role == 'operator') {
-                $perms = $permUserInfo['perms'];
-                $app_perms = explode(',', $permUserInfo['app_perms']);
+                // ★ 合并角色权限 + 用户额外权限（与 PermWrapper.check 逻辑一致）
+                $role_perms = [];
+                $role_app_perms = [];
+                if (!empty($permUserInfo['roleid'])) {
+                    $roleInfo = DbServiceFacade::name('sys_account_perm_role')->getInfo(['id' => $permUserInfo['roleid']]);
+                    $role_perms = array_filter(explode(',', $roleInfo['perms'] ?? ''));
+                    $role_app_perms = array_filter(explode(',', $roleInfo['app_perms'] ?? ''));
+                }
+                // 用户额外权限 + 角色权限
+                $user_perms = array_filter(explode(',', $permUserInfo['perms'] ?? ''));
+                $user_app_perms = array_filter(explode(',', $permUserInfo['app_perms'] ?? ''));
+                $all_perms = array_unique(array_merge($role_perms, $user_perms));
+                $all_app_perms = array_unique(array_merge($role_app_perms, $user_app_perms));
 
-                // 使用逗号分割字符串
-                $parts = explode(',', $perms);
+                // 从所有权限中提取顶级应用 key（不含 '.' 的即为应用级权限）
+                $appKeys = array_filter($all_perms, fn($item) => strpos($item, '.') === false);
+                $appKeys = array_unique(array_merge(array_values($appKeys), $all_app_perms));
 
-                // 使用array_filter过滤掉包含'.'的字符串
-                $filtered = array_filter($parts, function ($item) {
-                    return strpos($item, '.') === false;
-                });
-
-                $filtered = array_merge(array_filter($filtered), $app_perms);
-
-                $condition['am.module'] = $filtered;
+                if (!empty($appKeys)) {
+                    $condition['am.module'] = $appKeys;
+                }
             }
             $total = Db::name('sys_account_modules')->alias('am')->leftJoin("sys_modules m", "m.identifie = am.module")->where($condition)->count();
         }
