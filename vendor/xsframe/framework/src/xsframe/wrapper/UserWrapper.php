@@ -102,11 +102,10 @@ class UserWrapper
         $cookie['hash'] = md5($userInfo['password'] . $userInfo['salt']);
         $cookie['uniacid'] = self::getUserUniacid($userInfo['id']);
 
-        $cookie['perm_user'] = Db::name("sys_account_perm_user")->where(['uid' => $userInfo['id']])->find() ?? [];
-        $cookie['perm_role'] = Db::name("sys_account_perm_role")->where(['id' => $cookie['perm_user']['roleid']])->find() ?? [];
+        $cookie['perm_user'] = Db::name("sys_account_perm_user")->field("id,uid,realname,mobile,roleid,mid,status")->where(['uid' => $userInfo['id']])->find() ?? [];
+        $cookie['perm_role'] = Db::name("sys_account_perm_role")->field("id,pid,rolename,role_key,status")->where(['id' => $cookie['perm_user']['roleid']])->find() ?? [];
 
         $session = authcode(json_encode($cookie), 'encode');
-
         isetcookie(self::$session_key, $session, 7 * 86400, true);
 
         return [

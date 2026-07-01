@@ -118,6 +118,8 @@ class MenuWrapper
                     }
                 }
 
+                // dump($menu_item['route']);
+
                 if (!empty($val['icon'])) {
                     $menu_item['icon'] = $val['icon'];
                 }
@@ -232,6 +234,8 @@ class MenuWrapper
                 }
                 # 设置一级目录路由 end
 
+                // dump($menu_item['route']);
+
                 if ($full) {
                     $menu_item['url'] = getSiteRoot() . $menu_item['route'];
                 }
@@ -266,7 +270,7 @@ class MenuWrapper
                     $isMoreDir = true;
                 }
 
-                $webMenuRoute = (strexists($menuRoute, 'web.') ? '' : 'web.') . $menuRoute;
+                $webMenuRoute = ((strexists($menuRoute, 'web.') || $module == 'admin') ? '' : 'web.') . $menuRoute;
 
                 if (!empty($submenu['items'])) {
                     $submenuIsActive = false;
