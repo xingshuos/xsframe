@@ -101,6 +101,10 @@ class UserWrapper
         $cookie['role'] = $userInfo['role'];
         $cookie['hash'] = md5($userInfo['password'] . $userInfo['salt']);
         $cookie['uniacid'] = self::getUserUniacid($userInfo['id']);
+
+        $cookie['perm_user'] = Db::name("sys_account_perm_user")->where(['uid' => $userInfo['id']])->find() ?? [];
+        $cookie['perm_role'] = Db::name("sys_account_perm_role")->where(['id' => $cookie['perm_user']['roleid']])->find() ?? [];
+
         $session = authcode(json_encode($cookie), 'encode');
 
         isetcookie(self::$session_key, $session, 7 * 86400, true);
@@ -132,13 +136,13 @@ class UserWrapper
                 $oneMenus = [];
                 if ($role && $userId && $role == UserRoleKeyEnum::OPERATOR_KEY) {
                     $permUserInfo = DbServiceFacade::name('sys_account_perm_user')->getInfo(['uid' => $userId]);
-                    if( $permUserInfo['is_limit'] == 1 ){
+                    if ($permUserInfo['is_limit'] == 1) {
                         $perms = $permUserInfo['perms'];
                         $app_perms = explode(',', $permUserInfo['app_perms']);
 
-                        if( in_array($moduleName, $app_perms) ){
+                        if (in_array($moduleName, $app_perms)) {
                             $oneMenus = array_slice($menuConfig, 0, 1);
-                        }else{
+                        } else {
                             // 使用逗号分割字符串
                             $parts = explode(',', $perms);
                             if (!empty($parts)) {
@@ -157,7 +161,7 @@ class UserWrapper
                                 }
                             }
                         }
-                    }else{
+                    } else {
                         $oneMenus = array_slice($menuConfig, 0, 1);
                     }
                 } else {
@@ -168,14 +172,14 @@ class UserWrapper
                 $oneMenusKeys = array_keys($oneMenus);
 
                 $actionUrl = $oneMenus[$oneMenusKeys[0]]['items'][0]['route'];
-                if (empty($actionUrl) ) {
-                    if( !empty($oneMenus[$oneMenusKeys[0]]['items'][0]['url']) ){
+                if (empty($actionUrl)) {
+                    if (!empty($oneMenus[$oneMenusKeys[0]]['items'][0]['url'])) {
                         $actionUrl = $oneMenus[$oneMenusKeys[0]]['items'][0]['url'];
                         if (!StringUtil::strexists($actionUrl, "web.")) {
                             $actionUrl = "web." . $actionUrl;
                         }
                         $url = url("/" . $moduleName . "/" . $actionUrl);
-                    }else{
+                    } else {
                         $actionUrl = $oneMenus[$oneMenusKeys[0]]['route'];
                         if (empty($actionUrl)) {
                             $actionUrl = "/main";
