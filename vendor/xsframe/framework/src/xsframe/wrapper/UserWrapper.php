@@ -136,21 +136,32 @@ class UserWrapper
                 if ($role && $userId && $role == UserRoleKeyEnum::OPERATOR_KEY) {
                     $permUserInfo = DbServiceFacade::name('sys_account_perm_user')->getInfo(['uid' => $userId]);
                     if ($permUserInfo['is_limit'] == 1) {
-                        $perms = $permUserInfo['perms'];
-                        $app_perms = explode(',', $permUserInfo['app_perms']);
+                        // ★ 合并角色权限 + 用户额外权限（与 PermWrapper.check 逻辑一致）
+                        $role_perms = [];
+                        $role_app_perms = [];
+                        if (!empty($permUserInfo['roleid'])) {
+                            $roleInfo = DbServiceFacade::name('sys_account_perm_role')->getInfo(['id' => $permUserInfo['roleid']]);
+                            $role_perms = array_filter(explode(',', $roleInfo['perms'] ?? ''));
+                            $role_app_perms = array_filter(explode(',', $roleInfo['app_perms'] ?? ''));
+                        }
+                        $user_perms = array_filter(explode(',', $permUserInfo['perms'] ?? ''));
+                        $user_app_perms = array_filter(explode(',', $permUserInfo['app_perms'] ?? ''));
+                        $all_perms = array_unique(array_merge($role_perms, $user_perms));
+                        $all_app_perms = array_unique(array_merge($role_app_perms, $user_app_perms));
 
-                        if (in_array($moduleName, $app_perms)) {
+                        if (in_array($moduleName, $all_app_perms)) {
+                            // 有该应用级权限，返回第一个菜单
                             $oneMenus = array_slice($menuConfig, 0, 1);
                         } else {
-                            // 使用逗号分割字符串
-                            $parts = explode(',', $perms);
-                            if (!empty($parts)) {
-                                $prefixToRemove = "{$moduleName}.web.";
-                                foreach ($parts as $part) {
-                                    if (strpos($part, $prefixToRemove) !== false) {
-                                        $key = substr($part, strlen($prefixToRemove));
-                                        $menuInfo = $menuConfig[$key];
-                                        if (!empty($menuInfo) && $menuInfo['items'] && $menuInfo['items'][0] && $menuInfo['items'][0]['items']) { // 如果是三级目录的情况
+                            // 在合并后的操作权限中查找属于当前应用的菜单项
+                            $prefixToRemove = "{$moduleName}.web.";
+                            foreach ($all_perms as $part) {
+                                if (strpos($part, $prefixToRemove) !== false) {
+                                    $key = substr($part, strlen($prefixToRemove));
+                                    $menuInfo = $menuConfig[$key] ?? null;
+                                    if (!empty($menuInfo)) {
+                                        if (!empty($menuInfo['items']) && !empty($menuInfo['items'][0]) && !empty($menuInfo['items'][0]['items'])) {
+                                            // 三级目录的情况
                                             $oneMenus[$key] = $menuInfo['items'][0];
                                         } else {
                                             $oneMenus[$key] = $menuInfo;
@@ -218,24 +229,70 @@ class UserWrapper
     {
         $moduleName = null;
         $uniacid = 0;
+
+        // 先从 sys_account_perm_user 获取 uniacid（兜底，如果 sys_account_users 无记录）
+        $permUserInfo = Db::name('sys_account_perm_user')->where(['uid' => $userId])->find();
+        if (!empty($permUserInfo)) {
+            $uniacid = $permUserInfo['uniacid'];
+        }
+
+        // 获取用户关联的账号记录
         $usersAccountInfo = Db::name('sys_account_users')->field("id,uniacid,module")->where(['user_id' => $userId])->find();
+
         if (!empty($usersAccountInfo)) {
-            $uniacid = $usersAccountInfo['uniacid'];
+            if (!empty($usersAccountInfo['uniacid'])) {
+                $uniacid = $usersAccountInfo['uniacid'];
+            }
             $moduleName = $usersAccountInfo['module'];
 
+            // 检查记录的应用是否已安装
             $isInstall = Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'module' => $moduleName, 'deleted' => 0])->count();
             if (empty($isInstall)) {
                 $moduleName = null;
             }
+        }
 
-            if (empty($moduleName)) {
-                $defaultModuleInfo = Db::name("sys_account_modules")->field("id,uniacid,module")->where(['uniacid' => $uniacid, 'deleted' => 0])->order("is_default desc")->find();
-                if (!empty($defaultModuleInfo)) {
-                    $moduleName = $defaultModuleInfo['module'];
-                    Db::name('sys_account_users')->where(['id' => $usersAccountInfo['id']])->update(['module' => $moduleName]);
+        // 如果没有找到可用应用，基于权限合并查找第一个有权限的应用
+        if (empty($moduleName) && !empty($uniacid)) {
+            // 重新查询当前 uniacid 下的权限记录
+            $permUserInfo = Db::name('sys_account_perm_user')->where(['uid' => $userId, 'uniacid' => $uniacid])->find();
+
+            if (!empty($permUserInfo)) {
+                // ★ 合并角色权限 + 用户额外权限（与 PermWrapper.check 逻辑一致）
+                $role_perms = [];
+                $role_app_perms = [];
+                if (!empty($permUserInfo['roleid'])) {
+                    $roleInfo = Db::name('sys_account_perm_role')->where(['id' => $permUserInfo['roleid']])->find();
+                    $role_perms = array_filter(explode(',', $roleInfo['perms'] ?? ''));
+                    $role_app_perms = array_filter(explode(',', $roleInfo['app_perms'] ?? ''));
+                }
+                $user_perms = array_filter(explode(',', $permUserInfo['perms'] ?? ''));
+                $user_app_perms = array_filter(explode(',', $permUserInfo['app_perms'] ?? ''));
+
+                // 提取所有有权访问的应用 key
+                $all_perms = array_unique(array_merge($role_perms, $user_perms));
+                $all_app_perms = array_unique(array_merge($role_app_perms, $user_app_perms));
+                $appKeys = array_filter($all_perms, fn($item) => strpos($item, '.') === false);
+                $appKeys = array_unique(array_merge(array_values($appKeys), $all_app_perms));
+
+                // 查找该账号下第一个有权限且已安装的应用
+                if (!empty($appKeys)) {
+                    $defaultModuleInfo = Db::name('sys_account_modules')
+                        ->field("id,uniacid,module")
+                        ->where(['uniacid' => $uniacid, 'deleted' => 0])
+                        ->whereIn('module', $appKeys)
+                        ->order("is_default desc")
+                        ->find();
+                    if (!empty($defaultModuleInfo)) {
+                        $moduleName = $defaultModuleInfo['module'];
+                        if (!empty($usersAccountInfo)) {
+                            Db::name('sys_account_users')->where(['id' => $usersAccountInfo['id']])->update(['module' => $moduleName]);
+                        }
+                    }
                 }
             }
         }
+
         return [
             'module'  => $moduleName,
             'uniacid' => $uniacid
