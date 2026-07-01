@@ -2333,3 +2333,79 @@ if (!function_exists('tpl_form_field_category_3level')) {
         return $html;
     }
 }
+
+/**
+ * 多视频上传组件
+ * @param string $name 表单名称
+ * @param array $value 已上传视频列表
+ * @param array $options 配置选项
+ * @return string
+ */
+if (!function_exists('tpl_form_field_multi_video2')) {
+    function tpl_form_field_multi_video2($name, $value = [], $options = [])
+    {
+        $options = array_merge([
+            'fileSizeLimit' => 100, // MB
+            'type'          => 'video',
+            'multiple'      => true,
+            'multi'         => true,
+            'direct'        => false,
+        ], $options);
+
+        $s = '';
+
+        if (!defined('TPL_INIT_MULTI_VIDEO2')) {
+            $s = '
+<script type="text/javascript">
+    function uploadMultiVideo2(elm) {
+        var name = $(elm).next().val();
+        var options = ' . json_encode($options) . ';
+        // 关键：设置 upload_type = "video"
+        options.upload_type = "video";
+        
+        console.log("options0", options);
+        
+        util.image2("", function(urls){
+            $.each(urls, function(idx, url){
+                var videoHtml = \'<div class="multi-item">\' +
+                    \'<video src="\' + url.url + \'" controls class="img-responsive img-thumbnail" style="width:150px;height:120px;object-fit:cover;"></video>\' +
+                    \'<input type="hidden" name="\' + name + \'[]" value="\' + url.fileurl + \'">\' +
+                    \'<em class="close" title="删除视频" onclick="deleteMultiVideo2(this)">×</em>\' +
+                    \'</div>\';
+                $(elm).parent().parent().next().append(videoHtml);
+            });
+        }, options);
+    }
+
+    function deleteMultiVideo2(elm) {
+        $(elm).parent().remove();
+    }
+</script>';
+            define('TPL_INIT_MULTI_VIDEO2', true);
+        }
+
+        $s .= '<div class="input-group">
+            <input type="text" class="form-control" readonly value="" placeholder="批量上传视频" autocomplete="off">
+            <span class="input-group-btn">
+                <button class="btn btn-primary" type="button" onclick="uploadMultiVideo2(this);">选择视频</button>
+                <input type="hidden" value="' . $name . '">
+            </span>
+        </div>
+        <div class="input-group multi-img-details">';
+
+        if (is_array($value) && !empty($value)) {
+            foreach ($value as $video) {
+                $videoUrl = tomedia($video);
+                $s .= '
+<div class="multi-item">
+    <video src="' . $videoUrl . '" controls class="img-responsive img-thumbnail" style="width:150px;height:120px;object-fit:cover;"></video>
+    <input type="hidden" name="' . $name . '[]" value="' . $video . '">
+    <em class="close" title="删除视频" onclick="deleteMultiVideo2(this)">×</em>
+</div>';
+            }
+        }
+
+        $s .= '</div>';
+        return $s;
+    }
+}
