@@ -1,5 +1,12 @@
 {if !empty($perms['parent']) || $userInfo['role'] == 'operator'}
 
+<!-- <div class="form-group"> -->
+<!--     <label class="col-lg control-label"></label> -->
+<!--     <div class="col-sm-9 col-xs-12"> -->
+<!--         <span class='form-control-static'>用户可以在此角色权限的基础上附加其他权限</span> -->
+<!--     </div> -->
+<!-- </div> -->
+
 {if $action=='userpost'}
 <div class="form-group">
     <label class="col-lg control-label">查看权限</label>
@@ -23,11 +30,7 @@
     <div class="col-sm-9 col-xs-12">
         {foreach $perms['parent'] as $key => $value}
         <label class="checkbox-inline">
-            {php}$isRoleApp = in_array($key, (array)$role_app_perms);$isUserApp = in_array($key, (array)$app_perms);{/php}
-            <input type="checkbox" name="app_perms[]" value="{$key}"
-                {if $isRoleApp || $isUserApp} checked{/if}
-                {if $isRoleApp && $action=='userpost'} disabled{/if}
-            >  <b>{$value['text']}</b>{if $isRoleApp && $action=='userpost'}<span style="color:#999"> [角色权限]</span>{/if}
+            <input type="checkbox" name="app_perms[]" value="{$key}" {if in_array($key,$role_app_perms) || in_array($key,$app_perms)}checked{/if} {if in_array($key,$role_app_perms) && $action=='userpost'} disabled {/if}>  <b>{$value['text']}</b>
         </label>
         {/foreach}
         <span class="help-block">启用应用权限后，用户将拥有该应用的所有权限，级别高于操作权限</span>
@@ -44,108 +47,104 @@
 
                 {foreach $perms['parent'] as $key => $value}
 
-                    <div class='panel-heading' style="background:#f8f8f8;border-bottom: 1px solid #efefef;display:{if !in_array($key,(array)$operator_perms) && $userInfo['role'] == 'operator'}none{/if};" >
-                        <a class="btn btn-link btn-sm pull-right" data-toggle="collapse" data-parent="#accordion" href="#collapse_{$key}"><i class='icon icon-chevron-down'></i> 展开</a>
-                        <label class='checkbox-inline' title="{$key}">
-                            {php}$isRoleG = in_array($key, (array)$role_perms);$isUserG = in_array($key, (array)$user_perms);{/php}
-                            <input type='checkbox' id="perm_{$key}" value='{$key}' class='perm-all perms' data-group='{$key}'
-                                    {if $isRoleG || $isUserG} checked{/if}
-                                    {if $isRoleG && $action=='userpost'} disabled{/if}
-                            /> {$value['text']}{if $isRoleG && $action=='userpost'}<span style="color:#999"> [角色]</span>{/if}
-                        </label>
-                    </div>
+                <div class='panel-heading' style="background:#f8f8f8;border-bottom: 1px solid #efefef;display:{if !in_array($key,$operator_perms) && $userInfo['role'] == 'operator'}none{/if};" >
+                    <a class="btn btn-link btn-sm pull-right" data-toggle="collapse" data-parent="#accordion" href="#collapse_{$key}"><i class='icon icon-chevron-down'></i> 展开</a>
+                    <label class='checkbox-inline' title="{$key}">
+                        <input type='checkbox' id="perm_{$key}" value='{$key}' class='perm-all perms' data-group='{$key}'
+                               {if in_array($key,$role_perms) || in_array($key,$user_perms) } checked {/if}
+                        {if in_array($key,$role_perms) && $action=='userpost'} disabled {/if}
+                        /> {$value['text']}{if in_array($key,$role_perms) && $action=='userpost'}<span style="color:#999"> [角色]</span>{/if}
+                    </label>
+                </div>
 
-                    <div id="collapse_{$key}" class="panel-collapse {if $i==0}in{else}collapse{/if}">
+                <div id="collapse_{$key}" class="panel-collapse {if $i==0}in{else}collapse{/if}">
 
-                        <div class='panel-body perm-group'>
-                            {if count($perms['parent'][$key]) >1}
-                                <span>
+                    <div class='panel-body perm-group'>
+                        {if count($perms['parent'][$key]) >1}
+                        <span>
                                     {foreach $perms['parent'][$key] as $ke => $val}
                                         {if $ke != 'text'}
                                              <label class='checkbox-inline'>
-                                                 {php}$pk2=$key.'.'.$ke;$isR2=in_array($pk2,(array)$role_perms);{/php}
-                                                 <input type='checkbox' value='{$pk2}' class='perm-item perms' data-group='{$key}' data-parent='text'
-                                                    checked{if $isR2 && $action=='userpost'} disabled{/if} />  {:str_replace("-log", "", $val)}{if $isR2 && $action=='userpost'}<span style="color:#999"> [角色]</span>{/if}
+                                                 <input type='checkbox'  value='{$key}.{$ke}' class='perm-item perms' data-group='{$key}' data-parent='text' checked disabled />  {:str_replace("-log", "", $val)}
                                              </label>
                                         {else}
                                              <label class='checkbox-inline'>
-                                                 {php}$isRg=in_array($key,(array)$role_perms);{/php}
-                                                 <input type='checkbox' value='{$key}' class='perm-all-item perms' data-group='{$key}' data-parent='text'
-                                                    checked{if $isRg && $action=='userpost'} disabled{/if} />  <b>{:str_replace("-log", "", $val)}</b>{if $isRg && $action=='userpost'}<span style="color:#999"> [角色]</span>{/if}
+                                                 <input type='checkbox'  value='{$key}' class='perm-all-item perms' data-group='{$key}' data-parent='text' checked disabled />  <b>{:str_replace("-log", "", $val)}</b>
                                              </label>
                                         {/if}
                                     {/foreach}
                                 </span>
-                                <br>
-                            {/if}
+                        <br>
+                        {/if}
 
-                            {if !empty($perms['son'][$key])}
+                        {if !empty($perms['son'][$key])}
 
-                            {foreach $perms['son'][$key] as $ke => $val}
-                                <div class="menu-group">
-                                    {if !empty($val)}
-                                        <span>
+                        {foreach $perms['son'][$key] as $ke => $val}
+                        <div class="menu-group">
+                            {if !empty($val)}
+                            <span>
                                         {foreach $val as $k => $v}
                                             {if $k != 'text'}
-                                                <label class='checkbox-inline' style="display: {if !in_array($key.'.'.$ke.'.'.$k,(array)$operator_perms) && $userInfo['role'] == 'operator'}none;{/if}">
-                                                    {php}$pFull=$key.'.'.$ke.'.'.$k;$isRoleP=in_array($pFull,(array)$role_perms);$isUserP=in_array($pFull,(array)$user_perms);{/php}
-                                                    <input type='checkbox' value='{$pFull}' class='perm-item perms' data-group='{$key}' data-parent='{$ke}' data-son="{$k}"
-                                                        {if $isRoleP || $isUserP} checked{/if}
-                                                        {if $isRoleP && $action=='userpost'} disabled{/if}
-                                                    />  {:str_replace("-log", "", $v)}{if $isRoleP && $action=='userpost'}<span style="color:#999"> [角色]</span>{/if}
-                                                </label>
-                                            {else}
-                                                <label class='checkbox-inline' style="display: {if !in_array($key.'.'.$ke,(array)$operator_perms) && $userInfo['role'] == 'operator'}none;{/if}">
-                                                    {php}$pGrp=$key.'.'.$ke;$isRoleG=in_array($pGrp,(array)$role_perms);$isUserG=in_array($pGrp,(array)$user_perms);{/php}
-                                                    <input type='checkbox' value='{$pGrp}' class='perm-all-item perms groups' data-group='{$key}' data-parent='{$ke}' data-son="{$k}"
-                                                        {if $isRoleG || $isUserG} checked{/if}
-                                                        {if $isRoleG && $action=='userpost'} disabled{/if}
-                                                    />  <b>{:str_replace("-log", "", $v)}</b>{if $isRoleG && $action=='userpost'}<span style="color:#999"> [角色]</span>{/if}
-                                                </label>
-                                            {/if}
+                                                <label class='checkbox-inline' style="display: {if !in_array($key.".".$ke.".".$k,$operator_perms) && $userInfo['role'] == 'operator'}none;{/if}">
+                                                    <input type='checkbox'  value='{$key}.{$ke}.{$k}' class='perm-item perms' data-group='{$key}' data-parent='{$ke}' data-son="{$k}"
+
+                                                           {if in_array($key.".".$ke.".".$k,$role_perms) || in_array($key.".".$ke.".".$k,$user_perms)} checked{/if}
+                                                        {if in_array($key.".".$ke.".".$k,$role_perms) && $action=='userpost'} disabled{/if}
+
+                                                    />  {:str_replace("-log", "", $v)}{if in_array($key.".".$ke.".".$k,$role_perms) && $action=='userpost'}<span style="color:#999"> [角色]</span>{/if}
+                                </label>
+                                {else}
+                                                <label class='checkbox-inline' style="display: {if !in_array($key.".".$ke,$operator_perms) && $userInfo['role'] == 'operator'}none;{/if}">
+                                                    <input type='checkbox'  value='{$key}.{$ke}' class='perm-all-item perms groups' data-group='{$key}' data-parent='{$ke}' data-son="{$k}"
+
+                                                           {if in_array($key.".".$ke,$role_perms) || in_array($key.".".$ke,$user_perms)} checked{/if}
+                                                        {if in_array($key.".".$ke,$role_perms) && $action=='userpost'} disabled{/if}
+
+                                                    />  <b>{:str_replace("-log", "", $v)}</b>{if in_array($key.".".$ke,$role_perms) && $action=='userpost'}<span style="color:#999"> [角色]</span>{/if}
+                                </label>
+                                {/if}
                                         {/foreach}
                                         </span><br>
-                                    {/if}
+                            {/if}
 
-                                    {php}$parentKe = $ke;{/php}
-                                    <div style="margin-left: 25px;">
-                                        {foreach $perms['grandson'][$key] as $ke => $val}
-                                            {foreach $val as $k => $v}
-                                                {if !empty($v) && $ke == $parentKe}
-                                                    <span>
+                            {php}$parentKe = $ke;{/php}
+                            <div style="margin-left: 25px;">
+                                {foreach $perms['grandson'][$key] as $ke => $val}
+                                {foreach $val as $k => $v}
+                                {if !empty($v) && $ke == $parentKe}
+                                <span>
                                                         {foreach $v as $kk => $vv}
                                                             {if $kk != 'text'}
                                                                  <label class='checkbox-inline'>
-                                                                     {php}$pGs=$key.($ke?'.'.$ke:'').($k?'.'.$k:'').($kk?'.'.$kk:'');$isRoleGs=in_array($pGs,(array)$role_perms);$isUserGs=in_array($pGs,(array)$user_perms);{/php}
-                                                                     <input type='checkbox' value='{$pGs}' class='perm-item perms'
+                                                                     {php}$str = $key.($ke ? ".".$ke : "").($k ? ".".$k : "").($kk ? ".".$kk : "");{/php}
+                                                                     <input type='checkbox'  value='{$key}{$ke?".".$ke:""}{$k?".".$k:""}{$kk?".".$kk:""}' class='perm-item perms'
                                                                             data-group='{$key}' data-parent='{$parentKe}' data-son="{$k}" data-grandson="{$kk}"
-                                                                            {if $isRoleGs || $isUserGs} checked{/if}
-                                                                     {if $isRoleGs && $action=='userpost'} disabled{/if}
-                                                                     />  {:str_replace("-log", "", $vv)}{if $isRoleGs && $action=='userpost'}<span style="color:#999"> [角色]</span>{/if}
+                                                                            {if in_array($str,$role_perms) || in_array($str,$user_perms)} checked{/if}
+                                                                     {if in_array($str,$role_perms)  && $action=='userpost'} disabled{/if}
+                                                                     />  {:str_replace("-log", "", $vv)}{if in_array($str,$role_perms)  && $action=='userpost'}<span style="color:#999"> [角色]</span>{/if}
                                                                  </label>
                                                             {else}
                                                                  <label class='checkbox-inline'>
-                                                                     {php}$pGsAll=$key.'.'.$ke.'.'.$k;$isRoleGsa=in_array($pGsAll,(array)$role_perms);$isUserGsa=in_array($pGsAll,(array)$user_perms);{/php}
-                                                                     <input type='checkbox' value='{$pGsAll}' class='perm-all-item perms groups-item'
+                                                                     <input type='checkbox' value='{$key}.{$ke}.{$k}' class='perm-all-item perms groups-item'
                                                                             data-group='{$key}' data-parent='{$parentKe}' data-son="{$k}" data-grandson="{$kk}"
-                                                                            {if $isRoleGsa || $isUserGsa} checked{/if}
-                                                                     {if $isRoleGsa && $action=='userpost'} disabled{/if}
-                                                                     />  <b>{:str_replace("-log", "", $vv)}</b>{if $isRoleGsa && $action=='userpost'}<span style="color:#999"> [角色]</span>{/if}
+                                                                            {if in_array($key.".".$ke.".".$k,$role_perms) || in_array($key.".".$ke.".".$k,$user_perms)} checked{/if}
+                                                                     {if in_array($key.".".$ke.".".$k,$role_perms)  && $action=='userpost'} disabled{/if}
+                                                                     />  <b>{:str_replace("-log", "", $vv)}</b>{if in_array($key.".".$ke.".".$k,$role_perms)  && $action=='userpost'}<span style="color:#999"> [角色]</span>{/if}
                                                                  </label>
                                                             {/if}
                                                         {/foreach}
                                                      </span><br>
-                                                {/if}
-                                            {/foreach}
-                                        {/foreach}
-                                    </div>
-                                </div>
-                            {/foreach}
-                            {/if}
+                                {/if}
+                                {/foreach}
+                                {/foreach}
+                            </div>
                         </div>
+                        {/foreach}
+                        {/if}
                     </div>
+                </div>
 
-                    {php}$i++;{/php}
+                {php}$i++;{/php}
                 {/foreach}
 
             </div>
@@ -160,7 +159,8 @@
         $('.perm-all').click(function () {
             let checked = $(this).get(0).checked;
             let group = $(this).data('group');
-            $(".perm-item[data-group='" + group + "'],.perm-all-item[data-group='" + group + "']").each(function () {
+            // 只操作可编辑的 checkbox（排除 disabled 的角色权限）
+            $(".perm-item[data-group='" + group + "'],.perm-all-item[data-group='" + group + "']").not(':disabled').each(function () {
                 $(this).get(0).checked = checked;
             })
         });
@@ -168,18 +168,25 @@
         $('.perm-all-item').click(function () {
             let checked = $(this).get(0).checked;
             let group = $(this).data('group');
+            let parent = $(this).data('parent');
+            let son = $(this).data('son');
+            let grandson = $(this).data('grandson');
             let isGroup = $(this).hasClass('groups');
 
-            $(this).parents("span").find(".perm-item").each(function () {
+            // 只操作可编辑的 checkbox
+            $(this).parents("span").find(".perm-item").not(':disabled').each(function () {
                 $(this).get(0).checked = checked;
             });
 
             if( isGroup ){
-                $(this).parents(".menu-group").find(".groups-item,.perm-item").each(function () {
+                $(this).parents(".menu-group").find(".groups-item").not(':disabled').each(function () {
+                    $(this).get(0).checked = checked;
+                });
+                $(this).parents(".menu-group").find(".perm-item").not(':disabled').each(function () {
                     $(this).get(0).checked = checked;
                 });
             }else{
-                $(this).parents(".menu-group").find(".groups").each(function () {
+                $(this).parents(".menu-group").find(".groups").not(':disabled').each(function () {
                     $(this).get(0).checked = checked;
                 });
             }
@@ -188,13 +195,26 @@
         });
 
         $('.perm-item').click(function () {
+            let group = $(this).data('group');
+            let parent = $(this).data('parent');
+            let son = $(this).data('son');
+            let grandson = $(this).data('grandson');
             let check = false;
-            $(this).closest('span').find(".perm-item").each(function () {
-                if (this.checked) { check = true; return false; }
+
+            // 检查同一 span 内的可编辑 perm-item 是否有勾选
+            $(this).closest('span').find(".perm-item").not(':disabled').each(function () {
+                if ($(this).get(0).checked) {
+                    check = true;
+                    return false;
+                }
             });
 
+            // 更新对应的二级菜单状态（如果它不是 disabled）
             let allitem = $(this).parents("span").find(".perm-all-item");
-            if (allitem.length === 1) { allitem.get(0).checked = check; }
+            if (allitem.length === 1 && !allitem.prop('disabled')) {
+                allitem.get(0).checked = check;
+            }
+
             group_check(this);
         });
 
@@ -202,31 +222,74 @@
             if ($(this).find("label").length !== 1) {
                 $($(this).find("label").get(0)).wrap("<div class='col-sm-2' style='white-space:nowrap;'></div>");
                 $($(this).find("label").not($(this).find("label").get(0))).wrapAll("<div class='col-sm-10'></div>");
-            } else {
+            }
+            else {
                 $($(this).find("label").get(0)).wrap("<div class='col-sm-12'></div>");
             }
         });
 
         $("form").submit(function () {
+            $(this).attr('stop',1);
             let perms = [];
-            $(".perms:checked").each(function (index, e) { perms[index] = $(this).val(); });
-            $("input[name=permsarray]").val(perms.join(','));
+
+            $(".perms:checked").each(function (index,e) {
+                perms[index]=$(this).val();
+            });
+
+            perms = perms.join(',');
+            $("input[name=permsarray]").val(perms);
+            $(this).attr('stop',0);
             return true;
         });
 
-        $("input[name=look_switch],input[name=is_limit]").click(function(){
-            let show = $("input[name=is_limit]:checked").val() == 1;
-            $("#role-perm").toggle(show);
-        });
+        $("input[name=look_switch]").click(function(){
+            if( $(this).val() == 1 ){
+                $("#role-perm").show()
+            }else{
+                $("#role-perm").hide()
+            }
+        })
+
+        $("input[name=is_limit]").click(function(){
+            if( $(this).val() == 1 ){
+                $("#role-perm").show()
+            }else{
+                $("#role-perm").hide()
+            }
+        })
     });
 
     function group_check(obj) {
+        let isGroup = $(obj).hasClass('groups');
+        if( !isGroup ){
+            let check2 = false;
+            // 只检查可编辑的 checkbox
+            $(obj).parents('.menu-group').find(":checkbox").not(':disabled').each(function (index, item) {
+                if (item.checked) {
+                    check2 = true;
+                }
+            });
+            let group2 = $(obj).eq(0).data('group');
+            let $level2Checkbox = $(obj).parents(".menu-group").find(".groups[data-group=" + group2 + "]");
+            // 只更新可编辑的二级菜单
+            if ($level2Checkbox.length > 0 && !$level2Checkbox.prop('disabled')) {
+                $level2Checkbox.get(0).checked = check2;
+            }
+        }
+
         let check = false;
-        $(obj).parents('.perm-group').find(":checkbox").each(function (index, item) {
-            if (item.checked) { check = true; }
+        // 只检查可编辑的 checkbox
+        $(obj).parents('.perm-group').find(":checkbox").not(':disabled').each(function (index, item) {
+            if (item.checked) {
+                check = true;
+            }
         });
         let group = $(obj).eq(0).data('group');
-        $(".perm-all[data-group=" + group + "]").get(0).checked = check;
+        let $level1Checkbox = $(".perm-all[data-group=" + group + "]");
+        // 只更新可编辑的一级菜单
+        if ($level1Checkbox.length > 0 && !$level1Checkbox.prop('disabled')) {
+            $level1Checkbox.get(0).checked = check;
+        }
     }
 </script>
 {/if}
