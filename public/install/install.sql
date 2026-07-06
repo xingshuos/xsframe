@@ -49,41 +49,46 @@ DROP TABLE IF EXISTS `#__sys_account_perm_role`;
 
 CREATE TABLE `#__sys_account_perm_role`
 (
-    `id`           int(11) NOT NULL AUTO_INCREMENT,
-    `uniacid`      int(11) DEFAULT '0',
-    `rolename`     varchar(255) DEFAULT '',
-    `status`       tinyint(3) DEFAULT '0',
-    `perms`        text,
-    `deleted`      tinyint(3) DEFAULT '0',
-    `displayorder` int(10) DEFAULT '0',
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `uniacid` int(11) DEFAULT '0',
+    `pid` int(11) DEFAULT '0',
+    `rolename` varchar(255) DEFAULT '',
+    `role_key` varchar(64) NOT NULL COMMENT '角色编码，如 plan_manager、class_teacher',
+    `status` tinyint(4) DEFAULT '0',
+    `perms` text,
+    `deleted` tinyint(4) DEFAULT '0',
+    `displayorder` int(11) DEFAULT '0',
+    `app_perms` text COMMENT '应用所有者权限配置',
     PRIMARY KEY (`id`),
-    KEY            `idx_uniacid` (`uniacid`),
-    KEY            `idx_status` (`status`),
-    KEY            `idx_deleted` (`deleted`)
+    UNIQUE KEY `idx_uniacid_role_key` (`uniacid`,`role_key`),
+    KEY `idx_uniacid` (`uniacid`),
+    KEY `idx_status` (`status`),
+    KEY `idx_deleted` (`deleted`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `#__sys_account_perm_user`;
 CREATE TABLE `#__sys_account_perm_user`
 (
-    `id`           int(11) NOT NULL AUTO_INCREMENT,
-    `uniacid`      int(11) DEFAULT '0',
-    `uid`          int(11) DEFAULT '0',
-    `realname`     varchar(255) DEFAULT '',
-    `mobile`       varchar(255) DEFAULT '',
-    `roleid`       int(10) DEFAULT '0',
-    `perms`        text,
-    `mid`          int(10) DEFAULT '0',
-    `status`       tinyint(1) DEFAULT '0',
-    `avatar`       varchar(255) DEFAULT '' COMMENT '头像',
-    `createtime`   int(11) DEFAULT '0',
-    `deleted`      tinyint(3) DEFAULT '0',
-    `displayorder` int(10) DEFAULT '0',
-    `nickname`     varchar(100) DEFAULT '' COMMENT '昵称',
-    `is_limit` tinyint(1) DEFAULT '0' COMMENT '是否限制权限 0否 1是',
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `uniacid` int(11) DEFAULT '0',
+    `uid` int(11) DEFAULT '0',
+    `realname` varchar(255) DEFAULT '',
+    `mobile` varchar(255) DEFAULT '',
+    `roleid` int(11) DEFAULT '0',
+    `perms` text,
+    `mid` int(11) DEFAULT '0',
+    `status` tinyint(1) DEFAULT '0',
+    `avatar` varchar(255) DEFAULT '' COMMENT '头像',
+    `createtime` int(11) DEFAULT '0',
+    `deleted` tinyint(4) DEFAULT '0',
+    `displayorder` int(11) DEFAULT '0',
+    `nickname` varchar(100) DEFAULT '' COMMENT '昵称',
+    `is_limit` tinyint(1) NOT NULL COMMENT '是否限制权限 0否 1是',
+    `app_perms` text COMMENT '应用所有者权限配置',
     PRIMARY KEY (`id`),
-    KEY            `idx_uniacid` (`uniacid`),
-    KEY            `idx_uid` (`uid`),
-    KEY            `idx_deleted` (`deleted`)
+    KEY `idx_uniacid` (`uniacid`),
+    KEY `idx_uid` (`uid`),
+    KEY `idx_deleted` (`deleted`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
