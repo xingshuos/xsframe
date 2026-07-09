@@ -88,15 +88,15 @@ class MenuWrapper
         $orgAction = $action;
         $action = strtolower($action);
 
-        $isUnderlineController = false; // 是否使用下划线方式
+        $isUnderlineController = false;
 
         # 验证当前路由是否调换（子路由调换到其他父级路由中）
         $getChangeParentInfo = self::getChangeParentInfo($allMenus, $module, $orgController, $action);
 
-        $parentMenuRoute = $getChangeParentInfo['parentRoute'] ?? $controller; // 当前路由是否调换
-        $parentMenuIsChange = $getChangeParentInfo['isChange'] ?? false; // 是否已经有选中的菜单
+        $parentMenuRoute = $getChangeParentInfo['parentRoute'] ?? $controller;
+        $parentMenuIsChange = $getChangeParentInfo['isChange'] ?? false;
         $allMenus = $getChangeParentInfo['allMenus'] ?? $allMenus;
-        $parentMenuActive = false;// 是否已经有选中的菜单
+        $parentMenuActive = false;
 
         if ($controller != 'login') {
             foreach ($allMenus as $key => $val) {
@@ -132,8 +132,20 @@ class MenuWrapper
                             $runIn = true;
                         }
                     } else {
-                        if (strexists($controller, $menu_item['route']) || strexists($menu_item['route'], $controller)) {
+                        // 精确匹配
+                        if ($controller == $menu_item['route']) {
                             $runIn = true;
+                        } elseif (strexists($controller, $menu_item['route']) && strlen($menu_item['route']) > 0) {
+                            // 检查子串后面是否是单词边界
+                            $pos = strpos($controller, $menu_item['route']);
+                            if ($pos !== false && ($pos + strlen($menu_item['route']) >= strlen($controller) || !self::isWordChar(substr($controller, $pos + strlen($menu_item['route']), 1)))) {
+                                $runIn = true;
+                            }
+                        } elseif (strexists($menu_item['route'], $controller) && strlen($controller) > 0) {
+                            $pos = strpos($menu_item['route'], $controller);
+                            if ($pos !== false && ($pos + strlen($controller) >= strlen($menu_item['route']) || !self::isWordChar(substr($menu_item['route'], $pos + strlen($controller), 1)))) {
+                                $runIn = true;
+                            }
                         } else {
                             # 验证下划线方式选中
                             $orgControllerArr = explode(".", $orgController);
@@ -478,5 +490,13 @@ class MenuWrapper
             'submenu'   => $return_submenu,
             'pageTitle' => $pageTitle,
         ];
+    }
+
+    /**
+     * 判断字符是否为单词字符（字母、数字、下划线）
+     */
+    private static function isWordChar($char)
+    {
+        return preg_match('/^[a-zA-Z0-9_]$/', $char);
     }
 }
