@@ -13,7 +13,9 @@
 namespace app\admin\controller;
 
 use think\Exception;
+use think\facade\Cache;
 use think\facade\Db;
+use xsframe\enum\SysSettingsKeyEnum;
 use xsframe\facade\wrapper\SystemWrapperFacade;
 use xsframe\util\FileUtil;
 use xsframe\util\PinYinUtil;
@@ -179,6 +181,13 @@ class App extends Base
                 "uniapp_support" => intval($this->params["uniapp_support"]),
             ];
             Db::name('sys_modules')->where(['id' => $id])->update($data);
+
+            // 清除模块信息缓存，确保修改后立即生效
+            $moduleIdentifie = Db::name('sys_modules')->where(['id' => $id])->value('identifie');
+            if (!empty($moduleIdentifie)) {
+                Cache::delete(SysSettingsKeyEnum::MODULE_INFO_KEY . $moduleIdentifie);
+            }
+
             $this->success(["url" => webUrl("app/edit", ['id' => $id, 'tab' => str_replace("#tab_", "", $this->params['tab'])])]);
         }
 
