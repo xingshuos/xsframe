@@ -49,7 +49,7 @@ public/*
 !public/install/isntall.php
 !public/install/isntall.sql
 !public/version.php
-!public/favicon.ico
+public/favicon.ico
 
 app/*
 !app/admin
