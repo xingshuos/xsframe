@@ -25,7 +25,7 @@ return [
 
 
     // 是否开启模板编译缓存,设为false则每次都会重新编译
-    'tpl_cache'          => false,
+    'tpl_cache'          => true,
     'tpl_replace_string' => [
 
         // 后台公共静态目录
