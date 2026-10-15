@@ -20,6 +20,136 @@ use think\facade\Cache;
 
 class WechatService
 {
+    /**
+     * 校验微信公众号服务器请求签名。
+     */
+    public function verifyCallbackSignature(string $token, string $timestamp, string $nonce, string $signature, string $encrypted = ''): bool
+    {
+        if ($token === '' || $timestamp === '' || $nonce === '' || $signature === '') {
+            return false;
+        }
+
+        // 微信要求对令牌、时间戳、随机数及可选密文按字典序排序后计算 SHA1。
+        $parts = [$token, $timestamp, $nonce];
+        if ($encrypted !== '') {
+            $parts[] = $encrypted;
+        }
+        sort($parts, SORT_STRING);
+        return hash_equals(sha1(implode('', $parts)), $signature);
+    }
+
+    /**
+     * 验证微信接入请求，并返回应该原样输出的明文 echostr。
+     */
+    public function verifyCallbackEcho(string $token, string $appId, string $aesKey, array $query): ?string
+    {
+        foreach (['timestamp', 'nonce', 'echostr'] as $field) {
+            if (!isset($query[$field]) || !is_scalar($query[$field])) {
+                return null;
+            }
+        }
+
+        $timestamp = strval($query['timestamp']);
+        $nonce = strval($query['nonce']);
+        $echo = strval($query['echostr']);
+        if ($echo === '' || strlen($echo) > 4096) {
+            return null;
+        }
+
+        // 安全模式下 echostr 是加密文本，先验证消息签名再解密。
+        if (isset($query['encrypt_type']) && is_scalar($query['encrypt_type']) && strval($query['encrypt_type']) === 'aes') {
+            $messageSignature = $query['msg_signature'] ?? '';
+            if (!is_scalar($messageSignature) || !$this->verifyCallbackSignature($token, $timestamp, $nonce, strval($messageSignature), $echo)) {
+                return null;
+            }
+            return $this->decryptCallbackMessage($echo, $aesKey, $appId);
+        }
+
+        $signature = $query['signature'] ?? '';
+        if (!is_scalar($signature) || !$this->verifyCallbackSignature($token, $timestamp, $nonce, strval($signature))) {
+            return null;
+        }
+        return $echo;
+    }
+
+    /**
+     * 解密微信安全模式的消息，并确认消息归属当前公众号。
+     */
+    public function decryptCallbackMessage(string $encrypted, string $aesKey, string $appId): ?string
+    {
+        if (strlen($aesKey) !== 43 || $appId === '') {
+            return null;
+        }
+        $key = base64_decode($aesKey . '=', true);
+        $cipher = base64_decode($encrypted, true);
+        if ($key === false || strlen($key) !== 32 || $cipher === false || $cipher === '' || strlen($cipher) % 16 !== 0) {
+            return null;
+        }
+        $plain = openssl_decrypt($cipher, 'aes-256-cbc', $key, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING, substr($key, 0, 16));
+        if ($plain === false || strlen($plain) < 21) {
+            return null;
+        }
+
+        // 微信使用 32 字节块的 PKCS#7 填充，并在正文前放置随机串和四字节长度。
+        $padding = ord(substr($plain, -1));
+        if ($padding < 1 || $padding > 32 || substr($plain, -$padding) !== str_repeat(chr($padding), $padding)) {
+            return null;
+        }
+        $plain = substr($plain, 0, -$padding);
+        if (strlen($plain) < 20) {
+            return null;
+        }
+        $length = unpack('Nlength', substr($plain, 16, 4))['length'];
+        if ($length < 0 || 20 + $length > strlen($plain)) {
+            return null;
+        }
+        $messageAppId = substr($plain, 20 + $length);
+        if (!hash_equals($appId, $messageAppId)) {
+            return null;
+        }
+        return substr($plain, 20, $length);
+    }
+
+    /**
+     * 对业务层生成的回复 XML 加密并封装为微信安全模式响应。
+     */
+    public function encryptCallbackReply(string $replyXml, string $token, string $aesKey, string $appId, string $timestamp, string $nonce): ?string
+    {
+        if ($replyXml === '' || $token === '' || $appId === '' || $timestamp === '' || $nonce === '' || strlen($aesKey) !== 43) {
+            return null;
+        }
+        $key = base64_decode($aesKey . '=', true);
+        if ($key === false || strlen($key) !== 32) {
+            return null;
+        }
+
+        // 与微信安全模式一致：16 字节随机串、四字节正文长度、正文、AppID、32 字节块填充。
+        $plain = random_bytes(16) . pack('N', strlen($replyXml)) . $replyXml . $appId;
+        $padding = 32 - strlen($plain) % 32;
+        $plain .= str_repeat(chr($padding), $padding);
+        $cipher = openssl_encrypt($plain, 'aes-256-cbc', $key, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING, substr($key, 0, 16));
+        if ($cipher === false) {
+            return null;
+        }
+        $encrypted = base64_encode($cipher);
+        $parts = [$token, $timestamp, $nonce, $encrypted];
+        sort($parts, SORT_STRING);
+        $signature = sha1(implode('', $parts));
+
+        return '<xml><Encrypt><![CDATA[' . $encrypted . ']]></Encrypt>'
+            . '<MsgSignature><![CDATA[' . $signature . ']]></MsgSignature>'
+            . '<TimeStamp>' . htmlspecialchars($timestamp, ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</TimeStamp>'
+            . '<Nonce>' . htmlspecialchars($nonce, ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</Nonce></xml>';
+    }
+
+    /**
+     * 生成接入配置指纹，令牌或加密参数更改后旧接通记录自动失效。
+     */
+    public function callbackConfigFingerprint(array $config): string
+    {
+        return hash('sha256', strval($config['token'] ?? '') . "\0" . strval($config['appid'] ?? '') . "\0" . strval($config['encodingaeskey'] ?? ''));
+    }
+
     // 发送模板消息通知
     public function sendTplNotice($appId, $secret, $openid, $postData, $url = '', $templateId = null, $topColor = '#FF683F', $isReload = false)
     {

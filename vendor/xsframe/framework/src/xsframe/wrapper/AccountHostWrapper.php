@@ -37,19 +37,10 @@ class AccountHostWrapper
             $is_limit = $permUserInfo['is_limit'];
 
             if ($is_limit == 1 && $role == 'operator') {
-                // ★ 合并角色权限 + 用户额外权限（与 PermWrapper.check 逻辑一致）
-                $role_perms = [];
-                $role_app_perms = [];
-                if (!empty($permUserInfo['roleid'])) {
-                    $roleInfo = DbServiceFacade::name('sys_account_perm_role')->getInfo(['id' => $permUserInfo['roleid']]);
-                    $role_perms = array_filter(explode(',', $roleInfo['perms'] ?? ''));
-                    $role_app_perms = array_filter(explode(',', $roleInfo['app_perms'] ?? ''));
-                }
-                // 用户额外权限 + 角色权限
-                $user_perms = array_filter(explode(',', $permUserInfo['perms'] ?? ''));
-                $user_app_perms = array_filter(explode(',', $permUserInfo['app_perms'] ?? ''));
-                $all_perms = array_unique(array_merge($role_perms, $user_perms));
-                $all_app_perms = array_unique(array_merge($role_app_perms, $user_app_perms));
+                // 多角色合并：主角色 + 关联表所有角色 + 用户额外权限（统一走 UserPermService）
+                $merged = \app\common\service\UserPermService::getMergedPerms($userId, $uniacid);
+                $all_perms = $merged['perms'];
+                $all_app_perms = $merged['app_perms'];
 
                 // 从所有权限中提取顶级应用 key（不含 '.' 的即为应用级权限）
                 $appKeys = array_filter($all_perms, fn($item) => strpos($item, '.') === false);

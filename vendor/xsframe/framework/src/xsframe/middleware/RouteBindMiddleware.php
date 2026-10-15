@@ -52,8 +52,8 @@ class RouteBindMiddleware
             exit(new PayAlipayNotifyWrapper($request));
         }
 
-        # 微信公众号服务
-        if ($pathInfo == 'wechat/service') {
+        # 微信公众号服务：兼容独立入口与 /api 前缀的对外地址。
+        if ($pathInfo == 'wechat/service' || $pathInfo == 'api/wechat/service') {
             exit(new WechatWrapper($request));
         }
 

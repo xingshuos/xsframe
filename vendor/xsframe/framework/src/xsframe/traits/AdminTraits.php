@@ -1012,16 +1012,13 @@ trait AdminTraits
         }
 
         try {
-            $operator = Db::name('sys_account_perm_user')->field('perms,app_perms')->where(['uid' => $userId, 'uniacid' => $uniacid])->find();
-            $operatorPerms = (array)explode(',', $operator['perms']);
-            $operatorAppPerms = (array)explode(',', $operator['app_perms']);
+            // 多角色合并：主角色 + 关联表所有角色 + 用户额外权限（统一走 UserPermService）
+            $merged = \app\common\service\UserPermService::getMergedPerms($userId, $uniacid);
 
-            $permissions = [
-                'perms'     => $operatorPerms,
-                'app_perms' => $operatorAppPerms,
+            return [
+                'perms'     => $merged['perms'],
+                'app_perms' => $merged['app_perms'],
             ];
-
-            return $permissions ?: [];
         } catch (\Exception $e) {
             error_log('获取用户权限失败: ' . $e->getMessage());
             return [];

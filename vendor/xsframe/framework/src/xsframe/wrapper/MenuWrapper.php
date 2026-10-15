@@ -38,10 +38,18 @@ class MenuWrapper
                 foreach ($menuInfo['items'] as &$itemInfo) {
                     if (!empty($itemInfo['url'])) {
 
-                        $urlArr = explode("/", $url);
-                        $itemUrlArr = explode("/", $itemInfo['url']);
-
-                        $isInSide = strtolower($url) == strtolower("web." . $itemInfo['url']);
+                        // 菜单显示地址与同一功能的其他页面地址可以分别配置。
+                        $activeUrls = [$itemInfo['url']];
+                        if (!empty($itemInfo['active_urls']) && is_array($itemInfo['active_urls'])) {
+                            $activeUrls = array_merge($activeUrls, $itemInfo['active_urls']);
+                        }
+                        $isInSide = false;
+                        foreach ($activeUrls as $activeUrl) {
+                            if (is_string($activeUrl) && strtolower($url) == strtolower("web." . $activeUrl)) {
+                                $isInSide = true;
+                                break;
+                            }
+                        }
 
                         // if( $itemInfo['url'] == 'wx_user/index' ){
                         //     dump(strtolower($url));

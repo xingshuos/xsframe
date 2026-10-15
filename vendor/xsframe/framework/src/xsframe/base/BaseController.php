@@ -105,8 +105,14 @@ abstract class BaseController extends Controller
         $this->pSize = max(1, intval($this->request->param('size') ?? 10));
 
         $this->siteRoot = request()->domain();
-        if (StringUtil::strexists($this->request->server('HTTP_REFERER'), 'https')) {
-            $this->siteRoot = str_replace("http:", "https:", $this->siteRoot);
+        // 增强 HTTPS 检测：Nginx/Apache SSL 反向代理终止后，PHP 端 isSsl() 可能返回 false
+        // 仅依赖 HTTP_REFERER 不稳定（直接访问页面无 Referer），增加多种检测方式
+        $isHttps = StringUtil::strexists($this->request->server('HTTP_REFERER'), 'https')
+            || $this->request->server('SERVER_PORT') == '443'
+            || StringUtil::strexists($this->request->server('HTTP_X_FORWARDED_PROTO'), 'https')
+            || StringUtil::strexists($this->request->server('REQUEST_SCHEME'), 'https');
+        if ($isHttps && StringUtil::strexists($this->siteRoot, 'http://')) {
+            $this->siteRoot = str_replace("http://", "https://", $this->siteRoot);
         }
         $this->siteRoot = \xsframe\util\UrlUtil::processUrlWithPort($this->siteRoot);
 

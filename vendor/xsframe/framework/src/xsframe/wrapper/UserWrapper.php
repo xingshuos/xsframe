@@ -102,10 +102,8 @@ class UserWrapper
         $cookie['hash'] = md5($userInfo['password'] . $userInfo['salt']);
         $cookie['uniacid'] = self::getUserUniacid($userInfo['id']);
 
-        try {
-            $cookie['perm_user'] = Db::name("sys_account_perm_user")->field("id,uid,realname,mobile,roleid,mid,status")->where(['uid' => $userInfo['id']])->find() ?? [];
-            $cookie['perm_role'] = Db::name("sys_account_perm_role")->field("id,pid,rolename,role_key,status")->where(['id' => $cookie['perm_user']['roleid']])->find() ?? [];
-        }catch (\Exception $e){}
+        $cookie['perm_user'] = Db::name("sys_account_perm_user")->field("id,uid,realname,mobile,roleid,mid,status")->where(['uid' => $userInfo['id']])->find() ?? [];
+        $cookie['perm_role'] = Db::name("sys_account_perm_role")->field("id,pid,rolename,role_key,status")->where(['id' => $cookie['perm_user']['roleid']])->find() ?? [];
 
         $session = authcode(json_encode($cookie), 'encode');
         isetcookie(self::$session_key, $session, 7 * 86400, true);
@@ -138,18 +136,10 @@ class UserWrapper
                 if ($role && $userId && $role == UserRoleKeyEnum::OPERATOR_KEY) {
                     $permUserInfo = DbServiceFacade::name('sys_account_perm_user')->getInfo(['uid' => $userId]);
                     if ($permUserInfo['is_limit'] == 1) {
-                        // ★ 合并角色权限 + 用户额外权限（与 PermWrapper.check 逻辑一致）
-                        $role_perms = [];
-                        $role_app_perms = [];
-                        if (!empty($permUserInfo['roleid'])) {
-                            $roleInfo = DbServiceFacade::name('sys_account_perm_role')->getInfo(['id' => $permUserInfo['roleid']]);
-                            $role_perms = array_filter(explode(',', $roleInfo['perms'] ?? ''));
-                            $role_app_perms = array_filter(explode(',', $roleInfo['app_perms'] ?? ''));
-                        }
-                        $user_perms = array_filter(explode(',', $permUserInfo['perms'] ?? ''));
-                        $user_app_perms = array_filter(explode(',', $permUserInfo['app_perms'] ?? ''));
-                        $all_perms = array_unique(array_merge($role_perms, $user_perms));
-                        $all_app_perms = array_unique(array_merge($role_app_perms, $user_app_perms));
+                        // 多角色合并：主角色 + 关联表所有角色 + 用户额外权限（统一走 UserPermService）
+                        $merged = \app\common\service\UserPermService::getMergedPerms($userId);
+                        $all_perms = $merged['perms'];
+                        $all_app_perms = $merged['app_perms'];
 
                         if (in_array($moduleName, $all_app_perms)) {
                             // 有该应用级权限，返回第一个菜单
@@ -260,20 +250,12 @@ class UserWrapper
             $permUserInfo = Db::name('sys_account_perm_user')->where(['uid' => $userId, 'uniacid' => $uniacid])->find();
 
             if (!empty($permUserInfo)) {
-                // ★ 合并角色权限 + 用户额外权限（与 PermWrapper.check 逻辑一致）
-                $role_perms = [];
-                $role_app_perms = [];
-                if (!empty($permUserInfo['roleid'])) {
-                    $roleInfo = Db::name('sys_account_perm_role')->where(['id' => $permUserInfo['roleid']])->find();
-                    $role_perms = array_filter(explode(',', $roleInfo['perms'] ?? ''));
-                    $role_app_perms = array_filter(explode(',', $roleInfo['app_perms'] ?? ''));
-                }
-                $user_perms = array_filter(explode(',', $permUserInfo['perms'] ?? ''));
-                $user_app_perms = array_filter(explode(',', $permUserInfo['app_perms'] ?? ''));
+                // 多角色合并：主角色 + 关联表所有角色 + 用户额外权限（统一走 UserPermService）
+                $merged = \app\common\service\UserPermService::getMergedPerms($userId, $uniacid);
+                $all_perms = $merged['perms'];
+                $all_app_perms = $merged['app_perms'];
 
                 // 提取所有有权访问的应用 key
-                $all_perms = array_unique(array_merge($role_perms, $user_perms));
-                $all_app_perms = array_unique(array_merge($role_app_perms, $user_app_perms));
                 $appKeys = array_filter($all_perms, fn($item) => strpos($item, '.') === false);
                 $appKeys = array_unique(array_merge(array_values($appKeys), $all_app_perms));
 
@@ -330,7 +312,14 @@ class UserWrapper
             $moduleName = $moduleInfo['module'];
 
             if (empty($moduleName)) {
-                return ErrorUtil::error(-1, "暂无管理功能权限");
+                // 商户管理员（项目管理员）未绑定具体应用模块时，不拦截报错，
+                // 而是跳转到应用列表页，由其自行选择/进入对应商户后台。
+                // 否则商户管理员会因 sys_account_users.module 为空而被永久挡在后台之外。
+                if ($role == UserRoleKeyEnum::MANAGER_KEY) {
+                    $uniacid = $uniacid ?: self::getUserUniacid($userId);
+                    return '/admin/system/index.html' . ($uniacid ? ('?i=' . $uniacid) : '');
+                }
+                return ErrorUtil::error(-1, "暂未分配管理应用权限");
             }
 
             $realUrl = self::getModuleOneUrl($moduleName, true, $role, $userId);

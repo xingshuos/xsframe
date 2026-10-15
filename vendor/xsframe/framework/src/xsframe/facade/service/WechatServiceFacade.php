@@ -26,6 +26,11 @@ use think\Facade;
  * @method static deleteConditionalMenu(string $appid, string $secret, string $menuid, $isReload = false)
  * @method static tryMatchConditionalMenu(string $appid, string $secret, string $userId, $isReload = false)
  * @method static getAllMenus(string $appid, string $secret, $isReload = false)
+ * @method static bool verifyCallbackSignature(string $token, string $timestamp, string $nonce, string $signature, string $encrypted = '')
+ * @method static ?string verifyCallbackEcho(string $token, string $appId, string $aesKey, array $query)
+ * @method static ?string decryptCallbackMessage(string $encrypted, string $aesKey, string $appId)
+ * @method static ?string encryptCallbackReply(string $replyXml, string $token, string $aesKey, string $appId, string $timestamp, string $nonce)
+ * @method static string callbackConfigFingerprint(array $config)
  */
 class WechatServiceFacade extends Facade
 {

@@ -101,29 +101,51 @@ class PermWrapper
                         $partsCount = count($parts);
                         if ($partsCount >= 2) {
                             $mainKey = $parts[1];
-                            $subKey = $parts[2];
+                            $subKey = $parts[2] ?? '';
                             $opName = $parts[3] ?? '';
 
-                            if (isset($moduleMenus[$mainKey]) && !empty($moduleMenus[$mainKey]['items'])) {
-                                foreach ($moduleMenus[$mainKey]['items'] as $item) {
-                                    $routeParts = explode('/', $item['route']);
-                                    if ($routeParts[0] === $subKey) {
-                                        $permDef = $item['perm'] ?? [];
+                            if (isset($moduleMenus[$mainKey])) {
+                                if (!empty($moduleMenus[$mainKey]['items'])) {
+                                    foreach ($moduleMenus[$mainKey]['items'] as $item) {
+                                        $itemRoute = $item['route'] ?? $item['url'] ?? '';
+                                        if (!$itemRoute) {
+                                            continue;
+                                        }
 
-                                        // ★ 先检查 perm 是否直接定义了该操作
-                                        if (isset($permDef[$opName])) {
-                                            $operation = $opName; // 保留原操作名
-                                        } else if (isset($permDef['xxx']) && is_array($permDef['xxx']) && $opName !== '') {
-                                            // 其次检查 xxx 映射
-                                            if (array_key_exists($opName, $permDef['xxx'])) {
-                                                $operation = $permDef['xxx'][$opName];
+                                        $routeParts = explode('/', $itemRoute);
+                                        if ($routeParts[0] === $subKey) {
+                                            $permDef = $item['perm'] ?? [];
+
+                                            // ★ 先检查 perm 是否直接定义了该操作
+                                            if (isset($permDef[$opName])) {
+                                                $operation = $opName; // 保留原操作名
+                                            } else if (isset($permDef['xxx']) && is_array($permDef['xxx']) && $opName !== '') {
+                                                // 其次检查 xxx 映射
+                                                if (array_key_exists($opName, $permDef['xxx'])) {
+                                                    $operation = $permDef['xxx'][$opName];
+                                                } else {
+                                                    $operation = 'edit';
+                                                }
                                             } else {
                                                 $operation = 'edit';
                                             }
+                                            break;
+                                        }
+                                    }
+                                } else {
+                                    $permDef = $moduleMenus[$mainKey]['perm'] ?? [];
+                                    $topOpName = $opName ?: $subKey;
+
+                                    if (isset($permDef[$topOpName])) {
+                                        $operation = $topOpName;
+                                    } else if (isset($permDef['xxx']) && is_array($permDef['xxx']) && $topOpName !== '') {
+                                        if (array_key_exists($topOpName, $permDef['xxx'])) {
+                                            $operation = $permDef['xxx'][$topOpName];
                                         } else {
                                             $operation = 'edit';
                                         }
-                                        break;
+                                    } else {
+                                        $operation = 'edit';
                                     }
                                 }
                             }
@@ -154,7 +176,10 @@ class PermWrapper
             return false;
         }
 
-        $field = " u.uid,u.status as userstatus,u.is_limit,u.app_perms,r.status as rolestatus,u.perms as userperms,r.perms as roleperms,u.roleid ";
+        // 动态合并：角色权限 + 用户额外权限
+        // 角色权限变更后，用户的有效权限自动同步更新
+        // ★ perms = 用户额外权限，app_perms = 用户额外应用权限（不包含角色权限）
+        $field = " u.uid,u.status as userstatus,u.is_limit,u.perms as userperms,u.app_perms,u.roleid,r.status as rolestatus ";
 
         $where = ['u.uid' => $uid];
         if (!empty($userInfo['uniacid'])) {
@@ -172,11 +197,12 @@ class PermWrapper
             return false;
         }
 
-        $role_perms = explode(',', $user['roleperms']);
-        $user_perms = explode(',', $user['userperms']);
-        $app_perms = explode(',', $user['app_perms']);
+        // 多角色合并：主角色 + 关联表所有角色 + 用户额外权限（统一走 UserPermService）
+        $merged = \app\common\service\UserPermService::getMergedPerms($uid, !empty($userInfo['uniacid']) ? $userInfo['uniacid'] : null);
+        $user_perms = $merged['perms'];
+        $app_perms = $merged['app_perms'];
 
-        if (empty($role_perms) && empty($user_perms) && empty($app_perms)) {
+        if (empty($user_perms) && empty($app_perms)) {
             return false;
         }
 
@@ -247,8 +273,7 @@ class PermWrapper
             $permUrl = substr_replace($permUrl, $replace, $pos, strlen($search));
         }
 
-        $perms = array_merge($role_perms, $user_perms);
-        $perms = array_unique($perms);
+        $perms = array_unique($user_perms);
 
         // if( $oldPermUrl == 'sz_customer/web.finance.receive_plan/index' ){
         //     dd($permUrl, $perms);
@@ -346,19 +371,24 @@ class PermWrapper
                                 }
                             }
                         } else {
+                            if (array_key_exists('perm', $item) && $item['perm'] === false) {
+                                continue;
+                            }
+
                             $perm = [];
 
-                            if (is_array($item['perm']) && !empty($item['perm'])) {
+                            if (isset($item['perm']) && is_array($item['perm']) && !empty($item['perm'])) {
                                 $perm = $item['perm'];
                             } else {
                                 $perm = $permDefault;
                             }
 
-                            if ($item['route']) {
-                                $routers = explode("/", $item['route']);
+                            $itemMenuRoute = $item['route'] ?? ($item['url'] ?? '');
+                            if (isset($item['route']) && $item['route']) {
+                                $routers = explode("/", $itemMenuRoute);
                                 $c = count($routers) > 1 ? "." . $routers[0] : '';
                             } else {
-                                $routers = explode("/", $item['url']);
+                                $routers = explode("/", $itemMenuRoute);
                                 $c = count($routers) > 1 ? "." . $routers[0] : '';
                             }
 
@@ -366,7 +396,7 @@ class PermWrapper
                             $newModuleMenusItem = array_merge($newModuleMenusItemText, $perm);
 
                             if (empty($c)) {
-                                $itemModuleMenus[$item['route']] = $newModuleMenusItem;
+                                $itemModuleMenus[$itemMenuRoute] = $newModuleMenusItem;
                             } else {
                                 $itemRoute = preg_replace('/^\./u', '', $c); // 去掉第一个字符是.的
                                 $itemRoute = preg_replace('/\bweb\..*?\b/u', '', $itemRoute);// 去掉第一个字符是web.的
@@ -375,31 +405,19 @@ class PermWrapper
                         }
                     }
                 } else {
-                    $perm = [];
-
-                    if (is_array($menu['perm']) && !empty($menu['perm'])) {
-                        $perm = $menu['perm'];
+                    if (isset($menu['perm']) && is_array($menu['perm']) && !empty($menu['perm'])) {
+                        $itemModuleMenus = $menu['perm'];
                     } else {
-                        $perm = $permDefault;
-                    }
-
-                    $routers = explode("/", $menu['route']);
-                    $c = count($routers) > 1 ? "." . $routers[0] : '';
-
-                    $newModuleMenusItemText = ['text' => !empty($menu['subtitle']) ? $menu['subtitle'] : $item['title']];
-                    $newModuleMenusItem = array_merge($newModuleMenusItemText, $perm);
-
-                    if (empty($c)) {
-                        $itemModuleMenus[$menu['route']] = $newModuleMenusItem;
-                    } else {
-                        $itemRoute = preg_replace('/^\./u', '', $c); // 去掉第一个字符是.的
-                        $itemRoute = preg_replace('/\bweb\..*?\b/u', '', $itemRoute);// 去掉第一个字符是web.的
-                        $itemModuleMenus[$itemRoute] = $newModuleMenusItem;
+                        $itemModuleMenus = $permDefault;
                     }
                 }
 
-                // 主菜单权限
-                $parentMenus = array_merge(['text' => $menu['subtitle']], $itemModuleMenus);
+                // 主菜单权限：允许父菜单保留自身操作权限，同时继续承载子菜单权限。
+                $parentPerms = [];
+                if (isset($menu['perm']) && is_array($menu['perm']) && !empty($menu['perm'])) {
+                    $parentPerms = $menu['perm'];
+                }
+                $parentMenus = array_merge(['text' => !empty($menu['subtitle']) ? $menu['subtitle'] : ($menu['title'] ?? '')], $parentPerms, $itemModuleMenus);
 
                 if (!strexists($key, "web.")) {
                     $key = "web." . $key;

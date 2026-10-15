@@ -12,8 +12,6 @@ PHP `getallheaders()` polyfill. Compatible with PHP >= 5.3.
 
 This is a simple polyfill for [`getallheaders()`](http://www.php.net/manual/en/function.getallheaders.php).
 
-配合psr 使用
-
 ## Install
 
 For PHP version **`>= 5.6`**:
