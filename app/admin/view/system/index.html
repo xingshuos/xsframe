@@ -193,12 +193,12 @@
 
 <div class="page-content">
 
-    <div class='panel panel-default' style='border:none;'>
+    <div class='panel panel-default' style='border:none;padding-bottom: 12px;'>
         {foreach $list as $ck => $cv}
         <div class="panel-heading" style='background:none;border:none;'>
             {$category[$ck]}
         </div>
-        <div class="feed-activity-list">
+        <div class="feed-activity-list" style='padding-left: 16px;'>
             {foreach $cv as $plugin}
                 {if in_array($plugin['identifie'],$perms) || $userInfo['role'] != 'operator'}
                 <a class="feed-element" style="cursor: pointer" onclick="windowOpen('{$plugin.identifie}','{$plugin.url}')" href="javascript:;" data-name="{$plugin['name']}">
