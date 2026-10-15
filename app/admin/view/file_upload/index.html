@@ -1,0 +1,19 @@
+<!--
+    文件上传通用页面模板。
+    调用页面只需替换挂载点 ID 和初始化参数，不需要复制上传区域 HTML。
+    @author fengzi
+-->
+<link rel="stylesheet" href="{$siteRoot}/app/admin/static/file-upload/file-uploader.css">
+
+<div class="js-file-upload-component" id="fileUploadComponent"></div>
+
+<script src="{$siteRoot}/app/admin/static/file-upload/file-uploader.js"></script>
+<script>
+// 页面按需初始化文件上传组件，业务页面可通过 multiple 控制单文件或多文件。
+var fileUploader = FileUploader.create($('#fileUploadComponent'), {
+    uploadUrl: '{$uploadUrl|default=""}',
+    configUrl: '{$configUrl|default=""}',
+    multiple: {$multiple|default="false"},
+    maxCount: {$maxCount|default="0"}
+});
+</script>

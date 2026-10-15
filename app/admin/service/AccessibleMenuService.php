@@ -2,7 +2,6 @@
 
 namespace app\admin\service;
 
-use app\common\service\UserPermService;
 use think\facade\Db;
 
 /**

@@ -62,7 +62,7 @@ class System extends AdminBaseController
             $is_limit = (int)($permUserInfo['is_limit'] ?? 1);
             if ($is_limit == 1) {
                 // 多角色合并：主角色 + 关联表所有角色 + 用户额外权限（统一走 UserPermService）
-                $merged = \app\common\service\UserPermService::getMergedPerms($this->userId, $this->uniacid);
+                $merged = \app\admin\service\UserPermService::getMergedPerms($this->userId, $this->uniacid);
                 $all_perms = $merged['perms'];
                 $all_app_perms = $merged['app_perms'];
 
@@ -152,7 +152,7 @@ class System extends AdminBaseController
 
         $uid = $this->userId;
         // 多角色合并：主角色 + 关联表所有角色 + 用户额外权限（统一走 UserPermService）
-        $merged = \app\common\service\UserPermService::getMergedPerms($uid, $this->uniacid);
+        $merged = \app\admin\service\UserPermService::getMergedPerms($uid, $this->uniacid);
         $perms = $merged['perms'];
 
         $newList = [];
