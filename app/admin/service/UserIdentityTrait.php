@@ -2,12 +2,10 @@
 
 namespace app\admin\service;
 
-use think\facade\Db;
-
 /**
  * 用户身份解析Trait
- * 从请求中的微信用户信息解析出业务用户ID和类型
- * 设计为共享层组件，可被 sz_contest 和 sz_jiaowu 模块的控制器共同引用
+ * 从请求中已注入的用户信息解析用户ID和类型。
+ * 共享层只消费认证结果，不依赖任何具体应用的业务表。
  *
  * 依赖前置条件：
  * - 请求经过 AuthLoginMiddleware 中间件处理
@@ -17,7 +15,7 @@ use think\facade\Db;
  */
 trait UserIdentityTrait
 {
-    /** @var int 当前业务用户ID（学员表或教师表的主键） */
+    /** @var int 当前已认证用户ID */
     protected $currentUserId = 0;
 
     /** @var array 当前业务用户完整信息 */
@@ -28,9 +26,7 @@ trait UserIdentityTrait
 
     /**
      * 解析用户身份
-     * 从中间件注入的微信用户信息中，通过手机号匹配业务用户
-     * 学员通过 contact_phone 匹配 sz_jiaowu_student 表
-     * 教师通过 mobile 匹配 sz_jiaowu_teacher 表
+     * 直接使用中间件注入的认证信息，避免共享层查询应用业务表。
      * @return void
      * @author fengzi
      */
@@ -42,22 +38,12 @@ trait UserIdentityTrait
             return;
         }
 
-        // 从微信用户信息中提取手机号和用户类型
-        $mobile = $wxInfo['mobile'] ?? '';
+        $userInfo = is_array($wxInfo) ? $wxInfo : $wxInfo->toArray();
+
+        // 用户类型仍由认证中间件判定。
         $this->currentUserType = $this->request->userType;
-
-        // 根据用户类型查询对应的业务表
-        if (1 == $this->currentUserType) {
-            // 学员：通过联系电话匹配
-            $userInfo = Db::name('sz_jiaowu_student')->where('contact_phone', $mobile)->find();
-        } else {
-            // 教师：通过手机号匹配
-            $userInfo = Db::name('sz_jiaowu_teacher')->where('mobile', $mobile)->find();
-        }
-
-        // 设置解析结果
-        $this->currentUserId = $userInfo['id'] ?? 0;
-        $this->currentUserInfo = $userInfo ?? [];
+        $this->currentUserId = intval($userInfo['id'] ?? 0);
+        $this->currentUserInfo = $userInfo;
     }
 
     /**

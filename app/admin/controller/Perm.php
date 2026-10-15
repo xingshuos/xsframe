@@ -198,19 +198,6 @@ class Perm extends AdminBaseController
         $total = Db::name("sys_account_perm_user")->alias('pu')->field($field)->leftJoin("sys_users u", "u.id = pu.uid")->where($condition)->count();
         $pager = pagination2($total, $this->pIndex, $this->pSize);
 
-        // 获取所有已绑定教师的 sys_user_id 映射
-        $teacherMap = [];
-        $teacherList = Db::name('sz_jiaowu_teacher')
-            ->where('uniacid', $this->uniacid)
-            ->whereNull('deletetime')
-            ->where('sys_user_id', '>', 0)
-            ->field('id, name, mobile, teacher_no, sys_user_id')
-            ->select()
-            ->toArray();
-        foreach ($teacherList as $teacher) {
-            $teacherMap[$teacher['sys_user_id']] = $teacher;
-        }
-
         // 批量获取每个用户的全部关联角色（避免 N+1 查询）
         $userRolesMap = $this->getUserRolesMap(array_column($list, 'uid'));
 
@@ -244,13 +231,6 @@ class Perm extends AdminBaseController
                     . (!empty($roleTipItem['role_key']) ? '(' . $roleTipItem['role_key'] . ')' : '');
             }
             $list[$key]['roles_tip'] = implode('、', $roleTips);
-
-            // 关联教师信息
-            if (!empty($item['uid']) && isset($teacherMap[$item['uid']])) {
-                $list[$key]['teacher'] = $teacherMap[$item['uid']];
-            } else {
-                $list[$key]['teacher'] = null;
-            }
         }
         unset($item);
 
@@ -285,16 +265,6 @@ class Perm extends AdminBaseController
             $memberInfo['realname1'] = $memberInfo['nickname'];
         }
 
-        // 获取当前员工绑定的教师信息
-        $boundTeacher = null;
-        if (!empty($item['uid'])) {
-            $boundTeacher = Db::name('sz_jiaowu_teacher')
-                ->where('sys_user_id', $item['uid'])
-                ->where('uniacid', $this->uniacid)
-                ->whereNull('deletetime')
-                ->find();
-        }
-
         if ($this->request->isPost()) {
             $username = trim($this->params['username'] ?? '');
             $password = trim($this->params['password'] ?? '');
@@ -318,7 +288,6 @@ class Perm extends AdminBaseController
             $app_perms = $this->params['app_perms'] ?? [];
             $end_time = strval($this->params['end_time']);
             $limit_time = intval($this->params['limit_time']);
-            $teacher_id = intval($this->params['teacher_id'] ?? 0);
 
             if (empty($username)) {
                 $this->error('登录账号不能为空');
@@ -467,71 +436,6 @@ class Perm extends AdminBaseController
                 $this->syncUserRoles(intval($data['uid'] ?? 0), $roleIds);
             }
 
-            // 处理教师绑定关系；新增权限账号时使用刚创建的 uid，不能只依赖旧记录 item.uid。
-            $boundUserId = intval($item['uid'] ?? ($data['uid'] ?? 0));
-            if ($teacher_id > 0 && $boundUserId > 0) {
-                // 获取教师信息
-                $teacherInfo = Db::name('sz_jiaowu_teacher')
-                    ->where('id', $teacher_id)
-                    ->where('uniacid', $this->uniacid)
-                    ->whereNull('deletetime')
-                    ->find();
-
-                if ($teacherInfo) {
-                    // 检查教师是否已被其他员工绑定（排除当前员工）
-                    if ($teacherInfo['sys_user_id'] > 0 && intval($teacherInfo['sys_user_id']) !== $boundUserId) {
-                        $this->error('该教师已被其他员工绑定');
-                    }
-
-                    // 一个权限账号只允许关联一个教师，切换教师时先解除旧教师的账号关联。
-                    Db::name('sz_jiaowu_teacher')
-                        ->where('uniacid', $this->uniacid)
-                        ->where('sys_user_id', $boundUserId)
-                        ->where('id', '<>', $teacher_id)
-                        ->whereNull('deletetime')
-                        ->update(['sys_user_id' => 0]);
-
-                    // 更新教师账号关联、角色/部门及基础资料，保持权限账号与师资资料使用同一角色主键。
-                    Db::name('sz_jiaowu_teacher')
-                        ->where('id', $teacher_id)
-                        ->where('uniacid', $this->uniacid)
-                        ->whereNull('deletetime')
-                        ->update([
-                            'sys_user_id' => $boundUserId,
-                            'role_id'    => $roleId > 0 ? $roleId : 0,
-                            'name'       => $data['realname'] ?? ($teacherInfo['name'] ?? ''),
-                            'mobile'     => $data['mobile'] ?? ($teacherInfo['mobile'] ?? ''),
-                            'nickname'   => $data['realname'] ?? ($teacherInfo['nickname'] ?? ''),
-                        ]);
-                }
-            } elseif (($teacher_id === 0 || $teacher_id === '0') && $boundUserId > 0) {
-                // 解除绑定：将该教师的 sys_user_id 置为 0
-                Db::name('sz_jiaowu_teacher')
-                    ->where('sys_user_id', $boundUserId)
-                    ->where('uniacid', $this->uniacid)
-                    ->whereNull('deletetime')
-                    ->update(['sys_user_id' => 0]);
-            }
-
-            // 编辑员工信息时，如果已绑定教师，同步更新教师信息
-            if (empty($teacher_id) && !empty($item['uid'])) {
-                $boundTeacher = Db::name('sz_jiaowu_teacher')
-                    ->where('sys_user_id', $item['uid'])
-                    ->where('uniacid', $this->uniacid)
-                    ->whereNull('deletetime')
-                    ->find();
-
-                if ($boundTeacher) {
-                    Db::name('sz_jiaowu_teacher')
-                        ->where('id', $boundTeacher['id'])
-                        ->update([
-                            'name'     => $data['realname'] ?? '',
-                            'mobile'   => $data['mobile'] ?? '',
-                            'nickname' => $data['realname'] ?? '',
-                        ]);
-                }
-            }
-
             // $this->success(['url' => webUrl('perm/userPost', ['id' => $id, 'module' => $this->params['module']])]);
             $this->success(['url' => webUrl('perm/user')]);
         }
@@ -588,7 +492,6 @@ class Perm extends AdminBaseController
             'role_app_perms' => $roleAppPerms,
             'user_perms'     => $userPerms,    // 用户额外权限（已排除角色权限）
             'app_perms'      => $appPerms,
-            'boundTeacher'   => $boundTeacher, // 绑定的教师信息
             'memberInfo'     => $memberInfo,
         ]);
     }
@@ -1491,43 +1394,6 @@ class Perm extends AdminBaseController
         }
 
         return true;
-    }
-
-    /**
-     * 获取未绑定教师的列表（用于员工管理绑定教师）
-     */
-    public function getUnboundTeachers()
-    {
-        try {
-            $keyword = trim($this->params['keyword'] ?? '');
-
-            // 查询未绑定的教师
-            $query = Db::name('sz_jiaowu_teacher')
-                ->where('uniacid', $this->uniacid)
-                ->whereNull('deletetime')
-                ->where('sys_user_id', 0);
-
-            if (!empty($keyword)) {
-                $query->where(function ($q) use ($keyword) {
-                    $q->where('name', 'like', '%' . $keyword . '%')
-                        ->whereOr('mobile', 'like', '%' . $keyword . '%');
-                });
-            }
-
-            $teachers = $query->field('id, name, mobile, teacher_no')->select()->toArray();
-
-            return json([
-                'code' => 1,
-                'msg' => '获取成功',
-                'data' => $teachers,
-            ]);
-        } catch (\Exception $e) {
-            return json([
-                'code' => 0,
-                'msg' => '获取教师列表失败：' . $e->getMessage(),
-                'data' => [],
-            ]);
-        }
     }
 
 }

@@ -139,7 +139,6 @@
                 <th style=''>登录账号</th>
                 <th style='width:230px;'>角色</th>
                 <th style=''>姓名</th>
-                <th style='width:200px;'>关联教师</th>
                 <th style=''>手机</th>
                 <th>状态</th>
                 <th style="width: 140px">操作</th>
@@ -169,26 +168,6 @@
                     {/if}
                 </td>
                 <td>{$row['realname']}</td>
-                <td>
-                    {if $row['teacher']}
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span class="label label-success" style="background-color: #409EFF; font-size: 11px; padding: 3px 8px;">
-                            <i class="fa fa-link"></i> 已关联
-                        </span>
-                        <div>
-                            <div style="font-weight: 600; color: #333; font-size: 12px;">{$row['teacher']['name']}</div>
-                            <div style="color: #999; font-size: 11px;">
-                                {if $row['teacher']['mobile']}{$row['teacher']['mobile']}{/if}
-                                {if $row['teacher']['teacher_no']} · {$row['teacher']['teacher_no']}{/if}
-                            </div>
-                        </div>
-                    </div>
-                    {else}
-                    <span style="color: #ccc; font-size: 12px;">
-                        <i class="fa fa-minus-circle"></i> 未关联
-                    </span>
-                    {/if}
-                </td>
                 <td>{$row['mobile']}</td>
                 <td>
                     <span class='label {if $row['status']==1}label-primary{else}label-default{/if}'
@@ -229,7 +208,7 @@
                         </button>
                     </div>
                 </td>
-                <td colspan="5" style="text-align: right"> {$pager | raw}</td>
+                <td colspan="4" style="text-align: right"> {$pager | raw}</td>
             </tr>
             </tfoot>
             </tbody>
