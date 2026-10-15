@@ -21,10 +21,13 @@
 
     <!--原始样式-->
     <link rel="stylesheet" href="__ADMIN_CSS__/upload.css?t=20241122">
-    <link rel="stylesheet" href="__ADMIN_CSS__/common.css?t=20241122">
+    <link rel="stylesheet" href="__ADMIN_CSS__/common.css?t=20260713b">
 
     <!--后台装修-->
     <link href="__ADMIN_CSS__/admin.css?v=4.1.0" rel="stylesheet">
+
+    <!-- 全局统一主题（与 sz_customer 模块保持一致：导航宽度/按钮主色/搜索按钮/菜单样式） -->
+    <link rel="stylesheet" href="__ADMIN_CSS__/theme.css?v=20260710an">
     {/block}
 
     {block name='baseFont'}
@@ -32,17 +35,13 @@
     <link href="__ADMIN_FONTS__/awesome/font-awesome.fa.min.css?v=4.7.0" rel="stylesheet">
     {/block}
 
-    <script type="text/javascript" src="__ADMIN_COMPONENT__/jquery/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="__ADMIN_COMPONENT__/jquery/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="__ADMIN_COMPONENT__/jquery/jquery-migrate-3.4.1.min.js"></script>
+    <script type="text/javascript" src="__ADMIN_COMPONENT__/purify/purify.min.js"></script>
 
     {block name='baseScript'}
-    <script>var require = {urlArgs: 'v=20211031'};</script>
+    <script>var require = {urlArgs: 'v=20260710'};</script>
     <script type="text/javascript">
-        if (navigator.appName === 'Microsoft Internet Explorer') {
-            if (navigator.userAgent.indexOf("MSIE 5.0") > 0 || navigator.userAgent.indexOf("MSIE 6.0") > 0 || navigator.userAgent.indexOf("MSIE 7.0") > 0) {
-                alert('您使用的 IE 浏览器版本过低, 推荐使用 Chrome 浏览器或 IE8 及以上版本浏览器.');
-            }
-        }
-
         window.sysinfo = {
             'uniacid': '{$isSystem ? 0 :$uniacid}',
             'uid': '{$uid}',
@@ -54,14 +53,14 @@
         };
     </script>
 
-    <script type="text/javascript" src="__ADMIN_JS__/web/util.js"></script>
+    <script type="text/javascript" src="__ADMIN_JS__/web/util.js?v=202609160004"></script>
     <!-- <script type="text/javascript" src="__ADMIN_COMPONENT__/bootstrap/bootstrap.min.js"></script> -->
     <script type="text/javascript" src="__ADMIN_JS__/web/common.min.js"></script>
     <script type="text/javascript" src="__ADMIN_JS__/require.js"></script>
     <script src="__ADMIN_JS__/config.js"></script>
 
     <script>
-        require(['jquery', 'jquery.gcjs', 'init', 'tip']);
+        require(['jquery', 'jquery-migrate', 'jquery.gcjs', 'init', 'tip']);
 
         // 加载tip提示组件
         // require(['tip'], function () {
@@ -74,14 +73,6 @@
     {/block}
 </head>
 <style>
-    .wb-container {
-        margin: 0 0 0 130px;
-    }
-
-    .wb-nav ~ .wb-subnav ~ .wb-container {
-        margin-right: 0;
-    }
-
     .wb-header .dropdown-menu > li {
         width: 100%;
     }
@@ -214,6 +205,25 @@
         margin-left: 10px !important;
     }
 </style>
+<style>
+    /* 移除导航菜单焦点边框 */
+    a:focus,
+    a:focus-visible,
+    .wb-nav a:focus,
+    .wb-nav a:focus-visible,
+    .wb-nav li:focus,
+    .wb-nav li:focus-visible,
+    .wb-nav a:active,
+    .wb-nav li:active,
+    .wb-header a:focus,
+    .wb-header a:focus-visible,
+    .wb-header li:focus,
+    .wb-header li:focus-visible {
+        outline: none !important;
+        box-shadow: none !important;
+        border-color: transparent !important;
+    }
+</style>
 {block name='style'}{/block}
 <!-- 结 构 代 码 -->
 <body>
@@ -221,7 +231,7 @@
 {block name='header'}{/block}
 {block name='menus'}{/block}
 
-<div class="wb-container">
+<div class="wb-container right-panel" style="margin-right: 0;"> <!-- right-panel 如果没有消息可以追加 如果需要右边有消息部分就需要 注释 margin-right: 0; 调整下方注释部分代码 -->
     {if in_array($userInfo['role'],['owner','manager','operator'])}
         {if !$isSystem && !empty($selSystemNav)}
             <div class="page-content" id="iframePage" style="height: 700px;">
@@ -585,7 +595,9 @@
         // 发起请求
         $.get(url, {}, function (html) {
             console.log('ajaxModel: 请求成功');
-            $("#public_modal").html(html).modal({backdrop: backdrop, keyboard: keyboard, show: true});
+            // 使用 DOMPurify 过滤 AJAX 返回的 HTML，防止 XSS 攻击
+            var sanitized = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(html) : html;
+            $("#public_modal").html(sanitized).modal({backdrop: backdrop, keyboard: keyboard, show: true});
         });
     }
 

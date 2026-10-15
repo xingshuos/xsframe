@@ -182,6 +182,9 @@ class App extends Base
             ];
             Db::name('sys_modules')->where(['id' => $id])->update($data);
 
+            // 应用状态变更会影响前台访问权限，立即刷新全局应用列表缓存。
+            $this->updateSystemModuleList();
+
             // 清除模块信息缓存，确保修改后立即生效
             $moduleIdentifie = Db::name('sys_modules')->where(['id' => $id])->value('identifie');
             if (!empty($moduleIdentifie)) {

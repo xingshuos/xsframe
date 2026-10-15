@@ -69,6 +69,19 @@
                     </div>
 
                     <div class="form-group">
+                        <label class="col-lg control-label">登录验证码</label>
+                        <div class="col-sm-9 col-xs-12">
+                            <label class="radio-inline">
+                                <input type="radio" name="data[login_captcha]" value="1" {if $loginCaptchaEnabled}checked{/if}> 开启
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="data[login_captcha]" value="0" {if !$loginCaptchaEnabled}checked{/if}> 关闭
+                            </label>
+                            <span class="help-block">开启后，用户登录管理后台时必须填写图片验证码；历史配置默认开启。</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <label class="col-lg control-label">关键词</label>
                         <div class="col-sm-9 col-xs-12">
                             <input type="text" name="data[keywords]" class="form-control" value="{$websiteSets['keywords']}" placeholder="XX登录,XX后台,XXXX后台"/>

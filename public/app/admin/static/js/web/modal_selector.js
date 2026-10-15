@@ -52,7 +52,9 @@ define(["js/web/biz"], function (biz) {
                 condition: condition,
             },
             success: function (htm) {
-                model.ele.find(".content").empty().html(htm);
+                // 使用 DOMPurify 过滤 AJAX 返回的 HTML，防止 XSS
+                var sanitized = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(htm) : htm;
+                model.ele.find(".content").empty().html(sanitized);
             },
         });
     };

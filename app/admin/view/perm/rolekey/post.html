@@ -1,0 +1,83 @@
+{extend name="../../admin/view/public/system"}
+
+{block name='title'}{if !empty($item['id'])}编辑{else}添加{/if}角色标识-系统管理{/block}
+
+{block name='content'}
+
+<div class="page-header">
+    <span>当前位置：<span class="text-primary">{if !empty($item['id'])}编辑{else}添加{/if}角色标识 <small>{if !empty($item['id'])}修改【{$item['name']}】{/if}</small></span></span>
+</div>
+
+<div class="page-content">
+    {if $item['id']}
+    <div class="page-sub-toolbar">
+        <span class=''>
+             <a class="btn btn-primary btn-sm" href="{:webUrl('perm/rolekeyPost')}"><i class="icon icon-plus"></i> 添加新角色标识</a>
+        </span>
+    </div>
+    {/if}
+
+    <form action="" method="post" class="form-horizontal form-validate" enctype="multipart/form-data">
+        <input type="hidden" name="id" value="{$item['id']}" />
+
+        <div class="form-group">
+            <label class="col-lg control-label">排序</label>
+            <div class="col-sm-9 col-xs-12">
+                <input type="number" name="displayorder" class="form-control" value="{$item['displayorder']|default=0}" min="0" />
+                <span class="help-block">数字越大排序越靠前</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-lg control-label must">标识名称</label>
+            <div class="col-sm-9 col-xs-12">
+                <input type="text" name="name" class="form-control" value="{$item['name']}" data-rule-required="true" placeholder="请输入标识名称" />
+                <span class="help-block">用于显示的标识名称，如：管理员、编辑员等</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-lg control-label must">标识键值</label>
+            <div class="col-sm-9 col-xs-12">
+                <input type="text" name="role_key" class="form-control" value="{$item['role_key']}" data-rule-required="true" maxlength="64" placeholder="请输入标识键值，如：admin, editor" />
+                <span class="help-block">唯一标识键值，用于程序识别，同一商户下不可重复。只能包含字母、数字、下划线和横线</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-lg control-label">描述</label>
+            <div class="col-sm-9 col-xs-12">
+                <textarea name="description" class="form-control" rows="3" placeholder="请输入标识描述（可选）">{$item['description']}</textarea>
+                <span class="help-block">角色标识的描述信息，用于说明该标识的用途</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-lg control-label">状态</label>
+            <div class="col-sm-9 col-xs-12">
+                <label class='radio-inline'>
+                    <input type='radio' name='status' value='1' {if !isset($item['status']) || $item['status']==1}checked{/if} /> 启用
+                </label>
+                <label class='radio-inline'>
+                    <input type='radio' name='status' value='0' {if isset($item['status']) && $item['status']==0}checked{/if} /> 禁用
+                </label>
+                <span class="help-block">禁用后，关联该标识的角色将受影响</span>
+            </div>
+        </div>
+
+        <div class="form-group"></div>
+        <div class="form-group">
+            <label class="col-lg control-label"></label>
+            <div class="col-sm-9 col-xs-12">
+                <input type="submit" value="提交" class="btn btn-primary"  />
+                <input type="button" name="back" onclick='history.back()' style='margin-left:10px;' value="返回列表" class="btn btn-default" />
+            </div>
+        </div>
+    </form>
+</div>
+
+<a href="javascript:history.back()" class="btn btn-default" style="position:fixed;right:30px;bottom:30px;z-index:999;padding:10px 15px;border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,0.15);">
+    <i class="icon icon-arrow-left"></i> 返回列表
+</a>
+
+{/block}

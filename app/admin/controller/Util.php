@@ -93,7 +93,7 @@ class Util extends Base
         }
         is_array($page_num_arr) && ($page_num_arr = array_slice($page_num_arr, $slice, 10));
 
-        return $this->template('module_selector', ['list' => $list, 'page_num_arr' => $page_num_arr, 'total' => $total, 'page' => $page]);
+        return $this->template('module_selector', ['list' => $list, 'page_num_arr' => $page_num_arr, 'total' => $total, 'count' => $count, 'page' => $page]);
     }
 
     // 商户应用

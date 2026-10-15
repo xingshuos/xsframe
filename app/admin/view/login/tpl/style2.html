@@ -98,6 +98,8 @@
                 </div>
                 <span style="display:none;color:#ff0000;" id="capitalizationTip">大写锁定已打开</span>
 
+                {if $loginCaptchaEnabled}
+                <!-- 平台开启登录验证码时显示验证码输入区域。 -->
                 <div class="form-group verify-form-group">
                     <div class="input-group">
                         <input name="verify" type="text" class="form-control" placeholder="请输入验证码">
@@ -107,6 +109,7 @@
                     </div>
                     <div class="help-block">请输入验证码</div>
                 </div>
+                {/if}
             </div>
             <div class="form-inline" style="margin-bottom: 15px;">
                 <div class="checkbox">
@@ -154,11 +157,14 @@
     });
 
     var loginAction = function (e) {
+        {if $loginCaptchaEnabled}
+        // 开启验证码时，提交前先完成必填校验。
         var verify = $(':text[name="verify"]').val();
         if (verify == '') {
             $(".verify-form-group").addClass('error');
             return false;
         }
+        {/if}
         e.preventDefault();
         var postData = $("#login-form input").serializeArray();
         var postInit = {};

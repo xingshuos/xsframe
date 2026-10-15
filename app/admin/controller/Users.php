@@ -120,6 +120,25 @@ class Users extends Base
             $uniacid = $usersAccount['uniacid'];
         }
 
+        // 商户下拉列表（管理商户字段使用），仅取未删除的商户
+        $accounts = Db::name('sys_account')->field('uniacid,name')
+            ->where(['deleted' => 0])
+            ->order('displayorder desc, uniacid desc')
+            ->select()->toArray();
+        // 编辑时若当前关联商户已不在可选列表（如被删除），仍补充进来以保证正确回显
+        if (!empty($uniacid)) {
+            $hasCurrent = false;
+            foreach ($accounts as $a) {
+                if ($a['uniacid'] == $uniacid) {
+                    $hasCurrent = true;
+                    break;
+                }
+            }
+            if (!$hasCurrent && !empty($accountInfo)) {
+                array_unshift($accounts, ['uniacid' => $accountInfo['uniacid'], 'name' => $accountInfo['name']]);
+            }
+        }
+
         if ($this->request->isPost()) {
             $salt = RandomUtil::random(6);
             $username = trim($this->params["username"]);
@@ -231,6 +250,7 @@ class Users extends Base
             'uniacid'        => $uniacid,
             'item'           => $item,
             'accountInfo'    => $accountInfo,
+            'accounts'       => $accounts,
             'perms'          => $perms,
             'operator_perms' => $operatorPerms,
             'accounts_perms' => $accountsPerms,

@@ -20,7 +20,142 @@ use think\facade\Db;
 
 class Perm extends AdminBaseController
 {
+    /**
+     * 员工列表角色列默认展开显示的角色个数，超出部分折叠为「+N」
+     * 取值依据：现网人均关联 2 个角色，2 个以内可完整平铺不撑破列宽
+     */
+    const ROLE_DISPLAY_LIMIT = 2;
+
     protected $uniacid;
+
+    /**
+     * 批量获取用户的全部关联角色
+     * 关联表 sys_account_user_role.uid 语义 = sys_users.id（与 sys_account_perm_user.uid 一致）
+     *
+     * @param array $uids sys_users.id 集合
+     * @return array uid => [ ['id'=>..,'rolename'=>..,'role_key'=>..], ... ]
+     */
+    private function getUserRolesMap(array $uids): array
+    {
+        $uids = array_values(array_unique(array_filter(array_map('intval', $uids))));
+        if (empty($uids)) {
+            return [];
+        }
+
+        $rows = Db::name('sys_account_user_role')->alias('ur')
+            ->field('ur.uid, r.id, r.rolename, r.role_key')
+            ->join('sys_account_perm_role r', 'r.id = ur.roleid AND r.uniacid = ur.uniacid')
+            ->where('ur.uniacid', $this->uniacid)
+            ->whereIn('ur.uid', $uids)
+            ->where('r.deleted', 0)
+            ->order('r.displayorder desc, r.id desc')
+            ->select()
+            ->toArray();
+
+        $map = [];
+        foreach ($rows as $row) {
+            $map[$row['uid']][] = [
+                'id'       => $row['id'],
+                'rolename' => $row['rolename'],
+                'role_key' => $row['role_key'],
+            ];
+        }
+
+        return $map;
+    }
+
+    /**
+     * 获取单个用户已关联的角色ID集合（无关联记录时回退到主角色字段，兼容历史数据）
+     *
+     * @param int $uid           sys_users.id
+     * @param int $primaryRoleId sys_account_perm_user.roleid
+     * @return array
+     */
+    private function getUserRoleIds(int $uid, int $primaryRoleId = 0): array
+    {
+        $roleIds = [];
+        if ($uid > 0) {
+            $roleIds = Db::name('sys_account_user_role')
+                ->where(['uniacid' => $this->uniacid, 'uid' => $uid])
+                ->column('roleid');
+            $roleIds = array_values(array_unique(array_filter(array_map('intval', $roleIds))));
+        }
+
+        if (empty($roleIds) && $primaryRoleId > 0) {
+            $roleIds = [$primaryRoleId];
+        }
+
+        return $roleIds;
+    }
+
+    /**
+     * 同步用户多角色关联（差异化增删，依赖唯一索引 uk_user_role 避免重复）
+     *
+     * @param int   $uid     sys_users.id
+     * @param array $roleIds 本次提交的角色ID集合（已校验合法）
+     * @return void
+     */
+    private function syncUserRoles(int $uid, array $roleIds): void
+    {
+        if ($uid <= 0) {
+            return;
+        }
+
+        $roleIds = array_values(array_unique(array_filter(array_map('intval', $roleIds))));
+
+        $oldRoleIds = Db::name('sys_account_user_role')
+            ->where(['uniacid' => $this->uniacid, 'uid' => $uid])
+            ->column('roleid');
+        $oldRoleIds = array_values(array_unique(array_map('intval', $oldRoleIds)));
+
+        // 移除本次未选中的角色
+        $removeIds = array_diff($oldRoleIds, $roleIds);
+        if (!empty($removeIds)) {
+            Db::name('sys_account_user_role')
+                ->where(['uniacid' => $this->uniacid, 'uid' => $uid])
+                ->whereIn('roleid', $removeIds)
+                ->delete();
+        }
+
+        // 新增本次新选中的角色
+        $insertIds = array_diff($roleIds, $oldRoleIds);
+        if (!empty($insertIds)) {
+            $insertData = [];
+            foreach ($insertIds as $roleId) {
+                $insertData[] = [
+                    'uniacid' => $this->uniacid,
+                    'uid'     => $uid,
+                    'roleid'  => $roleId,
+                ];
+            }
+            Db::name('sys_account_user_role')->insertAll($insertData);
+        }
+    }
+
+    /**
+     * 过滤出当前商户下合法（未删除）的角色ID，并保持提交顺序
+     *
+     * @param array $roleIds
+     * @return array
+     */
+    private function filterValidRoleIds(array $roleIds): array
+    {
+        $roleIds = array_values(array_unique(array_filter(array_map('intval', $roleIds))));
+        if (empty($roleIds)) {
+            return [];
+        }
+
+        $validIds = Db::name('sys_account_perm_role')
+            ->where(['uniacid' => $this->uniacid, 'deleted' => 0, 'status' => 1])
+            ->whereIn('id', $roleIds)
+            ->column('id');
+        $validIds = array_map('intval', $validIds);
+
+        // 保持前端提交顺序，第一个作为主角色
+        return array_values(array_filter($roleIds, function ($roleId) use ($validIds) {
+            return in_array($roleId, $validIds, true);
+        }));
+    }
 
     // 用户列表
     public function user()
@@ -38,12 +173,24 @@ class Perm extends AdminBaseController
             $condition['u.status'] = $status;
         }
 
+        // 原生条件片段：think-orm 中只有空字符串键才会被当作原生表达式，非空键会被解析为函数名，
+        // 因此角色筛选与关键字筛选必须合并到同一个空键中。
+        $rawConditions = [];
+
+        // 角色筛选：命中关联表中的任一角色，或命中历史主角色字段（兼容未迁移数据）
         if (is_numeric($roleid)) {
-            $condition['pu.roleid'] = $roleid;
+            $roleidInt = intval($roleid);
+            $userRoleTable = Db::name('sys_account_user_role')->getTable();
+            $rawConditions[] = "(pu.roleid = {$roleidInt} OR EXISTS (SELECT 1 FROM `{$userRoleTable}` ur WHERE ur.uniacid = pu.uniacid AND ur.uid = pu.uid AND ur.roleid = {$roleidInt}))";
         }
 
         if (!empty($keyword)) {
-            $condition[''] = Db::raw(" pu.realname like '%" . trim($keyword) . "%' or pu.mobile like '%" . trim($keyword) . "%' ");
+            $keywordStr = trim($keyword);
+            $rawConditions[] = "(pu.realname like '%{$keywordStr}%' or pu.mobile like '%{$keywordStr}%')";
+        }
+
+        if (!empty($rawConditions)) {
+            $condition[''] = Db::raw(' ' . implode(' AND ', $rawConditions) . ' ');
         }
 
         $field = " pu.*,u.username,u.password,u.status ";
@@ -51,10 +198,59 @@ class Perm extends AdminBaseController
         $total = Db::name("sys_account_perm_user")->alias('pu')->field($field)->leftJoin("sys_users u", "u.id = pu.uid")->where($condition)->count();
         $pager = pagination2($total, $this->pIndex, $this->pSize);
 
+        // 获取所有已绑定教师的 sys_user_id 映射
+        $teacherMap = [];
+        $teacherList = Db::name('sz_jiaowu_teacher')
+            ->where('uniacid', $this->uniacid)
+            ->whereNull('deletetime')
+            ->where('sys_user_id', '>', 0)
+            ->field('id, name, mobile, teacher_no, sys_user_id')
+            ->select()
+            ->toArray();
+        foreach ($teacherList as $teacher) {
+            $teacherMap[$teacher['sys_user_id']] = $teacher;
+        }
+
+        // 批量获取每个用户的全部关联角色（避免 N+1 查询）
+        $userRolesMap = $this->getUserRolesMap(array_column($list, 'uid'));
+
         foreach ($list as $key => $item) {
-            $roleInfo = Db::name('sys_account_perm_role')->where(['id' => $item['roleid']])->find();
+            $roleInfo = Db::name('sys_account_perm_role')->where([
+                'id' => $item['roleid'],
+                'uniacid' => $this->uniacid,
+                'deleted' => 0,
+            ])->find();
+            // rolename / role_key 保持原语义：主角色，供其它引用继续使用
             $list[$key]['rolename'] = $roleInfo['rolename'] ?? '';
             $list[$key]['role_key'] = $roleInfo['role_key'] ?? '';
+
+            // 全部关联角色；无关联记录时回退主角色，兼容历史数据
+            $roles = $userRolesMap[$item['uid']] ?? [];
+            if (empty($roles) && !empty($roleInfo)) {
+                $roles = [[
+                    'id'       => $roleInfo['id'],
+                    'rolename' => $roleInfo['rolename'],
+                    'role_key' => $roleInfo['role_key'],
+                ]];
+            }
+            $list[$key]['roles'] = $roles;
+            // 列表展示切片：前 N 个直接平铺，其余折叠，避免角色过多撑破表格列宽
+            $list[$key]['roles_visible'] = array_slice($roles, 0, self::ROLE_DISPLAY_LIMIT);
+            $list[$key]['roles_hidden']  = array_slice($roles, self::ROLE_DISPLAY_LIMIT);
+            // 悬浮提示文本：完整角色名（含 role_key），供 title 属性使用
+            $roleTips = [];
+            foreach ($roles as $roleTipItem) {
+                $roleTips[] = $roleTipItem['rolename']
+                    . (!empty($roleTipItem['role_key']) ? '(' . $roleTipItem['role_key'] . ')' : '');
+            }
+            $list[$key]['roles_tip'] = implode('、', $roleTips);
+
+            // 关联教师信息
+            if (!empty($item['uid']) && isset($teacherMap[$item['uid']])) {
+                $list[$key]['teacher'] = $teacherMap[$item['uid']];
+            } else {
+                $list[$key]['teacher'] = null;
+            }
         }
         unset($item);
 
@@ -76,8 +272,9 @@ class Perm extends AdminBaseController
         $id = intval($this->params['id']);
 
         $field = " pu.*,u.username,u.password,u.status ";
-        $item = Db::name("sys_account_perm_user")->alias('pu')->field($field)->leftJoin("sys_users u", "u.id = pu.uid")->where(['pu.id' => $id])->find();
-        $role = Db::name("sys_account_perm_role")->where(['id' => $item['roleid']])->find();
+        $item = Db::name("sys_account_perm_user")->alias('pu')->field($field)->leftJoin("sys_users u", "u.id = pu.uid")->where(['pu.id' => $id, 'pu.uniacid' => $this->uniacid, 'pu.deleted' => 0])->find();
+        // 当前员工已关联的全部角色ID（无关联记录时回退主角色，兼容历史数据）
+        $selectedRoleIds = $this->getUserRoleIds(intval($item['uid'] ?? 0), intval($item['roleid'] ?? 0));
         $memberInfo = Db::name('sys_member')->field("id,nickname,realname,realname realname1,avatar,mobile")->where(['id' => $item['mid']])->find();
         $memberInfo['avatar'] = tomedia($memberInfo['avatar']);
         if (!empty($item)) {
@@ -88,18 +285,40 @@ class Perm extends AdminBaseController
             $memberInfo['realname1'] = $memberInfo['nickname'];
         }
 
+        // 获取当前员工绑定的教师信息
+        $boundTeacher = null;
+        if (!empty($item['uid'])) {
+            $boundTeacher = Db::name('sz_jiaowu_teacher')
+                ->where('sys_user_id', $item['uid'])
+                ->where('uniacid', $this->uniacid)
+                ->whereNull('deletetime')
+                ->find();
+        }
+
         if ($this->request->isPost()) {
             $username = trim($this->params['username'] ?? '');
             $password = trim($this->params['password'] ?? '');
             $realname = trim($this->params['realname'] ?? '');
             $mobile = trim($this->params['mobile'] ?? '');
             $status = intval($this->params['status'] ?? 0);
-            $roleId = trim($this->params['roleid'] ?? 0);
+            // 多角色：roleid 提交为数组，第一个作为主角色写回 sys_account_perm_user.roleid
+            $roleIds = $this->params['roleid'] ?? [];
+            if (!is_array($roleIds)) {
+                $roleIds = $roleIds === '' ? [] : [$roleIds];
+            }
+            $roleIds = $this->filterValidRoleIds($roleIds);
+            $roleId = $roleIds[0] ?? 0;
+            // 编辑多角色员工时优先保留原主角色，避免浏览器按角色选项展示顺序提交后意外更换主角色。
+            $currentPrimaryRoleId = intval($item['roleid'] ?? 0);
+            if ($currentPrimaryRoleId > 0 && in_array($currentPrimaryRoleId, $roleIds, true)) {
+                $roleId = $currentPrimaryRoleId;
+            }
             $mid = intval($this->params['mid'] ?? 0);
             $isLimit = intval($this->params['is_limit'] ?? 0);
             $app_perms = $this->params['app_perms'] ?? [];
             $end_time = strval($this->params['end_time']);
             $limit_time = intval($this->params['limit_time']);
+            $teacher_id = intval($this->params['teacher_id'] ?? 0);
 
             if (empty($username)) {
                 $this->error('登录账号不能为空');
@@ -121,10 +340,18 @@ class Perm extends AdminBaseController
             // ★ 核心：perms 只存用户手动勾选的权限，角色权限完全不保存
             // permsarray = 角色权限（disabled）+ 用户手动勾选 → 只取差集 = 用户额外权限
             $savedPermsRaw = array_filter(explode(',', $this->params['permsarray'] ?? ''));
+            // 多角色：角色权限取所有已选角色的并集
             $rolePermsArray = [];
-            if (!empty($roleId)) {
-                $roleInfo = Db::name('sys_account_perm_role')->field('perms')->where(['id' => $roleId])->find();
-                $rolePermsArray = array_filter(explode(',', $roleInfo['perms'] ?? ''));
+            if (!empty($roleIds)) {
+                // 角色权限必须限定当前租户及有效状态，避免跨租户角色被混入权限并集。
+                $rolePermsList = Db::name('sys_account_perm_role')
+                    ->where(['uniacid' => $this->uniacid, 'deleted' => 0, 'status' => 1])
+                    ->whereIn('id', $roleIds)
+                    ->column('perms');
+                foreach ($rolePermsList as $rolePermsStr) {
+                    $rolePermsArray = array_merge($rolePermsArray, array_filter(explode(',', $rolePermsStr ?? '')));
+                }
+                $rolePermsArray = array_values(array_unique($rolePermsArray));
             }
             // 差集：用户勾选的 - 角色的 = 用户自己额外勾选的（只存这部分）
             $userExtraPerms = array_values(array_diff($savedPermsRaw, $rolePermsArray));
@@ -176,6 +403,9 @@ class Perm extends AdminBaseController
                 } else {
                     Db::name('sys_account_users')->insert($userAccountData);
                 }
+
+                // 同步多角色关联
+                $this->syncUserRoles(intval($item['uid']), $roleIds);
             } else {
                 $data['createtime'] = time();
 
@@ -212,7 +442,12 @@ class Perm extends AdminBaseController
                         $userAccountData['module'] = $permsArray[0];
                     } else {
                         if ($roleId > 0) {
-                            $roleInfo = Db::name("sys_account_perm_role")->field("perms")->where(['id' => $roleId])->find();
+                            $roleInfo = Db::name("sys_account_perm_role")->field("perms")->where([
+                                'id' => $roleId,
+                                'uniacid' => $this->uniacid,
+                                'deleted' => 0,
+                                'status' => 1,
+                            ])->find();
                             $rolePerms = explode(',', $roleInfo['perms']);
                             $userAccountData = [
                                 'user_id' => $userId,
@@ -227,8 +462,78 @@ class Perm extends AdminBaseController
                 }
 
                 Db::name('sys_account_perm_user')->insert($data);
+
+                // 同步多角色关联（新增场景 uid 来自新建的 sys_users 记录）
+                $this->syncUserRoles(intval($data['uid'] ?? 0), $roleIds);
             }
-            $this->success(['url' => webUrl('perm/userPost', ['id' => $id, 'module' => $this->params['module']])]);
+
+            // 处理教师绑定关系；新增权限账号时使用刚创建的 uid，不能只依赖旧记录 item.uid。
+            $boundUserId = intval($item['uid'] ?? ($data['uid'] ?? 0));
+            if ($teacher_id > 0 && $boundUserId > 0) {
+                // 获取教师信息
+                $teacherInfo = Db::name('sz_jiaowu_teacher')
+                    ->where('id', $teacher_id)
+                    ->where('uniacid', $this->uniacid)
+                    ->whereNull('deletetime')
+                    ->find();
+
+                if ($teacherInfo) {
+                    // 检查教师是否已被其他员工绑定（排除当前员工）
+                    if ($teacherInfo['sys_user_id'] > 0 && intval($teacherInfo['sys_user_id']) !== $boundUserId) {
+                        $this->error('该教师已被其他员工绑定');
+                    }
+
+                    // 一个权限账号只允许关联一个教师，切换教师时先解除旧教师的账号关联。
+                    Db::name('sz_jiaowu_teacher')
+                        ->where('uniacid', $this->uniacid)
+                        ->where('sys_user_id', $boundUserId)
+                        ->where('id', '<>', $teacher_id)
+                        ->whereNull('deletetime')
+                        ->update(['sys_user_id' => 0]);
+
+                    // 更新教师账号关联、角色/部门及基础资料，保持权限账号与师资资料使用同一角色主键。
+                    Db::name('sz_jiaowu_teacher')
+                        ->where('id', $teacher_id)
+                        ->where('uniacid', $this->uniacid)
+                        ->whereNull('deletetime')
+                        ->update([
+                            'sys_user_id' => $boundUserId,
+                            'role_id'    => $roleId > 0 ? $roleId : 0,
+                            'name'       => $data['realname'] ?? ($teacherInfo['name'] ?? ''),
+                            'mobile'     => $data['mobile'] ?? ($teacherInfo['mobile'] ?? ''),
+                            'nickname'   => $data['realname'] ?? ($teacherInfo['nickname'] ?? ''),
+                        ]);
+                }
+            } elseif (($teacher_id === 0 || $teacher_id === '0') && $boundUserId > 0) {
+                // 解除绑定：将该教师的 sys_user_id 置为 0
+                Db::name('sz_jiaowu_teacher')
+                    ->where('sys_user_id', $boundUserId)
+                    ->where('uniacid', $this->uniacid)
+                    ->whereNull('deletetime')
+                    ->update(['sys_user_id' => 0]);
+            }
+
+            // 编辑员工信息时，如果已绑定教师，同步更新教师信息
+            if (empty($teacher_id) && !empty($item['uid'])) {
+                $boundTeacher = Db::name('sz_jiaowu_teacher')
+                    ->where('sys_user_id', $item['uid'])
+                    ->where('uniacid', $this->uniacid)
+                    ->whereNull('deletetime')
+                    ->find();
+
+                if ($boundTeacher) {
+                    Db::name('sz_jiaowu_teacher')
+                        ->where('id', $boundTeacher['id'])
+                        ->update([
+                            'name'     => $data['realname'] ?? '',
+                            'mobile'   => $data['mobile'] ?? '',
+                            'nickname' => $data['realname'] ?? '',
+                        ]);
+                }
+            }
+
+            // $this->success(['url' => webUrl('perm/userPost', ['id' => $id, 'module' => $this->params['module']])]);
+            $this->success(['url' => webUrl('perm/user')]);
         }
 
         $perms = PermFacade::formatPerms($this->uniacid);
@@ -248,10 +553,19 @@ class Perm extends AdminBaseController
         $appPerms = [];
 
         if (!empty($item)) {
-            if (!empty($item['roleid'])) {
-                $roleInfo = Db::name('sys_account_perm_role')->field('perms,app_perms')->where(['id' => $item['roleid']])->find();
-                $rolePerms = array_filter(explode(',', $roleInfo['perms'] ?? ''));
-                $roleAppPerms = array_filter(explode(',', $roleInfo['app_perms'] ?? ''));
+            // 多角色：角色权限取所有已关联角色的并集
+            if (!empty($selectedRoleIds)) {
+                $roleInfoList = Db::name('sys_account_perm_role')->field('perms,app_perms')->where([
+                    'uniacid' => $this->uniacid,
+                    'deleted' => 0,
+                    'status' => 1,
+                ])->whereIn('id', $selectedRoleIds)->select()->toArray();
+                foreach ($roleInfoList as $roleInfo) {
+                    $rolePerms = array_merge($rolePerms, array_filter(explode(',', $roleInfo['perms'] ?? '')));
+                    $roleAppPerms = array_merge($roleAppPerms, array_filter(explode(',', $roleInfo['app_perms'] ?? '')));
+                }
+                $rolePerms = array_values(array_unique($rolePerms));
+                $roleAppPerms = array_values(array_unique($roleAppPerms));
             }
             // 用户自己额外勾选的权限（perms 字段，保存时已排除角色权限）
             $userPerms = array_filter(explode(',', $item['perms'] ?? ''));
@@ -264,8 +578,9 @@ class Perm extends AdminBaseController
         // die;
 
         return $this->template('perm/user/post', [
-            'item'           => $item,
-            'role'           => $role,
+            'item'            => $item,
+            'selectedRoleIds' => $selectedRoleIds, // 已关联的全部角色ID
+            'roleOptions'    => Db::name('sys_account_perm_role')->where(['uniacid' => $this->uniacid, 'deleted' => 0, 'status' => 1])->field('id,rolename,perms')->order('displayorder desc, id desc')->select()->toArray(),
             'perms'          => $perms,
             'operator_perms' => $operatorPerms,
             'accounts_perms' => $accountsPerms,
@@ -273,6 +588,7 @@ class Perm extends AdminBaseController
             'role_app_perms' => $roleAppPerms,
             'user_perms'     => $userPerms,    // 用户额外权限（已排除角色权限）
             'app_perms'      => $appPerms,
+            'boundTeacher'   => $boundTeacher, // 绑定的教师信息
             'memberInfo'     => $memberInfo,
         ]);
     }
@@ -328,6 +644,7 @@ class Perm extends AdminBaseController
     {
         $keyword = $this->params['keyword'] ?? '';
         $status = $this->params['status'] ?? '';
+        $role_key = $this->params['role_key'] ?? '';
 
         $condition = [
             'uniacid' => $this->uniacid,
@@ -340,6 +657,11 @@ class Perm extends AdminBaseController
 
         if (!empty($keyword)) {
             $condition[] = ['rolename', 'like', '%' . trim($keyword) . '%'];
+        }
+
+        // 角色标识搜索
+        if (!empty($role_key)) {
+            $condition[] = ['role_key', 'like', '%' . trim($role_key) . '%'];
         }
 
         // 获取所有角色数据（不分页，便于构建树形结构）
@@ -357,18 +679,39 @@ class Perm extends AdminBaseController
         // 保留分页变量但不实际分页（角色数量通常较少）
         $pager = '';
 
+        // 预加载所有角色标识数据（避免N+1查询）
+        $roleKeyNames = Db::name('sys_account_role_key')
+            ->where(['uniacid' => $this->uniacid, 'deleted' => 0])
+            ->column('name', 'role_key');
+
+        // 获取角色标识选项列表（用于下拉搜索）
+        $roleKeyOptions = Db::name('sys_account_role_key')
+            ->where('uniacid', $this->uniacid)
+            ->where('status', 1)
+            ->where('deleted', 0)
+            ->order('id asc')
+            ->field('id, name, role_key')
+            ->select()
+            ->toArray();
+
         // 统计每个角色的员工数量
         foreach ($treeList as &$row) {
             $row['usercount'] = Db::name("sys_account_perm_user")
                 ->where(['roleid' => $row['id'], 'deleted' => 0])
                 ->count();
+            // 关联的角色标识名称（角色表 role_key = 标识表 role_key）
+            $rk = trim((string)($row['role_key'] ?? ''));
+            $row['flag_name'] = $rk !== '' ? ($roleKeyNames[$rk] ?? '') : '';
         }
+        unset($row);
 
         $result = [
-            'list'   => $treeList,
-            'pager'  => $pager,
-            'total'  => $total,
-            'status' => $status,
+            'list'          => $treeList,
+            'pager'         => $pager,
+            'total'         => $total,
+            'status'        => $status,
+            'role_key'      => $role_key,
+            'roleKeyOptions'=> $roleKeyOptions,
         ];
 
         return $this->template('perm/role/list', $result);
@@ -507,25 +850,11 @@ class Perm extends AdminBaseController
             $status = intval($this->params['status']);
             $permsarray = trim($this->params['permsarray'] ?? '');
             $app_perms_str = implode(",", $app_perms);
+            // 角色标识：角色表 role_key 直接对应 sys_account_role_key.role_key（可留空）
 
-            // 角色标识校验
-            if (empty($role_key)) {
-                $this->error('角色标识不能为空');
-            }
+            // 角色标识（role_key）校验：允许为空、允许跨角色复用，仅校验长度
             if (strlen($role_key) > 64) {
                 $this->error('角色标识长度不能超过64个字符');
-            }
-            // 唯一性校验：同一 uniacid 下，role_key 必须唯一（排除自身）
-            $exists = Db::name('sys_account_perm_role')
-                ->where('uniacid', $this->uniacid)
-                ->where('role_key', $role_key)
-                ->where('deleted', 0)
-                ->when($id > 0, function ($query) use ($id) {
-                    return $query->where('id', '<>', $id);
-                })
-                ->count();
-            if ($exists) {
-                $this->error('角色标识已存在，请使用其他标识');
             }
 
             // 校验上级角色合法性（不能是自身及后代）
@@ -561,7 +890,9 @@ class Perm extends AdminBaseController
             } else {
                 $id = Db::name('sys_account_perm_role')->insertGetId($data);
             }
-            $this->success(['url' => webUrl('perm/rolePost', ['id' => $id, 'module' => $this->params['module']])]);
+
+            // $this->success(['url' => webUrl('perm/rolePost', ['id' => $id, 'module' => $this->params['module']])]);
+            $this->success(['url' => webUrl('perm/role')]);
         }
 
         $perms = PermFacade::formatPerms($this->uniacid);
@@ -593,6 +924,19 @@ class Perm extends AdminBaseController
         // 添加顶级角色选项
         $roleOptions = [0 => '顶级角色'] + $roleOptions;
 
+        // 角色标识选项（来自 sys_account_role_key 表，不再写死在代码中）
+        $flagOptions = Db::name('sys_account_role_key')
+            ->where('uniacid', $this->uniacid)
+            ->where('status', 1)
+            ->where('deleted', 0)
+            ->order('id asc')
+            ->field('id, name, role_key')
+            ->select()
+            ->toArray();
+
+        // 当前角色已选中的标识 role_key（一对一，角色表 role_key 对应标识表 role_key）
+        $currentRoleKey = !empty($item) ? trim((string)($item['role_key'] ?? '')) : '';
+
         return $this->template('perm/role/post', [
             'item'           => $item,
             'perms'          => $perms,
@@ -602,7 +946,9 @@ class Perm extends AdminBaseController
             'role_app_perms' => $roleAppPerms,
             'user_perms'     => $userPerms,
             'app_perms'      => $appPerms,
-            'roleOptions'    => $roleOptions,
+            'roleOptions'     => $roleOptions,
+            'flagOptions'     => $flagOptions,
+            'currentRoleKey'  => $currentRoleKey,
         ]);
     }
 
@@ -625,12 +971,21 @@ class Perm extends AdminBaseController
             show_json(0, ["message" => "该角色下存在子角色，请先删除子角色"]);
         }
 
-        // 检查是否有员工使用该角色
+        // 检查是否有员工使用该角色（主角色字段）
         $hasUsers = Db::name("sys_account_perm_user")
             ->where(['roleid' => $id, 'uniacid' => $this->uniacid, 'deleted' => 0])
             ->count();
         if ($hasUsers > 0) {
             show_json(0, ["message" => "该角色下存在员工，请先移除员工或修改员工角色"]);
+        }
+
+        // 检查是否有员工通过多角色关联表使用该角色（仅统计未删除的员工）
+        $hasRelUsers = Db::name("sys_account_user_role")->alias('ur')
+            ->join('sys_account_perm_user pu', 'pu.uid = ur.uid AND pu.uniacid = ur.uniacid')
+            ->where(['ur.roleid' => $id, 'ur.uniacid' => $this->uniacid, 'pu.deleted' => 0])
+            ->count();
+        if ($hasRelUsers > 0) {
+            show_json(0, ["message" => "该角色已分配给员工（多角色关联），请先移除员工或修改员工角色"]);
         }
 
         $items = Db::name("sys_account_perm_role")->where(['id' => $id])->select();
@@ -768,6 +1123,230 @@ class Perm extends AdminBaseController
         ]);
     }
 
+    // 角色标识管理 - 列表
+    public function rolekey(): \think\response\View
+    {
+        // 获取搜索参数
+        $name = trim($this->params['name'] ?? '');
+        $role_key = trim($this->params['role_key'] ?? '');
+        $status = $this->params['status'] ?? '';
+
+        // 基础条件（只查当前商户）
+        $condition = [
+            'uniacid' => $this->uniacid,
+            'deleted' => 0,
+        ];
+
+        // 标识名称模糊搜索
+        if (!empty($name)) {
+            $condition[] = ['name', 'like', '%' . $name . '%'];
+        }
+
+        // 标识键值模糊搜索
+        if (!empty($role_key)) {
+            $condition[] = ['role_key', 'like', '%' . $role_key . '%'];
+        }
+
+        // 状态搜索
+        if (is_numeric($status)) {
+            $condition['status'] = intval($status);
+        }
+
+        // 查询列表
+        $list = Db::name('sys_account_role_key')
+            ->where($condition)
+            ->order('displayorder desc, id desc')
+            ->page($this->pIndex, $this->pSize)
+            ->select()
+            ->toArray();
+
+        // 格式化创建时间
+        foreach ($list as &$item) {
+            $item['createtime'] = !empty($item['createtime']) ? date('Y-m-d H:i', $item['createtime']) : '--';
+        }
+        unset($item);
+
+        // 总记录数
+        $total = Db::name('sys_account_role_key')
+            ->where($condition)
+            ->count();
+
+        $pager = pagination2($total, $this->pIndex, $this->pSize);
+
+        $result = [
+            'list'      => $list,
+            'total'     => $total,
+            'pager'     => $pager,
+            'name'      => $name,
+            'role_key'  => $role_key,
+            'status'    => $status,
+        ];
+
+        return $this->template('perm/rolekey/list', $result);
+    }
+
+    // 角色标识管理 - 添加/编辑
+    public function rolekeyPost()
+    {
+        $id = intval($this->params['id'] ?? 0);
+        // 编辑仅允许访问当前商户的有效记录，避免更新其他商户或已删除的标识。
+        $item = Db::name('sys_account_role_key')->where(['id' => $id, 'uniacid' => (int)$this->uniacid, 'deleted' => 0])->find();
+        if ($id > 0 && !$item) {
+            $this->error('角色标识不存在或已删除');
+        }
+
+        if ($this->request->isPost()) {
+            $name = trim((string)($this->params['name'] ?? ''));
+            $role_key = trim((string)($this->params['role_key'] ?? ''));
+            $description = trim((string)($this->params['description'] ?? ''));
+            $displayorder = intval($this->params['displayorder'] ?? 0);
+            $status = intval($this->params['status'] ?? 1);
+
+            // 验证标识名称
+            if (empty($name)) {
+                $this->error('标识名称不能为空');
+            }
+
+            // 验证标识键值
+            if (empty($role_key)) {
+                $this->error('标识键值不能为空');
+            }
+
+            // 标识键值格式验证（只允许字母、数字、下划线、横线）
+            if (!preg_match('/^[a-zA-Z0-9_-]+$/', $role_key)) {
+                $this->error('标识键值只能包含字母、数字、下划线和横线');
+            }
+
+            // 标识键值长度验证
+            if (strlen($role_key) > 64) {
+                $this->error('标识键值长度不能超过64个字符');
+            }
+
+            // 检查标识键值是否重复（同一商户下）
+            // 编辑时：如果role_key未修改则跳过检查；如果修改了则检查是否与其他记录重复
+            if ($id > 0 && !empty($item)) {
+                // 编辑模式：role_key未变化时不检查
+                if ($role_key !== $item['role_key']) {
+                    $condition = [
+                        'uniacid'  => $this->uniacid,
+                        'role_key' => $role_key,
+                    ];
+                    // 唯一键包含已删除记录，编辑时也必须检查全部占用记录。
+                    $exists = Db::name('sys_account_role_key')->where($condition)->where('id', '<>', $id)->find();
+                    if ($exists) {
+                        $this->error('该标识键值已存在，请使用其他键值');
+                    }
+                }
+            } else {
+                // 新增模式：包含软删除记录，命中后复用原记录而非再次插入。
+                $condition = [
+                    'uniacid'  => $this->uniacid,
+                    'role_key' => $role_key,
+                ];
+                $exists = Db::name('sys_account_role_key')->where($condition)->find();
+                if ($exists && (int)$exists['deleted'] === 0) {
+                    $this->error('该标识键值已存在，请使用其他键值');
+                }
+            }
+
+            $data = [
+                'uniacid'     => (int)$this->uniacid,
+                'name'        => $name,
+                'role_key'    => $role_key,
+                'description' => $description,
+                'displayorder'=> $displayorder,
+                'status'      => $status,
+            ];
+
+            if (!empty($id)) {
+                // 编辑
+                $data['updatetime'] = time();
+                Db::name('sys_account_role_key')->where(['id' => $id, 'uniacid' => (int)$this->uniacid, 'deleted' => 0])->update($data);
+            } elseif ($exists) {
+                // 恢复同商户同键的软删除记录，更新本次表单内容并保留原 ID、创建时间。
+                $data['deleted'] = 0;
+                $data['updatetime'] = time();
+                $restored = Db::name('sys_account_role_key')
+                    ->where(['id' => (int)$exists['id'], 'uniacid' => (int)$this->uniacid, 'deleted' => 1])
+                    ->update($data);
+                // 并发恢复只允许一次成功，避免覆盖另一个请求已经恢复的有效记录。
+                if (!$restored) {
+                    $this->error('该标识已恢复或状态已变化，请刷新后重试');
+                }
+            } else {
+                // 新增
+                $data['createtime'] = time();
+                $data['updatetime'] = time();
+                Db::name('sys_account_role_key')->insert($data);
+            }
+
+            $this->success(['url' => webUrl('perm/rolekey')]);
+        }
+
+        return $this->template('perm/rolekey/post', [
+            'item' => $item,
+        ]);
+    }
+
+    // 角色标识管理 - 删除
+    public function rolekeyDelete()
+    {
+        $id = intval($this->params["id"]);
+
+        if (empty($id)) {
+            $id = $this->params["ids"];
+        }
+
+        if (empty($id)) {
+            show_json(0, ["message" => "参数错误"]);
+        }
+
+        // 检查是否有角色正在使用该标识
+        $roleUsing = Db::name("sys_account_perm_role")
+            ->where(['role_key' => Db::name('sys_account_role_key')->where(['id' => $id])->value('role_key'), 'uniacid' => $this->uniacid, 'deleted' => 0])
+            ->count();
+        if ($roleUsing > 0) {
+            show_json(0, ["message" => "该标识已被角色使用，请先修改角色的标识后再删除"]);
+        }
+
+        $items = Db::name("sys_account_role_key")->where(['id' => $id])->select();
+        foreach ($items as $item) {
+            Db::name("sys_account_role_key")->where("id", '=', $item['id'])->update(['deleted' => 1]);
+        }
+
+        $this->success(["url" => referer()]);
+    }
+
+    // 角色标识管理 - 状态切换
+    public function rolekeyChange()
+    {
+        $id = intval($this->params["id"]);
+
+        if (empty($id)) {
+            $id = $this->params["ids"];
+        }
+
+        if (empty($id)) {
+            show_json(0, ["message" => "参数错误"]);
+        }
+
+        $type = trim($this->params["type"]);
+        $value = trim($this->params["value"]);
+
+        // 只允许修改的字段
+        $allowedFields = ['status', 'displayorder'];
+        if (!in_array($type, $allowedFields)) {
+            show_json(0, ["message" => "不允许修改的字段"]);
+        }
+
+        $items = Db::name("sys_account_role_key")->where(['id' => $id])->select();
+        foreach ($items as $item) {
+            Db::name("sys_account_role_key")->where("id", '=', $item['id'])->update([$type => $value]);
+        }
+
+        $this->success();
+    }
+
     public function roleChange()
     {
         $id = intval($this->params["id"]);
@@ -895,7 +1474,7 @@ class Perm extends AdminBaseController
 
         // 5. 不能包含用户名（如果提供了用户名）
         if (!empty($username) && stripos($password, $username) !== false) {
-            return '密码过于简单，不能包含用户名';
+            return '密码过于简单，不能包含账号名称';
         }
 
         // 6. 检查字符重复性（不能有超过6个相同字符）
@@ -912,6 +1491,43 @@ class Perm extends AdminBaseController
         }
 
         return true;
+    }
+
+    /**
+     * 获取未绑定教师的列表（用于员工管理绑定教师）
+     */
+    public function getUnboundTeachers()
+    {
+        try {
+            $keyword = trim($this->params['keyword'] ?? '');
+
+            // 查询未绑定的教师
+            $query = Db::name('sz_jiaowu_teacher')
+                ->where('uniacid', $this->uniacid)
+                ->whereNull('deletetime')
+                ->where('sys_user_id', 0);
+
+            if (!empty($keyword)) {
+                $query->where(function ($q) use ($keyword) {
+                    $q->where('name', 'like', '%' . $keyword . '%')
+                        ->whereOr('mobile', 'like', '%' . $keyword . '%');
+                });
+            }
+
+            $teachers = $query->field('id, name, mobile, teacher_no')->select()->toArray();
+
+            return json([
+                'code' => 1,
+                'msg' => '获取成功',
+                'data' => $teachers,
+            ]);
+        } catch (\Exception $e) {
+            return json([
+                'code' => 0,
+                'msg' => '获取教师列表失败：' . $e->getMessage(),
+                'data' => [],
+            ]);
+        }
     }
 
 }

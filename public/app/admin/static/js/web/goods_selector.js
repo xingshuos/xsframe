@@ -52,7 +52,9 @@ define(["js/web/biz"], function(biz) {
                 url: url,
                 async: false,
                 success: function(htm) {
-                    $('#goods-selector-modal').empty().html(htm);
+                    // 使用 DOMPurify 过滤 AJAX 返回的 HTML，防止 XSS
+                    var sanitized = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(htm) : htm;
+                    $('#goods-selector-modal').empty().html(sanitized);
                     return
                 }
             });
@@ -221,7 +223,9 @@ define(["js/web/biz"], function(biz) {
                         url: url,
                         async: false,
                         success: function(htm) {
-                            $('#goods-selector-modal').empty().html(htm);
+                            // 使用 DOMPurify 过滤 AJAX 返回的 HTML，防止 XSS
+                            var sanitized = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(htm) : htm;
+                            $('#goods-selector-modal').empty().html(sanitized);
                             model.loaded = 1;
                             return
                         }
@@ -451,7 +455,9 @@ define(["js/web/biz"], function(biz) {
                 platform: model.platform,
             },
             success: function(htm) {
-                model.ele.find(".content").empty().html(htm);
+                // 使用 DOMPurify 过滤 AJAX 返回的 HTML，防止 XSS
+                var sanitized = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(htm) : htm;
+                model.ele.find(".content").empty().html(sanitized);
                 model.selectStatus()
             },
         })

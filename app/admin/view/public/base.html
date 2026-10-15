@@ -20,7 +20,7 @@
 
     <!--原始样式-->
     <link rel="stylesheet" href="__ADMIN_CSS__/upload.css?t=20241122">
-    <link rel="stylesheet" href="__ADMIN_CSS__/common.css?t=20241122">
+    <link rel="stylesheet" href="__ADMIN_CSS__/common.css?t=20260713b">
 
     <!--后台装修-->
     <link href="__ADMIN_CSS__/admin.css?v=4.1.0" rel="stylesheet">
@@ -51,10 +51,12 @@
 
 
     {block name='baseScript'}
-    <script>var require = {urlArgs: 'v=20211031'};</script>
+    <script>var require = {urlArgs: 'v=20260710'};</script>
     <script src="__ADMIN_FONTS__/shop/iconfont.js"></script>
-    <script type="text/javascript" src="__ADMIN_COMPONENT__/jquery/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" src="__ADMIN_JS__/web/util.js"></script>
+    <script type="text/javascript" src="__ADMIN_COMPONENT__/jquery/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="__ADMIN_COMPONENT__/jquery/jquery-migrate-3.4.1.min.js"></script>
+    <script type="text/javascript" src="__ADMIN_COMPONENT__/purify/purify.min.js"></script>
+    <script type="text/javascript" src="__ADMIN_JS__/web/util.js?v=202609160004"></script>
     <script type="text/javascript" src="__ADMIN_COMPONENT__/bootstrap/bootstrap.min.js"></script>
     <script type="text/javascript" src="__ADMIN_JS__/web/common.min.js"></script>
     <script type="text/javascript" src="__ADMIN_JS__/require.js"></script>
@@ -339,14 +341,6 @@
     {/block}
 </head>
 <style>
-    .wb-container {
-        margin: 0 0 0 130px;
-    }
-
-    .wb-nav ~ .wb-subnav ~ .wb-container {
-        margin-right: 0;
-    }
-
     .wb-header .dropdown-menu > li {
         width: 100%;
     }
@@ -471,7 +465,26 @@
     }
 
     .no-scroll {
-        overflow: hidden;
+    overflow: hidden;
+}
+</style>
+<style>
+    /* 移除导航菜单焦点边框 */
+    a:focus,
+    a:focus-visible,
+    .wb-nav a:focus,
+    .wb-nav a:focus-visible,
+    .wb-nav li:focus,
+    .wb-nav li:focus-visible,
+    .wb-nav a:active,
+    .wb-nav li:active,
+    .wb-header a:focus,
+    .wb-header a:focus-visible,
+    .wb-header li:focus,
+    .wb-header li:focus-visible {
+        outline: none !important;
+        box-shadow: none !important;
+        border-color: transparent !important;
     }
 </style>
 {block name='style'}{/block}

@@ -91,7 +91,7 @@ define(['bootstrap', 'webuploader', 'util', 'filestyle','jquery.ui'], function (
 
             this.options = $.extend({}, this.defaultoptions, options);
 
-            console.log('options',this.options)
+            // console.log('options',options)
 
             this.options.callback = callback;
 

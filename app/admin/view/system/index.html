@@ -244,7 +244,16 @@
 <script>
     function windowOpen(module,url) {
         $.post("{:webUrl('system/setAccountDefaultModule')}",{uniacid:"{$uniacid}",module:module}, function (json) {
-            window.location.href = url;
+            if (json && json.status == 1) {
+                window.location.href = url;
+                return;
+            }
+            var message = json && json.result && json.result.message ? json.result.message : '当前账号没有该应用的访问权限';
+            if (typeof Toastr !== 'undefined') {
+                Toastr.error(message);
+            } else {
+                alert(message);
+            }
         }, 'json')
     }
 

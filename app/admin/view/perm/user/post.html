@@ -14,14 +14,6 @@
     <span>当前位置：<span class="text-primary">{if !empty($item['id'])}编辑{else}添加{/if}员工 <small>{if !empty($item['id'])}修改【{$item['username']}】{/if}</small></span></span>
 </div>
 <div class="page-content">
-    {if $item['id']}
-    <div class="page-sub-toolbar">
-        <span class=''>
-            <a class="btn btn-primary btn-sm" href="{:webUrl('perm/userPost')}">添加新员工</a>
-            <!-- <a class="btn btn-default btn-sm" href="{:webUrl('perm/role')}">&nbsp;&nbsp;角色管理&nbsp;&nbsp;</a> -->
-        </span>
-    </div>
-    {/if}
     <form id="dataform" action="" method="post" class="form-horizontal form-validate" >
         <input type="hidden" name="id" value="{$item['id']}" />
 
@@ -54,34 +46,12 @@
         <div class="form-group">
             <label class="col-lg control-label">所属角色</label>
             <div class="col-sm-9 col-xs-12">
-                <input type='hidden' id='userid' name='roleid' value="{$role['id']}" />
-                <div class='input-group'>
-                    <input type="text" name="user" maxlength="30" value="{$role['rolename']}" id="user" class="form-control" readonly />
-                    <div class='input-group-btn'>
-                        <button class="btn btn-default" type="button" onclick="popwin = $('#modal-module-menus1').modal();">选择角色</button>
-                        <button class="btn btn-danger" type="button" onclick="$('#userid').val('');$('#user').val('');">清除选择</button>
-                    </div>
-                </div>
-                <span class='help-block'>如果您选择了角色，则此用户本身就继承了此角色的所有权限</span>
-                <div id="modal-module-menus1"  class="modal fade" tabindex="-1">
-                    <div class="modal-dialog" style='width: 920px;'>
-                        <div class="modal-content">
-                            <div class="modal-header"><button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button><h3>选择角色</h3></div>
-                            <div class="modal-body" style="padding:30px;">
-                                <div class="row">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" name="keyword" value="" id="search-kwd1" placeholder="请输入角色名称" />
-                                        <span class='input-group-btn'><button type="button" class="btn btn-default" onclick="search_users();">搜索</button></span>
-                                    </div>
-                                </div>
-                                <div id="module-menus1" style="padding-top:5px;"></div>
-                            </div>
-                            <div class="modal-footer"><a href="#" class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</a></div>
-                        </div>
-
-                    </div>
-                </div>
-                <!--<div class='form-control-static'>{$user['username']}</div>-->
+                <select id="roleSelect" name="roleid[]" class="form-control "  style="width:100%;" data-placeholder="请选择角色（可多选）">  <!-- select2 multiple="multiple" -->
+                    {foreach $roleOptions as $roleOpt}
+                    <option value="{$roleOpt['id']}" data-perms="{$roleOpt['perms']}" {if in_array($roleOpt['id'], $selectedRoleIds)}selected{/if}>{$roleOpt['rolename']}</option>
+                    {/foreach}
+                </select>
+                <!-- <span class='help-block'>可为同一员工分配多个角色，员工将继承所选全部角色的权限并集；编辑时保留原主角色，取消原主角色后以当前提交的第一个角色为主角色。支持搜索筛选</span> -->
             </div>
         </div>
 
@@ -107,6 +77,44 @@
                 <!--<div class='form-control-static'>{$item['mobile']}</div>-->
             </div>
         </div>
+
+        <!-- 关联教师 -->
+        <div class="form-group">
+            <label class="col-lg control-label">关联教师</label>
+            <div class="col-sm-9 col-xs-12">
+                {if $boundTeacher}
+                <div class="bound-teacher-info" style="padding: 10px 15px; background: #f0f9ff; border: 1px solid #409EFF; border-radius: 6px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <div>
+                            <span style="font-weight: 600; color: #333;">{$boundTeacher.name}</span>
+                            <span style="color: #999; margin-left: 10px;">{$boundTeacher.mobile}</span>
+                            {if $boundTeacher.teacher_no}<span style="color: #999; margin-left: 10px;">编号：{$boundTeacher.teacher_no}</span>{/if}
+                        </div>
+                        <div>
+                            <span class="text-info" style="font-size: 12px;"><i class="fa fa-link"></i> 已绑定</span>
+                            <a href="javascript:;" id="unbind-teacher" style="margin-left: 15px; color: #f56c6c; font-size: 12px;"><i class="fa fa-unlink"></i> 解除绑定</a>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" name="teacher_id" id="teacher-id" value="{$boundTeacher.id}">
+                {else}
+                <div style="display: flex; align-items: center;">
+                    <div id="selected-teacher-display" style="display: none; padding: 8px 15px; background: #f0f9ff; border: 1px solid #409EFF; border-radius: 6px; margin-right: 10px; flex: 1;">
+                        <span id="selected-teacher-name" style="font-weight: 600; color: #333;"></span>
+                        <span id="selected-teacher-mobile" style="color: #999; margin-left: 10px;"></span>
+                    </div>
+                    <button type="button" id="select-teacher-btn" class="btn btn-default">
+                        <i class="fa fa-search"></i> 选择教师
+                    </button>
+                    <a href="javascript:;" id="clear-teacher" style="display: none; margin-left: 10px; color: #999;">清除</a>
+                </div>
+                <input type="hidden" name="teacher_id" id="teacher-id" value="0">
+                <p class="help-block">点击按钮选择未绑定的教师进行关联</p>
+                {/if}
+            </div>
+        </div>
+        <!-- 关联教师结束 -->
+
         <div class="form-group">
             <label class="col-lg control-label">员工状态</label>
             <div class="col-sm-9  col-xs-12">
@@ -118,12 +126,13 @@
                 </label>
             </div>
         </div>
-        <div class="form-group">
+
+        <!-- <div class="form-group">
             <label class="col-lg control-label">关联会员</label>
             <div class="col-sm-9  col-xs-12">
                 {:tpl_selector('mid',array('key' => 'id','text'=>'realname1','value'=>$item['realname1'],'thumb' => 'avatar','preview'=>true,'readonly'=>true,'multi'=>0, 'required'=>false,'placeholder'=>'请选择用户信息','buttontext'=>'选择用户', 'items'=>$memberInfo,'url'=>webUrl('perm/memberQuery')))}
             </div>
-        </div>
+        </div> -->
 
         <div class="form-group">
             <label class="col-lg control-label">截止时间</label>
@@ -157,70 +166,290 @@
     </form>
 </div>
 
-<script language='javascript'>
-    $('#xiangqing').click(function(){
-        $('#xiangqing').addClass("hidden");
-        $('#passwordGroup').show();
-        $('#mima').focus();
-    })
+<a href="{:webUrl('perm/user',['module' => $_GET['module']])}" class="btn btn-default" style="position:fixed;right:30px;bottom:30px;z-index:999;padding:10px 15px;border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,0.15);">
+    <i class="icon icon-arrow-left"></i> 返回列表
+</a>
 
-    $('#togglePassword').click(function(){
-        var input = $('#mima');
-        var button = $(this);
-        
-        if (input.attr("type") === "password") {
-            input.attr("type", "text");
-            button.html('<i class="fa fa-eye-slash"></i> 隐藏');
-        } else {
-            input.attr("type", "password");
-            button.html('<i class="fa fa-eye"></i> 显示');
+<script>
+    require(['bootstrap', 'jquery'], function(){
+
+        // 密码显示/隐藏切换
+        $('#xiangqing').click(function(){
+            $('#xiangqing').addClass("hidden");
+            $('#passwordGroup').show();
+            $('#mima').focus();
+        });
+
+        $('#togglePassword').click(function(){
+            var input = $('#mima');
+            var button = $(this);
+
+            if (input.attr("type") === "password") {
+                input.attr("type", "text");
+                button.html('<i class="fa fa-eye-slash"></i> 隐藏');
+            } else {
+                input.attr("type", "password");
+                button.html('<i class="fa fa-eye"></i> 显示');
+            }
+        });
+
+        // 更新角色权限（多角色：取所有已选角色权限的并集）
+        function updateRolePerms(rolePerms) {
+            // 0. 先记录用户手动勾选（非 disabled）的额外权限，避免增删角色时被清空
+            var userExtraPerms = [];
+            $('#role-perm :checkbox').each(function(){
+                if (this.checked && !this.disabled && this.value) {
+                    userExtraPerms.push(this.value);
+                }
+            });
+
+            // 1. 重置所有权限 checkbox
+            $('#role-perm :checkbox').each(function(){
+                this.disabled = false;
+                this.checked = false;
+                var $label = $(this).closest('label');
+                // 同时移除 JS 动态添加的 .perm-role-tag 和 PHP 服务端渲染的无类名 [角色] 标签，
+                // 避免增删角色后出现重复的 [角色][角色] 显示
+                $label.find('span.perm-role-tag').remove();
+                $label.find('> span[style*="color:#999"]').filter(function() {
+                    return $.trim($(this).text()) === '[角色]';
+                }).remove();
+            });
+
+            // 2. 根据角色权限并集勾选并锁定
+            $('#role-perm :checkbox').each(function(){
+                var _this = $(this);
+                var permValue = _this.val();
+
+                if( permValue && rolePerms.indexOf(permValue) !== -1 ){
+                    this.disabled = true;
+                    this.checked = true;
+                    var $label = _this.closest('label');
+                    if ($label.find('span.perm-role-tag').length === 0) {
+                        $label.append(' <span class="perm-role-tag" style="color:#999">[角色]</span>');
+                    }
+                }
+            });
+
+            // 3. 还原用户额外权限（角色已覆盖的无需还原，其 checkbox 已是勾选+锁定态）
+            $('#role-perm :checkbox').each(function(){
+                if (!this.disabled && this.value && userExtraPerms.indexOf(this.value) !== -1) {
+                    this.checked = true;
+                }
+            });
         }
+
+        // 收集当前所选全部角色的权限并集
+        function collectSelectedRolePerms() {
+            var merged = [];
+            $('#roleSelect').find(':selected').each(function(){
+                var perms = ($(this).data('perms') || '').toString().split(',');
+                for (var i = 0; i < perms.length; i++) {
+                    if (perms[i] && merged.indexOf(perms[i]) === -1) {
+                        merged.push(perms[i]);
+                    }
+                }
+            });
+            return merged;
+        }
+
+        // 使用 change 事件代替 select2:select，更可靠
+        $('#roleSelect').on('change', function(){
+            // 多选场景下取消勾选也会触发 change，统一按并集重算（空集合即为全部重置）
+            updateRolePerms(collectSelectedRolePerms());
+        });
+
+        // ========== 教师选择相关 ==========
+
+        // 选择教师按钮点击事件
+        $('#select-teacher-btn').on('click', function() {
+            loadUnboundTeachers();
+        });
+
+        // 加载未绑定教师列表
+        function loadUnboundTeachers() {
+            $.ajax({
+                url: '{:url("perm/getUnboundTeachers")}',
+                type: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    if (res.code === 1 && res.data) {
+                        showTeacherSelectModal(res.data);
+                    } else {
+                        tip.msgbox.err(res.msg || '获取教师列表失败');
+                    }
+                },
+                error: function() {
+                    tip.msgbox.err('请求失败，请稍后重试');
+                }
+            });
+        }
+
+        // 显示教师选择弹窗（使用 Bootstrap Modal）
+        function showTeacherSelectModal(teachers) {
+            var html = '<div class="modal fade" id="teacherSelectModal" tabindex="-1" role="dialog">' +
+                '<div class="modal-dialog modal-lg" style="width: 80%; height: 90%;">' +
+                '<div class="modal-content" style="height: 100%;">' +
+                '<div class="modal-header">' +
+                '<button type="button" class="close" data-dismiss="modal">&times;</button>' +
+                '<h4 class="modal-title"><i class="fa fa-search"></i> 选择教师进行绑定</h4>' +
+                '</div>' +
+                '<div class="modal-body" style="height: calc(100% - 120px); overflow-y: auto;">' +
+                '<div class="search-box" style="margin-bottom: 15px;">' +
+                '<input type="text" class="form-control" id="teacher-search-input" placeholder="搜索教师姓名、手机号...">' +
+                '</div>' +
+                '<div class="teacher-list">';
+
+            if (teachers.length === 0) {
+                html += '<div style="text-align: center; padding: 40px 0; color: #999;">' +
+                    '<i class="fa fa-inbox" style="font-size: 48px; color: #ddd;"></i>' +
+                    '<p style="margin-top: 10px;">暂无可绑定的教师</p>' +
+                    '<p style="font-size: 12px;">（所有教师已绑定或没有符合条件的教师）</p>' +
+                    '</div>';
+            } else {
+                $.each(teachers, function(i, teacher) {
+                    html += '<div class="teacher-item" data-id="' + teacher.id + '" data-name="' + (teacher.name || '') + '" data-mobile="' + (teacher.mobile || '') + '" data-teacher-no="' + (teacher.teacher_no || '') + '" style="padding: 12px 15px; border: 1px solid #e5e5e5; border-radius: 6px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s;">' +
+                        '<div style="font-weight: 600; font-size: 14px; color: #333;">' + (teacher.name || '未设置') + '</div>' +
+                        '<div style="font-size: 12px; color: #999; margin-top: 4px;">手机号：' + (teacher.mobile || '-') + (teacher.teacher_no ? ' | 编号：' + teacher.teacher_no : '') + '</div>' +
+                        '</div>';
+                });
+            }
+
+            html += '</div></div>' +
+                '<div class="modal-footer">' +
+                '<button type="button" class="btn btn-primary" id="confirm-teacher-btn" disabled>确定</button>' +
+                '<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>' +
+                '</div>' +
+                '</div></div></div>';
+
+            // 移除已存在的弹窗
+            $('#teacherSelectModal').remove();
+
+            // 添加到页面并显示
+            $('body').append(html);
+            $('#teacherSelectModal').modal('show');
+
+            // 搜索功能
+            $('#teacher-search-input').on('input', function() {
+                var keyword = $(this).val().toLowerCase();
+                $('.teacher-item').each(function() {
+                    var $item = $(this);
+                    var text = ($item.data('name') + ' ' + $item.data('mobile') + ' ' + $item.data('teacher-no')).toLowerCase();
+                    if (text.indexOf(keyword) !== -1) {
+                        $item.show();
+                    } else {
+                        $item.hide();
+                    }
+                });
+            });
+
+            // 点击选择教师
+            $(document).on('click', '.teacher-item', function() {
+                $('.teacher-item').removeClass('selected').css('border-color', '#e5e5e5').css('background-color', '#fff');
+                $(this).addClass('selected').css('border-color', '#409EFF').css('background-color', '#ecf5ff');
+                $('#confirm-teacher-btn').prop('disabled', false);
+            });
+
+            // 确定按钮
+            $('#confirm-teacher-btn').on('click', function() {
+                var $selected = $('.teacher-item.selected');
+                if ($selected.length === 0) {
+                    tip.msgbox.err('请选择一个教师');
+                    return;
+                }
+                var teacherId = $selected.data('id');
+                var teacherName = $selected.data('name');
+                var teacherMobile = $selected.data('mobile');
+
+                // 填充表单
+                $('#teacher-id').val(teacherId);
+                $('#selected-teacher-name').text(teacherName);
+                $('#selected-teacher-mobile').text(teacherMobile);
+                $('#selected-teacher-display').show();
+                $('#select-teacher-btn').hide();
+                $('#clear-teacher').show();
+
+                tip.msgbox.suc('已选择教师：' + teacherName);
+                $('#teacherSelectModal').modal('hide');
+            });
+
+            // 鼠标悬停效果
+            $(document).on('mouseenter', '.teacher-item', function() {
+                if (!$(this).hasClass('selected')) {
+                    $(this).css('border-color', '#409EFF').css('background-color', '#f0f9ff');
+                }
+            });
+            $(document).on('mouseleave', '.teacher-item', function() {
+                if (!$(this).hasClass('selected')) {
+                    $(this).css('border-color', '#e5e5e5').css('background-color', '#fff');
+                }
+            });
+        }
+
+        // 清除选择的教师
+        $('#clear-teacher').on('click', function() {
+            $('#teacher-id').val(0);
+            $('#selected-teacher-display').hide();
+            $('#select-teacher-btn').show();
+            $(this).hide();
+        });
+
+        // 解除绑定
+        $('#unbind-teacher').on('click', function() {
+            if (confirm('确定要解除与该教师的绑定吗？')) {
+                // 替换为未绑定状态的HTML结构
+                var unboundHtml = 
+                    '<div style="display: flex; align-items: center;">' +
+                    '<div id="selected-teacher-display" style="display: none; padding: 8px 15px; background: #f0f9ff; border: 1px solid #409EFF; border-radius: 6px; margin-right: 10px; flex: 1;">' +
+                    '<span id="selected-teacher-name" style="font-weight: 600; color: #333;"></span>' +
+                    '<span id="selected-teacher-mobile" style="color: #999; margin-left: 10px;"></span>' +
+                    '</div>' +
+                    '<button type="button" id="select-teacher-btn" class="btn btn-default">' +
+                    '<i class="fa fa-search"></i> 选择教师' +
+                    '</button>' +
+                    '<a href="javascript:;" id="clear-teacher" style="display: none; margin-left: 10px; color: #999;">清除</a>' +
+                    '</div>' +
+                    '<input type="hidden" name="teacher_id" id="teacher-id" value="0">' +
+                    '<p class="help-block">点击按钮选择未绑定的教师进行关联</p>';
+                
+                // 替换整个内容
+                $('.form-group:has(#unbind-teacher) .col-sm-9').html(unboundHtml);
+                
+                // 重新绑定事件
+                bindTeacherSelectEvents();
+                
+                tip.msgbox.suc('已解除绑定，可重新选择教师');
+            }
+        });
+        
+        // 绑定教师选择相关事件（用于动态生成的元素）
+        function bindTeacherSelectEvents() {
+            // 选择教师按钮点击事件
+            $('#select-teacher-btn').off('click').on('click', function() {
+                loadUnboundTeachers();
+            });
+            
+            // 清除选择的教师
+            $('#clear-teacher').off('click').on('click', function() {
+                $('#teacher-id').val(0);
+                $('#selected-teacher-display').hide();
+                $('#select-teacher-btn').show();
+                $(this).hide();
+            });
+        }
+
     });
-
-    function search_users() {
-        $("#module-menus1").html("正在搜索....");
-        $.get('{:webUrl("perm/roleQuery")}', {
-            keyword: $.trim($('#search-kwd1').val())
-        }, function(dat){
-            $('#module-menus1').html(dat);
-        });
-    }
-
-    function select_role(o) {
-        $("#userid").val(o.id);
-        $("#user").val( o.rolename );
-        console.log(o)
-        let perms = o.perms.split(',');
-        $(':checkbox').removeAttr('disabled').removeAttr('checked').each(function(){
-
-            var _this = $(this);
-            var perm = '';
-            if( _this.data('group') ){
-                perm+=_this.data('group');
-            }
-            if( _this.data('parent') ){
-                if (_this.data('parent') != 'text') {
-                    perm += "." + _this.data('parent');
-                }
-            }
-            if( _this.data('son') ){
-                if (_this.data('son') != 'text') {
-                    perm += "." + _this.data('son');
-                }
-            }
-            if( _this.data('grandson') ){
-                if (_this.data('grandson') != 'text') {
-                    perm += "." + _this.data('grandson');
-                }
-            }
-            if( $.arrayIndexOf(perms,perm)!=-1){
-                $(this).attr('disabled',true).get(0).checked =true;
-            }
-
-        });
-
-        $(".close").click();
-    }
 </script>
+
+<style>
+    .teacher-item:hover {
+        border-color: #409EFF !important;
+        background-color: #f0f9ff !important;
+    }
+    .teacher-item.selected {
+        border-color: #409EFF !important;
+        background-color: #ecf5ff !important;
+    }
+</style>
 
 {/block}

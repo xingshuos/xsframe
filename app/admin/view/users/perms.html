@@ -146,7 +146,8 @@
         $('.perm-all').click(function () {
             let checked = $(this).get(0).checked;
             let group = $(this).data('group');
-            $(".perm-item[data-group='" + group + "'],.perm-all-item[data-group='" + group + "']").each(function () {
+            // 只操作可编辑的 checkbox（排除 disabled 的角色权限）
+            $(".perm-item[data-group='" + group + "'],.perm-all-item[data-group='" + group + "']").not(':disabled').each(function () {
                 $(this).get(0).checked = checked;
             })
         });
@@ -159,19 +160,20 @@
             let grandson = $(this).data('grandson');
             let isGroup = $(this).hasClass('groups');
 
-            $(this).parents("span").find(".perm-item").each(function () {
+            // 只操作可编辑的 checkbox
+            $(this).parents("span").find(".perm-item").not(':disabled').each(function () {
                 $(this).get(0).checked = checked;
             });
 
             if( isGroup ){
-                $(this).parents(".menu-group").find(".groups-item").each(function () {
+                $(this).parents(".menu-group").find(".groups-item").not(':disabled').each(function () {
                     $(this).get(0).checked = checked;
                 });
-                $(this).parents(".menu-group").find(".perm-item").each(function () {
+                $(this).parents(".menu-group").find(".perm-item").not(':disabled').each(function () {
                     $(this).get(0).checked = checked;
                 });
             }else{
-                $(this).parents(".menu-group").find(".groups").each(function () {
+                $(this).parents(".menu-group").find(".groups").not(':disabled').each(function () {
                     $(this).get(0).checked = checked;
                 });
             }
@@ -186,15 +188,17 @@
             let grandson = $(this).data('grandson');
             let check = false;
 
-            $(this).closest('span').find(".perm-item").each(function () {
+            // 检查同一 span 内的可编辑 perm-item 是否有勾选
+            $(this).closest('span').find(".perm-item").not(':disabled').each(function () {
                 if ($(this).get(0).checked) {
                     check = true;
                     return false;
                 }
             });
 
+            // 更新对应的二级菜单状态（如果它不是 disabled）
             let allitem = $(this).parents("span").find(".perm-all-item");
-            if (allitem.length === 1) {
+            if (allitem.length === 1 && !allitem.prop('disabled')) {
                 allitem.get(0).checked = check;
             }
 
@@ -208,6 +212,37 @@
             }
             else {
                 $($(this).find("label").get(0)).wrap("<div class='col-sm-12'></div>");
+            }
+        });
+
+        $(".perm-group").each(function () {
+            let $group = $(this);
+            $group.find('.menu-group').each(function () {
+                let $menuGroup = $(this);
+                let hasChecked = false;
+                $menuGroup.find(":checkbox").not('.groups').not(':disabled').each(function () {
+                    if (this.checked) {
+                        hasChecked = true;
+                        return false;
+                    }
+                });
+                let $level2 = $menuGroup.find('.groups');
+                if ($level2.length > 0 && !$level2.prop('disabled')) {
+                    $level2.get(0).checked = hasChecked;
+                }
+            });
+
+            let group = $group.closest('.panel-collapse').prev('.panel-heading').find('.perm-all').data('group');
+            let hasChecked = false;
+            $group.find('.menu-group').find(":checkbox").not(':disabled').each(function () {
+                if (this.checked) {
+                    hasChecked = true;
+                    return false;
+                }
+            });
+            let $level1 = $(".perm-all[data-group='" + group + "']");
+            if ($level1.length > 0 && !$level1.prop('disabled')) {
+                $level1.get(0).checked = hasChecked;
             }
         });
 
@@ -247,26 +282,31 @@
     });
 
     function group_check(obj) {
-        let isGroup = $(this).hasClass('groups');
-        if( !isGroup ){
-            let check2 = false;
-            $(obj).parents('.menu-group').find(":checkbox").each(function (index, item) {
-                if (item.checked) {
-                    check2 = true;
-                }
-            });
-            let group2 = $(obj).eq(0).data('group');
-            $(obj).parents(".menu-group").find(".groups[data-group=" + group2 + "]").get(0).checked = check2;
+        let $menuGroup = $(obj).closest('.menu-group');
+
+        let check2 = false;
+        $menuGroup.find(":checkbox").not('.groups').not(':disabled').each(function (index, item) {
+            if (item.checked) {
+                check2 = true;
+            }
+        });
+        let $level2Checkbox = $menuGroup.find('.groups');
+        if ($level2Checkbox.length > 0 && !$level2Checkbox.prop('disabled')) {
+            $level2Checkbox.get(0).checked = check2;
         }
 
+        let $permGroup = $(obj).closest('.perm-group');
+        let group = $(obj).eq(0).data('group');
         let check = false;
-        $(obj).parents('.perm-group').find(":checkbox").each(function (index, item) {
+        $permGroup.find('.menu-group').find(":checkbox").not(':disabled').each(function (index, item) {
             if (item.checked) {
                 check = true;
             }
         });
-        let group = $(obj).eq(0).data('group');
-        $(".perm-all[data-group=" + group + "]").get(0).checked = check;
+        let $level1Checkbox = $(".perm-all[data-group='" + group + "']");
+        if ($level1Checkbox.length > 0 && !$level1Checkbox.prop('disabled')) {
+            $level1Checkbox.get(0).checked = check;
+        }
     }
 </script>
 {/if}

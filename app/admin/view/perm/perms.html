@@ -8,24 +8,26 @@
 <!-- </div> -->
 
 {if $action=='userpost'}
-<div class="form-group">
-    <label class="col-lg control-label">查看权限</label>
+<!-- 权限设置：默认限制权限，不允许用户选择 -->
+<div class="form-group" style="display:none;">
+    <label class="col-lg control-label">权限设置</label>
     <div class="col-lg-10">
-        <label class="radio-inline"><input type="radio" name="look_switch" value="0" {if empty($item['look_switch'])}checked="true"{/if} /> 隐藏</label>
-        <label class="radio-inline"><input type="radio" name="look_switch" value="1" {if $item['look_switch'] == 1}checked="true"{/if}/> 查看</label>
+        <input type="hidden" name="is_limit" value="1" />
     </div>
 </div>
+<!--
 <div class="form-group">
     <label class="col-lg control-label">权限设置</label>
     <div class="col-lg-10">
-        <label class="radio-inline"><input type="radio" name="is_limit" value="0" {if empty($item['is_limit'])}checked="true"{/if} /> 不限权限</label>
-        <label class="radio-inline"><input type="radio" name="is_limit" value="1" {if $item['is_limit'] == 1}checked="true"{/if}/> 限定权限</label>
+        <label class="radio-inline"><input type="radio" name="is_limit" value="0" {if $item['is_limit'] === 0}checked="true"{/if} /> 不限权限</label>
+        <label class="radio-inline"><input type="radio" name="is_limit" value="1" {if !isset($item['is_limit']) || $item['is_limit'] == 1}checked="true"{/if}/> 限定权限</label>
         <span class="help-block">注意：不限制权限，用户将拥有已分配应用内的所有菜单权限</span>
     </div>
 </div>
+-->
 {/if}
 
-<div class="form-group" id="app-perm" style="{if empty($item['is_limit']) && $action=='userpost'}display:none;{/if}">
+<!-- <div class="form-group" id="app-perm" style="{if empty($item['is_limit']) && $action=='userpost'}display:none;{/if}">
     <label class="col-lg control-label">应用权限</label>
     <div class="col-sm-9 col-xs-12">
         {foreach $perms['parent'] as $key => $value}
@@ -35,9 +37,9 @@
         {/foreach}
         <span class="help-block">启用应用权限后，用户将拥有该应用的所有权限，级别高于操作权限</span>
     </div>
-</div>
+</div> -->
 
-<div class="form-group" id="role-perm" style="{if empty($item['is_limit']) && $action=='userpost'}display:none;{/if}">
+<div class="form-group" id="role-perm">
     <label class="col-lg control-label">操作权限</label>
     <div class="col-sm-9 col-xs-12">
         <div id="accordion" class="panel-group">
@@ -228,6 +230,37 @@
             }
         });
 
+        $(".perm-group").each(function () {
+            let $group = $(this);
+            $group.find('.menu-group').each(function () {
+                let $menuGroup = $(this);
+                let hasChecked = false;
+                $menuGroup.find(":checkbox").not('.groups').not(':disabled').each(function () {
+                    if (this.checked) {
+                        hasChecked = true;
+                        return false;
+                    }
+                });
+                let $level2 = $menuGroup.find('.groups');
+                if ($level2.length > 0 && !$level2.prop('disabled')) {
+                    $level2.get(0).checked = hasChecked;
+                }
+            });
+
+            let group = $group.closest('.panel-collapse').prev('.panel-heading').find('.perm-all').data('group');
+            let hasChecked = false;
+            $group.find('.menu-group').find(":checkbox").not(':disabled').each(function () {
+                if (this.checked) {
+                    hasChecked = true;
+                    return false;
+                }
+            });
+            let $level1 = $(".perm-all[data-group='" + group + "']");
+            if ($level1.length > 0 && !$level1.prop('disabled')) {
+                $level1.get(0).checked = hasChecked;
+            }
+        });
+
         $("form").submit(function () {
             $(this).attr('stop',1);
             let perms = [];
@@ -260,33 +293,28 @@
     });
 
     function group_check(obj) {
-        let isGroup = $(obj).hasClass('groups');
-        if( !isGroup ){
-            let check2 = false;
-            // 只检查可编辑的 checkbox
-            $(obj).parents('.menu-group').find(":checkbox").not(':disabled').each(function (index, item) {
-                if (item.checked) {
-                    check2 = true;
-                }
-            });
-            let group2 = $(obj).eq(0).data('group');
-            let $level2Checkbox = $(obj).parents(".menu-group").find(".groups[data-group=" + group2 + "]");
-            // 只更新可编辑的二级菜单
-            if ($level2Checkbox.length > 0 && !$level2Checkbox.prop('disabled')) {
-                $level2Checkbox.get(0).checked = check2;
+        let $menuGroup = $(obj).closest('.menu-group');
+
+        let check2 = false;
+        $menuGroup.find(":checkbox").not('.groups').not(':disabled').each(function (index, item) {
+            if (item.checked) {
+                check2 = true;
             }
+        });
+        let $level2Checkbox = $menuGroup.find('.groups');
+        if ($level2Checkbox.length > 0 && !$level2Checkbox.prop('disabled')) {
+            $level2Checkbox.get(0).checked = check2;
         }
 
+        let $permGroup = $(obj).closest('.perm-group');
+        let group = $(obj).eq(0).data('group');
         let check = false;
-        // 只检查可编辑的 checkbox
-        $(obj).parents('.perm-group').find(":checkbox").not(':disabled').each(function (index, item) {
+        $permGroup.find('.menu-group').find(":checkbox").not(':disabled').each(function (index, item) {
             if (item.checked) {
                 check = true;
             }
         });
-        let group = $(obj).eq(0).data('group');
-        let $level1Checkbox = $(".perm-all[data-group=" + group + "]");
-        // 只更新可编辑的一级菜单
+        let $level1Checkbox = $(".perm-all[data-group='" + group + "']");
         if ($level1Checkbox.length > 0 && !$level1Checkbox.prop('disabled')) {
             $level1Checkbox.get(0).checked = check;
         }

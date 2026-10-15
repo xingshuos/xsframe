@@ -14,7 +14,7 @@
                     <div class="input-group">
                         <input type="text" class="form-control search"	placeholder="请输入应用名称、标识、简介等关键词搜索">
                         <span class="input-group-btn">
-							<button type="button" class="btn btn-default pager-nav" page="1">搜索</button>
+							<button type="button" class="btn btn-search pager-nav" data-page="1">搜索</button>
 						</span>
                     </div>
                 </div>
@@ -226,6 +226,13 @@
         margin-left: -1px;
         text-decoration: none;
         border: 1px solid #ddd;
+        cursor: pointer;
+    }
+    /* 分页导航元素（页码/下一页/尾页/跳转/搜索）被 DOMPurify 剥离 href 后不再是超链接，
+       需显式指定 pointer 光标，保证悬停显示小手而非文本光标 */
+    .goods-selector .pager-nav,
+    .goods-selector .pagination>li>a{
+        cursor: pointer;
     }
     .pagination>li input{
 
@@ -261,8 +268,15 @@
         padding: 15px;
     }
     .goods-selector .modal .modal-footer .btn {
-        display: inline-block;
+        /* 用 inline-flex 替代 inline-block，强制中文方块字垂直+水平居中，避免因 line-height 与 padding 几何计算不稳定导致文字偏下 */
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         min-width: 105px;
+        height: 32px;
+        line-height: 1;
+        padding: 0 16px;
+        vertical-align: middle;
     }
 
     .goods-selector .form-control.select2-container .select2-choice {

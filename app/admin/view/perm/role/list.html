@@ -12,13 +12,13 @@
         <input type="hidden" name="module" value="{$_GET['module']}">
 
         <div class="page-toolbar">
-            <div class="col-sm-6">
+            <div class="col-sm-3">
                 <span class="">
                     <a class="btn btn-primary btn-sm" href="{:webUrl('perm/rolePost',['module' => $_GET['module']])}"><i class="icon icon-plus"></i> 添加新角色</a>
                 </span>
             </div>
 
-            <div class="col-sm-6 pull-right">
+            <div class="col-sm-9 pull-right">
                 <div class="input-group">
                     <div class="input-group-select">
                         <select name="status" class='form-control'>
@@ -27,9 +27,19 @@
                             <option value="0" {if $_GPC['status'] == '0'} selected{/if}>禁用</option>
                         </select>
                     </div>
-                    <input type="text" class="input-sm form-control" name='keyword' value="{$_GPC['keyword']}" placeholder="请输入关键词">
+                    <input type="text" class="input-sm form-control" name='keyword' value="{$_GPC['keyword']}" placeholder="角色名称">
+                    <div class="input-group-select">
+                        <select name="role_key" class='form-control select2' style="width: 300px;">
+                            <option value="" {if $role_key == ''} selected{/if}>角色标识</option>
+                            {if !empty($roleKeyOptions)}
+                                {foreach $roleKeyOptions as $opt}
+                                    <option value="{$opt['role_key']}" {if $role_key == $opt['role_key']}selected{/if}>{$opt['name']} ({$opt['role_key']})</option>
+                                {/foreach}
+                            {/if}
+                        </select>
+                    </div>
                     <span class="input-group-btn">
-                        <button class="btn btn-primary" type="submit"> 搜索</button>
+                        <button class="btn btn-search" type="submit"> 搜索</button>
                     </span>
                 </div>
             </div>
@@ -55,6 +65,7 @@
                 </label>
             </th>
             <th style="width: 200px">角色名称</th>
+            <th style="width: 150px;">角色标识</th>
             <th style="width: 150px;">上级角色</th>
             <th style="width: 100px;">员工数量</th>
             <th style="width: 100px;">状态</th>
@@ -71,6 +82,16 @@
                 {/for}
                 {if $row['level'] > 0}├─ {/if}
                 {$row['rolename']}
+            </td>
+            <td>
+                {if !empty($row['role_key'])}
+                    <span class="label label-info">{$row['role_key']}</span>
+                    {if !empty($row['flag_name'])}
+                        <span class="text-muted" style="margin-left: 5px;">({$row['flag_name']})</span>
+                    {/if}
+                {else}
+                    <span class="text-muted">--</span>
+                {/if}
             </td>
             <td>{$row['parent_rolename']}</td>
             <td>{$row['usercount']}</td>
@@ -100,7 +121,7 @@
         </tbody>
         <tfoot>
         <tr>
-            <td colspan="3">
+            <td colspan="4">
                 <div class="input-group-btn">
                     <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('perm/roleChange',array('type' => 'status','value'=>1))}">
                         <i class='icon icon-eye'></i> 启用</button>

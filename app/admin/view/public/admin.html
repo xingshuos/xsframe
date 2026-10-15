@@ -163,7 +163,7 @@
     <ul id="navheight" style="max-height: 100%;height: calc(100% - 70px);overflow: unset;overflow-y: auto;">
 
         {foreach $menusList['menu'] as $key => $sysmenu}
-            <li {if $sysmenu['active'] && !$selSystemNav}class="active"{/if}>
+        <li {if $sysmenu['active'] && !$selSystemNav}class="active"{/if} {if $key === 0}style="margin-top: 15px;"{/if}>
                 <a data-href="{:webUrl($sysmenu['route'])}" class="wb-nav-item" data-module="{$module}" data-route="{$sysmenu['route']}">
                     {if !empty($sysmenu['icon'])}
                     <i class="icon {if strlen($sysmenu['text']) == 9}text-more{/if} {$sysmenu['icon']}"></i>
@@ -191,7 +191,7 @@
 
     <!-- 二级导航 -->
     {if !empty($menusList['submenu']['items'])}
-    <div class="wb-subnav">
+    <div class="wb-subnav no-notice">
         <div style="width: 100%;height: 100%;overflow-y: auto">
 
             <div class="subnav-scene">
@@ -231,6 +231,100 @@
         </div>
     </div>
     {/if}
+
+    <!-- 消息通知 -->
+    <div class="wb-panel" style="display: none !important;"><!-- in -->
+        <div class="panel-group" id="panel-accordion">
+            <div class="panel panel-default">
+                <div class="panel-heading collapsed" data-toggle="collapse" data-parent="#panel-accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                    <h4 class="panel-title">
+                        <i class="icow icow-dingdan"></i> <a class="news">订单消息</a> <span></span>
+                    </h4>
+                </div>
+                <div id="collapseOne" class="panel-collapse collapse" aria-labelledby="headingOne" aria-expanded="false" style="height: 0px;">
+                    <ul class="panel-body">
+                        <li class="panel-list">
+                            <a class="panel-list-text" href="https://admin.lymlart.com/web/index.php?c=site&amp;a=entry&amp;m=ewei_shopv2&amp;do=web&amp;r=order.list.status1">待发货订单 <span class="pull-right text-warning">(8)</span> </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading collapsed" role="tab" id="headingTwo" data-toggle="collapse" data-parent="#panel-accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    <h4 class="panel-title">
+                        <i class="icow icow-gonggao"></i> <a>内部公告</a> <span></span>
+                    </h4>
+                </div>
+                <div id="collapseTwo" class="panel-collapse collapse " role="tabpanel" aria-labelledby="headingTwo" aria-expanded="false">
+                    <ul class="panel-body">
+                        <li class="panel-list small">
+                            <a class="panel-list-text" href="javascript:;" data-toggle="ajaxModal" data-href="https://admin.lymlart.com/web/index.php?c=site&amp;a=entry&amp;m=ewei_shopv2&amp;do=web&amp;r=shop.index.view&amp;id=1" title="这是一个站内信公告">这是一个站内信公告</a>
+                        </li>
+                        <li class="panel-list small" style="padding: 10px;">
+                            <a class="panel-list-text text-center" href="https://admin.lymlart.com/web/index.php?c=site&amp;a=entry&amp;m=ewei_shopv2&amp;do=web&amp;r=shop.index.notice"><span class="text-primary">查看更多</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading collapsed" role="tab" id="headingThree" data-toggle="collapse" data-parent="#panel-accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    <h4 class="panel-title">
+                        <i class="icow icow-yongjinmingxi"></i> <a>佣金提现</a> <span></span>
+                    </h4>
+                </div>
+                <div id="collapseThree" class="panel-collapse collapse " role="tabpanel" aria-labelledby="headingFour" aria-expanded="false">
+                    <ul class="panel-body">
+                        <li class="panel-list">
+                            <div class="panel-list-text text-center">暂无消息提醒</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading collapsed" role="tab" id="headingFour" data-toggle="collapse" data-parent="#panel-accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseThree">
+                    <h4 class="panel-title">
+                        <i class="icow icow-pingjia"></i> <a>评价</a> <span></span>
+                    </h4>
+                </div>
+                <div id="collapseFour" class="panel-collapse collapse " role="tabpanel" aria-labelledby="headingFour" aria-expanded="false">
+                    <ul class="panel-body">
+                        <li class="panel-list">
+                            <div class="panel-list-text text-center">暂无消息提醒</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!--系统更新-->
+            <div class="panel panel-default">
+                <div class="panel-heading collapsed" role="tab" id="headingFive" data-toggle="collapse" data-parent="#panel-accordion" href="#collapseFive" aria-expanded="false" aria-controls="collapseThree">
+                    <h4 class="panel-title">
+                        <i class="icow icow-lingdang1"></i> <a style="position:relative;">系统提示 <i class="systips"></i></a> <span></span>
+                    </h4>
+                </div>
+                <div id="collapseFive" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour" aria-expanded="false" style="height: 0px;">
+                    <ul class="panel-body">
+                        <li class="panel-list">
+                            <div class="panel-list-text nomsg">暂无消息提醒</div>
+                            <div class="panel-list-text upmsg" style="">
+                                <div>检测到更新</div>
+                                <div>新版本 <span id="sysversion">------</span></div>
+                                <div>新版本 <span id="sysrelease">------</span></div>
+                                <div>
+                                    <a class="text-primary" href="https://admin.lymlart.com/web/index.php?c=site&amp;a=entry&amp;m=ewei_shopv2&amp;do=web&amp;r=system.auth.upgrade">立即更新</a>
+                                    <a class="text-warning" href="javascript:check_ewei_shopv2_upgrade_hide();" style="margin-left: 15px;">暂不提醒</a>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <div class="wb-panel-fold">&lt;!&ndash; in &ndash;&gt; -->
+        <!-- <i class="icow icow-info"></i> 消息提醒 -->
+        <!-- <i class="icon icon-angle-double-right"></i> 收起面板 -->
+    <!-- </div>-->
 
 {/if}
 

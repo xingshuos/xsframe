@@ -1,0 +1,164 @@
+{extend name="../../admin/view/public/system"}
+
+{block name='style'}
+<style>
+    .rolekey-name {
+        max-width: 200px;
+        word-break: break-all;
+    }
+
+    .rolekey-key {
+        max-width: 150px;
+        word-break: break-all;
+    }
+</style>
+{/block}
+
+{block name='content'}
+
+<div class="page-header">当前位置：<span class="text-primary">角色标识管理</span></div>
+
+<div class="page-content">
+    <form action="" method="get" class="form-horizontal" role="form">
+        <input type="hidden" name="module" value="{$_GET['module']}">
+
+        <div class="page-toolbar">
+            <div class="col-sm-6">
+                <span class="">
+                    <a class="btn btn-primary btn-sm" href="{:webUrl('perm/rolekeyPost',['module' => $_GET['module']])}"><i class="icon icon-plus"></i> 添加角色标识</a>
+                </span>
+            </div>
+
+            <div class="col-sm-6 pull-right">
+                <div class="input-group">
+                    
+                    <div class="input-group-select">
+                        <select name="status" class='form-control'>
+                            <option value="" {if $status == ''} selected{/if}>状态</option>
+                            <option value="1" {if $status == '1'} selected{/if}>启用</option>
+                            <option value="0" {if $status == '0'} selected{/if}>禁用</option>
+                        </select>
+                    </div>
+
+                    <input type="text" class="input-sm form-control" name='name' value="{$name}" placeholder="标识名称">
+                    <div class="input-group-select"></div>
+                    <input type="text" class="input-sm form-control" name='role_key' value="{$role_key}" placeholder="标识键值">
+                    <span class="input-group-btn">
+                        <button class="btn btn-search" type="submit"> 搜索</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    {if count($list)>0}
+    <!-- 批量操作按钮 -->
+    <div class="page-table-header">
+        <div class="btn-group">
+            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('perm/rolekeyChange',array('type' => 'status','value'=>1))}">
+                <i class='icon icon-eye'></i> 启用</button>
+            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch'  data-href="{:webUrl('perm/rolekeyChange',array('type' => 'status','value'=>0))}">
+                <i class='icon icon-eye-close'></i> 禁用</button>
+            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('perm/rolekeyDelete',['module' => $_GET['module']])}">
+                <i class='icon icon-trash'></i> 删除</button>
+        </div>
+    </div>
+    <table class="table table-hover table-responsive">
+        <thead>
+        <tr>
+            <th style="width: 60px;">
+                <label class='checkbox-inline'>
+                    <input type="checkbox" id="checkAll">
+                </label>
+            </th>
+            <th style="width: 120px;">排序</th>
+            <th style="width: 150px;">标识名称</th>
+            <th style="width: 150px;">标识键值</th>
+            <th style="width: 200px;">描述</th>
+            <th style="width: 100px;">状态</th>
+            <th style="width: 100px;">创建时间</th>
+            <th style="width: 100px;">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {foreach $list as $key=>$row }
+        <tr>
+            <td><input type='checkbox' value="{$row['id']}" class="check-item"/></td>
+            <td class='full'>
+                <a href='javascript:;' data-toggle="ajaxEdit" data-href="{:webUrl('perm/rolekeyChange',array('type'=>'displayorder','id'=>$row['id']))}">{$row['displayorder']}</a>
+                <i class="icon icon-pencil icon-weibiaoti-- " data-toggle="ajaxEdit2"></i>
+            </td>
+            <td><div class="rolekey-name" title="{$row['name']}">{$row['name']}</div></td>
+            <td><span class="label label-info">{$row['role_key']}</span></td>
+            <td><div class="text-muted" title="{$row['description']}">{$row['description']}</div></td>
+            <td>
+                <span class='label {if $row['status']==1}label-primary{else}label-default{/if}'
+                data-toggle='ajaxSwitch'
+                data-switch-value='{$row['status']}'
+                data-switch-value0='0|禁用|label label-default|{:webUrl('perm/rolekeyChange',array('type' => 'status','value'=>1,'id'=>$row['id']))}'
+                data-switch-value1='1|启用|label label-primary|{:webUrl('perm/rolekeyChange',array('type' => 'status','value'=>0,'id'=>$row['id']))}'
+                >
+                {if $row['status']==1}启用{else}禁用{/if}</span>
+            </td>
+            <td><span class="text-muted">{$row['createtime']|date='Y-m-d'}</span></td>
+            <td>
+                <a class='btn btn-default btn-sm btn-operation btn-op' href="{:webUrl('perm/rolekeyPost', array('id' => $row['id'],'module' => $_GET['module']))}">
+                     <span data-toggle="tooltip" data-placement="top" title="" data-original-title="编辑">
+                        <i class="icon icon-pencil"></i>
+                     </span>
+                </a>
+                <a class='btn btn-default btn-sm btn-operation btn-op' data-toggle="ajaxRemove" href="{:webUrl('perm/rolekeyDelete', array('id' => $row['id'],'module' => $_GET['module']))}" data-confirm="确认删除此角色标识吗？">
+                    <span data-toggle="tooltip" data-placement="top" title="" data-original-title="删除">
+                        <i class='icon icon-trash'></i>
+                    </span>
+                </a>
+            </td>
+        </tr>
+        {/foreach}
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="5">
+                <div class="input-group-btn">
+                    <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('perm/rolekeyChange',array('type' => 'status','value'=>1))}">
+                        <i class='icon icon-eye'></i> 启用</button>
+                    <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch'  data-href="{:webUrl('perm/rolekeyChange',array('type' => 'status','value'=>0))}">
+                        <i class='icon icon-eye-close'></i> 禁用</button>
+                    <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{:webUrl('perm/rolekeyDelete')}">
+                        <i class='icon icon-trash'></i> 删除</button>
+                </div>
+            </td>
+            <td colspan="3" class="text-right"> {$pager | raw} </td>
+        </tr>
+        </tfoot>
+    </table>
+    {else}
+    <div class='panel panel-default'>
+        <div class='panel-body' style='text-align: center;padding:30px;'>
+            暂时没有任何角色标识!
+        </div>
+    </div>
+    {/if}
+</div>
+
+{/block}
+
+{block name='script'}
+<script>
+    require(['jquery', 'bootstrap', 'tip'], function($) {
+
+        // 页面加载完成后初始化
+        $(function() {
+            // 表格行悬停效果
+            $('table tbody tr').hover(
+                function() {
+                    $(this).addClass('active');
+                },
+                function() {
+                    $(this).removeClass('active');
+                }
+            );
+        });
+    });
+</script>
+{/block}

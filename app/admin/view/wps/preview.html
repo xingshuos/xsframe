@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebOffice</title>
+</head>
+<script src="/static/wps/web-office-sdk-solution-v2.0.7.umd.js"></script>
+<body>
+<script>
+    window.onload = () => {
+        const instance = WebOfficeSDK.init({
+            officeType: WebOfficeSDK.OfficeType.Writer,
+            appId: 'SX20251022CIYQKV',
+            fileId: '393f6f640b376d613df7ed77',
+            token:'MWM5YUJZcG04dHpBeFJlTDlTV0diV3piR0NsSGplbDc4UUNVWVBGNDk1alI3eUVTajUyRjBHeVgxTWo0WTc0'
+        })
+    }
+</script>
+</body>
+</html>

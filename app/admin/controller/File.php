@@ -98,6 +98,15 @@ class File extends AdminBaseController
             $result['message'] = $result['msg'];
             die(json_encode($result));
         }
+        // UEditor 粘贴图片使用固定响应协议，按显式标记返回兼容结构，不影响现有上传组件。
+        if ((int)request()->param('ueditor', 0) === 1) {
+            return json([
+                'state'    => 'SUCCESS',
+                'url'      => (string)$result['url'],
+                'title'    => (string)$originName,
+                'original' => (string)$originName,
+            ]);
+        }
         die(json_encode($result));
     }
 

@@ -12,6 +12,8 @@
 
 namespace app\admin\controller;
 
+use app\admin\service\AccessibleMenuService;
+use app\admin\service\LoginCaptchaService;
 use think\captcha\facade\Captcha;
 use think\facade\Db;
 use xsframe\enum\SysSettingsKeyEnum;
@@ -27,6 +29,8 @@ class Login extends Base
     {
         $rememberUsername = $_COOKIE['remember-username'] ?? '';
         $websiteSets = $this->settingsController->getSysSettings(SysSettingsKeyEnum::WEBSITE_KEY);
+        // 验证码属于平台级登录安全配置，不允许被独立域名的商户设置覆盖。
+        $loginCaptchaEnabled = LoginCaptchaService::isEnabled($websiteSets);
 
         $style = 'login'; # 默认登录页面
 
@@ -81,6 +85,7 @@ class Login extends Base
         return $this->template($style, [
             'rememberUsername' => $rememberUsername,
             'websiteSets'      => $websiteSets,
+            'loginCaptchaEnabled' => $loginCaptchaEnabled,
             'systemExpireShow' => $systemExpireShow,
             'systemExpireText' => $systemExpireText,
         ]);
@@ -89,9 +94,9 @@ class Login extends Base
     // 登录
     public function login()
     {
-        $username = trim($this->params['username'] ?? '');
-        $password = trim($this->params['password'] ?? '');
-        $verify = trim($this->params['verify'] ?? '');
+        $username = trim(strval($this->params['username'] ?? ''));
+        $password = trim(strval($this->params['password'] ?? ''));
+        $verify = trim(strval($this->params['verify'] ?? ''));
 
         if (empty($username)) {
             show_json(0, '请输入用户名!');
@@ -100,9 +105,17 @@ class Login extends Base
             show_json(0, '请输入密码!');
         }
 
-        # 负载均衡服务器下会导致验证无效，需要将session放入redis存储 TODO
-        if (!Captcha::check($verify)) {
-            show_json(0, '验证码输入错误!');
+        // 服务端根据平台配置决定是否校验，避免仅隐藏前端输入框后仍可被绕过。
+        $websiteSets = $this->settingsController->getSysSettings(SysSettingsKeyEnum::WEBSITE_KEY);
+        if (LoginCaptchaService::isEnabled($websiteSets)) {
+            if ($verify === '') {
+                show_json(0, '请输入验证码!');
+            }
+
+            # 负载均衡服务器下会导致验证无效，需要将session放入redis存储 TODO
+            if (!Captcha::check($verify)) {
+                show_json(0, '验证码输入错误!');
+            }
         }
 
         # 校验系统授权
@@ -145,6 +158,22 @@ class Login extends Base
 
         $userInfo = $resultInfo['userInfo'];
         $url = $resultInfo['url'];
+
+        // 登录成功后重新按当前账号的菜单查看权限解析入口，避免落入同一父菜单下无权限的第一个子菜单。
+        $moduleInfo = UserWrapper::getModuleInfoByUserId((int)$userInfo['id']);
+        $accessibleUrl = (new AccessibleMenuService())->firstUrl(
+            (string)($moduleInfo['module'] ?? ''),
+            (int)($moduleInfo['uniacid'] ?? 0),
+            (int)$userInfo['id'],
+            (string)($userInfo['role'] ?? '')
+        );
+        if ($accessibleUrl !== null) {
+            $url = $accessibleUrl;
+        } elseif (!empty($moduleInfo['module']) && !in_array((string)($userInfo['role'] ?? ''), ['owner', 'manager', 'founder'], true)) {
+            // 受限账号没有任何可访问页面时立即清理登录态，避免继续返回无权限的默认地址。
+            UserWrapper::logout();
+            show_json(0, '当前账号没有可访问的后台页面，请联系管理员配置菜单权限');
+        }
 
         Db::name("sys_users")->where(['id' => $userInfo['id']])->update(['logintime' => TIMESTAMP, 'lastip' => $this->request->ip()]);
 

@@ -11,6 +11,8 @@
     .feed-element {
         box-sizing: border-box;
         float: none;
+        display: flex;
+        align-items: flex-start;
         width: calc(25% - 20px); /* 默认大屏幕显示4个 */
         margin: 10px;
         border: 1px solid #efefef;
@@ -105,9 +107,21 @@
         color: var(--primary-color);
         font-weight: bold;
         margin-left: 10px;
+        padding-right: 68px;
+        box-sizing: border-box;
         display: flex;
         align-items: center;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
+        overflow: hidden;
+    }
+
+    /* 标题预留状态徽标空间，长标题使用省略号，避免与启用状态重叠。 */
+    .feed-element .title .fl {
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .feed-element img.img-circle,
@@ -120,11 +134,24 @@
         object-fit: cover;
     }
 
+    /* 固定 Logo 区域宽度，保证卡片内容始终与 Logo 横向排列。 */
+    .feed-element > .pull-left {
+        flex: 0 0 100px;
+        float: none;
+    }
+    @media (max-width: 767px) {
+        .feed-element > .pull-left {
+            flex-basis: 80px;
+        }
+    }
+
     .media-body {
         margin-top: 3px;
-        height: 65px;
+        /*height: 65px;*/
         padding-left: 15px;
         position: relative;
+        flex: 1 1 auto;
+        min-width: 0;
         overflow: hidden;
     }
 
@@ -146,6 +173,26 @@
         position: absolute;
         right: 0;
         top: 0;
+    }
+
+    /* 使用轻量胶囊徽标区分应用状态，保持状态醒目但不抢占标题视觉焦点。 */
+    .status-box .text {
+        display: inline-flex;
+        align-items: center;
+        min-height: 22px;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        line-height: 18px;
+        white-space: nowrap;
+    }
+    .status-box .text-success {
+        color: #18794e;
+        background: #e8f7ef;
+    }
+    .status-box .text-danger {
+        color: #b42318;
+        background: #fff0ed;
     }
 
     .authorization{
@@ -234,7 +281,16 @@
 <script>
     function windowOpen(module,url) {
         $.post("{:webUrl('system/setAccountDefaultModule')}",{uniacid:"{$uniacid}",module:module}, function (json) {
-            window.location.href = url;
+            if (json && json.status == 1) {
+                window.location.href = url;
+                return;
+            }
+            var message = json && json.result && json.result.message ? json.result.message : '当前账号没有该应用的访问权限';
+            if (typeof Toastr !== 'undefined') {
+                Toastr.error(message);
+            } else {
+                alert(message);
+            }
         }, 'json')
     }
 

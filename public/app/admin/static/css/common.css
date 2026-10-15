@@ -330,7 +330,7 @@ select, input:focus, input {
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
-    z-index: 2 !important;
+    z-index: 3 !important;
 }
 
 .wb-header .logo {
@@ -2570,7 +2570,7 @@ a.form-control-static {
 /*百度编辑器头部固定*/
 .wb-container .edui-default .edui-editor-toolbarbox {
     position: static;
-    top: 60px !important;
+    /*top: 60px !important;*/
 }
 
 /*公众号过长*/

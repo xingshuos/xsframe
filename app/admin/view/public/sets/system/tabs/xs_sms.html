@@ -1,0 +1,117 @@
+<!-- 新短信中心配置使用独立 xs_sms 节点，旧业务继续使用下方 sms 节点。 -->
+<style>
+.xs-sms-config{margin-bottom:24px}
+.xs-sms-config .panel-body{padding:20px}
+.xs-sms-provider-switch{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:18px 0}
+.xs-sms-provider-tab{position:relative;display:flex;min-width:0;padding:15px;border:1px solid #dfe7f0;border-radius:9px;background:#fff;color:#314861;text-align:left;transition:border-color .18s,box-shadow .18s,background .18s}
+.xs-sms-provider-tab:hover,.xs-sms-provider-tab:focus{border-color:#8bb9f8;outline:0;box-shadow:0 0 0 3px rgba(0,98,255,.08)}
+.xs-sms-provider-tab.is-active{border-color:#2677e8;background:#f5f9ff;box-shadow:0 0 0 2px rgba(38,119,232,.1)}
+.xs-sms-provider-icon{display:flex;align-items:center;justify-content:center;flex:none;width:38px;height:38px;margin-right:11px;border-radius:9px;background:#eaf3ff;color:#176bd1;font-size:16px;font-weight:700}
+.xs-sms-provider-icon.is-tencent{background:#e8f8f6;color:#00877e}
+.xs-sms-provider-icon.is-juhe{background:#fff4df;color:#a96500}
+.xs-sms-provider-icon.is-lianlu{background:#f1edff;color:#6746c3}
+.xs-sms-provider-copy{min-width:0;flex:1}
+.xs-sms-provider-name{display:block;margin-bottom:5px;color:#243b59;font-weight:600}
+.xs-sms-provider-summary{display:block;overflow:hidden;color:#75869b;font-size:12px;line-height:1.5;text-overflow:ellipsis;white-space:nowrap}
+.xs-sms-provider-state{display:inline-block;margin-top:9px;padding:2px 8px;border-radius:10px;background:#f2f5f8;color:#6c7d90;font-size:11px;line-height:18px}
+.xs-sms-provider-state.is-ready{background:#e8f8ef;color:#16834d}
+.xs-sms-provider-state.is-inherited{background:#fff5df;color:#9a6500}
+.xs-sms-provider-panel{display:none;max-width:980px;padding:20px;border:1px solid #e2e8f0;border-radius:9px;background:#fff}
+.xs-sms-provider-panel.is-active{display:block}
+.xs-sms-provider-panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px}
+.xs-sms-provider-panel h4{margin:0 0 5px;color:#243b59;font-size:18px;font-weight:600}
+.xs-sms-provider-panel-head p{margin:0;color:#75869b;font-size:12px;line-height:1.6}
+.xs-sms-provider-tip{flex:none;padding:4px 9px;border-radius:11px;background:#f2f6fb;color:#60758d;font-size:11px}
+.xs-sms-field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 16px}
+.xs-sms-field{min-width:0;margin:0}
+.xs-sms-field.is-wide{grid-column:1/-1}
+.xs-sms-field label{display:block;margin-bottom:6px;color:#334963;font-weight:600}
+.xs-sms-field .form-control{width:100%}
+.xs-sms-field .help-block{margin:6px 0 0}
+.xs-sms-switch-help{margin:0;color:#667d96;font-size:12px;line-height:1.7}
+@media(max-width:1100px){.xs-sms-provider-switch{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.xs-sms-provider-switch,.xs-sms-field-grid{grid-template-columns:1fr}.xs-sms-field.is-wide{grid-column:auto}.xs-sms-provider-panel-head{display:block}.xs-sms-provider-tip{display:inline-block;margin-top:9px}}
+</style>
+<div class="panel panel-default xs-sms-config" data-sms-provider-root="admin">
+    <div class="panel-heading"><strong>短信中心新通道配置</strong></div>
+    <div class="panel-body">
+        <div class="alert alert-info">供 <code>SmsSendService</code>、模板管理和短信测试使用。尚未单独保存的通道会只读继承旧配置；保存后只更新 <code>xs_sms</code>，不会切换旧业务通道。</div>
+        <p class="xs-sms-switch-help">选择一个服务商填写凭据。这里的切换只改变当前显示的配置表单，实际发送通道仍由短信中心登记的模板决定。</p>
+        <div class="xs-sms-provider-switch" role="tablist" aria-label="短信服务商">
+            <button type="button" class="xs-sms-provider-tab is-active" data-provider="aliyun" data-state="{:htmlentities($xsSmsStatuses['aliyun']['state'] ?? 'pending')}" role="tab" aria-controls="xs-sms-admin-aliyun" aria-selected="true">
+                <span class="xs-sms-provider-icon">阿</span><span class="xs-sms-provider-copy"><span class="xs-sms-provider-name">阿里云短信</span><span class="xs-sms-provider-summary">AccessKey、签名、SMS_ 模板</span><span class="xs-sms-provider-state is-{:htmlentities($xsSmsStatuses['aliyun']['state'] ?? 'pending')}">{:htmlentities($xsSmsStatuses['aliyun']['label'] ?? '待配置')}</span></span>
+            </button>
+            <button type="button" class="xs-sms-provider-tab" data-provider="tencent" data-state="{:htmlentities($xsSmsStatuses['tencent']['state'] ?? 'pending')}" role="tab" aria-controls="xs-sms-admin-tencent" aria-selected="false">
+                <span class="xs-sms-provider-icon is-tencent">腾</span><span class="xs-sms-provider-copy"><span class="xs-sms-provider-name">腾讯云短信</span><span class="xs-sms-provider-summary">云 API 密钥、应用 ID、签名</span><span class="xs-sms-provider-state is-{:htmlentities($xsSmsStatuses['tencent']['state'] ?? 'pending')}">{:htmlentities($xsSmsStatuses['tencent']['label'] ?? '待配置')}</span></span>
+            </button>
+            <button type="button" class="xs-sms-provider-tab" data-provider="juhe" data-state="{:htmlentities($xsSmsStatuses['juhe']['state'] ?? 'pending')}" role="tab" aria-controls="xs-sms-admin-juhe" aria-selected="false">
+                <span class="xs-sms-provider-icon is-juhe">聚</span><span class="xs-sms-provider-copy"><span class="xs-sms-provider-name">聚合数据短信</span><span class="xs-sms-provider-summary">AppKey、数字模板编号</span><span class="xs-sms-provider-state is-{:htmlentities($xsSmsStatuses['juhe']['state'] ?? 'pending')}">{:htmlentities($xsSmsStatuses['juhe']['label'] ?? '待配置')}</span></span>
+            </button>
+            <button type="button" class="xs-sms-provider-tab" data-provider="lianlu" data-state="{:htmlentities($xsSmsStatuses['lianlu']['state'] ?? 'pending')}" role="tab" aria-controls="xs-sms-admin-lianlu" aria-selected="false">
+                <span class="xs-sms-provider-icon is-lianlu">联</span><span class="xs-sms-provider-copy"><span class="xs-sms-provider-name">联麓短信</span><span class="xs-sms-provider-summary">企业 ID、应用 ID、Key</span><span class="xs-sms-provider-state is-{:htmlentities($xsSmsStatuses['lianlu']['state'] ?? 'pending')}">{:htmlentities($xsSmsStatuses['lianlu']['label'] ?? '待配置')}</span></span>
+            </button>
+        </div>
+
+        <div class="xs-sms-provider-panels">
+            <section id="xs-sms-admin-aliyun" class="xs-sms-provider-panel is-active" data-provider-panel="aliyun" role="tabpanel">
+                <div class="xs-sms-provider-panel-head"><div><h4>阿里云短信凭据</h4><p>填写访问密钥和已审核签名，模板编号在短信中心单独登记。</p></div><span class="xs-sms-provider-tip">密钥留空将保留原值</span></div>
+                <div class="xs-sms-field-grid">
+                    <div class="xs-sms-field"><label>AccessKeyId</label><input class="form-control" name="data[xs_sms][providers][aliyun][accessKeyId]" value="{:htmlentities($xsSmsSettings['providers']['aliyun']['accessKeyId'] ?? '')}"></div>
+                    <div class="xs-sms-field"><label>AccessKeySecret</label><input type="password" class="form-control" name="data[xs_sms][providers][aliyun][accessKeySecret]" value="" autocomplete="new-password" placeholder="首次填写；以后留空保留原密钥"></div>
+                    <div class="xs-sms-field is-wide"><label>短信签名</label><input class="form-control" name="data[xs_sms][providers][aliyun][sign]" value="{:htmlentities($xsSmsSettings['providers']['aliyun']['sign'] ?? '')}"></div>
+                </div>
+            </section>
+            <section id="xs-sms-admin-tencent" class="xs-sms-provider-panel" data-provider-panel="tencent" role="tabpanel" hidden>
+                <div class="xs-sms-provider-panel-head"><div><h4>腾讯云短信凭据</h4><p>填写云 API 密钥、短信应用 ID 和已审核签名。</p></div><span class="xs-sms-provider-tip">密钥留空将保留原值</span></div>
+                <div class="xs-sms-field-grid">
+                    <div class="xs-sms-field"><label>SecretId</label><input class="form-control" name="data[xs_sms][providers][tencent][secretId]" value="{:htmlentities($xsSmsSettings['providers']['tencent']['secretId'] ?? '')}"></div>
+                    <div class="xs-sms-field"><label>SecretKey</label><input type="password" class="form-control" name="data[xs_sms][providers][tencent][secretKey]" value="" autocomplete="new-password" placeholder="首次填写；以后留空保留原密钥"></div>
+                    <div class="xs-sms-field"><label>SmsSdkAppId</label><input class="form-control" name="data[xs_sms][providers][tencent][sdkAppId]" value="{:htmlentities($xsSmsSettings['providers']['tencent']['sdkAppId'] ?? '')}"></div>
+                    <div class="xs-sms-field"><label>短信签名</label><input class="form-control" name="data[xs_sms][providers][tencent][sign]" value="{:htmlentities($xsSmsSettings['providers']['tencent']['sign'] ?? '')}"></div>
+                    <div class="xs-sms-field is-wide"><label>地域</label><input class="form-control" name="data[xs_sms][providers][tencent][region]" value="{:htmlentities($xsSmsSettings['providers']['tencent']['region'] ?? 'ap-guangzhou')}"><p class="help-block">默认 ap-guangzhou，请与腾讯云 API 地域保持一致。</p></div>
+                </div>
+            </section>
+            <section id="xs-sms-admin-juhe" class="xs-sms-provider-panel" data-provider-panel="juhe" role="tabpanel" hidden>
+                <div class="xs-sms-provider-panel-head"><div><h4>聚合数据短信凭据</h4><p>填写短信 API 的 AppKey，数字模板编号在短信中心单独登记。</p></div><span class="xs-sms-provider-tip">密钥留空将保留原值</span></div>
+                <div class="xs-sms-field-grid"><div class="xs-sms-field is-wide"><label>AppKey</label><input type="password" class="form-control" name="data[xs_sms][providers][juhe][appkey]" value="" autocomplete="new-password" placeholder="首次填写；以后留空保留原密钥"><p class="help-block">签名随聚合审核模板管理，请求不单独提交签名。</p></div></div>
+            </section>
+            <section id="xs-sms-admin-lianlu" class="xs-sms-provider-panel" data-provider-panel="lianlu" role="tabpanel" hidden>
+                <div class="xs-sms-provider-panel-head"><div><h4>联麓短信凭据</h4><p>填写平台分配的企业 ID、应用 ID 与 Key，模板编号在短信中心单独登记。</p></div><span class="xs-sms-provider-tip">密钥留空将保留原值</span></div>
+                <div class="xs-sms-field-grid">
+                    <div class="xs-sms-field"><label>企业 ID（MchId）</label><input class="form-control" name="data[xs_sms][providers][lianlu][enterpriseId]" value="{:htmlentities($xsSmsSettings['providers']['lianlu']['enterpriseId'] ?? '')}"></div>
+                    <div class="xs-sms-field"><label>AppId</label><input class="form-control" name="data[xs_sms][providers][lianlu][appid]" value="{:htmlentities($xsSmsSettings['providers']['lianlu']['appid'] ?? '')}"></div>
+                    <div class="xs-sms-field is-wide"><label>Key</label><input type="password" class="form-control" name="data[xs_sms][providers][lianlu][appkey]" value="" autocomplete="new-password" placeholder="首次填写；以后留空保留原密钥"></div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<script>
+(function () {
+    // 页面首次打开时优先展示已独立配置的通道，其次展示继承旧配置的通道。
+    var root = document.querySelector('[data-sms-provider-root="admin"]');
+    if (!root) return;
+    var tabs = Array.prototype.slice.call(root.querySelectorAll('[data-provider]'));
+    var panels = Array.prototype.slice.call(root.querySelectorAll('[data-provider-panel]'));
+    var activate = function (provider) {
+        tabs.forEach(function (tab) {
+            var active = tab.getAttribute('data-provider') === provider;
+            tab.classList.toggle('is-active', active);
+            tab.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+        panels.forEach(function (panel) {
+            var active = panel.getAttribute('data-provider-panel') === provider;
+            panel.classList.toggle('is-active', active);
+            panel.hidden = !active;
+        });
+    };
+    tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () { activate(tab.getAttribute('data-provider')); });
+    });
+    var initial = root.querySelector('[data-provider][data-state="ready"]')
+        || root.querySelector('[data-provider][data-state="inherited"]') || tabs[0];
+    if (initial) activate(initial.getAttribute('data-provider'));
+})();
+</script>
+<h4>旧业务短信配置</h4>
+<div class="alert alert-warning">下方配置仍由原有 <code>SmsServiceFacade</code> 使用。修改这里可能影响旧验证码和通知业务；新短信中心不会改写其通道选择与模板编号。</div>

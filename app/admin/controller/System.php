@@ -12,6 +12,7 @@
 
 namespace app\admin\controller;
 
+use app\admin\service\AccessibleMenuService;
 use xsframe\base\AdminBaseController;
 use xsframe\enum\AppCategoryKeyEnum;
 use xsframe\enum\AppTypesKeyEnum;
@@ -21,7 +22,6 @@ use xsframe\service\ZiShuAiService;
 use xsframe\util\ArrayUtil;
 use xsframe\util\FileUtil;
 use xsframe\util\RandomUtil;
-use xsframe\util\StringUtil;
 use xsframe\wrapper\AttachmentWrapper;
 use think\facade\Db;
 use xsframe\wrapper\UserWrapper;
@@ -33,8 +33,6 @@ class System extends AdminBaseController
     // 应用列表
     public function index()
     {
-        $this->getRealModuleUrl("sz_propt");
-
         $result = $this->getAppList();
 
 
@@ -58,73 +56,104 @@ class System extends AdminBaseController
 
         $field = "am.settings," . "m.*";
         $is_limit = 0;
+        $moduleFilter = null;
         if ($this->adminSession['role'] == 'operator') {
             $permUserInfo = DbServiceFacade::name('sys_account_perm_user')->getInfo(['uniacid' => $this->uniacid, 'uid' => $this->userId]);
-            $is_limit = $permUserInfo['is_limit'];
+            $is_limit = (int)($permUserInfo['is_limit'] ?? 1);
             if ($is_limit == 1) {
-                // ★ 合并角色权限 + 用户额外权限（与 PermWrapper.check 逻辑一致）
-                $role_perms = [];
-                $role_app_perms = [];
-                if (!empty($permUserInfo['roleid'])) {
-                    $roleInfo = DbServiceFacade::name('sys_account_perm_role')->getInfo(['id' => $permUserInfo['roleid']]);
-                    $role_perms = array_filter(explode(',', $roleInfo['perms'] ?? ''));
-                    $role_app_perms = array_filter(explode(',', $roleInfo['app_perms'] ?? ''));
-                }
-                // 用户额外权限 + 角色权限
-                $user_perms = array_filter(explode(',', $permUserInfo['perms'] ?? ''));
-                $user_app_perms = array_filter(explode(',', $permUserInfo['app_perms'] ?? ''));
-                $all_perms = array_unique(array_merge($role_perms, $user_perms));
-                $all_app_perms = array_unique(array_merge($role_app_perms, $user_app_perms));
+                // 多角色合并：主角色 + 关联表所有角色 + 用户额外权限（统一走 UserPermService）
+                $merged = \app\common\service\UserPermService::getMergedPerms($this->userId, $this->uniacid);
+                $all_perms = $merged['perms'];
+                $all_app_perms = $merged['app_perms'];
 
-                // 从所有权限中提取顶级应用 key（不含 '.' 的即为应用级权限）
-                $appKeys = array_filter($all_perms, fn($item) => strpos($item, '.') === false);
-                $appKeys = array_unique(array_merge(array_values($appKeys), $all_app_perms));
-
-                if (!empty($appKeys)) {
-                    $condition['am.module'] = $appKeys;
+                // 同时提取应用级权限和菜单/操作权限中的应用前缀，确保拥有具体菜单权限的应用也能显示。
+                $appKeys = [];
+                foreach ($all_perms as $permission) {
+                    $permission = (string)$permission;
+                    $webPosition = strpos($permission, '.web.');
+                    if ($webPosition !== false) {
+                        $appKeys[] = substr($permission, 0, $webPosition);
+                    } elseif (strpos($permission, '.') === false && $permission !== '') {
+                        $appKeys[] = $permission;
+                    }
                 }
+                $appKeys = array_unique(array_merge($appKeys, array_map('strval', $all_app_perms)));
+
+                // 没有应用级权限时使用不可能命中的模块值，避免无权限账号看到全部应用。
+                $moduleFilter = $appKeys ?: ['__no_permission__'];
             }
         }
 
         $category = AppCategoryKeyEnum::getEnumsText();
 
-        $list = Db::name('sys_account_modules')->fetchSql(false)->alias('am')->field($field)->leftJoin("sys_modules m", "m.identifie = am.module")->where($condition)
+        $listQuery = Db::name('sys_account_modules')->fetchSql(false)->alias('am')->field($field)->leftJoin("sys_modules m", "m.identifie = am.module")->where($condition);
+        if ($moduleFilter !== null) {
+            $listQuery->whereIn('am.module', $moduleFilter);
+        }
+        $list = $listQuery
             ->orderRaw("FIELD(m.type," . "'" . implode("','", array_keys($category)) . "'" . ")")->order("am.displayorder asc")->page($this->pIndex, $this->pSize)->select();
         $list = $list->toArray();
-        $total = Db::name('sys_account_modules')->alias('am')->field($field)->leftJoin("sys_modules m", "m.identifie = am.module")->where($condition)->count();
+        $totalQuery = Db::name('sys_account_modules')->alias('am')->field($field)->leftJoin("sys_modules m", "m.identifie = am.module")->where($condition);
+        if ($moduleFilter !== null) {
+            $totalQuery->whereIn('am.module', $moduleFilter);
+        }
+        $total = $totalQuery->count();
         $pager = pagination2($total, $this->pIndex, $this->pSize);
 
         foreach ($list as &$item) {
             $appTypes = $this->getAppTypes($item);
             $item['app_types'] = AppTypesKeyEnum::getTextArray(implode(",", $appTypes));
             $settings = unserialize($item['settings']);
-            if (!empty($settings)) {
-                if (!empty($settings['basic'])) {
-                    if (!empty($settings['basic']['logo'])) {
-                        $basicLogo = tomedia($settings['basic']['logo']);
-                        $item['logo'] = $basicLogo;
-                        $settings['basic']['logo'] = $basicLogo;
-                    }
-                    if (!empty($settings['basic']['name'])) {
-                        $item['name'] = $settings['basic']['name'];
-                    }
-                }
-                $item['settings'] = $settings;
-            }
-            $item['logo'] = tomedia($item['logo']);
 
-            // 获取后台访问地址
-            $item['url'] = $this->getRealModuleUrl($item['identifie']);
+            // Logo处理：优先读取自定义设置的logo
+            $customLogo = '';
+            if (!empty($settings['basic']['logo'])) {
+                $customLogo = tomedia($settings['basic']['logo']);
+                $item['logo'] = $customLogo;
+                $settings['basic']['logo'] = $customLogo;
+            } elseif (!empty($item['logo'])) {
+                // 其次读取数据表中的logo字段
+                $item['logo'] = tomedia($item['logo']);
+            }
+
+            if (!empty($settings['basic']['name'])) {
+                $item['name'] = $settings['basic']['name'];
+            }
+
+            $item['settings'] = $settings;
+
+            // 受限账号必须进入当前应用实际拥有查看权限的第一个菜单页面。
+            $accessibleUrl = (new AccessibleMenuService())->firstUrl(
+                (string)$item['identifie'],
+                (int)$this->uniacid,
+                (int)$this->userId,
+                (string)($this->adminSession['role'] ?? '')
+            );
+            if ($accessibleUrl !== null) {
+                $item['url'] = $accessibleUrl;
+            } elseif ($this->adminSession['role'] === 'operator' && $is_limit === 1) {
+                // 受限账号没有可访问入口时从应用列表移除，避免点击后进入无权限页面。
+                $item['url'] = '';
+            } else {
+                // 管理员或未启用限制的账号保留无菜单应用的兼容入口。
+                $item['url'] = $this->getRealModuleUrl($item['identifie']);
+            }
         }
         unset($item);
+        if ($this->adminSession['role'] === 'operator' && $is_limit === 1) {
+            $list = array_values(array_filter($list, static function (array $item): bool {
+                return $item['url'] !== '';
+            }));
+            // 应用过滤后同步总数和分页信息，避免页面显示已移除的无权限应用数量。
+            $total = count($list);
+            $pager = pagination2($total, $this->pIndex, $this->pSize);
+        }
         $list = set_medias($list, ['logo']);
 
         $uid = $this->userId;
-        $field = " u.uid,u.status as userstatus,r.status as rolestatus,u.perms as userperms,r.perms as roleperms,u.roleid ";
-        $user = Db::name("sys_account_perm_user")->alias('u')->field($field)->leftJoin("sys_account_perm_role r", "r.id = u.roleid")->where(['u.uid' => $uid])->find();
-        $role_perms = explode(',', $user['roleperms']);
-        $user_perms = explode(',', $user['userperms']);
-        $perms = array_merge($role_perms, $user_perms);
+        // 多角色合并：主角色 + 关联表所有角色 + 用户额外权限（统一走 UserPermService）
+        $merged = \app\common\service\UserPermService::getMergedPerms($uid, $this->uniacid);
+        $perms = $merged['perms'];
 
         $newList = [];
         foreach ($list as $item) {
@@ -353,50 +382,24 @@ class System extends AdminBaseController
     // 获取后端访问入口
     private function getRealModuleUrl($moduleName)
     {
-        $realModuleName = realModuleName($moduleName);
-        $moduleMenuConfigFile = IA_ROOT . "/app/" . $moduleName . "/config/menu.php";
-
-        if (is_file($moduleMenuConfigFile)) {
-            $menuConfig = include($moduleMenuConfigFile);
-            $oneMenus = array_slice($menuConfig, 0, 1);
-            $oneMenusKeys = array_keys($oneMenus);
-            $actionUrl = $oneMenus[$oneMenusKeys[0]]['items'][0]['route'];
-            $isRoute = true;
-            if (empty($actionUrl)) {
-                if (!empty($oneMenus[$oneMenusKeys[0]]['items'][0]['url'])) {
-                    $actionUrl = $oneMenus[$oneMenusKeys[0]]['items'][0]['url'];
-                    if (!StringUtil::strexists($actionUrl, "web.")) {
-                        $actionUrl = "web." . $actionUrl;
-                    }
-                    $isRoute = false;
-                } else {
-                    $actionUrl = $oneMenus[$oneMenusKeys[0]]['route'];
-                    if (empty($actionUrl)) {
-                        $actionUrl = "/main";
-                    } else {
-                        $isAction = count(explode("/", $actionUrl)) == 1;
-                        $actionUrl = ($isAction ? "/" : ".") . $actionUrl;
-                    }
-                }
-            } else {
-                if (StringUtil::strexists($actionUrl, "/")) {
-                    $actionUrl = "." . $actionUrl;
-                } else {
-                    $actionUrl = "/" . $actionUrl;
-                }
-            }
-
-            if ($isRoute && !strexists($oneMenusKeys[0], "web.")) {
-                $oneMenusKeys[0] = "web." . $oneMenusKeys[0];
-                $actionUrl = $oneMenusKeys[0] . $actionUrl;
-            }
-
-            $url = webUrl('/' . $realModuleName . "/{$actionUrl}", ['i' => $this->uniacid]);
-        } else {
-            $url = webUrl('/' . $realModuleName . "/web.index", ['i' => $this->uniacid]);
+        $moduleName = trim((string)$moduleName);
+        $configuredUrl = (new AccessibleMenuService())->firstConfiguredUrl(
+            $moduleName,
+            (int)$this->uniacid
+        );
+        if ($configuredUrl !== null) {
+            return $configuredUrl;
         }
 
-        return $url;
+        // 没有菜单配置时，仅兼容确实存在的 web/Index 控制器，避免生成不存在的 web.index。
+        $realModuleName = realModuleName($moduleName);
+        $indexController = IA_ROOT . '/app/' . $moduleName . '/controller/web/Index.php';
+        if (is_file($indexController)) {
+            return webUrl('/' . $realModuleName . '/web.index', ['i' => $this->uniacid]);
+        }
+
+        // 应用没有可确认的入口时转到统一 404 页面。
+        return webUrl('/admin/error/index', ['type' => 404, 'i' => $this->uniacid]);
     }
 
     // 基本信息
@@ -580,10 +583,35 @@ class System extends AdminBaseController
     // 设置默认应用
     public function setAccountDefaultModule()
     {
-        $uniacid = $this->params['uniacid'] ?? '';
-        $module = $this->params['module'] ?? '';
+        $uniacid = (int)($this->params['uniacid'] ?? 0);
+        $module = trim((string)($this->params['module'] ?? ''));
 
-        if (!empty($uniacid) && !empty($module)) {
+        if ($uniacid > 0 && $module !== '') {
+            $moduleExists = Db::name('sys_account_modules')
+                ->where(['uniacid' => $uniacid, 'module' => $module, 'deleted' => 0])
+                ->count();
+            if (!$moduleExists) {
+                show_json(0, '应用不存在或未安装');
+            }
+
+            // 切换应用前复用与登录一致的菜单权限解析，阻止受限账号切入无可访问页面的应用。
+            if (($this->adminSession['role'] ?? '') === 'operator') {
+                $permUserInfo = Db::name('sys_account_perm_user')
+                    ->where(['uniacid' => $uniacid, 'uid' => (int)$this->userId, 'status' => 1])
+                    ->find();
+                if (!$permUserInfo || (int)$permUserInfo['is_limit'] === 1) {
+                    $accessibleUrl = (new AccessibleMenuService())->firstUrl(
+                        $module,
+                        $uniacid,
+                        (int)$this->userId,
+                        'operator'
+                    );
+                    if ($accessibleUrl === null) {
+                        show_json(0, '当前账号没有该应用的可访问页面');
+                    }
+                }
+            }
+
             # 设置默认应用
             Db::name('sys_account_modules')->where(['uniacid' => $uniacid])->update(['is_default' => 0]);
             Db::name('sys_account_modules')->where(['uniacid' => $uniacid, 'module' => $module])->update(['is_default' => 1]);

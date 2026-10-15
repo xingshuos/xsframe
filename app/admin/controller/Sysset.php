@@ -2,6 +2,7 @@
 
 namespace app\admin\controller;
 
+use app\admin\service\LoginCaptchaService;
 use think\Exception;
 use think\facade\Cache;
 use think\facade\Db;
@@ -91,7 +92,11 @@ class Sysset extends Base
         $websiteSets = $this->settingsController->getSysSettings(SysSettingsKeyEnum::WEBSITE_KEY);
 
         if ($this->request->isPost()) {
-            $data = $this->params['data'];
+            $data = (array)($this->params['data'] ?? []);
+            // 登录验证码开关只允许保存为0或1，避免异常请求写入无效配置。
+            $data[LoginCaptchaService::SETTING_KEY] = LoginCaptchaService::normalize(
+                $data[LoginCaptchaService::SETTING_KEY] ?? 1
+            );
             $data['logo'] = tomedia($data['logo']);
             $data['copyright'] = htmlspecialchars_decode($this->params['data_copyright']);
 
@@ -111,6 +116,7 @@ class Sysset extends Base
             'version'      => IMS_VERSION,
             'versionTime'  => IMS_VERSION_TIME,
             'loginTplList' => $loginTplList,
+            'loginCaptchaEnabled' => LoginCaptchaService::isEnabled($websiteSets),
         ];
         return $this->template('site', $result);
     }

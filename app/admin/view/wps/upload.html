@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>WPS文档上传</title>
+    <link href="/static/home/js/jquery.min.js" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h4>WPS文档上传</h4>
+                </div>
+                <div class="card-body">
+                    <form id="uploadForm" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="file" class="form-label">选择文档</label>
+                            <input type="file" class="form-control" id="file" name="file" accept=".doc,.docx,.xls,.xlsx,.ppt,.pptx" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="permission" class="form-label">文档权限</label>
+                            <select class="form-select" id="permission" name="permission">
+                                <option value="read">只读</option>
+                                <option value="write">可编辑</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">上传文档</button>
+                    </form>
+                    <div id="result" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('uploadForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const resultDiv = document.getElementById('result');
+
+        fetch('/api/wps/doUpload', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 0) {
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-success">
+                            <h5>上传成功！</h5>
+                            <p>文件名：${data.data.file_name}</p>
+                            <a href="/api/wps/preview/${data.data.file_id}" class="btn btn-success" target="_blank">在线预览/编辑</a>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="alert alert-danger">上传失败：${data.message}</div>`;
+                }
+            })
+            .catch(error => {
+                resultDiv.innerHTML = `<div class="alert alert-danger">上传失败：${error}</div>`;
+            });
+    });
+</script>
+</body>
+</html>

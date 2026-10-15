@@ -4,7 +4,7 @@
 namespace app\admin\controller;
 
 
-use think\facade\Config;
+use app\admin\service\AccessibleMenuService;
 use xsframe\base\AdminBaseController;
 use xsframe\facade\wrapper\SystemWrapperFacade;
 use xsframe\wrapper\UserWrapper;
@@ -46,9 +46,18 @@ class Base extends AdminBaseController
                             }
                         }
 
-                        $realUrl = UserWrapper::getModuleOneUrl($moduleName, true, $adminSession['role'], $adminSession['uid']);
-                        $url = webUrl(strval($realUrl), ['i' => $uniacid]);
-                        header('location: ' . $url);
+                        // 入口页必须同时满足菜单存在和当前账号的 main 权限，不能只取父菜单下第一个子菜单。
+                        $url = (new AccessibleMenuService())->firstUrl(
+                            (string)$moduleName,
+                            (int)$uniacid,
+                            (int)$adminSession['uid'],
+                            (string)($adminSession['role'] ?? '')
+                        );
+                        if ($url === null) {
+                            header('location: ' . url('/admin/error/index', ['type' => 403]));
+                        } else {
+                            header('location: ' . $url);
+                        }
                     } else {
                         header('location: ' . url('/admin/error/index', ['type' => 403]));
                     }

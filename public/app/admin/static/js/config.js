@@ -4,7 +4,8 @@ let myConfig = {
     baseUrl: "/app/admin/static/",
     path: "/app/admin/static/",
     paths: {
-        "jquery": "components/jquery/jquery-1.11.1.min",
+        "jquery": "components/jquery/jquery-3.7.1.min",
+        "jquery-migrate": "components/jquery/jquery-migrate-3.4.1.min",
         "jquery.form": "components/jquery/jquery.form",
         "jquery.gcjs": "components/jquery/jquery.gcjs",
         "jquery.validate": "components/jquery/jquery.validate.min",
@@ -73,6 +74,9 @@ let myConfig = {
         "sweetalert": "components/sweetalert2/sweetalert2.min",
 
         "bootstrap-table": "components/bootstrap/bootstrap-table/bootstrap-table",
+
+        // DOMPurify - HTML 消毒库，用于防止 XSS 攻击
+        "purify": "components/purify/purify.min",
     },
     // shim配置项中的每个条目都代表一个非AMD模块，并包含以下两个关键属性：
     // deps：这是一个数组，列出了该模块所依赖的其他模块。这些依赖模块将首先被加载，然后才会加载当前模块。

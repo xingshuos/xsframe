@@ -47,7 +47,9 @@ define(["js/web/biz"], function(biz) {
                 url: url,
                 async: false,
                 success: function(htm) {
-                    $('#goods-selector-modal').empty().html(htm);
+                    // 使用 DOMPurify 过滤 AJAX 返回的 HTML，防止 XSS
+                    var sanitized = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(htm) : htm;
+                    $('#goods-selector-modal').empty().html(sanitized);
                     return false;
                 }
             });
@@ -217,7 +219,9 @@ define(["js/web/biz"], function(biz) {
                         url: url,
                         async: false,
                         success: function(htm) {
-                            $('#goods-selector-modal').empty().html(htm);
+                            // 使用 DOMPurify 过滤 AJAX 返回的 HTML，防止 XSS
+                            var sanitized = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(htm) : htm;
+                            $('#goods-selector-modal').empty().html(sanitized);
                             model.loaded = 1;
                             return false;
                         }
@@ -259,13 +263,35 @@ define(["js/web/biz"], function(biz) {
             }
         });
         model.listenPool.push(model.name);
-        $(model.modal).on("click", ".pager-nav", function() {
-            let num = Number($(this).attr("page"));
+        // 分页委托绑在 $(model.modal)（.modal-dialog）自身，而不是 document。
+        // 原因：直接绑在 $(model.modal) 上的 click handler 会调 e.stopPropagation() 阻止事件冒泡到祖先，
+        // 若委托绑在 document 上，事件永远冒泡不到 document，委托失效，"分页点击无效"。
+        // 委托与直接 handler 同元素并列时，stopPropagation 只阻止继续向祖先冒泡，不影响同元素委托触发。
+        $(model.modal).on("click.pagerNav", ".pager-nav", function(e) {
+            // 末页时下一页/尾页按钮已加 .disabled 类（模板侧根据 $page >= $total 渲染），
+            // <a> 元素无原生 disabled 行为，点击仍会冒泡，这里拦截：禁用态直接 return，不触发请求。
+            if ($(this).hasClass("disabled")) {
+                return;
+            }
+            let num = Number($(this).attr("data-page"));
+            if (isNaN(num) || num < 1) {
+                return;
+            }
+            // 兜底：防止跳转到超过总页数的页码（如用户手动输入大于总页数的值），
+            // 避免向服务端请求空数据并渲染空白。
+            // data-total 位于分页最外层包装 div 上，用 closest("[data-total]") 向上查找，
+            // 不受中间嵌套 div 层数影响。
+            let totalAttr = $(this).closest("[data-total]").attr("data-total");
+            let total = Number(totalAttr);
+            if (!isNaN(total) && total > 0 && num > total) {
+                return;
+            }
             model.jumpnow(num)
         });
-        $(model.modal).on("change", ".page-raduis", function() {
+        // page-raduis input 变化时同步更新"跳转"按钮的 data-page 属性
+        $(model.modal).on("change.pageRaduis", ".page-raduis", function() {
             let num = Number($(this).val());
-            $(this).parent().next("li").find("a").attr("page", num)
+            $(this).parent().next("li").find("a").attr("data-page", num)
         });
         $(model.modal).on("click", ".selectit", function() {
             let goods = {};
@@ -446,7 +472,9 @@ define(["js/web/biz"], function(biz) {
                 platform: model.platform,
             },
             success: function(htm) {
-                model.ele.find(".content").empty().html(htm);
+                // 使用 DOMPurify 过滤 AJAX 返回的 HTML，防止 XSS
+                var sanitized = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(htm) : htm;
+                model.ele.find(".content").empty().html(sanitized);
                 model.selectStatus()
             },
         })

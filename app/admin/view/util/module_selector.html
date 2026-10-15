@@ -12,7 +12,7 @@
     <tbody class="ui-sortable container">
     {if empty($list)}
         <tr>
-            <td colspan="4" style="text-align: center">
+            <td colspan="6" style="text-align: center">
                 查不到任何应用
             </td>
         </tr>
@@ -47,25 +47,30 @@
     {/if}
     </tbody>
 </table>
-<div style="text-align:right;width:100%;position: absolute;bottom: 0;right:30px;">
+<!--
+    分页栏改为自然文档流（去掉 absolute 定位），避免覆盖表格最后一行；
+    margin-top 与 padding 提供与上方表格的间距，padding-bottom 防止分页自身贴底。
+    分页功能逻辑（.pager-nav / data-page / 委托）保持不变。
+-->
+<div style="text-align:right;width:100%;padding:8px 0 100px;" data-total="{$total}">
     <div>
         <ul class="pagination pagination-centered">
             {if !empty($page_num_arr)}
                 {foreach $page_num_arr as $k => $num}
                     <li {if $num== $page}class="active"{/if}>
-                    <a href="javascript:;" page="{$num}" class="pager-nav">
+                    <a href="javascript:;" data-page="{$num}" class="pager-nav">
                         {$num}
                     </a>
                     </li>
                 {/foreach}
             {/if}
-            <li>
-                <a href="javascript:;" page="{$page+1}" class="pager-nav">
+            <li {if $page >= $total}class="disabled"{/if}>
+                <a href="javascript:;" data-page="{$page+1}" class="pager-nav{if $page >= $total} disabled{/if}">
                     下一页»
                 </a>
             </li>
-            <li>
-                <a href="javascript:;" page="{$total}" class="pager-nav" class="page-raduis">
+            <li {if $page >= $total}class="disabled"{/if}>
+                <a href="javascript:;" data-page="{$total}" class="pager-nav pager-last{if $page >= $total} disabled{/if}">
                     尾页
                 </a>
             </li>
@@ -73,7 +78,7 @@
                 <input type="text" class="page-raduis" value="{$page}">
             </li>
             <li>
-                <a href="javascript:;" page="{$page}" class="pager-nav">
+                <a href="javascript:;" data-page="{$page}" class="pager-nav">
                     跳转
                 </a>
             </li>

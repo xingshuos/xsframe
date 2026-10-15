@@ -258,6 +258,7 @@
                 }), o
             }, 20), n) {
                 var d = a.getEditor(n, l);
+                util.configureUeditorImageUpload(d, t);
                 $("#" + n).removeClass("form-control"), $("#" + n).data("editor", d), $("#" + n).parents("form").submit(function () {
                     d.queryCommandState("source") && d.execCommand("source")
                 }), $.isFunction(t.callback) && t.callback(e, d)
@@ -286,6 +287,46 @@
                 ueditorFun(ue, fileUploader)
             }))
         })
+    };
+
+    /**
+     * 为公共 UEditor 配置后台图片上传地址，统一支持粘贴图片上传。
+     * @param {Object} editor UEditor 实例
+     * @param {Object} options 编辑器配置
+     * @returns {void}
+     */
+    util.configureUeditorImageUpload = function (editor, options) {
+        if (!editor || typeof editor.setOpt !== "function" || editor.__xsframeImageUploadConfigured) return;
+
+        var uploadUrl = String((options && options.upload_url) || "");
+        var uploadConfig = typeof Config !== "undefined" && Config.upload ? Config.upload : null;
+        if (!uploadUrl && uploadConfig) uploadUrl = String(uploadConfig.uploadurl || "");
+
+        // 系统后台页面没有模块 Config.upload，复用现有后台文件上传接口。
+        if (!uploadUrl && window.sysinfo) {
+            var sysinfo = window.sysinfo;
+            uploadUrl = "/admin/file/upload.html?upload_type=image&global=0&dest_dir=" +
+                encodeURIComponent((options && options.dest_dir) || "") +
+                "&uniacid=" + encodeURIComponent(sysinfo.uniacid || 0) +
+                "&module=" + encodeURIComponent(sysinfo.module || "") +
+                "&uid=" + encodeURIComponent(sysinfo.uid || 0) +
+                "&client=" + encodeURIComponent(sysinfo.client || "web");
+        }
+        if (!uploadUrl || typeof editor.getActionUrl !== "function") return;
+        if (!/[?&]ueditor=/.test(uploadUrl)) uploadUrl += (uploadUrl.indexOf("?") === -1 ? "?" : "&") + "ueditor=1";
+
+        editor.setOpt({
+            imageActionName: "uploadimage",
+            imageFieldName: "file",
+            imageUrlPrefix: "",
+            imageMaxSize: 10 * 1024 * 1024,
+            imageAllowFiles: [".png", ".jpg", ".jpeg", ".gif", ".bmp"]
+        });
+        var originalGetActionUrl = editor.getActionUrl;
+        editor.getActionUrl = function (action) {
+            return action === "uploadimage" ? uploadUrl : originalGetActionUrl.call(this, action);
+        };
+        editor.__xsframeImageUploadConfigured = true;
     };
 
     util.editor = function (e, t, o) {
@@ -409,6 +450,7 @@
                 }), o
             }, 20), n) {
                 var d = a.getEditor(n, l);
+                util.configureUeditorImageUpload(d, t);
                 $("#" + n).removeClass("form-control"), $("#" + n).data("editor", d), $("#" + n).parents("form").submit(function () {
                     d.queryCommandState("source") && d.execCommand("source")
                 }), $.isFunction(t.callback) && t.callback(e, d)
@@ -733,9 +775,6 @@
         };
 
         opts = $.extend({}, opts, base64options);
-        opts.type = 'image';
-
-        // console.log('util.image 66', opts);
 
         require(['jquery', 'fileUploader'], function ($, fileUploader) {
             fileUploader.show(function (images) {
@@ -750,7 +789,8 @@
 
     util.image2 = function (val, callback, base64options, options) {
         let opts = {
-            type: 'image',
+            type: base64options && base64options.type ? base64options.type : 'image',
+            uploadtype: base64options && base64options.type ? base64options.type : 'image',
             direct: false,
             multiple: false,
             path: val,
@@ -761,7 +801,6 @@
         };
 
         opts = $.extend({}, opts, base64options);
-        opts.type = 'image';
 
         require(['jquery', 'fileUploader2'], function ($, fileUploader) {
             fileUploader.show(function (images) {
@@ -904,11 +943,19 @@
                 }
             }
         }
-        modalobj.find('.modal-body').load(url, function () {
-            $('form.ajaxfrom').each(function () {
-                $(this).attr('action', $(this).attr('action') + '&isajax=1&target=formtarget');
-                $(this).attr('target', '_formtarget');
-            })
+        $.ajax({
+            url: url,
+            method: 'GET',
+            dataType: 'html',
+            success: function(html) {
+                // 使用 DOMPurify 过滤 AJAX 返回的 HTML，防止 XSS
+                var sanitized = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(html) : html;
+                modalobj.find('.modal-body').html(sanitized);
+                $('form.ajaxfrom').each(function () {
+                    $(this).attr('action', $(this).attr('action') + '&isajax=1&target=formtarget');
+                    $(this).attr('target', '_formtarget');
+                });
+            }
         });
         modalobj.on('hidden.bs.modal', function () {
             modalobj.remove();

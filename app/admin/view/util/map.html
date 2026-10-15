@@ -5,7 +5,9 @@
 <title>腾讯地图开放API - 轻快小巧,简单易用!</title>
 <link rel="stylesheet" href="__ADMIN_COMPONENT__/jquery/jquery-ui.min.css">
 <link rel="stylesheet" href="__ADMIN_COMPONENT__/bootstrap/bootstrap.min.css">
-<script src="__ADMIN_COMPONENT__/jquery/jquery-1.11.1.min.js"></script>
+<script src="__ADMIN_COMPONENT__/jquery/jquery-3.7.1.min.js"></script>
+<script src="__ADMIN_COMPONENT__/jquery/jquery-migrate-3.4.1.min.js"></script>
+<script src="__ADMIN_COMPONENT__/purify/purify.min.js"></script>
 <script src="__ADMIN_COMPONENT__/jquery/jquery-ui-1.10.3.min.js"></script>
 <script charset="utf-8" src="//map.qq.com/api/js?v=2.exp&key=ZWXBZ-GJZLX-CX74Y-Z7B4O-MEAHS-TOBE6&qq=786824455"></script>
 <style type="text/css">
@@ -44,7 +46,7 @@
 <div class="form-group">
     <div class="search input-group">
         <input type="text" id="addr_cur" class="search_t form-control" onkeypress="if(event.keyCode==13) {btnSearch.click();return false;}"/>
-        <div id="btn_search" class="input-group-btn"><button class="btn btn-default"><i class="icon-search"></i> 搜索</button></div>
+        <div id="btn_search" class="input-group-btn"><button class="btn btn-search"><i class="icon-search"></i> 搜索</button></div>
     </div>
     <div class="poi">
         <div class="poi_note">当前坐标：</div>

@@ -404,8 +404,8 @@ textarea:focus {
 }
 
 .btn-primary:active {
-    background: #368fcf !important;
-    border-color: #368fcf !important;
+    background: #0050d4 !important;
+    border-color: #0050d4 !important;
 }
 
 .btn-success.disabled:focus, .btn-success.disabled:hover, .btn-success[disabled].focus, .btn-success[disabled]:focus, .btn-success[disabled]:hover, fieldset[disabled] .btn-success.focus, fieldset[disabled] .btn-success:focus, fieldset[disabled] .btn-success:hover {
@@ -514,8 +514,8 @@ textarea:focus {
 
 .btn-primary:active,
 .btn-primary-o:active {
-    background: #368fcf !important;
-    border-color: #368fcf !important;
+    background: #0050d4 !important;
+    border-color: #0050d4 !important;
 }
 
 .btn-primary-o {

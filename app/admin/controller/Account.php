@@ -116,8 +116,58 @@ class Account extends Base
         # 配置
         $accountSettings = $this->settingsController->getAccountSettings($uniacid, 'settings');
 
+        // 短信配置令牌绑定当前管理员与目标商户，两个设置入口共用白名单校验。
+        $smsTokenKey = 'admin_account_sms_' . intval($uniacid) . '_' . intval($this->userId);
+        $smsToken = session($smsTokenKey);
+        if (!is_string($smsToken) || $smsToken === '') {
+            $smsToken = bin2hex(random_bytes(24));
+            session($smsTokenKey, $smsToken);
+        }
+        \think\facade\View::assign('smsToken', $smsToken);
+        $smsConfigService = app(\app\xs_sms\service\SmsConfigService::class);
+        // 新短信中心独立读取 xs_sms；页面只接收脱敏配置和不含凭据的通道状态。
+        $xsSmsOverview = $smsConfigService->overview(is_array($accountSettings) ? $accountSettings : []);
+        \think\facade\View::assign('xsSmsSettings', $xsSmsOverview['settings']);
+        \think\facade\View::assign('xsSmsStatuses', $xsSmsOverview['statuses']);
+
         if ($this->request->isPost()) {
             $settingsData = $this->params['data'] ?? [];
+            $normalizedXsSms = null;
+            if (!is_array($settingsData)) {
+                return $this->error(['message' => '商户配置格式无效']);
+            }
+
+            // 新旧短信配置共用页面令牌，但分别校验和写入各自节点。
+            if (isset($settingsData['sms']) || isset($settingsData['xs_sms'])) {
+                $submittedToken = $this->request->post('_sms_token', '');
+                if (!is_string($submittedToken) || !hash_equals($smsToken, $submittedToken)) {
+                    return $this->error(['message' => '短信配置页面校验失效，请刷新后重试']);
+                }
+            }
+            if (isset($settingsData['sms'])) {
+                if (!is_array($settingsData['sms'])) {
+                    return $this->error(['message' => '旧短信配置格式无效']);
+                }
+                try {
+                    $settingsData['sms'] = $smsConfigService->normalize(
+                        is_array($accountSettings['sms'] ?? null) ? $accountSettings['sms'] : [], $settingsData['sms']);
+                } catch (\InvalidArgumentException $error) {
+                    return $this->error(['message' => $error->getMessage()]);
+                }
+            }
+            if (isset($settingsData['xs_sms'])) {
+                if (!is_array($settingsData['xs_sms'])) {
+                    return $this->error(['message' => '短信中心配置格式无效']);
+                }
+                try {
+                    $normalizedXsSms = $smsConfigService->normalizeCenter(
+                        $smsConfigService->resolve(is_array($accountSettings) ? $accountSettings : []),
+                        $settingsData['xs_sms']);
+                    $settingsData['xs_sms'] = $normalizedXsSms;
+                } catch (\InvalidArgumentException $error) {
+                    return $this->error(['message' => $error->getMessage()]);
+                }
+            }
 
             if (!empty($_FILES)) {
                 if ($_FILES['wxpay_cert_file']['name']) {
@@ -147,6 +197,10 @@ class Account extends Base
             // }
 
             $settingsData = ArrayUtil::customMergeArrays($accountSettings, $settingsData);
+            if ($normalizedXsSms !== null) {
+                // 白名单结果必须整体替换新节点，避免通用深度合并恢复已过滤的未知字段。
+                $settingsData['xs_sms'] = $normalizedXsSms;
+            }
 
             $data = [
                 "name"         => trim($this->params["name"]),

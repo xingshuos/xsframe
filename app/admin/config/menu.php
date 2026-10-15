@@ -94,10 +94,6 @@ return [
                 'route' => 'list',
             ],
             [
-                'title' => '添加用户',
-                'route' => 'add',
-            ],
-            [
                 'title' => '当前账号',
                 'route' => 'profile',
             ],

@@ -586,7 +586,10 @@ define(['jquery', 'bootstrap'], function ($, bs) {
             console.log('lallalala', video)
         }
         if ($('#previewVideo').length < 1) {
-            $('body').append('<div class="modal fade" id="previewVideo"><div class="modal-dialog" style="min-width: 400px !important;"><div class="modal-content"><div class="modal-header"><button data-dismiss="modal" class="close" type="button">×</button><h4 class="modal-title">视频预览</h4></div><div class="modal-body" style="padding: 0; background: #000;"><video src="' + video + '" style="height: 450px; width: 100%; display: block;" controls="controls"></video></div></div></div></div>')
+            // 使用 DOM 方法创建元素，避免通过字符串拼接插入用户控制的 URL（防止 XSS）
+            var $modal = $('<div class="modal fade" id="previewVideo"><div class="modal-dialog" style="min-width: 400px !important;"><div class="modal-content"><div class="modal-header"><button data-dismiss="modal" class="close" type="button">×</button><h4 class="modal-title">视频预览</h4></div><div class="modal-body" style="padding: 0; background: #000;"><video style="height: 450px; width: 100%; display: block;" controls="controls"></video></div></div></div></div>');
+            $modal.find('video').attr('src', video);
+            $('body').append($modal);
         } else {
             $("#previewVideo video").attr("src", video);
             $("#previewVideo iframe").attr("src", video)
@@ -831,7 +834,7 @@ define(['jquery', 'bootstrap'], function ($, bs) {
             editor.find(".form-editor-text").text(value)
         })
     }
-    $("img").error(function () {
+    $("img").on('error', function () {
         // $(this).attr('src', '/app/admin/static/images/nopic.png')
     });
     $('#myTab a').click(function (e) {

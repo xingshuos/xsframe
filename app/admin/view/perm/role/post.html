@@ -26,6 +26,28 @@
         </div>
 
         <div class="form-group">
+            <label class="col-lg control-label must">角色标识</label>
+            <div class="col-sm-9 col-xs-12">
+                <div class="input-group" style="width: 100%;">
+                    <select name="role_key" class="form-control select2" id="roleKeySelect">
+                        <option value="">请选择角色标识</option>
+                        {if !empty($flagOptions)}
+                            {foreach $flagOptions as $flag}
+                                <option value="{$flag['role_key']}" {if $currentRoleKey == $flag['role_key']}selected{/if}>{$flag['name']} ({$flag['role_key']})</option>
+                            {/foreach}
+                        {/if}
+                    </select>
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" id="addRoleKeyBtn" title="新增角色标识">
+                            <i class="icon icon-plus"></i> 新增
+                        </button>
+                    </span>
+                </div>
+                <span class="help-block">选择角色标识，如果没有可点击右侧"新增"按钮添加</span>
+            </div>
+        </div>
+
+        <!-- <div class="form-group">
             <label class="col-lg control-label">上级角色</label>
             <div class="col-sm-9 col-xs-12">
                 <select class="form-control select2" name="pid">
@@ -35,7 +57,7 @@
                 </select>
                 <span class="help-block">选择上级角色，顶级角色请选择“顶级角色”</span>
             </div>
-        </div>
+        </div> -->
 
         <div class="form-group">
             <label class="col-lg control-label">状态</label>
@@ -62,6 +84,10 @@
         </div>
     </form>
 </div>
+
+<a href="javascript:history.back()" class="btn btn-default" style="position:fixed;right:30px;bottom:30px;z-index:999;padding:10px 15px;border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,0.15);">
+    <i class="icon icon-arrow-left"></i> 返回列表
+</a>
 
 <script>
     require(['bootstrap', 'select2'], function(){

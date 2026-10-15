@@ -25,6 +25,48 @@
     .tooltip-inner{
         border:none;
     }
+    /* 角色列：限定列宽，标签自动换行，超长角色名内部省略，避免撑破表格 */
+    .role-cell{
+        max-width: 230px;
+    }
+    .role-tag{
+        display: inline-block;
+        max-width: 100%;
+        margin: 0 4px 4px 0;
+        background-color: #409EFF;
+        color: #fff;
+        font-weight: normal;
+        font-size: 12px;
+        line-height: 1.5;
+        padding: 3px 8px;
+        border-radius: 3px;
+        vertical-align: middle;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    /* 「+N / 收起」折叠开关 */
+    .role-tag-more{
+        background-color: #909399;
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+    .role-tag-more:hover{
+        background-color: #7a7f87;
+    }
+    /* 折叠区默认隐藏，展开时就地平铺（不用浮层，避免被 table-responsive 的 overflow 裁切） */
+    .role-hidden-group{
+        display: none;
+    }
+    .role-hidden-group.is-open{
+        display: inline;
+    }
+    .role-empty{
+        color: #ccc;
+    }
 </style>
 
 <div class="page-header">
@@ -65,7 +107,7 @@
                     </span>
                     <input type="text" class="form-control " name="keyword" value="{$_GPC['keyword']}" placeholder="可搜索员工关键词">
                     <span class="input-group-btn">
-                        <button class="btn btn-primary" type="submit"> 搜索</button>
+                        <button class="btn btn-search" type="submit"> 搜索</button>
                     </span>
                 </div>
             </div>
@@ -73,7 +115,7 @@
     </form>
 
     {if count($list)>0}
-        <div class="page-table-header">
+        <!-- <div class="page-table-header">
             <div class="btn-group">
                 <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{:webUrl('perm/userChange',array('type' => 'status','value'=>1,'module' => $_GET['module']))}">
                     <i class='icon icon-eye'></i> 启用</button>
@@ -85,7 +127,7 @@
                     <i class='icon icon-trash'></i> 删除</button>
                 </button>
             </div>
-        </div>
+        </div> -->
         <table class="table table-hover table-responsive">
             <thead>
             <tr>
@@ -95,11 +137,12 @@
                     </label>
                 </th>
                 <th style=''>登录账号</th>
-                <th style=''>角色</th>
+                <th style='width:230px;'>角色</th>
                 <th style=''>姓名</th>
+                <th style='width:200px;'>关联教师</th>
                 <th style=''>手机</th>
                 <th>状态</th>
-                <th style="width: 100px">操作</th>
+                <th style="width: 140px">操作</th>
             </tr>
             </thead>
             <tbody>
@@ -107,8 +150,45 @@
             <tr>
                 <td><input type='checkbox'   value="{$row['id']}"/></td>
                 <td>{$row['username']}</td>
-                <td>{$row['rolename'] ? $row['rolename'] : '无'}</td>
+                <td class="role-cell" title="{$row['roles_tip']}">
+                    {if !empty($row['roles'])}
+                        {foreach $row['roles_visible'] as $roleItem}
+                        <span class="role-tag">{$roleItem['rolename']}</span>
+                        {/foreach}
+                        {if !empty($row['roles_hidden'])}
+                        <span class="role-hidden-group">
+                            {foreach $row['roles_hidden'] as $roleItem}
+                            <span class="role-tag">{$roleItem['rolename']}</span>
+                            {/foreach}
+                        </span>
+                        <span class="role-tag role-tag-more" data-toggle="roleMore"
+                              data-more-text="+{:count($row['roles_hidden'])}" data-less-text="收起">+{:count($row['roles_hidden'])}</span>
+                        {/if}
+                    {else}
+                        <span class="role-empty">无</span>
+                    {/if}
+                </td>
                 <td>{$row['realname']}</td>
+                <td>
+                    {if $row['teacher']}
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="label label-success" style="background-color: #409EFF; font-size: 11px; padding: 3px 8px;">
+                            <i class="fa fa-link"></i> 已关联
+                        </span>
+                        <div>
+                            <div style="font-weight: 600; color: #333; font-size: 12px;">{$row['teacher']['name']}</div>
+                            <div style="color: #999; font-size: 11px;">
+                                {if $row['teacher']['mobile']}{$row['teacher']['mobile']}{/if}
+                                {if $row['teacher']['teacher_no']} · {$row['teacher']['teacher_no']}{/if}
+                            </div>
+                        </div>
+                    </div>
+                    {else}
+                    <span style="color: #ccc; font-size: 12px;">
+                        <i class="fa fa-minus-circle"></i> 未关联
+                    </span>
+                    {/if}
+                </td>
                 <td>{$row['mobile']}</td>
                 <td>
                     <span class='label {if $row['status']==1}label-primary{else}label-default{/if}'
@@ -149,7 +229,7 @@
                         </button>
                     </div>
                 </td>
-                <td colspan="4" style="text-align: right"> {$pager | raw}</td>
+                <td colspan="5" style="text-align: right"> {$pager | raw}</td>
             </tr>
             </tfoot>
             </tbody>
@@ -165,6 +245,11 @@
 </div>
 
 <script language="javascript">
-
+    // 角色列：展开/收起被折叠的角色标签（事件委托，兼容分页后重新渲染）
+    $(document).on('click', '[data-toggle="roleMore"]', function () {
+        var $btn = $(this);
+        var isOpen = $btn.siblings('.role-hidden-group').toggleClass('is-open').hasClass('is-open');
+        $btn.text(isOpen ? $btn.data('less-text') : $btn.data('more-text'));
+    });
 </script>
 {/block}
