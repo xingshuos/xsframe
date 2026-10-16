@@ -1,0 +1,1509 @@
+/* ============================================================================
+ * theme.css — 全局统一主题层（仅样式，不改动任何 HTML 结构 / JS / PHP 逻辑）
+ * 引入位置：admin_base.html 中 backend.css 之后（层叠顺序最后，覆盖生效）
+ * 设计语言：沿用 common.css 的 :root 设计令牌，统一圆角 / 柔和阴影 / 主色 / 间距
+ * 如需回退：删除 admin_base.html 中 theme.css 的 <link> 即可恢复原样
+ * ========================================================================== */
+
+:root {
+    /* 主色体系（与 common.css --primary-color 保持一致，并补充交互态） */
+    --wb-primary: #0062ff;
+    --wb-primary-hover: #1a73ff;
+    --wb-primary-active: #0050d4;
+    --wb-primary-soft: #eef4ff;
+
+    /* 功能色（与 common.css 一致） */
+    --wb-success: #19be6b;
+    --wb-warning: #ff9900;
+    --wb-danger: #ed4014;
+    --wb-info: #2db7f5;
+
+    /* 中性色 */
+    --wb-title: #17233d;
+    --wb-text: #3c4858;
+    --wb-text-weak: #8a94a6;
+    --wb-border: #eef0f3;
+    --wb-border-strong: #e3e6eb;
+    --wb-bg: #f5f7f9;
+    --wb-surface: #ffffff;
+
+    /* 侧边栏（改为白色背景，选中态用主色蓝） */
+    --wb-nav-bg: #ffffff;
+    --wb-nav-bg-hover: #f3f6fa;
+    --wb-nav-text: #5a6472;
+    --wb-nav-text-active: #0062ff;
+
+    /* 形状：大色块圆角统一 16px */
+    --wb-radius: 16px;
+    --wb-radius-sm: 6px;
+    --wb-radius-xs: 4px;
+
+    /* 阴影 */
+    --wb-shadow-sm: 0 1px 2px rgba(17, 24, 39, .04), 0 1px 3px rgba(17, 24, 39, .06);
+    --wb-shadow: 0 2px 8px rgba(17, 24, 39, .05), 0 8px 24px rgba(17, 24, 39, .06);
+    --wb-shadow-pop: 0 6px 16px rgba(17, 24, 39, .08), 0 2px 6px rgba(17, 24, 39, .06);
+
+    /* 字体 */
+    --wb-font: "Microsoft YaHei UI", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+}
+
+/* ============================ 1. 基础与排版 ============================ */
+/* 统一字体：仅作用于文本元素，刻意排除图标字体类（.fa/.icon/.icow/.iconfont 等），
+   避免 !important 覆盖图标字体导致图标变为乱码文字 */
+body,
+input, select, textarea, button,
+.panel, .panel-body, .panel-heading,
+.table, .table thead th, .table tbody td,
+.btn, .form-control, .input-group-addon,
+.dropdown-menu, .modal, .modal-title,
+.nav-tabs, .pagination, .label, .badge,
+.ibox, .ibox-title, .ibox-content,
+.wb-nav, .wb-header, .wb-subnav,
+.well, .alert, .help-block, .control-label,
+.wb-nav-title, .subnav-scene, .menu-header {
+    font-family: var(--wb-font);
+}
+
+body {
+    background: var(--wb-bg);
+    color: var(--wb-text);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--wb-title);
+    font-weight: 600;
+}
+
+/* 内容区普通链接 hover 用主色（不影响导航/按钮） */
+.wb-content a:not(.btn):not(.dropdown-toggle):hover {
+    color: var(--wb-primary);
+}
+
+/* ============================ 1.1 左侧主菜单（白色背景 + 选中主色蓝） ============================ */
+.wb-nav {
+    background: #ffffff !important;
+    color: var(--wb-nav-text) !important;
+    border-right: 1px solid var(--wb-border) !important;
+}
+
+.wb-nav ul li a {
+    color: var(--wb-nav-text) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 130px;
+    height: 48px;
+    margin: 0 auto;
+    border-radius: 12px;
+    transition: all .15s;
+}
+
+.wb-nav ul li:hover {
+    background: transparent !important;
+}
+
+.wb-nav ul li:hover a {
+    background: #f8f8f8 !important;
+}
+
+.wb-nav ul li.active {
+    background: transparent !important;
+}
+
+.wb-nav ul li.active a {
+    color: var(--wb-primary) !important;
+    font-weight: 600;
+    background: var(--wb-primary-soft);
+}
+
+/* 折叠按钮 — 隐藏 */
+.wb-nav .wb-nav-fold {
+    display: none !important;
+}
+
+.wb-nav .sysset {
+    background: #f5f7fa !important;
+}
+
+.wb-nav .sysset a {
+    color: var(--wb-nav-text) !important;
+}
+
+.wb-nav .sysset a:hover {
+    color: var(--wb-primary) !important;
+}
+
+/* 设置浮层小三角去掉残留投影（filter drop-shadow） */
+.wb-nav .sysset .syssettips {
+    filter: none !important;
+}
+
+/* ============================ 2. 面板 Panel ============================ */
+.panel,
+.panel.panel-default,
+.panel.panel-intro {
+    border: none !important;
+    border-radius: var(--wb-radius) !important;
+    box-shadow: var(--wb-shadow) !important;
+    background: var(--wb-surface);
+}
+
+.panel-intro > .panel-heading {
+    background: var(--wb-surface) !important;
+    border-bottom: 1px solid var(--wb-border) !important;
+    padding: 18px 22px 0 !important;
+    position: relative;
+}
+
+.panel-intro > .panel-heading .panel-title {
+    height: 26px;
+    font-weight: 600;
+    color: var(--wb-title);
+    font-size: 15px;
+}
+
+.panel-intro > .panel-heading .panel-lead em {
+    color: var(--wb-text);
+}
+
+.panel-body {
+    padding: 22px !important;
+    background: var(--wb-surface);
+}
+
+/* ============================ 3. 标签页 nav-tabs（面板内） ============================ */
+.panel-intro > .panel-heading .nav-tabs {
+    border-bottom: 1px solid var(--wb-border) !important;
+    margin-bottom: 0;
+    /* 始终单行，空间不足时横向滚动，避免标签页被挤成两行 */
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.panel-intro > .panel-heading .nav-tabs > li {
+    float: none;
+}
+
+.panel-intro > .panel-heading .nav-tabs > li > a {
+    white-space: nowrap;
+}
+
+.panel-intro > .panel-heading .nav-tabs > li > a {
+    color: var(--wb-text-weak);
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    border-bottom: 2px solid transparent !important;
+    border-radius: var(--wb-radius-sm) var(--wb-radius-sm) 0 0 !important;
+    margin-right: 6px;
+    padding: 10px 16px !important;
+    font-weight: 500;
+    transition: color .15s, background .15s, border-color .15s;
+}
+
+.panel-intro > .panel-heading .nav-tabs > li > a:hover,
+.panel-intro > .panel-heading .nav-tabs > li > a:focus {
+    color: var(--wb-primary);
+    background: var(--wb-primary-soft) !important;
+    border-color: transparent !important;
+    border-bottom-color: transparent !important;
+}
+
+.panel-intro > .panel-heading .nav-tabs > li.active > a,
+.panel-intro > .panel-heading .nav-tabs > li.active > a:hover,
+.panel-intro > .panel-heading .nav-tabs > li.active > a:focus {
+    color: var(--wb-primary);
+    background: var(--wb-surface) !important;
+    border-color: transparent !important;
+    border-bottom: 2px solid var(--wb-primary) !important;
+    font-weight: 600;
+    cursor: default;
+}
+
+/* 独立 nav-tabs（非面板内）统一风格 */
+.nav-tabs:not(.panel-intro .nav-tabs) {
+    border-bottom: 1px solid var(--wb-border);
+}
+
+.nav-tabs:not(.panel-intro .nav-tabs) > li > a {
+    border-radius: var(--wb-radius-sm) var(--wb-radius-sm) 0 0;
+    color: var(--wb-text-weak);
+}
+
+.nav-tabs:not(.panel-intro .nav-tabs) > li.active > a {
+    color: var(--wb-primary);
+    border-bottom-color: var(--wb-primary);
+}
+
+/* ============================ 4. 表格 Table ============================ */
+.table {
+    margin-bottom: 0;
+    color: var(--wb-text);
+    background: var(--wb-surface);
+}
+
+.table > thead > tr > td,
+.table > thead > tr > th,
+.table > tbody > tr > td,
+.table > tbody > tr > th,
+.table > tfoot > tr > td,
+.table > tfoot > tr > th {
+    border-color: var(--wb-border) !important;
+    padding: 12px 16px !important;
+    vertical-align: middle;
+    color: var(--wb-text);
+}
+
+.table > thead > tr > td,
+.table > thead > tr > th {
+    background: #f7f9fc !important;
+    color: var(--wb-title) !important;
+    font-weight: 600 !important;
+    font-size: 13px;
+    border-top: none !important;
+    border-bottom: 1px solid var(--wb-border) !important;
+    white-space: nowrap;
+}
+
+/* Bootstrap-Table 单元格（覆盖 backend.css 高特异性规则） */
+.bootstrap-table .table:not(.table-condensed) > tbody > tr > th,
+.bootstrap-table .table:not(.table-condensed) > tfoot > tr > th,
+.bootstrap-table .table:not(.table-condensed) > thead > tr > td,
+.bootstrap-table .table:not(.table-condensed) > tbody > tr > td,
+.bootstrap-table .table:not(.table-condensed) > tfoot > tr > td {
+    padding: 12px 16px !important;
+    height: auto !important;
+}
+
+.fixed-table-container tbody td .th-inner,
+.fixed-table-container thead th .th-inner {
+    padding: 10px 16px !important;
+    line-height: 1.4;
+}
+
+/* thead 表头 .th-inner 去除 padding 与 width（不影响 tbody td） */
+.fixed-table-container thead th .th-inner {
+    padding: 0 !important;
+    width: auto !important;
+}
+
+/* 斑马纹柔化 */
+.table-striped > tbody > tr:nth-of-type(odd) > td {
+    background: #fafbfc;
+}
+
+/* 行 hover 浅蓝 */
+.table-hover > tbody > tr:hover > td,
+.table > tbody > tr:hover > td {
+    background: var(--wb-primary-soft) !important;
+    transition: background .15s;
+}
+
+/* 边框表格 */
+.table-bordered,
+.table-bordered > tbody > tr > td,
+.table-bordered > tbody > tr > th,
+.table-bordered > thead > tr > th,
+.table-bordered > tfoot > tr > td {
+    border-color: var(--wb-border) !important;
+}
+
+.table .sortable {
+    color: var(--wb-text-weak) !important;
+}
+
+/* 选中行（bootstrap-table） */
+.fixed-table-container tbody .selected td {
+    background-color: rgba(0, 98, 255, .06) !important;
+}
+
+/* ============================ 5. 按钮 Button ============================ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    border-radius: var(--wb-radius-sm);
+    font-weight: 500;
+    border: none;
+    text-shadow: none !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    transition: background .15s, color .15s, border-color .15s, transform .05s, box-shadow .15s;
+    gap: 2px;
+    line-height: 1;
+    /* 固定高度与表单 input(34px) 一致，保证工具栏内按钮与搜索框严格对齐 */
+    height: 34px;
+    padding: 0 16px;
+}
+
+/* bootstrap-select 选中项文本垂直居中（.btn 的 line-height:1 / height:34px 会使内部文字偏移） */
+.bootstrap-select .dropdown-toggle .filter-option {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+.bootstrap-select .dropdown-toggle .filter-option-inner {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+/* 按钮内图标与文字：统一间距 */
+.btn .fa,
+.btn .icon,
+.btn .iconfont,
+.btn [class^="fa-"],
+.btn [class*=" fa-"] {
+    line-height: 1;
+    font-size: 0.95em;
+    flex-shrink: 0;
+}
+
+/* 只有图标没有文字时取消右侧间距 */
+.btn .fa:only-child,
+.btn .icon:only-child,
+.btn .iconfont:only-child,
+.btn [class^="fa-"]:only-child,
+.btn [class*=" fa-"]:only-child {
+    margin-right: 0;
+}
+
+.btn:hover,
+.btn:focus {
+    outline: none !important;
+    box-shadow: var(--wb-shadow-sm);
+}
+
+.btn:active,
+.btn.active {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+.btn-primary {
+    background: var(--wb-primary);
+    border-color: var(--wb-primary);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: var(--wb-primary-hover);
+    border-color: var(--wb-primary-hover);
+    color: #fff;
+}
+
+.btn-primary:active,
+.btn-primary.active,
+.open>.dropdown-toggle.btn-primary {
+    background: var(--wb-primary-active) !important;
+    border-color: var(--wb-primary-active) !important;
+    color: #fff !important;
+}
+
+/* 搜索按钮专用色 #409EFF — Element UI 主题蓝 */
+.btn-search {
+    background: #409EFF;
+    border-color: #409EFF;
+    color: #fff;
+}
+.btn-search:hover {
+    background: #66b1ff;
+    border-color: #66b1ff;
+    color: #fff;
+}
+.btn-search:active,
+.btn-search.active {
+    background: #3a8ee6;
+    border-color: #3a8ee6;
+    color: #fff;
+}
+
+.btn-success {
+    background: var(--wb-success);
+    border-color: var(--wb-success);
+    color: #fff;
+}
+
+.btn-success:hover {
+    background: #15a85f;
+    color: #fff;
+}
+
+.btn-info {
+    background: var(--wb-info);
+    border-color: var(--wb-info);
+    color: #fff;
+}
+
+.btn-warning {
+    background: var(--wb-warning);
+    border-color: var(--wb-warning);
+    color: #fff;
+}
+
+.btn-danger {
+    background: var(--wb-danger);
+    border-color: var(--wb-danger);
+    color: #fff;
+}
+
+.btn-default {
+    background: #fff;
+    border: 1px solid var(--wb-border-strong) !important;
+    color: var(--wb-text);
+}
+
+.btn-default:hover {
+    background: #f5f7f9;
+    color: var(--wb-primary);
+    border-color: var(--wb-primary) !important;
+}
+
+.btn-link {
+    color: var(--wb-primary);
+}
+
+/* 尺寸变体统一高度，保证与表单 input 垂直对齐 */
+.btn-xs {
+    height: 26px;
+    padding: 0 10px;
+    font-size: 12px;
+}
+
+.btn-sm {
+    height: 30px;
+    padding: 0 12px;
+    font-size: 13px;
+}
+
+.btn-lg {
+    height: 40px;
+    padding: 0 22px;
+    font-size: 15px;
+}
+
+/* 块级按钮（表单提交等）保持内容居中且占满整行 */
+.btn-block {
+    display: flex;
+    width: 100%;
+}
+
+/* 工具栏按钮间距统一 */
+.toolbar .btn,
+.fixed-table-toolbar .bs-bars .btn,
+.fixed-table-toolbar .columns .btn {
+    margin-right: 8px;
+}
+
+.toolbar .btn:last-child {
+    margin-right: 0;
+}
+
+/* 操作列按钮（btn-operation） */
+.btn-operation {
+    color: var(--wb-primary);
+}
+
+.btn-operation:hover {
+    color: var(--wb-primary-hover);
+}
+
+/* ============================ 5.2 操作按钮统一左对齐 ============================ */
+/* 列表「操作」列（编辑/删除/详情等）按钮统一左对齐。
+   Bootstrap-Table 会把对齐写成单元格内联样式 text-align，故用更具体的选择器 + !important 覆盖。
+   操作列在各模块列表均为最后一列，用 :last-child 精准命中，不影响其它列对齐。 */
+.bootstrap-table .fixed-table-body tbody tr td:last-child,
+.bootstrap-table .fixed-table-body tbody tr td:has(.btn-operation),
+.bootstrap-table .fixed-table-body tbody tr td:last-child .btn-group,
+.bootstrap-table .fixed-table-body tbody tr td:last-child .btn,
+.bootstrap-table .fixed-table-body tbody tr td:has(.btn-operation) .btn-group,
+.bootstrap-table .fixed-table-body tbody tr td:has(.btn-operation) .btn {
+    text-align: left !important;
+}
+
+/* 表单页底部操作按钮（保存/关闭等）左对齐 */
+.layer-footer .btn-group-bottom,
+.form-group.layer-footer .col-xs-12.col-sm-8,
+.form-group.layer-footer .col-xs-12.col-sm-8.btn-group-bottom {
+    text-align: left !important;
+}
+
+/* 工具栏按钮保持左对齐（防止个别模块被其它样式右移/居中） */
+.fixed-table-toolbar .bs-bars {
+    justify-content: flex-start;
+    margin-right: auto;
+}
+
+/* ============================ 5.1 工具栏布局（按钮 + 搜索 + 列切换） ============================ */
+/* 用 flex 让左侧按钮组与右侧搜索/列按钮保持在同一行并对齐居中；
+   空间不足时整体优雅换行，避免搜索框被挤到下一行（FastAdmin 默认 float 的顽疾） */
+.fixed-table-toolbar {
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.fixed-table-toolbar .bs-bars,
+.fixed-table-toolbar .columns,
+.fixed-table-toolbar .search {
+    float: none !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    display: flex;
+    align-items: center;
+}
+
+/* 左侧按钮区自动占满剩余空间，把搜索/列按钮推到最右 */
+.fixed-table-toolbar .bs-bars {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+/* 搜索框排到最右，列切换排在搜索框前面 */
+.fixed-table-toolbar .search {
+    margin-left: auto;
+    order: 2;
+}
+
+.fixed-table-toolbar .columns {
+    margin-left: 0;
+    order: 1;
+}
+
+/* 工具栏内按钮横向排列、可换行、对齐居中，统一间距（替代 margin-right 写法） */
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.toolbar .btn,
+.fixed-table-toolbar .bs-bars .btn {
+    margin-right: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+/* 图标型按钮（仅图标，如刷新）收窄，接近方形更精致 */
+.toolbar .btn-refresh,
+.fixed-table-toolbar .btn-refresh {
+    padding: 0 11px;
+    background: #f4f4f4;
+    border-color: #e1e1e1;
+    color: #555555;
+}
+
+.toolbar .btn-refresh .fa,
+.fixed-table-toolbar .btn-refresh .fa {
+    color: #555555;
+}
+
+.toolbar .btn-refresh:hover,
+.fixed-table-toolbar .btn-refresh:hover {
+    background: #e8e8e8;
+    color: #555555;
+}
+
+/* 搜索框在小屏可收缩，避免溢出 */
+.fixed-table-toolbar .search .form-control {
+    max-width: 100%;
+}
+
+/* ============================ 6. 分页 Pagination ============================ */
+.pagination > li > a,
+.pagination > li > span {
+    border-color: var(--wb-border-strong);
+    color: var(--wb-text);
+    border-radius: var(--wb-radius-sm) !important;
+    margin: 0 3px;
+    transition: all .15s;
+}
+
+.pagination > li > a:hover,
+.pagination > li > span:hover {
+    color: var(--wb-primary);
+    border-color: var(--wb-primary);
+    background: var(--wb-primary-soft);
+}
+
+.pagination > .active > a,
+.pagination > .active > a:hover,
+.pagination > .active > a:focus,
+.pagination > .active > span,
+.pagination > .active > span:hover {
+    background: var(--wb-primary);
+    border-color: var(--wb-primary);
+    color: #fff;
+}
+
+.fixed-table-pagination {
+    margin-top: 16px;
+}
+
+.fixed-table-pagination .pagination-detail,
+.fixed-table-pagination .pagination {
+    margin-top: 8px;
+}
+
+/* ============================ 7. 徽标 Label / Badge ============================ */
+.label {
+    border-radius: var(--wb-radius-xs);
+    padding: .3em .65em;
+    font-weight: 500;
+    font-size: 12px;
+}
+
+.label-primary {
+    background: var(--wb-primary);
+}
+
+.label-success {
+    background: var(--wb-success);
+}
+
+.label-info {
+    background: var(--wb-info);
+}
+
+.label-warning {
+    background: var(--wb-warning);
+}
+
+.label-danger {
+    background: var(--wb-danger);
+}
+
+.label-default {
+    background: #e4e7ec;
+    color: #5b6573;
+}
+
+.badge {
+    border-radius: 10px;
+    font-weight: 500;
+}
+
+/* ============================ 8. 表单 Form ============================ */
+.form-control {
+    border-radius: var(--wb-radius-sm);
+    border: 1px solid var(--wb-border-strong);
+    box-shadow: none !important;
+    color: var(--wb-text);
+    height: 34px;
+    transition: border-color .15s, box-shadow .15s;
+}
+
+.form-control:hover {
+    border-color: #c9d2dd;
+}
+
+.form-control:focus {
+    border-color: var(--wb-primary) !important;
+    box-shadow: 0 0 0 3px rgba(0, 98, 255, .12) !important;
+    outline: none !important;
+}
+
+textarea.form-control {
+    height: auto;
+}
+
+.control-label {
+    color: var(--wb-title);
+    font-weight: 500;
+}
+
+.input-group .form-control {
+    border-radius: 0 var(--wb-radius-sm) var(--wb-radius-sm) 0;
+}
+
+.input-group-addon,
+.input-group-btn:first-child .btn {
+    border-radius: var(--wb-radius-sm) 0 0 var(--wb-radius-sm);
+    background: #f5f7f9;
+    border-color: var(--wb-border-strong);
+    color: var(--wb-text-weak);
+}
+
+.input-group-btn:last-child .btn {
+    border-radius: 0 var(--wb-radius-sm) var(--wb-radius-sm) 0;
+}
+
+select.form-control {
+    cursor: pointer;
+}
+
+/* ============================ 9. 弹窗 Modal ============================ */
+.modal-content {
+    border: none;
+    border-radius: var(--wb-radius);
+    box-shadow: var(--wb-shadow-pop);
+    overflow: hidden;
+}
+
+.modal-header {
+    background: #fafbfc;
+    border-bottom: 1px solid var(--wb-border);
+    padding: 16px 22px;
+}
+
+.modal-title {
+    font-weight: 600;
+    color: var(--wb-title);
+}
+
+.modal-body {
+    padding: 22px;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--wb-border);
+    background: #fafbfc;
+    padding: 14px 22px;
+}
+
+/* ============================ 10. 下拉菜单 Dropdown ============================ */
+.dropdown-menu {
+    border: none !important;
+    border-radius: var(--wb-radius-sm);
+    box-shadow: var(--wb-shadow-pop);
+    padding: 6px 0;
+    margin-top: 8px;
+}
+
+.dropdown-menu > li > a {
+    padding: 9px 18px;
+    color: var(--wb-text);
+    transition: background .12s, color .12s;
+}
+
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+    background: var(--wb-primary-soft) !important;
+    color: var(--wb-primary) !important;
+}
+
+.dropdown-menu.text-left a,
+.dropdown-menu.text-left li {
+    text-align: left;
+}
+
+/* ============================ 11. 卡片 ibox ============================ */
+.ibox {
+    background: var(--wb-surface);
+    border-radius: var(--wb-radius);
+    box-shadow: var(--wb-shadow);
+    border: none;
+}
+
+.ibox-title {
+    border-bottom: 1px solid var(--wb-border);
+    padding: 16px 22px;
+    background: var(--wb-surface);
+    border-radius: var(--wb-radius) var(--wb-radius) 0 0;
+}
+
+.ibox-content {
+    padding: 22px;
+    background: var(--wb-surface);
+}
+
+/* ============================ 12. 顶部栏 Header ============================ */
+.wb-header {
+    background: var(--wb-surface);
+    border-bottom: 1px solid var(--wb-border);
+    box-shadow: 0 1px 3px rgba(17, 24, 39, .04);
+}
+
+.wb-header > ul > li > a {
+    color: var(--wb-text);
+    transition: color .15s, background .15s;
+}
+
+.wb-header > ul > li:hover,
+.wb-header > ul > li.active {
+    background: #f2f5f9;
+}
+
+.wb-header ul li.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+/* 顶部用户下拉项 */
+.wb-header .dropdown-menu > li > a {
+    color: var(--wb-text);
+}
+
+.wb-header .dropdown-menu > li:hover a {
+    color: var(--wb-primary);
+}
+
+/* 左侧 logo 区域改为白色背景，文字同步改为深色以保证可读性 */
+.wb-header .logo {
+    background: var(--wb-nav-bg) !important;
+    border-bottom: 1px solid var(--wb-border);
+    color: var(--wb-title) !important;
+    width: 150px !important;
+}
+
+.wb-header .logo .title {
+    color: var(--wb-title) !important;
+}
+
+/* ============================ 13. 一级导航 wb-nav ============================ */
+.wb-nav {
+    background: var(--wb-nav-bg);
+    box-shadow: 2px 0 8px rgba(0, 0, 0, .08);
+}
+
+.wb-nav ul li a {
+    color: #c5ccd4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 130px;
+    height: 48px;
+    margin: 0 auto;
+    border-radius: 12px;
+    transition: color .15s, background .15s;
+}
+
+.wb-nav ul li:hover {
+    background: transparent;
+}
+
+.wb-nav ul li:hover a {
+    background: #f8f8f8;
+}
+
+.wb-nav ul li.active {
+    background: transparent;
+}
+
+.wb-nav ul li.active a {
+    color: #fff;
+    font-weight: 600;
+    background: #eef4ff;
+}
+
+/* 折叠态圆角处理 */
+.wb-nav.fold ul li.active {
+    box-shadow: inset 3px 0 0 rgba(255, 255, 255, .65);
+}
+
+/* 折叠按钮 */
+.wb-nav .wb-nav-fold {
+    background: var(--wb-nav-bg);
+    color: #7c838a;
+    transition: color .15s;
+}
+
+.wb-nav .wb-nav-fold:hover {
+    color: #fff;
+}
+
+/* 设置入口 */
+.wb-nav .sysset {
+    background: #16222e;
+}
+
+.wb-nav .sysset a {
+    color: #cacaca;
+}
+
+.wb-nav .sysset:hover a {
+    color: #fff;
+}
+
+/* ============================ 14. 二级导航 wb-subnav ============================ */
+.wb-subnav {
+    background: var(--wb-surface);
+    box-shadow: 2px 0 8px rgba(17, 24, 39, .04);
+}
+
+.wb-subnav .subnav-scene {
+    color: var(--wb-title);
+    font-weight: 600;
+    height: 78px;
+    padding: 0 20px;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.wb-subnav .menu-header {
+    color: var(--wb-text);
+    padding: 0 20px 0 5px;
+    font-weight: 500;
+    line-height: 50px;
+    height: 50px;
+}
+
+.wb-subnav .menu-header.active {
+    color: var(--wb-primary);
+    background: var(--wb-primary-soft);
+}
+
+.wb-subnav .menu-header:hover {
+    background: #f8f8f8;
+}
+
+.wb-subnav ul li,
+.wb-subnav ul.single li {
+    transition: background .12s;
+}
+
+.wb-subnav ul li a {
+    color: var(--wb-text);
+    padding-left: 32px;
+    display: flex;
+    align-items: center;
+    height: 50px;
+    transition: color .12s, background .12s;
+}
+
+.wb-subnav ul.single li a {
+    color: var(--wb-text);
+    padding-left: 20px;
+    display: flex;
+    align-items: center;
+    height: 50px;
+    transition: color .12s, background .12s;
+}
+
+.wb-subnav ul li:hover a {
+    background: #f8f8f8;
+}
+
+.wb-subnav ul.single li:hover a {
+    background: #f8f8f8;
+}
+
+.wb-subnav ul li.active a {
+    color: var(--wb-primary);
+    background: transparent !important;
+    font-weight: 600;
+}
+
+.wb-subnav ul li.active {
+    background: transparent !important;
+}
+
+.wb-subnav ul.single li.active a {
+    color: var(--wb-primary);
+    background: transparent !important;
+    font-weight: 600;
+}
+
+/* 二级菜单选中指示条：从右侧移到左侧，宽度 2px */
+.wb-subnav ul li.active::after,
+.wb-subnav ul.single li.active::after {
+    right: auto !important;
+    left: 0 !important;
+    width: 2px !important;
+}
+
+/* ============================ 导航宽度与容器偏移 ============================ */
+/* wb-nav: 150px, wb-subnav: 140px → 容器左边距 = 290px */
+.wb-nav {
+    width: 150px !important;
+}
+
+.wb-subnav {
+    width: 140px !important;
+    left: 150px;
+}
+
+/* 容器基础偏移：仅主布局（含一级导航）应用，弹窗/对话框页面不含导航故不偏移 */
+body:has(.wb-nav) .wb-container {
+    margin: 0 0 0 150px !important;
+}
+
+/* 弹窗/对话框（body.is-dialog）内强制无左偏移，避免被主布局规则影响 */
+body.is-dialog .wb-container {
+    margin: 0 !important;
+}
+
+/* 容器偏移 */
+.wb-nav ~ .wb-subnav ~ .wb-container {
+    margin-left: 290px !important;
+}
+
+.wb-nav.fold ~ .wb-subnav ~ .wb-container {
+    margin-left: 200px !important;
+}
+
+.wb-subnav.fold ~ .wb-container {
+    margin-left: 150px !important;
+}
+
+/* fixed-header 偏移 */
+.wb-nav ~ .wb-subnav ~ .wb-container .fixed-header {
+    left: 270px !important;
+}
+
+/* page-loading 偏移 */
+.wb-nav ~ .wb-subnav ~ .wb-container #page-loading .page-loading-inner {
+    left: 270px !important;
+}
+
+/* ============================ 15. 滚动条 ============================ */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(17, 24, 39, .18);
+    border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(17, 24, 39, .32);
+}
+
+.bootstrap-table ::-webkit-scrollbar-thumb,
+.bootstrap-table .fixed-columns ::-webkit-scrollbar-thumb,
+.bootstrap-table .fixed-columns-right ::-webkit-scrollbar-thumb {
+    background: rgba(17, 24, 39, .18);
+}
+
+/* ============================ 16. 杂项 ============================ */
+/* 提示框 / 警告框柔和化 */
+.alert {
+    border-radius: var(--wb-radius-sm);
+    border: none;
+}
+
+/* 缩略图 */
+.thumbnail {
+    border-radius: var(--wb-radius-sm);
+    border-color: var(--wb-border);
+}
+
+/* 进度条 */
+.progress {
+    border-radius: 10px;
+    box-shadow: none;
+    background: #eef0f3;
+}
+
+/* 加载动画居中 */
+.page-loading-inner {
+    background: rgba(255, 255, 255, .9);
+    border-radius: var(--wb-radius);
+}
+
+/* 页脚版权 */
+.copyright-footer {
+    color: var(--wb-text-weak);
+    padding: 16px 0;
+    font-size: 12px;
+}
+
+/* ============================ 17. 按钮圆角类统一 ============================ */
+/* 覆盖 FastAdmin 的 btn-embossed（浮雕/直角）等修饰类，保证全局按钮圆角一致 */
+.btn,
+.btn-embossed,
+.btn-round,
+.btn-flat,
+.btn-outline {
+    border-radius: var(--wb-radius-sm) !important;
+    box-shadow: none !important;
+}
+
+/* 尺寸变体圆角统一（Bootstrap 默认 btn-xs/sm 偏小，统一为协调值） */
+.btn-xs,
+.btn-group-xs > .btn {
+    border-radius: 4px !important;
+}
+
+.btn-sm,
+.btn-group-sm > .btn {
+    border-radius: 5px !important;
+}
+
+.btn-lg,
+.btn-group-lg > .btn {
+    border-radius: 8px !important;
+}
+
+/* 圆形按钮（图标/头像类）保持正圆 */
+.btn-circle {
+    border-radius: 50% !important;
+}
+
+/* ============================ 18. 弹窗样式美化 ============================ */
+/* ---------- 18.1 Bootstrap Modal（#public_modal / 各业务弹窗） ---------- */
+.modal-content {
+    border: none;
+    border-radius: var(--wb-radius);
+    box-shadow: var(--wb-shadow-pop);
+    overflow: hidden;
+}
+
+.modal-header {
+    background: #fafbfc;
+    border-bottom: 1px solid var(--wb-border);
+    padding: 16px 22px;
+    border-radius: var(--wb-radius) var(--wb-radius) 0 0;
+}
+
+.modal-title {
+    font-weight: 600;
+    color: var(--wb-title);
+    font-size: 16px;
+}
+
+.modal-body {
+    padding: 22px;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--wb-border);
+    background: #fafbfc;
+    padding: 14px 22px;
+    border-radius: 0 0 var(--wb-radius) var(--wb-radius);
+}
+
+/* 关闭按钮精致化 */
+.modal-header .close {
+    color: var(--wb-text-weak);
+    opacity: 1;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    line-height: 1;
+    transition: background .15s, color .15s;
+}
+
+.modal-header .close:hover {
+    background: var(--wb-primary-soft);
+    color: var(--wb-primary);
+    opacity: 1;
+}
+
+/* 弹窗内表单与按钮 */
+.modal-body .form-control {
+    border-radius: var(--wb-radius-sm);
+}
+
+.modal-footer .btn {
+    min-width: 76px;
+}
+
+/* ---------- 18.2 Layer 弹窗（Layer.open 大量使用） ---------- */
+.layui-layer {
+    border: none !important;
+    border-radius: var(--wb-radius) !important;
+    box-shadow: var(--wb-shadow-pop) !important;
+    overflow: hidden;
+}
+
+.layui-layer-title {
+    background: #fafbfc !important;
+    color: var(--wb-title) !important;
+    border-bottom: 1px solid var(--wb-border) !important;
+    border-radius: var(--wb-radius) var(--wb-radius) 0 0 !important;
+    height: 48px;
+    line-height: 48px;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 0 44px 0 16px;
+}
+
+.layui-layer-setwin {
+    top: 14px;
+    right: 14px;
+}
+
+.layui-layer-close,
+.layui-layer-close1,
+.layui-layer-close2 {
+    width: 22px !important;
+    height: 22px !important;
+    margin-top: -2px;
+    border-radius: 50% !important;
+    transition: background .15s, color .15s;
+}
+
+.layui-layer-close:hover,
+.layui-layer-close1:hover,
+.layui-layer-close2:hover {
+    background: var(--wb-primary-soft) !important;
+}
+
+.layui-layer-content {
+    color: var(--wb-text);
+    padding: 20px;
+}
+
+/* 按钮区与确认/取消按钮统一主色 */
+.layui-layer-btn {
+    border-top: 1px solid var(--wb-border);
+    background: #fafbfc;
+    padding: 12px 20px !important;
+    text-align: right;
+}
+
+.layui-layer-btn a {
+    border-radius: var(--wb-radius-sm) !important;
+    height: 34px;
+    line-height: 34px !important;
+    padding: 0 18px !important;
+    margin: 0 0 0 8px !important;
+    background: #fff !important;
+    border: 1px solid var(--wb-border-strong) !important;
+    color: var(--wb-text) !important;
+    font-weight: 500;
+    transition: background .15s, color .15s, border-color .15s;
+}
+
+.layui-layer-btn a:hover {
+    border-color: var(--wb-primary) !important;
+    color: var(--wb-primary) !important;
+}
+
+.layui-layer-btn .layui-layer-btn0 {
+    background: var(--wb-primary) !important;
+    border-color: var(--wb-primary) !important;
+    color: #fff !important;
+}
+
+.layui-layer-btn .layui-layer-btn0:hover {
+    background: var(--wb-primary-hover) !important;
+    border-color: var(--wb-primary-hover) !important;
+    color: #fff !important;
+}
+
+/* 页面层 / iframe 层内容区去掉多余内边距（由内部自行控制） */
+.layui-layer-page .layui-layer-content,
+.layui-layer-iframe .layui-layer-content {
+    padding: 0;
+    overflow: auto;
+}
+
+/* ============================ 19. 页面宽度与右侧面板优化 ============================ */
+/* 主内容区始终占满可用宽度（100%），右侧面板作为抽屉/浮层处理，不再预留固定边距 */
+.wb-container,
+.wb-container.right-panel {
+    margin-right: 0 !important;
+}
+
+/* 右侧面板宽度统一，展开时以浮层方式覆盖内容 */
+.wb-panel {
+    width: 150px;
+    right: -150px;
+}
+
+.wb-panel .panel-body .panel-collapse > .panel-body {
+    width: 150px;
+}
+
+/* 固定头部与加载层随容器占满 */
+.fixed-header,
+.wb-container.right-panel .fixed-header {
+    right: 20px !important;
+}
+
+.page-loading-inner,
+.wb-container.right-panel #page-loading .page-loading-inner {
+    right: 0 !important;
+}
+
+/* ============================ 20. 页面自适应 ============================ */
+/* 中大屏：收紧右侧留白与内容区内边距 */
+@media (max-width: 1600px) {
+    .wb-content {
+        padding: 0 18px 26px !important;
+    }
+
+    .panel-body {
+        padding: 20px !important;
+    }
+
+    .panel-intro > .panel-heading {
+        padding: 16px 20px 0 !important;
+    }
+}
+
+/* 中屏：收窄内容区内边距与面板留白 */
+@media (max-width: 1366px) {
+    .wb-content {
+        padding: 0 16px 24px !important;
+    }
+
+    .panel-body {
+        padding: 18px !important;
+    }
+
+    .panel-intro > .panel-heading {
+        padding: 16px 18px 0 !important;
+    }
+
+    .ibox-content {
+        padding: 18px;
+    }
+}
+
+/* 平板：进一步收窄，表格容器允许横向滚动 */
+@media (max-width: 991px) {
+    .wb-content {
+        padding: 0 12px 20px !important;
+    }
+
+    .panel-body {
+        padding: 16px !important;
+    }
+
+    .panel-intro > .panel-heading {
+        padding: 14px 14px 0 !important;
+    }
+
+    .fixed-table-body {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .ibox-content {
+        padding: 16px;
+    }
+
+    /* 弹窗在小屏占更大宽度 */
+    .modal-dialog {
+        margin: 12px auto;
+    }
+
+    /* 工具栏按钮与搜索框允许换行，避免挤压 */
+    .toolbar,
+    .fixed-table-toolbar {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .toolbar .btn,
+    .fixed-table-toolbar .btn {
+        margin-bottom: 4px;
+    }
+}
+
+/* 手机：紧凑布局，标题与按钮适配，弹窗接近全宽 */
+@media (max-width: 767px) {
+    .wb-content {
+        padding: 0 10px 16px !important;
+    }
+
+    .panel-body {
+        padding: 14px !important;
+    }
+
+    .panel-intro > .panel-heading {
+        padding: 14px 12px 0 !important;
+    }
+
+    .panel-intro > .panel-heading .nav-tabs > li > a {
+        padding: 8px 10px !important;
+        margin-right: 2px;
+        font-size: 13px;
+    }
+
+    .ibox-content {
+        padding: 14px;
+    }
+
+    /* 表单标签在窄屏左对齐（Bootstrap col-xs 已堆叠） */
+    .form-horizontal .control-label {
+        text-align: left;
+        margin-bottom: 4px;
+    }
+
+    /* 顶部用户下拉宽度适配 */
+    .wb-header ul li.dropdown.ellipsis {
+        min-width: auto;
+    }
+
+    /* Bootstrap 弹窗接近全宽 */
+    .modal-dialog {
+        width: auto;
+        max-width: calc(100% - 20px);
+        margin: 10px auto;
+    }
+
+    /* Layer 弹窗限制最大宽度，避免窄屏溢出 */
+    .layui-layer,
+    .layui-layer-page,
+    .layui-layer-iframe {
+        max-width: calc(100vw - 20px) !important;
+    }
+
+    .layui-layer-content {
+        padding: 16px;
+    }
+
+    /* 页脚按钮操作区换行，避免拥挤 */
+    .fixed-footer .btn {
+        margin-bottom: 6px;
+    }
+
+    /* 手机下表格横向滚动，单元格不换行 */
+    .fixed-table-body {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table {
+        min-width: 640px;
+    }
+
+    /* 工具栏按钮全宽堆叠 */
+    .toolbar .btn,
+    .fixed-table-toolbar .btn {
+        width: auto;
+        margin-bottom: 6px;
+    }
+
+    .toolbar .search,
+    .fixed-table-toolbar .search {
+        width: 100%;
+        margin-top: 8px;
+    }
+
+    .toolbar .search .form-control,
+    .fixed-table-toolbar .search .form-control {
+        width: 100%;
+    }
+}
+
+/* 隐藏跨页选择提示按钮 */
+.btn-selected-tips {
+    display: none !important;
+}
+
+/* ============================ 21. 全局取消所有阴影（扁平化） ============================ */
+/* 用户要求：全局有阴影的全都取消掉。统一用边框/底色区分层次，保持扁平风格。 */
+* {
+    box-shadow: none !important;
+}
+
+/* [WB] 隐藏面板内 nav-tabs 横向滚动条（保留滚动能力） */
+.panel-intro > .panel-heading .nav-tabs {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.panel-intro > .panel-heading .nav-tabs::-webkit-scrollbar {
+    display: none;
+}
